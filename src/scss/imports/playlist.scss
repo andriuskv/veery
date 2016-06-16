@@ -1,0 +1,26 @@
+.playlist-header {
+    padding: $spacing;
+    margin-bottom: $spacing;
+    background-color: $color2
+}
+.filter-input {
+    padding: 2px 6px;
+}
+.playlist-container {
+    position: relative;
+    height: calc(100% - 34px);
+    background-color: $color2;
+}
+.track {
+    transition: all .1s;
+    font-size: 14px;
+
+    &.playing { color: $brand-color; }
+    &.hidden { display: none; }
+    &.selected {
+        background-color: $color1;
+
+        &:hover { background-color: $color1; }
+     }
+     &:hover { background-color: $color3; }
+}

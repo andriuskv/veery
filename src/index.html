@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>ve2ry</title>
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+    <div class="sidebar">
+        <header class="sidebar-header">
+            <h1 class="main-title">ve<span>2</span>ry</h1>
+        </header>
+        <nav class="sidebar-nav">
+            <a href="#/add" class="font-btn add-playlist-btn js-tab-select-btn" data-tab-item="add" title="Add playlist">Add playlist</a>
+            <div class="sidebar-section">
+                <h3 class="sidebar-section-title">Playlists</h3>
+                <ul id="js-sidebar-playlist-entries" class="list sidebar-playlist-entries"></ul>
+            </div>
+        </nav>
+        <div id="js-sidebar-footer" class="sidebar-footer">
+            <div class="player-track-art-container">
+                <img src="" id="js-player-track-art" class="player-track-art" alt="track art">
+            </div>
+            <div id="js-player-track-info" class="player-track-info">
+                <div class="track-title"></div>
+                <div class="track-artist"></div>
+            </div>
+        </div>
+    </div>
+    <div class="main">
+        <div id="js-tab-container" class="tab-container">
+            <div id="js-tab-add" class="tab">
+                <div class="tab-content">
+                    <h2 class="tab-title">Add playlist</h2>
+                    <div id="js-playlist-add-options" class="playlist-add-options">
+                        <div class="playlist-add-option">
+                            <ul class="list playlist-provider-container">
+                                <li class="playlist-provider" data-choice="youtube">
+                                    <img src="assets/images/youtube-logo.png" alt="" class="playlist-provider-logo">
+                                    <div>YouTube</div>
+                                </li>
+                                <li class="playlist-provider" data-choice="soundcloud">
+                                    <img src="assets/images/soundcloud-logo.png" alt="" class="playlist-provider-logo">
+                                    <div>SoundCloud</div>
+                                </li>
+                            </ul>
+                            <div id="js-import-form-container" class="form-container">
+                                <form id="js-playlist-import-form">
+                                    <input type="text" name="playlist-id" class="input" placeholder="Link to playlist">
+                                    <button class="btn">Import</button>
+                                </form>
+                                <div id="js-remote-notice" class="playlist-add-notice"></div>
+                            </div>
+                        </div>
+                        <div class="playlist-add-option">
+                            <button data-choice="file" class="font-btn">
+                                <div class="local-btn-icon icon-doc-inv"></div>
+                                <div class="local-btn-title">Add from files</div>
+                            </button>
+                            <button data-choice="folder" class="font-btn">
+                                <div class="local-btn-icon icon-folder"></div>
+                                <div class="local-btn-title">Add from folder</div>
+                            </button>
+                            <input type="file" id="js-file-chooser" class="file-chooser">
+                            <div>
+                                <progress id="js-file-progress" class="file-progress" value="0" step="1"></progress>
+                                <div id="js-local-notice" class="playlist-add-notice">Unsupported audio formats will be ignored</div>
+                            </div>
+                        </div>
+                    </div>
+                    <ul id="js-playlist-entries" class="list playlist-entries"></ul>
+                </div>
+            </div>
+            <div id="js-tab-404" class="tab">
+                <div class="tab-content tab-404-content">
+                    <h2>404</h2>
+                    <h3>Not found</h3>
+                </div>
+            </div>
+        </div>
+        <div id="js-player-controls" class="player-controls">
+            <button class="icon-to-start font-btn main-control-btn" data-control-item="previous" title="Previous"></button>
+            <button id="js-player-play" class="icon-play font-btn main-control-btn" data-control-item="play" title="Play"></button>
+            <button class="icon-stop font-btn main-control-btn" data-control-item="stop" title="Stop"></button>
+            <button class="icon-to-end font-btn main-control-btn" data-control-item="next" title="Next"></button>
+            <div id="js-player-track" class="player-track-slider-container">
+                <div id="js-player-elapsed" class="player-time">0:00</div>
+                <div id="js-player-track-slider" class="player-track-slider" data-track-item="track">
+                    <div class="player-track-elapsed" data-track-item="elapsed"></div>
+                    <div class="player-slider-thumb" data-track-item="thumb"></div>
+                </div>
+                <div id="js-player-duration" class="player-time">0:00</div>
+            </div>
+            <button class="icon-cw font-btn control-btn" data-control-item="repeat" title="Repeat"></button>
+            <button class="icon-shuffle font-btn control-btn" data-control-item="shuffle" title="Shuffle"></button>
+            <button class="icon-volume-up font-btn control-btn" data-control-item="volume" title="Volume"></button>
+            <div id="js-volume-track" class="volume-slider-wrapper">
+                <div id="js-player-volume-slider" class="player-volume-slider" data-volume-item="track">
+                    <div class="player-track-elapsed volume-elapsed" data-volume-item="elapsed"></div>
+                    <div class="player-slider-thumb" data-volume-item="thumb"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="yt-player"></div>
+    <script src="js/main.js"></script>
+</body>
+</html>
