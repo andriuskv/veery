@@ -2,11 +2,11 @@
 
 "use strict";
 
-const window = self;
+var window = self;
 
 importScripts("../libs/db.min.js");
 
-let server = null;
+var server = null;
 
 db.open({
     server: "local-playlist",
@@ -17,65 +17,52 @@ db.open({
             key: { keyPath: "index", autoIncrement: false }
         }
     }
-}).then(s => {
+}).then(function (s) {
     server = s;
 
-    s.query("track")
-    .all()
-    .execute()
-    .then(tracks => {
+    s.query("track").all().execute().then(function (tracks) {
         if (tracks.length) {
-            tracks = tracks.map((track, index) => {
+            tracks = tracks.map(function (track, index) {
                 track.index = index;
                 return track;
             });
-            postMessage({ tracks });
+            postMessage({ tracks: tracks });
         }
-    })
-    .catch(error => {
+    }).catch(function (error) {
         console.log(error);
     });
 });
 
-onmessage = function(event) {
-    const data = event.data;
+onmessage = function onmessage(event) {
+    var data = event.data;
 
     if (data.action === "update") {
-        server.clear("track")
-        .then(function() {
+        server.clear("track").then(function () {
             server.add("track", data.playlist);
-        })
-        .catch(error => {
+        }).catch(function (error) {
             console.log(error);
         });
-    }
-    else if (data.action === "remove") {
+    } else if (data.action === "remove") {
         console.log(data.action, data.name);
 
-        server.query("track")
-        .filter("name", data.name)
-        .execute()
-        .then(results => {
+        server.query("track").filter("name", data.name).execute().then(function (results) {
             if (results.length) {
-                results.forEach(result => {
+                results.forEach(function (result) {
                     server.remove("track", result.index);
                 });
             }
         });
-    }
-    else if (data.action === "clear") {
+    } else if (data.action === "clear") {
         if (!server) {
             return;
         }
-        server.clear("track")
-        .then(() => {
+        server.clear("track").then(function () {
             postMessage({ action: "init" });
             console.log("cleared");
             server.close();
             self.close();
             indexedDB.deleteDatabase("local-playlist");
-        })
-        .catch(error => {
+        }).catch(function (error) {
             console.log(error);
         });
     }
