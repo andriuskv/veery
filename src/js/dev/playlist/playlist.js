@@ -36,14 +36,12 @@ function createPlaylist(pl) {
         tracks: pl.tracks || [],
         playbackOrder: []
     }, pl, JSON.parse(localStorage.getItem(pl.id)) || {});
-    console.log(playlists);
     return playlists[pl.id];
 }
 
 function removePlaylist(id) {
     delete playlists[id];
     localStorage.removeItem(id);
-    console.log(playlists);
 }
 
 function setActivePlaylist(id) {
@@ -76,7 +74,6 @@ function setCurrentIndex(index) {
     const playlist = getActivePlaylist();
 
     currentIndex = playlist.playbackOrder.indexOf(Number.parseInt(index, 10));
-    console.log(index, currentIndex);
 }
 
 function resetCurrentIndex() {
@@ -95,7 +92,6 @@ function getCurrentTrackIndex() {
 
 function setTrackIndexes(pl, shuffle) {
     if (!getPlaylistById(pl.id)) {
-        console.log("setTrackIndexes", "creating playlist");
         pl = createPlaylist(pl);
     }
 
@@ -130,7 +126,6 @@ function shufflePlaybackOrder(shuffle, pl) {
     else {
         pl.playbackOrder.sort((a, b) => a - b);
     }
-    console.log(pl.playbackOrder);
     savePlaylist(pl);
 }
 

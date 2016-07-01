@@ -1,6 +1,7 @@
 .playlist-add-options {
     display: flex;
-    height: 160px;
+    align-items: flex-start;
+    height: 124px;
 }
 .playlist-add-option {
     flex-basis: 50%;
@@ -19,16 +20,18 @@
     text-align: center;
     font-size: 14px;
     color: $base-text-color;
+    cursor: pointer;
 
     &:last-of-type { margin-right: 0; }
     &.selected { background-color: $color1; }
+    div { user-select: none; }
 }
 .playlist-provider-logo {
     max-width: 100%;
 }
 .form-container {
     display: none;
-    margin-top: $spacing-double;
+    margin-top: $spacing;
     font-size: 14px;
 
     &.show { display: block; }
@@ -48,9 +51,8 @@
     opacity: 0;
     width: 300px;
     height: 26px;
-    margin-top: $spacing;
     border: none;
-    transition: all .2s;
+    transition: all 0.2s;
 
     &.show {
         visibility: visible;
@@ -65,12 +67,22 @@
         background-color: $brand-color;
     }
 }
-.playlist-add-notice {
+.playlist-add-local-notice {
+    position: relative;
+    top: -24px;
     display: none;
-    margin-top: $spacing;
+    text-align: center;
+    color: $color2;
     font-size: 12px;
 
     &.show { display: block; }
+}
+.playlist-add-notice {
+    visibility: hidden;
+    text-align: center;
+    margin-top: $spacing;
+
+    &.show { visibility: visible; }
 }
 .playlist-entries {
     margin: $spacing;

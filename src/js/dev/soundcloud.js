@@ -38,7 +38,7 @@ function fetchPlaylist(url) {
     .catch(error => {
         console.log(error);
         if (error.status === 404) {
-            playlistAdd.showErrorMessage("Playlist was not found");
+            playlistAdd.showNotice("Playlist was not found");
         }
     });
 }

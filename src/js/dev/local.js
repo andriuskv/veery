@@ -1,8 +1,9 @@
 /* global parse_audio_metadata */
 
 import { formatTime } from "./main.js";
-import * as playlistManage from "./playlist/playlist.manage.js";
 import * as playlist from "./playlist/playlist.js";
+import * as playlistManage from "./playlist/playlist.manage.js";
+import * as playlistAdd from "./playlist/playlist.add.js";
 
 let worker = initWorker();
 
@@ -104,6 +105,9 @@ function parseTrackMetadata(track) {
 }
 
 function parseTracks(tracks, parsedTracks, startIndex) {
+    if (!tracks.length) {
+        return Promise.resolve(tracks);
+    }
     return Promise.all([
         parseTrackMetadata(tracks[0].audioTrack),
         getTrackDuration(tracks[0].audioTrack)
@@ -112,8 +116,8 @@ function parseTracks(tracks, parsedTracks, startIndex) {
         parsedTracks.push({
             index: startIndex + parsedTracks.length,
             title: data[0].title.trim(),
-            artist: data[0].artist.trim(),
-            album: data[0].album.trim(),
+            artist: data[0].artist ? data[0].artist.trim() : "",
+            album: data[0].album ? data[0].album.trim() : "",
             name: tracks[0].name,
             thumbnail: data[0].picture,
             audioTrack: tracks[0].audioTrack,
@@ -139,6 +143,11 @@ function addLocalTracks(localTracks) {
     parseTracks(tracks, [], playlistTracks.length)
     .then(tracks => {
         progress.toggle();
+
+        if (!tracks.length) {
+            playlistAdd.showNotice("No valid images found");
+            return;
+        }
         pl.tracks.push(...tracks);
 
         if (document.getElementById(`js-${pl.id}`)) {
@@ -151,6 +160,9 @@ function addLocalTracks(localTracks) {
             action: "update",
             playlist: playlistTracks
         });
+    })
+    .catch(error => {
+        console.log(error);
     });
 }
 
