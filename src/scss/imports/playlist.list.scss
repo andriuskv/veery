@@ -39,7 +39,6 @@
     color: $base-text-color;
     cursor: default;
 
-    &:last-of-type { border: none; }
     span {
         @extend %text-overflow;
 

@@ -95,7 +95,7 @@ function fetchPlaylist(url) {
     getYoutube("playlists", "snippet", "id", id)
     .then(data => {
         if (!data.items.length) {
-            playlistAdd.showErrorMessage("Playlist was not found");
+            playlistAdd.showNotice("Playlist was not found");
             return;
         }
         return {

@@ -8,8 +8,8 @@ import * as playlistManage from "./playlist.manage.js";
 
 let provider = "";
 
-function showErrorMessage(message) {
-    const element = document.getElementById("js-remote-notice");
+function showNotice(message) {
+    const element = document.getElementById("js-playlist-add-notice");
 
     element.textContent = message;
     element.classList.add("show");
@@ -21,8 +21,6 @@ function showErrorMessage(message) {
 }
 
 function importPlaylist(name, value) {
-    console.log(`fetching ${name} playlist`);
-
     if (name === "youtube") {
         yt.fetchPlaylist(value);
     }
@@ -176,5 +174,5 @@ window.addEventListener("DOMContentLoaded", function onLoad() {
 
 export {
     addPlaylist as add,
-    showErrorMessage
+    showNotice
 };
