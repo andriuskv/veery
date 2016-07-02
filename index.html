@@ -52,7 +52,6 @@
                                     <input type="text" name="playlist-id" class="input" placeholder="Link to playlist">
                                     <button class="btn">Import</button>
                                 </form>
-                                <div id="js-remote-notice" class="playlist-add-notice"></div>
                             </div>
                         </div>
                         <div class="playlist-add-option">
@@ -67,10 +66,11 @@
                             <input type="file" id="js-file-chooser" class="file-chooser">
                             <div>
                                 <progress id="js-file-progress" class="file-progress" value="0" step="1"></progress>
-                                <div id="js-local-notice" class="playlist-add-notice">Unsupported audio formats will be ignored</div>
+                                <div id="js-local-notice" class="playlist-add-local-notice">Unsupported audio formats will be ignored</div>
                             </div>
                         </div>
                     </div>
+                    <div id="js-playlist-add-notice" class="playlist-add-notice">asdasd asda</div>
                     <ul id="js-playlist-entries" class="list playlist-entries"></ul>
                 </div>
             </div>
