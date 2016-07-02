@@ -13,10 +13,12 @@
         "node": true,
         "worker": true
     },
+    "extends": "eslint:recommended",
     "rules": {
         "semi": 2,
         "prefer-const": 2,
         "comma-dangle": [2, "never"],
+        "no-console": 0,
         "no-cond-assign": 2,
         "no-dupe-args": 2,
         "no-dupe-keys": 2,
