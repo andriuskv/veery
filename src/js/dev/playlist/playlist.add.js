@@ -98,9 +98,9 @@ function editPlaylistTitle(action, target, titleElement, playlistId) {
     }
 }
 
-document.getElementById("js-file-chooser").addEventListener("change", event => {
-    local.addTracks(event.target.files);
-    event.target.value = "";
+document.getElementById("js-file-chooser").addEventListener("change", ({ target }) => {
+    local.addTracks([...target.files]);
+    target.value = "";
 });
 
 document.getElementById("js-playlist-import-form").addEventListener("submit", event => {
