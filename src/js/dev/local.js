@@ -79,17 +79,21 @@ function removeFileType(fileName) {
     return fileName.slice(0, fileName.lastIndexOf("."));
 }
 
-function filterInvalidTracks(newTracks, playlistTracks) {
+function filterUnsupportedFiles(files) {
     const audio = new Audio();
 
-    return newTracks.reduce((tracks, track) => {
-        const name = removeFileType(track.name.trim());
-        const duplicate = playlistTracks.some(track => track.name === name);
+    return files.filter(file => audio.canPlayType(file.type));
+}
 
-        if (!duplicate && audio.canPlayType(track.type)) {
+function filterDuplicateTracks(tracks, existingTracks) {
+    return tracks.reduce((tracks, track) => {
+        const name = removeFileType(track.name.trim());
+        const duplicate = existingTracks.some(track => track.name === name);
+
+        if (!duplicate) {
             tracks.push({
-                name: name,
-                audioTrack: track
+                audioTrack: track,
+                name
             });
         }
         return tracks;
@@ -105,9 +109,6 @@ function parseTrackMetadata(track) {
 }
 
 function parseTracks(tracks, parsedTracks, startIndex) {
-    if (!tracks.length) {
-        return Promise.resolve(tracks);
-    }
     return Promise.all([
         parseTrackMetadata(tracks[0].audioTrack),
         getTrackDuration(tracks[0].audioTrack)
@@ -132,22 +133,13 @@ function parseTracks(tracks, parsedTracks, startIndex) {
     });
 }
 
-function addLocalTracks(localTracks) {
-    const pl = getPlaylist();
-    const playlistTracks = pl.tracks;
-    const tracks = filterInvalidTracks([...localTracks], playlistTracks);
-
-    progress.setAttrValue("max", tracks.length);
+function processNewTracks(pl, newTracks) {
+    progress.setAttrValue("max", newTracks.length);
     progress.toggle();
 
-    parseTracks(tracks, [], playlistTracks.length)
+    parseTracks(newTracks, [], pl.tracks.length)
     .then(tracks => {
         progress.toggle();
-
-        if (!tracks.length) {
-            playlistAdd.showNotice("No valid images found");
-            return;
-        }
         pl.tracks.push(...tracks);
 
         if (document.getElementById(`js-${pl.id}`)) {
@@ -158,7 +150,7 @@ function addLocalTracks(localTracks) {
         }
         worker.postMessage({
             action: "update",
-            playlist: playlistTracks
+            playlist: pl.tracks
         });
     })
     .catch(error => {
@@ -166,7 +158,25 @@ function addLocalTracks(localTracks) {
     });
 }
 
+function addNewTracks(files) {
+    const supportedTracks = filterUnsupportedFiles(files);
+
+    if (!supportedTracks.length) {
+        playlistAdd.showNotice("No valid audio files found");
+        return;
+    }
+
+    const pl = getPlaylist();
+    const tracks = filterDuplicateTracks(supportedTracks, pl.tracks);
+
+    if (!tracks.length) {
+        playlistAdd.showNotice("Tracks already exist");
+        return;
+    }
+    processNewTracks(pl, tracks);
+}
+
 export {
-    addLocalTracks as addTracks,
+    addNewTracks as addTracks,
     worker
 };

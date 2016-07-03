@@ -50,7 +50,8 @@
     visibility: hidden;
     opacity: 0;
     width: 300px;
-    height: 26px;
+    height: 22px;
+    margin-top: 2px;
     border: none;
     transition: all 0.2s;
 
@@ -69,7 +70,7 @@
 }
 .playlist-add-local-notice {
     position: relative;
-    top: -24px;
+    top: -22px;
     display: none;
     text-align: center;
     color: $color2;
@@ -79,8 +80,9 @@
 }
 .playlist-add-notice {
     visibility: hidden;
-    text-align: center;
+    height: 18px;
     margin-top: $spacing;
+    text-align: center;
 
     &.show { visibility: visible; }
 }
