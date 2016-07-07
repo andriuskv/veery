@@ -101,6 +101,9 @@ function playTrack() {
     const index = playlist.getCurrentTrackIndex();
     const track = playlist.getTrackAtIndex(index);
 
+    if (!track) {
+        return;
+    }
     playlist.setCurrentTrack(track);
 
     if (player === "native") {
@@ -125,7 +128,9 @@ function playNextTrack(direction) {
 
     const track = playlist.getNextTrack(direction);
 
-    playNewTrack(track, player);
+    if (track) {
+        playNewTrack(track, player);
+    }
 }
 
 function playTrackAtIndex(index, id) {
@@ -139,6 +144,9 @@ function playTrackAtIndex(index, id) {
     const pl = playlist.get(id);
     const track = pl.tracks[index];
 
+    if (!track) {
+        return;
+    }
     settings.set("player", player);
     playlist.setActive(pl.id);
 
@@ -149,7 +157,6 @@ function playTrackAtIndex(index, id) {
     else {
         playlist.setCurrentIndex(track.index);
     }
-
     playlist.setCurrentTrack(track);
     playNewTrack(track, player);
 }
