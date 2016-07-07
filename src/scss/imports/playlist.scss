@@ -5,11 +5,11 @@
 }
 .playlist-container {
     position: relative;
-    height: calc(100% - 34px);
+    height: calc(100% - 38px);
     background-color: $color2;
 }
 .track {
-    transition: all .1s;
+    transition: all 0.1s;
     font-size: 14px;
 
     &.playing { color: $brand-color; }

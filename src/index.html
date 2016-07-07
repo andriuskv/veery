@@ -88,9 +88,10 @@
             <button class="icon-to-end font-btn main-control-btn" data-control-item="next" title="Next"></button>
             <div id="js-player-track" class="player-track-slider-container">
                 <div id="js-player-elapsed" class="player-time">0:00</div>
-                <div id="js-player-track-slider" class="player-track-slider" data-track-item="track">
-                    <div class="player-track-elapsed" data-track-item="elapsed"></div>
-                    <div class="player-slider-thumb" data-track-item="thumb"></div>
+                <div id="js-player-track-slider" class="player-control-slider player-track-slider" data-track-item="track">
+                    <div id="js-player-track-elapsed" class="player-track-elapsed" data-track-item="elapsed">
+                        <div class="player-slider-thumb" data-track-item="thumb"></div>
+                    </div>
                 </div>
                 <div id="js-player-duration" class="player-time">0:00</div>
             </div>
@@ -98,9 +99,10 @@
             <button class="icon-shuffle font-btn control-btn" data-control-item="shuffle" title="Shuffle"></button>
             <button class="icon-volume-up font-btn control-btn" data-control-item="volume" title="Volume"></button>
             <div id="js-volume-track" class="volume-slider-wrapper">
-                <div id="js-player-volume-slider" class="player-volume-slider" data-volume-item="track">
-                    <div class="player-track-elapsed volume-elapsed" data-volume-item="elapsed"></div>
-                    <div class="player-slider-thumb" data-volume-item="thumb"></div>
+                <div id="js-player-volume-slider" class="player-control-slider player-volume-slider" data-volume-item="track">
+                    <div id="js-player-volume-elapsed" class="player-track-elapsed volume-elapsed" data-volume-item="elapsed">
+                        <div class="player-slider-thumb" data-volume-item="thumb"></div>
+                    </div>
                 </div>
             </div>
         </div>
