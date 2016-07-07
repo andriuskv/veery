@@ -156,9 +156,11 @@ function getNextTrack(direction) {
     const index = getNextTrackIndex(direction);
     const track = getTrackAtIndex(index);
 
-    setCurrentTrack(track);
-    setCurrentIndex(track.index);
-    return track;
+    if (track) {
+        setCurrentTrack(track);
+        setCurrentIndex(track.index);
+        return track;
+    }
 }
 
 function sortArray(tracks, sort, order) {
