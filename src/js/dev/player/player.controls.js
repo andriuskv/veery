@@ -67,12 +67,9 @@ function addClassOnPlayBtn(classToAdd) {
 }
 
 function togglePlayBtnClass(paused) {
-    if (paused) {
-        addClassOnPlayBtn("icon-play");
-    }
-    else {
-        addClassOnPlayBtn("icon-pause");
-    }
+    const iconClassName = paused ? "icon-play" : "icon-pause";
+
+    addClassOnPlayBtn(iconClassName);
 }
 
 function getElapsedValue(slider, screenX) {
@@ -102,12 +99,7 @@ function onVolumeTrackMouseup() {
 }
 
 function updateSlider(slider, percent) {
-    const trackSlider = document.getElementById(`js-player-${slider}-slider`);
-    const elapsed = trackSlider.children[0];
-    const elapsedThumb = trackSlider.children[1];
-
-    elapsed.style.width = `${percent}%`;
-    elapsedThumb.style.left = `${percent}%`;
+    document.getElementById(`js-player-${slider}-elapsed`).style.width = `${percent}%`;
 }
 
 function setElapsedTime(time) {
