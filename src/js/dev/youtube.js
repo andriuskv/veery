@@ -2,9 +2,9 @@ import { scriptLoader } from "./main.js";
 import * as playlistAdd from "./playlist/playlist.add.js";
 
 function parseItems(playlist) {
-    playlist.id = "yt-pl-" + playlist.id;
+    playlist.id = `yt-pl-${playlist.id}`;
     playlist.tracks = playlist.tracks.map((track, index) => ({
-        index: index,
+        index,
         id: track.snippet.resourceId.videoId,
         duration: track.snippet.duration,
         title: track.snippet.title,
@@ -26,7 +26,7 @@ function parseDuration(duration) {
             if (duration.length === 2) {
                 const value = Number.parseInt(duration[0], 10);
 
-                newDuration += value >= 10 ? value : "0" + value;
+                newDuration += value >= 10 ? value : `0${value}`;
                 if (unit !== "S") {
                     newDuration += ":";
                     duration = duration.slice(1)[0];
@@ -99,7 +99,7 @@ function fetchPlaylist(url) {
             return;
         }
         return {
-            id: id,
+            id,
             title: data.items[0].snippet.title,
             tracks: []
         };

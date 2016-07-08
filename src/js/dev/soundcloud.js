@@ -11,9 +11,9 @@ function init() {
 
 function parseTracks(tracks) {
     return tracks.map((track, index) => ({
+        index,
         duration: formatTime(track.duration / 1000),
         id: track.id,
-        index: index,
         thumbnail: track.artwork_url || "assets/images/album-art-placeholder.png",
         title: track.title
     }));

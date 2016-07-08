@@ -36,7 +36,7 @@ function playTrackOnButtonPress(track) {
         const play = audio.play.bind(audio);
         const pause = audio.pause.bind(audio);
 
-        player.togglePlaying(play, pause);
+        player.toggleTrackPlaying(play, pause);
         return;
     }
     playTrack(track);

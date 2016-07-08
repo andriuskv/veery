@@ -86,6 +86,12 @@ function getElapsedValue(slider, screenX) {
     return value * 100;
 }
 
+function resetTrackSlider() {
+    elapsedTime.stop();
+    setElapsedTime(0);
+    updateSlider("track", 0);
+}
+
 function onVolumeTrackMousemove(event) {
     const volume = getElapsedValue("volume", event.screenX);
 
@@ -198,5 +204,5 @@ export {
     addClassOnPlayBtn,
     setElapsedTime,
     showTrackDuration,
-    updateSlider
+    resetTrackSlider
 };
