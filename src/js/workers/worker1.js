@@ -42,7 +42,7 @@ onmessage = function(event) {
 
     if (data.action === "update") {
         server.clear("track")
-        .then(function() {
+        .then(() => {
             server.add("track", data.playlist);
         })
         .catch(error => {

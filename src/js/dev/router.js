@@ -24,7 +24,7 @@ function addRoute(route) {
 }
 
 function toggleRoute(route) {
-    window.location.hash = "/" + route;
+    window.location.hash = `/${route}`;
 }
 
 function toggleTab(route) {

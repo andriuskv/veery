@@ -43,7 +43,7 @@ function togglePlaying() {
     const play = scPlayer.play.bind(scPlayer);
     const pause = scPlayer.pause.bind(scPlayer);
 
-    player.togglePlaying(play, pause);
+    player.toggleTrackPlaying(play, pause);
 }
 
 function stopTrack() {

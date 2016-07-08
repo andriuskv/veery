@@ -10,7 +10,7 @@
     "watch:scss": "onchange 'src/scss/*.scss' 'src/scss/imports/*.scss' -- npm run scss",
     "watch:js": "onchange 'src/js/index.js' 'src/js/dev/*.js' 'src/js/dev/**/*.js' -- npm run js",
     "watch": "npm run watch:js & npm run watch:scss",
-    "start": "live-server & npm run watch",
+    "start": "npm run js & npm run scss && npm run watch & live-server",
     "build:html": "cp ./src/index.html dist",
     "build:css": "npm run scss && csso ./src/css/main.css ./dist/css/main.css",
     "build:js": "npm run js && uglifyjs ./src/js/main.js -mco ./dist/js/main.js",

@@ -2,6 +2,7 @@ const playlists = {};
 let activePlaylistId = "";
 let currentTrack = null;
 let currentIndex = 0;
+let selectedTrack = null;
 
 function getAllPlaylists() {
     return playlists;
@@ -90,11 +91,21 @@ function getCurrentTrackIndex() {
     return playlist.playbackOrder[currentIndex];
 }
 
-function setTrackIndexes(pl, shuffle) {
-    if (!getPlaylistById(pl.id)) {
-        pl = createPlaylist(pl);
-    }
+function getTrackAtCurrentIndex() {
+    const index = getCurrentTrackIndex();
 
+    return getTrackAtIndex(index);
+}
+
+function setSelectedTrack(track) {
+    selectedTrack = Object.assign({}, track);
+}
+
+function getSelectedTrack() {
+    return selectedTrack;
+}
+
+function setTrackIndexes(pl, shuffle) {
     pl.playbackOrder = pl.tracks.map(track => track.index);
 
     if (shuffle) {
@@ -207,8 +218,10 @@ export {
     getNextTrack,
     setCurrentIndex,
     resetCurrentIndex,
-    getCurrentTrackIndex,
+    getTrackAtCurrentIndex,
     getTrackAtIndex,
+    setSelectedTrack,
+    getSelectedTrack,
     setTrackIndexes,
     shufflePlaybackOrder,
     decrementIndex

@@ -27,7 +27,7 @@ function onTrackEnd(repeatCb) {
         playNextTrack(1);
         return;
     }
-    resetTrack();
+    controls.resetTrackSlider();
     repeatCb();
 }
 
@@ -43,7 +43,7 @@ function getPlayer(playlistId) {
     }
 }
 
-function togglePlaying(playCb, pauseCb) {
+function toggleTrackPlaying(playCb, pauseCb) {
     const paused = settings.get("paused");
 
     if (paused) {
@@ -70,36 +70,21 @@ function playNewTrack(track, player) {
 }
 
 function playFirstTrack(id) {
-    if (!playlist.get(id)) {
-        return;
-    }
-
-    const selected = document.getElementById(`js-${id}`).querySelector(".track.selected");
+    const selectedTrack = playlist.getSelectedTrack();
     let index = 0;
 
-    if (selected) {
-        index = Number.parseInt(selected.getAttribute("data-index"), 10);
+    if (selectedTrack) {
+        index = selectedTrack.index;
         settings.set("manual", true);
     }
     else {
-        playlist.setActive(id);
         index = playlist.getNextTrackIndex(0);
     }
     playTrackAtIndex(index, id);
 }
 
-function playTrack() {
-    const player = settings.get("player");
-
-    if (!player) {
-        const id = settings.get("activeTab");
-
-        playFirstTrack(id);
-        return;
-    }
-
-    const index = playlist.getCurrentTrackIndex();
-    const track = playlist.getTrackAtIndex(index);
+function togglePlaying(player) {
+    const track = playlist.getTrackAtCurrentIndex();
 
     if (!track) {
         return;
@@ -115,6 +100,21 @@ function playTrack() {
     else if (player === "soundcloud") {
         scPlayer.togglePlaying();
     }
+}
+
+function playTrack() {
+    const player = settings.get("player");
+
+    if (!player) {
+        const id = settings.get("activeTab");
+
+        if (playlist.get(id)) {
+            playlist.setActive(id);
+            playFirstTrack(id);
+        }
+        return;
+    }
+    togglePlaying(player);
 }
 
 function playNextTrack(direction) {
@@ -135,20 +135,18 @@ function playNextTrack(direction) {
 
 function playTrackAtIndex(index, id) {
     const currentTrack = playlist.getCurrentTrack();
+    const player = getPlayer(id);
+    const pl = playlist.get(id);
+    const track = pl.tracks[index];
 
     if (!settings.get("paused") || currentTrack) {
         stopTrack(currentTrack);
     }
 
-    const player = getPlayer(id);
-    const pl = playlist.get(id);
-    const track = pl.tracks[index];
-
     if (!track) {
         return;
     }
     settings.set("player", player);
-    playlist.setActive(pl.id);
 
     if (settings.get("shuffle") && !pl.shuffled) {
         playlist.shufflePlaybackOrder(true, pl);
@@ -183,19 +181,13 @@ function stopTrack(track = playlist.getCurrentTrack(), player = settings.get("pl
     }
 }
 
-function resetTrack() {
-    sidebar.showTrackInfo();
-    controls.elapsedTime.stop();
-    controls.setElapsedTime(0);
-    controls.updateSlider("track", 0);
-    controls.showTrackDuration(0);
-}
-
 function resetPlayer() {
-    resetTrack();
     settings.set("paused", true);
     playlist.setCurrentTrack(null);
+    controls.resetTrackSlider();
+    controls.showTrackDuration(0);
     controls.addClassOnPlayBtn("icon-play");
+    sidebar.showTrackInfo();
 }
 
 function toggleRepeat(repeat) {
@@ -243,14 +235,16 @@ function seekTime(percent) {
     controls.setElapsedTime(elapsed);
 }
 
-document.getElementById("js-tab-container").addEventListener("dblclick", event => {
-    const element = main.getElementByAttr(event.target, "data-index");
+document.getElementById("js-tab-container").addEventListener("dblclick", ({ target }) => {
+    const element = main.getElementByAttr(target, "data-index");
 
     if (element) {
+        const index = element.attrValue;
         const id = settings.get("activeTab");
 
         settings.set("manual", true);
-        playTrackAtIndex(element.attrValue, id);
+        playlist.setActive(id);
+        playTrackAtIndex(index, id);
     }
 });
 
@@ -261,7 +255,7 @@ export {
     toggleRepeat as repeat,
     toggleShuffle as shuffle,
     seekTime as seek,
-    togglePlaying,
+    toggleTrackPlaying,
     setVolume,
     onTrackStart,
     onTrackEnd

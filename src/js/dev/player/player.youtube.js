@@ -54,7 +54,7 @@ function togglePlaying() {
     const play = ytPlayer.playVideo.bind(ytPlayer);
     const pause = ytPlayer.pauseVideo.bind(ytPlayer);
 
-    player.togglePlaying(play, pause);
+    player.toggleTrackPlaying(play, pause);
 }
 
 function playTrack(track) {

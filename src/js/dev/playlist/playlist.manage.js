@@ -125,7 +125,7 @@ function sortPlaylist(sortBy) {
     }
 }
 
-function selectedTrackElement(element) {
+function selectTrackElement(element) {
     main.removeClassFromElement("track", "selected");
     element.classList.add("selected");
 }
@@ -177,11 +177,14 @@ document.getElementById("js-tab-container").addEventListener("click", ({ target 
         sortPlaylist(sortBy);
         return;
     }
-
     const item = main.getElementByAttr(target, "data-index");
 
     if (item) {
-        selectedTrackElement(item.element);
+        playlist.setSelectedTrack({
+            playlistId: settings.get("activeTab"),
+            index: Number.parseInt(item.attrValue, 10)
+        });
+        selectTrackElement(item.element);
     }
 });
 
