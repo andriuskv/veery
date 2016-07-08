@@ -14,28 +14,38 @@
 .playlist-provider {
     user-select: none;
     width: 100px;
-    padding: $spacing;
-    margin-right: $spacing-double;
-    border-radius: $spacing-half;
+    padding: 4px;
+    margin-right: 8px;
+    border-radius: 2px;
     text-align: center;
     font-size: 14px;
     color: $base-text-color;
     cursor: pointer;
 
-    &:hover { color: $brand-color; }
-    &:last-of-type { margin-right: 0; }
-    &.selected { background-color: $color1; }
-    div { user-select: none; }
+    &:hover {
+        color: $brand-color;
+    }
+    &:last-of-type {
+        margin-right: 0;
+    }
+    &.selected {
+        background-color: $color1;
+    }
+    div {
+        user-select: none;
+    }
 }
 .playlist-provider-logo {
     max-width: 100%;
 }
 .form-container {
     display: none;
-    margin-top: $spacing;
+    margin-top: 4px;
     font-size: 14px;
 
-    &.show { display: block; }
+    &.show {
+        display: block;
+    }
 }
 .local-btn-icon {
     font-size: 59px;
@@ -76,32 +86,38 @@
     color: $color2;
     font-size: 12px;
 
-    &.show { display: block; }
+    &.show {
+        display: block;
+    }
 }
 .playlist-add-notice {
     visibility: hidden;
     height: 18px;
-    margin-top: $spacing;
+    margin-top: 4px;
     text-align: center;
 
-    &.show { visibility: visible; }
+    &.show {
+        visibility: visible;
+    }
 }
 .playlist-entries {
-    margin: $spacing;
-    padding: $spacing;
+    margin: 4px;
+    padding: 4px;
 }
 .playlist-entry {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: $spacing;
+    padding: 4px;
     border-bottom: 1px solid $color1;
 }
 .playlist-entry-title {
     flex-grow: 1;
-    margin-right: $spacing;
+    margin-right: 4px;
 
-    &:read-only { background-color: transparent; }
+    &:read-only {
+        background-color: transparent;
+    }
 }
 .playlist-entry-btn.active {
     background-color: $color1;
