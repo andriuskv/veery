@@ -4,13 +4,13 @@
     // -14px to account for scrollbar
     width: calc(100% - 14px);
     height: 26px;
-    padding-top: $spacing;
-    padding-bottom: $spacing;
-    margin-left: $spacing;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    margin-left: 4px;
 }
 .list-view-header-item {
     flex-basis: 30%;
-    padding-left: $spacing;
+    padding-left: 4px;
     font-size: 16px;
     color: #888;
 
@@ -27,14 +27,16 @@
     user-select: none;
     backface-visibility: hidden;
     overflow-y: scroll;
+
+    // -26px because of .list-view-header
     height: calc(100% - 26px);
 }
 .list-item {
     display: flex;
-    padding-top: $spacing;
-    padding-bottom: $spacing;
-    margin-left: $spacing;
-    margin-right: $spacing;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    margin-left: 4px;
+    margin-right: 4px;
     border-bottom: 1px solid $color1;
     color: $base-text-color;
     cursor: default;
@@ -46,9 +48,11 @@
         @extend %text-overflow;
 
         flex-basis: 30%;
-        padding-left: $spacing;
+        padding-left: 4px;
 
-        &:last-of-type { flex-basis: 10% }
+        &:last-of-type {
+            flex-basis: 10%
+        }
 
     }
 }

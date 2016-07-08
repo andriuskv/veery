@@ -19,29 +19,33 @@
     color: $base-text-color;
     font-size: 40px;
 
-    span { color: $brand-color; }
+    span {
+        color: $brand-color;
+    }
 }
 .sidebar-nav {
     flex-grow: 1;
     user-select: none;
-    padding-top: $spacing;
-    margin-right: $spacing;
+    padding-top: 4px;
+    margin-right: 4px;
     background-color: $color2;
 }
 .add-playlist-btn {
     display: block;
-    margin: 0 $spacing $spacing $spacing;
+    margin: 0 4px 4px 4px;
     text-align: center;
 
-    &.active { background-color: $color1; }
+    &.active {
+        background-color: $color1;
+    }
 }
 .sidebar-section {
-    border-top: $spacing solid $color1;
+    border-top: 4px solid $color1;
 }
 .sidebar-section-title {
     margin-top: 0;
     margin-bottom: 0;
-    padding: $spacing;
+    padding: 4px;
     border-bottom: 1px solid $color1;
     color: $base-text-color;
     font-weight: normal;
@@ -50,13 +54,13 @@
     cursor: default;
 }
 .sidebar-playlist-entries {
-    padding: $spacing;
+    padding: 4px;
 }
 .sidebar-btn {
     position: relative;
     width: 100%;
-    padding-top: $spacing-double;
-    padding-bottom: $spacing-double;
+    padding-top: 6px;
+    padding-bottom: 6px;
     border-radius: 0;
     text-align: center;
 
@@ -64,11 +68,13 @@
         background-color: $color1;
         color: $base-text-color;
 
+        &:hover {
+            color: $brand-color;
+        }
         .is-playlist-active {
             background-color: $color1;
             box-shadow: -2px 0px 6px $color1;
         }
-        &:hover { color: $brand-color; }
     }
 }
 .sidebar-playlist-title {
@@ -77,22 +83,26 @@
 .is-playlist-active {
     position: absolute;
     top: 50%;
-    right: $spacing;
+    right: 4px;
     transform: translateY(-50%);
     background-color: $color2;
     box-shadow: -2px 0px 6px $color2;
 
-    &.hidden { display: none; }
+    &.hidden {
+        display: none;
+    }
 }
 .sidebar-footer {
     overflow: hidden;
     display: none;
 
-    &.show { display: block; }
+    &.show {
+        display: block;
+    }
 }
 .player-track-art-container {
-    padding: $spacing;
-    margin: $spacing $spacing $spacing 0;
+    padding: 4px;
+    margin: 4px 4px 4px 0;
     background-color: $color2;
 }
 .player-track-art {
@@ -103,8 +113,8 @@
 }
 .player-track-info {
     height: 40px;
-    padding: $spacing;
-    margin-right: $spacing;
+    padding: 4px;
+    margin-right: 4px;
     background-color: $color2;
     white-space: nowrap;
     color: $base-text-color;

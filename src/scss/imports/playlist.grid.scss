@@ -3,14 +3,16 @@
     position: absolute;
     top: 4px;
     right: 19px;
-    padding: $spacing-half;
-    border: $spacing solid $color1;
-    border-radius: $spacing-half;
+    padding: 2px;
+    border: 4px solid $color1;
+    border-radius: 2px;
     background-color: $color3;
     color: $base-text-color;
     opacity: 0.6;
 
-    &:hover { opacity: 1; }
+    &:hover {
+        opacity: 1;
+    }
 }
 .grid-view {
     backface-visibility: hidden;
@@ -19,14 +21,14 @@
     align-content: flex-start;
     flex-wrap: wrap;
     height: 100%;
-    padding: $spacing-half;
+    padding: 2px;
 }
 .grid-item {
     user-select: none;
     width: 160px;
     height: 130px;
-    padding: $spacing-half;
-    margin: $spacing-half;
+    padding: 2px;
+    margin: 2px;
     color: $base-text-color;
     text-align: center;
     font-size: 12px;

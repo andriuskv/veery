@@ -55,8 +55,8 @@
     background: $brand-color;
 }
 .control-btn {
-    padding: $spacing;
-    margin-right: $spacing;
+    padding: 4px;
+    margin-right: 4px;
     font-size: 14px;
 }
 .volume-slider-wrapper {
@@ -66,9 +66,9 @@
     right: 19px;
     display: none;
     height: 32px;
-    padding-left: $spacing-triple;
-    padding-right: $spacing-triple;
-    border-radius: $spacing;
+    padding-left: 12px;
+    padding-right: 12px;
+    border-radius: 4px;
     background-color: $color3;
 
     &.active {
@@ -93,5 +93,7 @@
     border-radius: 50%;
     background: #ddd;
 
-    &:active { background-color: #aaa; }
+    &:active {
+        background-color: #aaa;
+    }
 }

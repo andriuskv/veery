@@ -43,9 +43,9 @@ a {
     list-style: none;
 }
 .input {
-    padding: $spacing 6px;
+    padding: 4px 6px;
     border: none;
-    border-radius: $spacing-half;
+    border-radius: 2px;
     background-color: $color1;
     font-size: 16px;
     color: $base-text-color;
@@ -53,9 +53,11 @@ a {
 .btn {
     @extend .input;
 
-    transition: all .1s;
+    transition: all 0.1s;
 
-    &:hover { color: $brand-color; }
+    &:hover {
+        color: $brand-color;
+    }
 }
 .font-btn {
     @extend .btn;
@@ -81,7 +83,9 @@ a {
     display: none;
     height: 100%;
 
-    &.active { display: block; }
+    &.active {
+        display: block;
+    }
 }
 .tab-content {
     height: 100%;
@@ -99,7 +103,9 @@ a {
     align-items: center;
     flex-direction: column;
 
-    h2, h3 { margin-top: 0; }
+    h2, h3 {
+        margin-top: 0;
+    }
     h2 {
         margin-bottom: 0;
         font-size: 64px;
