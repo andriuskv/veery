@@ -90,7 +90,12 @@ function getPlaylistItems(playlist) {
 }
 
 function fetchPlaylist(url) {
-    const id = url.includes("list=") ? url.split("list=")[1] : url;
+    if (!url.includes("list=")) {
+        playlistAdd.showNotice("Invalid url");
+        return;
+    }
+
+    const id = url.split("list=")[1];
 
     getYoutube("playlists", "snippet", "id", id)
     .then(data => {
