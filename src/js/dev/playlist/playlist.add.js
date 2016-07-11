@@ -8,6 +8,17 @@ import * as playlistManage from "./playlist.manage.js";
 
 let provider = "";
 
+const importBtn = (function() {
+    const btn = document.getElementById("js-playlist-import-btn");
+
+    function toggle() {
+        btn.children[0].classList.toggle("hidden");
+        btn.children[1].classList.toggle("hidden");
+    }
+
+    return { toggle };
+})();
+
 function showNotice(message) {
     const element = document.getElementById("js-playlist-add-notice");
 
@@ -35,6 +46,7 @@ function addPlaylist(pl) {
     if (existingPlaylist) {
         playlistManage.remove(existingPlaylist.id);
     }
+    importBtn.toggle();
     playlistManage.init(playlist.create(pl), "grid", true);
 }
 
@@ -108,6 +120,7 @@ document.getElementById("js-playlist-import-form").addEventListener("submit", ev
     const value = form.elements["playlist-id"].value.trim();
 
     if (value) {
+        importBtn.toggle();
         importPlaylist(provider, value);
         form.reset();
     }
@@ -174,5 +187,6 @@ window.addEventListener("DOMContentLoaded", function onLoad() {
 
 export {
     addPlaylist as add,
-    showNotice
+    showNotice,
+    importBtn
 };

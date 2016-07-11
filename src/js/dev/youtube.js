@@ -92,6 +92,7 @@ function getPlaylistItems(playlist) {
 function fetchPlaylist(url) {
     if (!url.includes("list=")) {
         playlistAdd.showNotice("Invalid url");
+        playlistAdd.importBtn.toggle();
         return;
     }
 
@@ -101,6 +102,7 @@ function fetchPlaylist(url) {
     .then(data => {
         if (!data.items.length) {
             playlistAdd.showNotice("Playlist was not found");
+            playlistAdd.importBtn.toggle();
             return;
         }
         return {

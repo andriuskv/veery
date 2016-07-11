@@ -39,6 +39,7 @@ function fetchPlaylist(url) {
         console.log(error);
         if (error.status === 404) {
             playlistAdd.showNotice("Playlist was not found");
+            playlistAdd.importBtn.toggle();
         }
     });
 }
