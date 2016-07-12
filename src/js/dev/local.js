@@ -149,8 +149,8 @@ function processNewTracks(pl, newTracks) {
             playlistManage.init(pl, "list", true);
         }
         worker.postMessage({
-            action: "update",
-            playlist: pl.tracks
+            action: "add",
+            tracks
         });
     })
     .catch(error => {

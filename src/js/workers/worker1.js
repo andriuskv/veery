@@ -13,22 +13,24 @@ db.open({
     version: 1,
     noServerMethods: true,
     schema: {
-        track: {
-            key: { keyPath: "index", autoIncrement: false }
+        tracks: {
+            key: { keyPath: "_id", autoIncrement: true }
         }
     }
-}).then(s => {
+})
+.then(s => {
     server = s;
 
-    s.query("track")
+    s.query("tracks")
     .all()
     .execute()
-    .then(tracks => {
-        if (tracks.length) {
-            tracks = tracks.map((track, index) => {
+    .then(storedTracks => {
+        if (storedTracks.length) {
+            const tracks = storedTracks.map((track, index) => {
                 track.index = index;
                 return track;
             });
+
             postMessage({ tracks });
         }
     })
@@ -40,39 +42,37 @@ db.open({
 onmessage = function(event) {
     const data = event.data;
 
-    if (data.action === "update") {
-        server.clear("track")
-        .then(() => {
-            server.add("track", data.playlist);
-        })
+    if (data.action === "add") {
+        server.add("tracks", data.tracks)
         .catch(error => {
             console.log(error);
         });
     }
     else if (data.action === "remove") {
-        console.log(data.action, data.name);
-
-        server.query("track")
+        server.query("tracks")
         .filter("name", data.name)
         .execute()
         .then(results => {
             if (results.length) {
-                results.forEach(result => {
-                    server.remove("track", result.index);
-                });
+                server.remove("tracks", results[0]._id);
             }
+        })
+        .catch(error => {
+            console.log(error);
         });
     }
     else if (data.action === "clear") {
-        if (!server) {
-            return;
-        }
-        server.clear("track")
+        server.clear("tracks")
         .then(() => {
             postMessage({ action: "init" });
-            console.log("cleared");
+
+            // close db connection
             server.close();
+
+            // close worker
             self.close();
+
+            // remove db
             indexedDB.deleteDatabase("local-playlist");
         })
         .catch(error => {
