@@ -12,11 +12,8 @@ let timeout = 0;
 function initPlaylist(pl, view, toggle) {
     const route = `playlist/${pl.id}`;
 
-    if (!pl.playbackOrder.length) {
-        playlist.setTrackIndexes(pl, settings.get("shuffle"));
-    }
-
     router.add(route);
+    playlist.setTrackIndexes(pl, settings.get("shuffle"));
     playlistView.add(pl, view);
     sidebar.createEntry(pl.title, pl.id);
     createPlaylistEntry(pl.title, pl.id);
@@ -32,6 +29,7 @@ function initPlaylist(pl, view, toggle) {
     else if (router.isActive(pl.id)) {
         main.toggleTab(pl.id);
     }
+    playlist.save(pl);
 }
 
 function appendToPlaylist(pl, tracks, view, toggle) {
@@ -116,6 +114,7 @@ function sortPlaylist(sortBy) {
 
     playlist.sort(pl, sortBy);
     updatePlaylist(pl);
+    playlist.save(pl);
 
     if (query) {
         const trackElements = document.getElementById(`js-${pl.id}`).children;
