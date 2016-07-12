@@ -16,9 +16,7 @@ function savePlaylist(pl) {
     const toSave = {
         id: pl.id,
         order: -pl.order,
-        shuffled: pl.shuffled,
         sortedBy: pl.sortedBy,
-        playbackOrder: pl.playbackOrder,
         title: pl.title
     };
 
@@ -109,11 +107,8 @@ function setTrackIndexes(pl, shuffle) {
     pl.playbackOrder = pl.tracks.map(track => track.index);
 
     if (shuffle) {
-        shufflePlaybackOrder(true, pl);
+        shufflePlaybackOrder(shuffle, pl);
         resetCurrentIndex();
-    }
-    else {
-        savePlaylist(pl);
     }
 }
 
@@ -137,7 +132,6 @@ function shufflePlaybackOrder(shuffle, pl) {
     else {
         pl.playbackOrder.sort((a, b) => a - b);
     }
-    savePlaylist(pl);
 }
 
 function decrementIndex() {
@@ -198,7 +192,6 @@ function sortPlaylist(pl, sortBy) {
     }
     pl.sortedBy = sortBy;
     sortArray(pl.tracks, sortBy, pl.order);
-    savePlaylist(pl);
 }
 
 export {
