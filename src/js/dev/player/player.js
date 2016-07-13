@@ -47,6 +47,7 @@ function toggleTrackPlaying(playCb, pauseCb) {
     const paused = settings.get("paused");
 
     if (paused) {
+        settings.set("manual", true);
         playCb();
     }
     else {
