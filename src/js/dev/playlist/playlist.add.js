@@ -181,6 +181,9 @@ window.addEventListener("DOMContentLoaded", function onLoad() {
             main.scriptLoader.load("js/libs/sdk.js", sc.init);
             playlistManage.init(playlist.create(pl), "grid", false);
         }
+        else if (item === "local-files") {
+            local.worker.init();
+        }
     });
     window.removeEventListener("DOMContentLoaded", onLoad);
 });

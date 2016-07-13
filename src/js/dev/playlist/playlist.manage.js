@@ -47,7 +47,7 @@ function removePlaylist(id, entry) {
     playlistView.remove(id);
 
     if (id === "local-files") {
-        local.worker.postMessage({ action: "clear" });
+        local.worker.post({ action: "clear" });
     }
 
     if (playlist.isActive(id)) {
@@ -138,7 +138,7 @@ function removeTrack(pl, playlistElement, trackElement) {
     if (pl.id === "local-files") {
         const { name: trackName } = pl.tracks[index];
 
-        local.worker.postMessage({
+        local.worker.post({
             action: "remove",
             name: trackName
         });

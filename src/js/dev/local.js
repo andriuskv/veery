@@ -5,8 +5,6 @@ import * as playlist from "./playlist/playlist.js";
 import * as playlistManage from "./playlist/playlist.manage.js";
 import * as playlistAdd from "./playlist/playlist.add.js";
 
-let worker = initWorker();
-
 const progress = (function() {
     const progress = document.getElementById("js-file-progress");
 
@@ -25,26 +23,45 @@ const progress = (function() {
     };
 })();
 
-function initWorker() {
-    const dbWorker = new Worker("js/workers/worker1.js");
+const worker = (function initWorker() {
+    let worker = null;
+    let initialized = false;
 
-    dbWorker.onmessage = function(event) {
-        const data = event.data;
+    function init() {
+        worker = new Worker("js/workers/worker1.js");
+        initialized = true;
 
-        if (data.action === "init") {
-            worker = initWorker();
-            return;
-        }
-        const pl = getPlaylist();
+        worker.onmessage = function(event) {
+            const data = event.data;
 
-        pl.tracks.push(...data.tracks);
-        playlistManage.init(pl, "list", false);
+            if (data.action === "init") {
+                worker = new Worker("js/workers/worker1.js");
+                return;
+            }
+            const pl = getPlaylist();
+
+            pl.tracks.push(...data.tracks);
+            playlistManage.init(pl, "list", false);
+        };
+        worker.onerror = function(event) {
+            console.log(event);
+        };
+    }
+
+    function postMessage(message) {
+        worker.postMessage(message);
+    }
+
+    function isInitialized() {
+        return initialized;
+    }
+
+    return {
+        post: postMessage,
+        isInitialized,
+        init
     };
-    dbWorker.onerror = function(event) {
-        console.log(event);
-    };
-    return dbWorker;
-}
+})();
 
 function getPlaylist() {
     const localPlaylist = playlist.get("local-files");
@@ -148,7 +165,7 @@ function processNewTracks(pl, newTracks) {
         else {
             playlistManage.init(pl, "list", true);
         }
-        worker.postMessage({
+        worker.post({
             action: "add",
             tracks
         });
@@ -172,6 +189,9 @@ function addNewTracks(files) {
     if (!tracks.length) {
         playlistAdd.showNotice("Tracks already exist");
         return;
+    }
+    if (!worker.isInitialized()) {
+        worker.init();
     }
     processNewTracks(pl, tracks);
 }
