@@ -140,7 +140,14 @@ function playTrackAtIndex(index, id) {
     const track = pl.tracks[index];
 
     if (!settings.get("paused") || currentTrack) {
-        stopTrack(currentTrack);
+        const currentPlayer = settings.get("player");
+
+        if (player !== currentPlayer) {
+            stopPlayer(currentTrack, currentPlayer);
+        }
+        else {
+            stopTrack(currentTrack, currentPlayer);
+        }
     }
 
     if (!track) {
@@ -159,7 +166,7 @@ function playTrackAtIndex(index, id) {
     playNewTrack(track, player);
 }
 
-function stopTrack(track = playlist.getCurrentTrack(), player = settings.get("player")) {
+function stopTrack(track, player) {
     if (!track) {
         return;
     }
@@ -173,6 +180,10 @@ function stopTrack(track = playlist.getCurrentTrack(), player = settings.get("pl
     else if (player === "soundcloud") {
         scPlayer.stop();
     }
+}
+
+function stopPlayer(track = playlist.getCurrentTrack(), player = settings.get("player")) {
+    stopTrack(track, player);
 
     if (player) {
         sidebar.hideActiveIcon();
@@ -251,7 +262,7 @@ document.getElementById("js-tab-container").addEventListener("dblclick", ({ targ
 export {
     playTrack as play,
     playNextTrack as playNext,
-    stopTrack as stop,
+    stopPlayer as stop,
     toggleRepeat as repeat,
     toggleShuffle as shuffle,
     seekTime as seek,
