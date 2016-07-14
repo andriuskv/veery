@@ -48,8 +48,13 @@ function toggleTab(route) {
 
     if (tab && document.getElementById(`js-tab-${tab}`)) {
         main.toggleTab(tab, tab === "404");
-        return;
     }
+}
+
+function toggleCurrentRoute() {
+    const route = window.location.hash.slice(2);
+
+    toggleTab(route);
 }
 
 window.addEventListener("hashchange", event => {
@@ -58,20 +63,9 @@ window.addEventListener("hashchange", event => {
     toggleTab(route);
 });
 
-window.addEventListener("DOMContentLoaded", function addPlaylistRoutes() {
-    const route = window.location.hash.slice(2);
-
-    Object.keys(localStorage).forEach(item => {
-        if (item !== "settings") {
-            addRoute(`playlist/${item}`);
-        }
-    });
-    toggleTab(route);
-    window.removeEventListener("DOMContentLoaded", addPlaylistRoutes);
-});
-
 export {
     addRoute as add,
     toggleRoute as toggle,
+    toggleCurrentRoute as toggleCurrent,
     isActive
 };

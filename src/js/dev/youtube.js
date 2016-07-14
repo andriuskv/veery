@@ -1,4 +1,3 @@
-import { scriptLoader } from "./main.js";
 import * as playlistAdd from "./playlist/playlist.add.js";
 
 function parseItems(playlist) {
@@ -117,7 +116,6 @@ function fetchPlaylist(url) {
     .catch(error => {
         console.log(error);
     });
-    scriptLoader.load("https://www.youtube.com/iframe_api");
 }
 
 export { fetchPlaylist };

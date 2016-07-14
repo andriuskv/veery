@@ -1,4 +1,5 @@
 import * as main from "./../main.js";
+import * as router from "./../router.js";
 import * as sidebar from "./../sidebar.js";
 import * as local from "./../local.js";
 import * as yt from "./../youtube.js";
@@ -47,7 +48,7 @@ function addPlaylist(pl) {
         playlistManage.remove(existingPlaylist.id);
     }
     importBtn.toggle();
-    playlistManage.init(playlist.create(pl), "grid", true);
+    playlistManage.init(playlist.create(pl), true);
 }
 
 function setProvider(item) {
@@ -59,7 +60,6 @@ function setProvider(item) {
         item.element.classList.add("selected");
         document.getElementById("js-import-form-container").classList.add("show");
     }
-    main.scriptLoader.load("js/libs/sdk.js", sc.init);
 }
 
 function showFilePicker(choice) {
@@ -77,7 +77,6 @@ function showFilePicker(choice) {
         filePicker.setAttribute("directory", true);
     }
     filePicker.dispatchEvent(clickEvent);
-    main.scriptLoader.load("js/libs/metadata-audio-parser.js");
 }
 
 function editPlaylistTitle(action, target, titleElement, playlistId) {
@@ -172,20 +171,23 @@ document.getElementById("js-playlist-add-options").addEventListener("click", ({ 
     setProvider(item);
 });
 
-window.addEventListener("DOMContentLoaded", function onLoad() {
-    Object.keys(localStorage).forEach(item => {
-        if (item.startsWith("yt-pl-") || item.startsWith("sc-pl-")) {
-            const pl = JSON.parse(localStorage.getItem(item));
+window.addEventListener("load", function onLoad() {
+    const savedPlaylists = JSON.parse(localStorage.getItem("playlists")) || {};
 
-            main.scriptLoader.load("https://www.youtube.com/iframe_api");
-            main.scriptLoader.load("js/libs/sdk.js", sc.init);
-            playlistManage.init(playlist.create(pl), "grid", false);
-        }
-        else if (item === "local-files") {
+    main.scriptLoader.load("js/libs/sdk.js", sc.init);
+    main.scriptLoader.load("https://www.youtube.com/iframe_api");
+    main.scriptLoader.load("js/libs/metadata-audio-parser.js");
+
+    Object.keys(savedPlaylists).forEach(id => {
+        const pl = savedPlaylists[id];
+
+        playlistManage.init(playlist.create(pl), false);
+        if (id === "local-files") {
             local.worker.init();
         }
     });
-    window.removeEventListener("DOMContentLoaded", onLoad);
+    router.toggleCurrent();
+    window.removeEventListener("load", onLoad);
 });
 
 export {

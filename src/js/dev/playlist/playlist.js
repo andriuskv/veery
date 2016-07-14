@@ -13,6 +13,7 @@ function getPlaylistById(id) {
 }
 
 function savePlaylist(pl) {
+    const savedPlaylists = JSON.parse(localStorage.getItem("playlists")) || {};
     const toSave = {
         id: pl.id,
         order: -pl.order,
@@ -23,8 +24,8 @@ function savePlaylist(pl) {
     if (pl.id.startsWith("yt-pl-") || pl.id.startsWith("sc-pl-")) {
         toSave.tracks = pl.tracks;
     }
-
-    localStorage.setItem(pl.id, JSON.stringify(toSave));
+    savedPlaylists[pl.id] = toSave;
+    localStorage.setItem("playlists", JSON.stringify(savedPlaylists));
 }
 
 function createPlaylist(pl) {
@@ -33,14 +34,18 @@ function createPlaylist(pl) {
         order: 0,
         shuffled: false,
         tracks: pl.tracks || [],
+        type: pl.id === "local-files" ? "list": "grid",
         playbackOrder: []
-    }, pl, JSON.parse(localStorage.getItem(pl.id)) || {});
+    }, pl);
     return playlists[pl.id];
 }
 
 function removePlaylist(id) {
+    const savedPlaylists = JSON.parse(localStorage.getItem("playlists")) || {};
+
     delete playlists[id];
-    localStorage.removeItem(id);
+    delete savedPlaylists[id];
+    localStorage.setItem("playlists", JSON.stringify(savedPlaylists));
 }
 
 function setActivePlaylist(id) {

@@ -42,7 +42,8 @@ function loadTracks() {
             return track;
         });
 
-        postMessage({ tracks });
+        // postMessage({ tracks });
+        postMessage(tracks);
     });
 }
 
@@ -76,15 +77,10 @@ onmessage = function(event) {
     else if (data.action === "clear") {
         server.clear("tracks")
         .then(() => {
-            postMessage({ action: "init" });
 
             // close db connection
             server.close();
-
-            // close worker
-            self.close();
-
-            // remove db
+            server = null;
             indexedDB.deleteDatabase("local-playlist");
         })
         .catch(error => {
