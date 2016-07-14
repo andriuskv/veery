@@ -32,16 +32,11 @@ const worker = (function initWorker() {
         initialized = true;
 
         worker.onmessage = function(event) {
-            const data = event.data;
-
-            if (data.action === "init") {
-                worker = new Worker("js/workers/worker1.js");
-                return;
-            }
+            const tracks = event.data;
             const pl = getPlaylist();
 
-            pl.tracks.push(...data.tracks);
-            playlistManage.init(pl, "list", false);
+            pl.tracks.push(...tracks);
+            playlistManage.appendTo(pl, tracks, false);
         };
         worker.onerror = function(event) {
             console.log(event);
@@ -160,10 +155,10 @@ function processNewTracks(pl, newTracks) {
         pl.tracks.push(...tracks);
 
         if (document.getElementById(`js-${pl.id}`)) {
-            playlistManage.appendTo(pl, tracks, "list", true);
+            playlistManage.appendTo(pl, tracks, true);
         }
         else {
-            playlistManage.init(pl, "list", true);
+            playlistManage.init(pl, true);
         }
         worker.post({
             action: "add",

@@ -62,21 +62,21 @@ function createItems(cb, tracks) {
     return tracks.map(item => cb(item)).join("");
 }
 
-function createPlaylistTab({ id, tracks }, view) {
+function createPlaylistTab(pl) {
     let playlist = "";
 
-    if (view === "list") {
-        playlist = createList(id, createItems(createListItem, tracks));
+    if (pl.type === "list") {
+        playlist = createList(pl.id, createItems(createListItem, pl.tracks));
     }
-    else if (view === "grid") {
-        playlist = createGrid(id, createItems(createGridItem, tracks));
+    else if (pl.type === "grid") {
+        playlist = createGrid(pl.id, createItems(createGridItem, pl.tracks));
     }
 
     return `
-        <div id="js-tab-${id}" class="tab">
+        <div id="js-tab-${pl.id}" class="tab">
             <div class="playlist-header">
                 <input type="text" class="input filter-input"
-                    id="js-${id}-filter-input"
+                    id="js-${pl.id}-filter-input"
                     placeholder="Filter">
             </div>
             <div class="playlist-container">${playlist}</div>
@@ -84,21 +84,21 @@ function createPlaylistTab({ id, tracks }, view) {
     `;
 }
 
-function addPlaylistTab(pl, view) {
-    const tab = createPlaylistTab(pl, view);
+function addPlaylistTab(pl) {
+    const tab = createPlaylistTab(pl);
     const container = document.getElementById("js-tab-container");
 
     container.insertAdjacentHTML("beforeend", tab);
 }
 
-function appendToPlaylist(id, tracks, view) {
-    const playlist = document.getElementById(`js-${id}`);
+function appendToPlaylist(pl, tracks) {
+    const playlist = document.getElementById(`js-${pl.id}`);
     let cb = null;
 
-    if (view === "list") {
+    if (pl.type === "list") {
         cb = createListItem;
     }
-    else if (view === "grid") {
+    else if (pl.type === "grid") {
         cb = createGridItem;
     }
     playlist.insertAdjacentHTML("beforeend", createItems(cb, tracks));

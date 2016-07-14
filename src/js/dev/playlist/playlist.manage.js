@@ -9,12 +9,12 @@ import * as playlistView from "./playlist.view.js";
 
 let timeout = 0;
 
-function initPlaylist(pl, view, toggle) {
+function initPlaylist(pl, toggle) {
     const route = `playlist/${pl.id}`;
 
     router.add(route);
     playlist.setTrackIndexes(pl, settings.get("shuffle"));
-    playlistView.add(pl, view);
+    playlistView.add(pl);
     sidebar.createEntry(pl.title, pl.id);
     createPlaylistEntry(pl.title, pl.id);
 
@@ -32,11 +32,11 @@ function initPlaylist(pl, view, toggle) {
     playlist.save(pl);
 }
 
-function appendToPlaylist(pl, tracks, view, toggle) {
+function appendToPlaylist(pl, tracks, toggle) {
     playlist.setTrackIndexes(pl, settings.get("shuffle"));
-    playlistView.append(pl.id, tracks, view);
+    playlistView.append(pl, tracks);
 
-    if (toggle) {
+    if (toggle && router.isActive("add")) {
         const route = `playlist/${pl.id}`;
 
         router.toggle(route);
