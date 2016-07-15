@@ -17,22 +17,34 @@ function repeatTrack() {
     scPlayer.play();
 }
 
-function playTrack(track) {
-    if (scPlayer) {
-        scPlayer.seek(0);
-    }
+function playTrack(track, startTime) {
     console.log(track);
     SC.stream(`/tracks/${track.id}`).then(trackPlayer => {
         scPlayer = trackPlayer;
+
         trackPlayer.setVolume(settings.get("volume"));
-        trackPlayer.play();
 
         trackPlayer.on("play-resume", () => {
-            player.onTrackStart(track, getTime(scPlayer))
+            player.onTrackStart(track, getTime(trackPlayer))
             .then(() => {
                 player.onTrackEnd(repeatTrack);
             });
         });
+
+        trackPlayer.on("state-change", state => {
+            if (!startTime) {
+                return;
+            }
+            else if (state === "loading") {
+                trackPlayer.seek(startTime * 1000);
+                trackPlayer.pause();
+            }
+            else if (state === "seeking") {
+                startTime = 0;
+            }
+        });
+
+        trackPlayer.play();
     })
     .catch(error => {
         console.log(error);

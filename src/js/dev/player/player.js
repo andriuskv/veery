@@ -8,18 +8,83 @@ import * as nPlayer from "./player.native.js";
 import * as ytPlayer from "./player.youtube.js";
 import * as scPlayer from "./player.soundcloud.js";
 
+const storedTrack = (function () {
+    const storedTrack = JSON.parse(localStorage.getItem("track"));
+    let initialized = false;
+
+    function getTrack() {
+        return storedTrack;
+    }
+
+    function setTrack(track) {
+        localStorage.setItem("track", JSON.stringify(track));
+    }
+
+    function removeTrack() {
+        localStorage.removeItem("track");
+    }
+
+    function isInitialized() {
+        return storedTrack && initialized;
+    }
+
+    function initTrack() {
+        if (initialized || !storedTrack) {
+            return;
+        }
+        initialized = true;
+        playlist.setActive(storedTrack.playlistId);
+
+        const track = playlist.getTrackAtIndex(storedTrack.index);
+        const player = getPlayer(storedTrack.playlistId);
+
+        playlist.setCurrentIndex(track.index);
+        playlist.setCurrentTrack(track);
+
+        controls.updateSlider("track", storedTrack.elapsed);
+        controls.setElapsedTime(storedTrack.currentTime);
+        beforeTrackStart(track, storedTrack.playlistId, false);
+
+        settings.set("player", player);
+
+        if (player === "native") {
+            nPlayer.playTrack(track, storedTrack.currentTime);
+        }
+        else if (player === "soundcloud") {
+            scPlayer.playTrack(track, storedTrack.currentTime);
+        }
+    }
+
+    return {
+        init: initTrack,
+        set: setTrack,
+        get: getTrack,
+        remove: removeTrack,
+        isInitialized
+    };
+})();
+
+function beforeTrackStart(track, id, manual) {
+    sidebar.showTrackInfo(track);
+    sidebar.showActiveIcon(id);
+    controls.showTrackDuration(track.duration, false);
+    playlistView.showPlayingTrack(track.index, id, manual);
+}
+
 function onTrackStart(track, time) {
     const id = playlist.getActivePlaylistId();
 
-    controls.showTrackDuration(track.duration, false);
+    beforeTrackStart(track, id, settings.get("manual"));
     controls.addClassOnPlayBtn("icon-pause");
-    sidebar.showTrackInfo(track);
-    sidebar.showActiveIcon(id);
-    playlistView.showPlayingTrack(track.index, id, settings.get("manual"));
     settings.set("paused", false);
     settings.set("manual", false);
 
-    return controls.elapsedTime.start(time);
+    return controls.elapsedTime.start({
+        playlistId: id,
+        index: track.index,
+        duration: time.duration,
+        currentTime: time.currentTime
+    });
 }
 
 function onTrackEnd(repeatCb) {
@@ -270,5 +335,6 @@ export {
     toggleTrackPlaying,
     setVolume,
     onTrackStart,
-    onTrackEnd
+    onTrackEnd,
+    storedTrack
 };

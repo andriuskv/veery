@@ -9,15 +9,11 @@ function getTime(audio) {
     };
 }
 
-function playTrack(track) {
+function playTrack(track, startTime) {
     console.log(track);
     track.audioBlobURL = URL.createObjectURL(track.audioTrack);
     track.audio = new Audio(track.audioBlobURL);
-
-    track.audio.oncanplay = function() {
-        track.audio.volume = settings.get("volume");
-        track.audio.play();
-    };
+    track.audio.volume = settings.get("volume");
 
     track.audio.onplaying = function() {
         player.onTrackStart(track, getTime(track.audio))
@@ -26,6 +22,15 @@ function playTrack(track) {
 
             player.onTrackEnd(play);
         });
+    };
+
+    if (startTime) {
+        track.audio.currentTime = startTime;
+        return;
+    }
+
+    track.audio.oncanplay = function() {
+        track.audio.play();
     };
 }
 

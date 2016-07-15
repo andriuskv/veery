@@ -12,22 +12,25 @@ const elapsedTime = (function() {
         }
     }
 
-    function update({ currentTime, duration }) {
+    function update(track) {
         const startTime = performance.now();
 
         return new Promise(resolve => {
             (function update(currentTime, startTime, elapsed) {
-                const elapsedInPercent = currentTime / duration * 100;
                 const ideal = performance.now() - startTime;
                 const diff = ideal - elapsed;
 
                 setElapsedTime(currentTime);
+                track.currentTime = currentTime;
                 if (!settings.get("seeking")) {
-                    updateSlider("track", elapsedInPercent);
-                }
+                    const elapsedInPercent = currentTime / track.duration * 100;
 
+                    updateSlider("track", elapsedInPercent);
+                    track.elapsed = elapsedInPercent;
+                    player.storedTrack.set(track);
+                }
                 timeout = setTimeout(() => {
-                    if (currentTime < duration) {
+                    if (currentTime < track.duration) {
                         currentTime += 1;
                         elapsed += 1000;
                         update(currentTime, startTime, elapsed);
@@ -36,13 +39,13 @@ const elapsedTime = (function() {
                         resolve();
                     }
                 }, 1000 - diff);
-            })(Math.floor(currentTime), startTime, 0);
+            })(Math.floor(track.currentTime), startTime, 0);
         });
     }
 
-    function start(track, cb) {
+    function start(track) {
         stop();
-        return update(track, cb);
+        return update(track);
     }
 
     return { stop, start };
@@ -167,6 +170,7 @@ document.getElementById("js-player-controls").addEventListener("click", ({ targe
             break;
         case "stop":
             player.stop();
+            player.storedTrack.remove();
             break;
         case "next":
             player.playNext(1);
@@ -202,6 +206,7 @@ export {
     elapsedTime,
     togglePlayBtnClass,
     addClassOnPlayBtn,
+    updateSlider,
     setElapsedTime,
     showTrackDuration,
     resetTrackSlider

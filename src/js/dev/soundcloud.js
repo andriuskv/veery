@@ -2,11 +2,22 @@
 
 import { formatTime } from "./main.js";
 import * as playlistAdd from "./playlist/playlist.add.js";
+import * as playlistManage from "./playlist/playlist.manage.js";
+import * as player from "./player/player.js";
 
 function init() {
     SC.initialize({
         client_id: ""
     });
+    initStoredTrack();
+}
+
+function initStoredTrack() {
+    const initialized = player.storedTrack.isInitialized();
+
+    if (!initialized) {
+        playlistManage.initPlaylists("sc-pl-");
+    }
 }
 
 function parseTracks(tracks) {
