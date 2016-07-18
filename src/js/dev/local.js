@@ -1,6 +1,7 @@
 /* global parse_audio_metadata */
 
 import { formatTime } from "./main.js";
+import * as player from "./player/player.js";
 import * as playlist from "./playlist/playlist.js";
 import * as playlistManage from "./playlist/playlist.manage.js";
 import * as playlistAdd from "./playlist/playlist.add.js";
@@ -25,11 +26,9 @@ const progress = (function() {
 
 const worker = (function initWorker() {
     let worker = null;
-    let initialized = false;
 
     function init() {
         worker = new Worker("js/workers/worker1.js");
-        initialized = true;
 
         worker.onmessage = function(event) {
             const tracks = event.data;
@@ -37,7 +36,9 @@ const worker = (function initWorker() {
 
             pl.tracks.push(...tracks);
             playlistManage.appendTo(pl, tracks, false);
+            initStoredTrack();
         };
+
         worker.onerror = function(event) {
             console.log(event);
         };
@@ -47,16 +48,19 @@ const worker = (function initWorker() {
         worker.postMessage(message);
     }
 
-    function isInitialized() {
-        return initialized;
-    }
-
     return {
         post: postMessage,
-        isInitialized,
         init
     };
 })();
+
+function initStoredTrack() {
+    const initialized = player.storedTrack.isInitialized();
+
+    if (!initialized) {
+        playlistManage.initStoredTrack("local-files");
+    }
+}
 
 function getPlaylist() {
     const localPlaylist = playlist.get("local-files");
@@ -184,9 +188,6 @@ function addNewTracks(files) {
     if (!tracks.length) {
         playlistAdd.showNotice("Tracks already exist");
         return;
-    }
-    if (!worker.isInitialized()) {
-        worker.init();
     }
     processNewTracks(pl, tracks);
 }

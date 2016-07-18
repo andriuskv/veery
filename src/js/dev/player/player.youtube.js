@@ -2,9 +2,12 @@
 
 import * as settings from "./../settings.js";
 import * as playlist from "./../playlist/playlist.js";
+import * as playlistManage from "./../playlist/playlist.manage.js";
 import * as player from "./player.js";
 
 let ytPlayer = null;
+
+window.onYouTubeIframeAPIReady = initPlayer;
 
 function getTime(player) {
     return {
@@ -18,6 +21,7 @@ function onPlayerStateChange({ data: currentState }) {
         const track = playlist.getCurrentTrack() || playlist.getNextTrack(0);
 
         console.log(track);
+        setVolume(settings.get("volume"));
         player.onTrackStart(track, getTime(ytPlayer))
         .then(() => {
             const play = ytPlayer.playVideo.bind(ytPlayer);
@@ -28,9 +32,18 @@ function onPlayerStateChange({ data: currentState }) {
 }
 
 function onPlayerReady() {
-    const track = playlist.getNextTrack(0);
+    const initialized = player.storedTrack.isInitialized();
 
-    playTrack(track);
+    if (!initialized) {
+        const containsYouTubePlaylist = playlistManage.initPlaylists("yt-pl-");
+
+        if (containsYouTubePlaylist) {
+            const storedTrack = player.storedTrack.get();
+            const track = playlist.getNextTrack(0);
+
+            ytPlayer.cueVideoById(track.id, storedTrack.currentTime);
+        }
+    }
 }
 
 function onError(error) {
@@ -59,11 +72,9 @@ function togglePlaying() {
 
 function playTrack(track) {
     if (ytPlayer) {
-        setVolume(settings.get("volume"));
         ytPlayer.loadVideoById(track.id);
         return;
     }
-    initPlayer();
 }
 
 function stopTrack() {

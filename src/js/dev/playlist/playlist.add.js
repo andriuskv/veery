@@ -172,7 +172,7 @@ document.getElementById("js-playlist-add-options").addEventListener("click", ({ 
 });
 
 window.addEventListener("load", function onLoad() {
-    const savedPlaylists = JSON.parse(localStorage.getItem("playlists")) || {};
+    const savedPlaylists = playlist.getSavedPlaylists();
 
     main.scriptLoader.load("js/libs/sdk.js", sc.init);
     main.scriptLoader.load("https://www.youtube.com/iframe_api");
@@ -182,10 +182,9 @@ window.addEventListener("load", function onLoad() {
         const pl = savedPlaylists[id];
 
         playlistManage.init(playlist.create(pl), false);
-        if (id === "local-files") {
-            local.worker.init();
-        }
     });
+
+    local.worker.init();
     router.toggleCurrent();
     window.removeEventListener("load", onLoad);
 });

@@ -12,8 +12,16 @@ function getPlaylistById(id) {
     return playlists[id];
 }
 
+function getSavedPlaylists() {
+    return JSON.parse(localStorage.getItem("playlists")) || {};
+}
+
+function savePlaylists(playlists) {
+    localStorage.setItem("playlists", JSON.stringify(playlists));
+}
+
 function savePlaylist(pl) {
-    const savedPlaylists = JSON.parse(localStorage.getItem("playlists")) || {};
+    const savedPlaylists = getSavedPlaylists();
     const toSave = {
         id: pl.id,
         order: -pl.order,
@@ -25,7 +33,7 @@ function savePlaylist(pl) {
         toSave.tracks = pl.tracks;
     }
     savedPlaylists[pl.id] = toSave;
-    localStorage.setItem("playlists", JSON.stringify(savedPlaylists));
+    savePlaylists(savedPlaylists);
 }
 
 function createPlaylist(pl) {
@@ -40,12 +48,17 @@ function createPlaylist(pl) {
     return playlists[pl.id];
 }
 
+function setAsInitialized(id) {
+    playlists[id].initialized = true;
+    return Object.keys(playlists).every(id => playlists[id].initialized);
+}
+
 function removePlaylist(id) {
-    const savedPlaylists = JSON.parse(localStorage.getItem("playlists")) || {};
+    const savedPlaylists = getSavedPlaylists();
 
     delete playlists[id];
     delete savedPlaylists[id];
-    localStorage.setItem("playlists", JSON.stringify(savedPlaylists));
+    savePlaylists(savedPlaylists);
 }
 
 function setActivePlaylist(id) {
@@ -208,6 +221,8 @@ export {
     getAllPlaylists as getAll,
     getActivePlaylist as getActive,
     setActivePlaylist as setActive,
+    setAsInitialized,
+    getSavedPlaylists,
     isActive,
     getActivePlaylistId,
     setCurrentTrack,

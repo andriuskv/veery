@@ -54,6 +54,12 @@ function removePlaylist(id, entry) {
         player.stop();
     }
 
+    const storedTrack = player.storedTrack.get();
+
+    if (storedTrack.playlistId === id) {
+        player.storedTrack.remove();
+    }
+
     if (!entry) {
         entry = document.querySelector(`[data-id=${id}]`);
     }
@@ -169,6 +175,26 @@ function removeTrack(pl, playlistElement, trackElement) {
     }
 }
 
+function initStoredTrack(id) {
+    const allPlaylistsInitialized = playlist.setAsInitialized(id);
+
+    if (allPlaylistsInitialized) {
+        player.storedTrack.init();
+    }
+}
+
+function initPlaylists(playlistAffix) {
+    let containsPlaylist = false;
+
+    Object.keys(playlist.getAll()).forEach(id => {
+        if (id.startsWith(playlistAffix)) {
+            containsPlaylist = true;
+            initStoredTrack(id);
+        }
+    });
+    return containsPlaylist;
+}
+
 document.getElementById("js-tab-container").addEventListener("click", ({ target }) => {
     const sortBy = target.getAttribute("data-sort");
 
@@ -223,5 +249,7 @@ window.addEventListener("keypress", event => {
 export {
     initPlaylist as init,
     appendToPlaylist as appendTo,
-    removePlaylist as remove
+    removePlaylist as remove,
+    initStoredTrack,
+    initPlaylists
 };
