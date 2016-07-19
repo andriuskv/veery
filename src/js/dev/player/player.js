@@ -25,7 +25,10 @@ const storedTrack = (function () {
     }
 
     function isInitialized() {
-        return storedTrack && initialized;
+        if (!storedTrack) {
+            return true;
+        }
+        return initialized;
     }
 
     function initTrack() {
@@ -35,7 +38,7 @@ const storedTrack = (function () {
         initialized = true;
         playlist.setActive(storedTrack.playlistId);
 
-        const track = playlist.getTrackAtIndex(storedTrack.index);
+        const track = playlist.findTranck(storedTrack.playlistId, storedTrack.name);
         const player = getPlayer(storedTrack.playlistId);
 
         playlist.setCurrentIndex(track.index);
@@ -43,7 +46,7 @@ const storedTrack = (function () {
 
         controls.updateSlider("track", storedTrack.elapsed);
         controls.setElapsedTime(storedTrack.currentTime);
-        beforeTrackStart(track, storedTrack.playlistId, false);
+        beforeTrackStart(track, storedTrack.playlistId, true);
 
         settings.set("player", player);
 
@@ -81,7 +84,7 @@ function onTrackStart(track, time) {
 
     return controls.elapsedTime.start({
         playlistId: id,
-        index: track.index,
+        name: track.name || track.title,
         duration: time.duration,
         currentTime: time.currentTime
     });

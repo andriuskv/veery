@@ -24,7 +24,7 @@ function savePlaylist(pl) {
     const savedPlaylists = getSavedPlaylists();
     const toSave = {
         id: pl.id,
-        order: -pl.order,
+        order: pl.order,
         sortedBy: pl.sortedBy,
         title: pl.title
     };
@@ -169,6 +169,10 @@ function getNextTrackIndex(direction) {
     return playbackOrder[currentIndex];
 }
 
+function findTranck(id, searchTerm) {
+    return playlists[id].tracks.find(track => track.name === searchTerm || track.title === searchTerm);
+}
+
 function getTrackAtIndex(index) {
     const playlist = getActivePlaylist();
 
@@ -186,7 +190,7 @@ function getNextTrack(direction) {
     }
 }
 
-function sortArray(tracks, sort, order) {
+function sortTracks(tracks, sort, order) {
     tracks.sort((a, b) => {
         const aValue = a[sort].toLowerCase();
         const bValue = b[sort].toLowerCase();
@@ -209,7 +213,7 @@ function sortPlaylist(pl, sortBy) {
         pl.order = 1;
     }
     pl.sortedBy = sortBy;
-    sortArray(pl.tracks, sortBy, pl.order);
+    sortTracks(pl.tracks, sortBy, pl.order);
 }
 
 export {
@@ -221,6 +225,8 @@ export {
     getAllPlaylists as getAll,
     getActivePlaylist as getActive,
     setActivePlaylist as setActive,
+    findTranck,
+    sortTracks,
     setAsInitialized,
     getSavedPlaylists,
     isActive,
