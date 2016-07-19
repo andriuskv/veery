@@ -24,7 +24,7 @@ function playTrack(track, startTime) {
         });
     };
 
-    if (startTime) {
+    if (typeof startTime === "number") {
         track.audio.currentTime = startTime;
         return;
     }

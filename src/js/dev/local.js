@@ -36,6 +36,10 @@ const worker = (function initWorker() {
 
             pl.tracks.push(...tracks);
             playlistManage.appendTo(pl, tracks, false);
+            if (pl.sortedBy) {
+                playlist.sortTracks(pl.tracks, pl.sortedBy, pl.order);
+                playlistManage.update(pl);
+            }
             initStoredTrack();
         };
 

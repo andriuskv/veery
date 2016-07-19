@@ -18,8 +18,8 @@ function initPlaylist(pl, toggle) {
     sidebar.createEntry(pl.title, pl.id);
     createPlaylistEntry(pl.title, pl.id);
 
-    if (pl.sortedBy) {
-        playlist.sort(pl, pl.sortedBy);
+    if (pl.id !== "local-files" && pl.sortedBy) {
+        playlist.sortTracks(pl.tracks, pl.sortedBy, pl.order);
         updatePlaylist(pl);
     }
 
@@ -76,7 +76,7 @@ function updatePlaylist(pl) {
     playlistView.update(pl);
 
     if (currentTrack && playlist.isActive(pl.id)) {
-        playlistView.showPlayingTrack(currentTrack.index, pl.id, false);
+        playlistView.showPlayingTrack(currentTrack.index, pl.id, true);
         playlist.setCurrentIndex(currentTrack.index);
     }
 }
@@ -250,6 +250,7 @@ export {
     initPlaylist as init,
     appendToPlaylist as appendTo,
     removePlaylist as remove,
+    updatePlaylist as update,
     initStoredTrack,
     initPlaylists
 };
