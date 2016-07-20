@@ -67,7 +67,6 @@ const storedTrack = (function () {
 
 function beforeTrackStart(track, id, manual) {
     sidebar.showTrackInfo(track);
-    sidebar.showActiveIcon(id);
     controls.showTrackDuration(track.duration, false);
     playlistView.showPlayingTrack(track.index, id, manual);
 }
@@ -76,6 +75,7 @@ function onTrackStart(track, time) {
     const id = playlist.getActivePlaylistId();
 
     beforeTrackStart(track, id, settings.get("manual"));
+    sidebar.showActiveIcon(id);
     controls.addClassOnPlayBtn("icon-pause");
     settings.set("paused", false);
     settings.set("manual", false);
@@ -118,6 +118,7 @@ function toggleTrackPlaying(playCb, pauseCb) {
     }
     else {
         pauseCb();
+        sidebar.hideActiveIcon();
         controls.elapsedTime.stop();
         controls.addClassOnPlayBtn("icon-play");
     }
