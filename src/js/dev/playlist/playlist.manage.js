@@ -140,18 +140,19 @@ function removeTrack(pl, playlistElement, trackElement) {
     const currentTrack = playlist.getCurrentTrack();
     const currentIndex = currentTrack ? currentTrack.index : -1;
     const shuffle = settings.get("shuffle");
+    const track = pl.tracks[index];
+    const trackName = track.name || track.title;
+    const storedTrack = player.storedTrack.get();
+
+    if (storedTrack.playlistId === pl.id && storedTrack.name === trackName) {
+        player.storedTrack.remove();
+    }
 
     if (pl.id === "local-files") {
-        const { name: trackName } = pl.tracks[index];
-
         local.worker.post({
             action: "remove",
             name: trackName
         });
-    }
-    else if (pl.id.startsWith("yt-pl-") || pl.id.startsWith("sc-pl-")) {
-        pl.deleted = pl.deleted || [];
-        pl.deleted.push(pl.tracks[index].id);
     }
 
     playlistElement.removeChild(trackElement);
@@ -161,6 +162,11 @@ function removeTrack(pl, playlistElement, trackElement) {
         playlistElement.children[index].setAttribute("data-index", index);
     });
     playlist.setTrackIndexes(pl, shuffle, true);
+    playlist.save(pl);
+
+    if (pl.id !== playlist.getActivePlaylistId()) {
+        return;
+    }
 
     if (currentTrack && currentIndex === index) {
         if (!settings.get("paused")) {

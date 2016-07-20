@@ -9,10 +9,11 @@ import * as ytPlayer from "./player.youtube.js";
 import * as scPlayer from "./player.soundcloud.js";
 
 const storedTrack = (function () {
-    const storedTrack = JSON.parse(localStorage.getItem("track"));
+    let storedTrack = JSON.parse(localStorage.getItem("track"));
     let initialized = false;
 
     function getTrack() {
+        storedTrack = JSON.parse(localStorage.getItem("track"));
         return storedTrack;
     }
 
@@ -25,14 +26,11 @@ const storedTrack = (function () {
     }
 
     function isInitialized() {
-        if (!storedTrack) {
-            return true;
-        }
-        return initialized;
+        return !storedTrack || initialized;
     }
 
     function initTrack() {
-        if (initialized || !storedTrack) {
+        if (isInitialized()) {
             return;
         }
         initialized = true;
