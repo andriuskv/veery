@@ -8,59 +8,65 @@ importScripts("../libs/db.min.js");
 
 var server = null;
 
-db.open({
-    server: "local-playlist",
-    version: 1,
-    noServerMethods: true,
-    schema: {
-        track: {
-            key: { keyPath: "index", autoIncrement: false }
-        }
-    }
-}).then(function (s) {
-    server = s;
+(function init() {
+    initDb().then(loadTracks);
+})();
 
-    s.query("track").all().execute().then(function (tracks) {
-        if (tracks.length) {
-            tracks = tracks.map(function (track, index) {
-                track.index = index;
-                return track;
-            });
-            postMessage({ tracks: tracks });
+function initDb() {
+    return db.open({
+        server: "local-playlist",
+        version: 1,
+        noServerMethods: true,
+        schema: {
+            tracks: {
+                key: { keyPath: "_id", autoIncrement: true }
+            }
         }
-    }).catch(function (error) {
-        console.log(error);
+    }).then(function (s) {
+        server = s;
     });
-});
+}
+
+function loadTracks() {
+    server.query("tracks").all().execute().then(function (storedTracks) {
+        if (!storedTracks.length) {
+            return;
+        }
+        var tracks = storedTracks.map(function (track, index) {
+            track.index = index;
+            return track;
+        });
+
+        // postMessage({ tracks });
+        postMessage(tracks);
+    });
+}
 
 onmessage = function onmessage(event) {
     var data = event.data;
 
-    if (data.action === "update") {
-        server.clear("track").then(function () {
-            server.add("track", data.playlist);
+    if (data.action === "add") {
+        if (server) {
+            server.add("tracks", data.tracks);
+        } else {
+            initDb().then(function () {
+                server.add("tracks", data.tracks);
+            });
+        }
+    } else if (data.action === "remove") {
+        server.query("tracks").filter("name", data.name).execute().then(function (results) {
+            if (results.length) {
+                server.remove("tracks", results[0]._id);
+            }
         }).catch(function (error) {
             console.log(error);
         });
-    } else if (data.action === "remove") {
-        console.log(data.action, data.name);
-
-        server.query("track").filter("name", data.name).execute().then(function (results) {
-            if (results.length) {
-                results.forEach(function (result) {
-                    server.remove("track", result.index);
-                });
-            }
-        });
     } else if (data.action === "clear") {
-        if (!server) {
-            return;
-        }
-        server.clear("track").then(function () {
-            postMessage({ action: "init" });
-            console.log("cleared");
+        server.clear("tracks").then(function () {
+
+            // close db connection
             server.close();
-            self.close();
+            server = null;
             indexedDB.deleteDatabase("local-playlist");
         }).catch(function (error) {
             console.log(error);
