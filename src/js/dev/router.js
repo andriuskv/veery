@@ -13,10 +13,6 @@ function isActive(route) {
     return window.location.hash.includes(route);
 }
 
-function isPlaylistRoute(route) {
-    return /^playlist\/.+/.test(route);
-}
-
 function addRoute(route) {
     if (!contains(route)) {
         routes.push(route);
@@ -28,8 +24,6 @@ function toggleRoute(route) {
 }
 
 function toggleTab(route) {
-    let tab = "";
-
     if (!route) {
         toggleRoute("add");
         return;
@@ -38,13 +32,7 @@ function toggleTab(route) {
         toggleRoute("404");
         return;
     }
-
-    if (isPlaylistRoute(route)) {
-        tab = route.slice(route.lastIndexOf("/") + 1);
-    }
-    else {
-        tab = route.replace(/\//g, "-");
-    }
+    const tab = route.replace(/\//g, "-");
 
     if (tab && document.getElementById(`js-tab-${tab}`)) {
         main.toggleTab(tab, tab === "404");

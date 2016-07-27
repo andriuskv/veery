@@ -42,7 +42,6 @@ function loadTracks() {
             return track;
         });
 
-        // postMessage({ tracks });
         postMessage(tracks);
     });
 }

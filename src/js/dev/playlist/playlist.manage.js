@@ -27,7 +27,7 @@ function initPlaylist(pl, toggle) {
         router.toggle(route);
     }
     else if (router.isActive(pl.id)) {
-        main.toggleTab(pl.id);
+        main.toggleTab(`playlist-${pl.id}`);
     }
     playlist.save(pl);
 }
@@ -219,19 +219,17 @@ document.getElementById("js-tab-container").addEventListener("click", ({ target 
     }
 });
 
-window.addEventListener("keyup", ({ target }) => {
+document.getElementById("js-filter-input").addEventListener("keyup", ({ target }) => {
     if (timeout) {
         clearTimeout(timeout);
     }
 
     timeout = setTimeout(() => {
-        if (target.classList.contains("filter-input")) {
-            const pl = playlist.get(settings.get("activeTab"));
-            const trackElements = document.getElementById(`js-${pl.id}`).children;
-            const query = target.value.trim().toLowerCase();
+        const pl = playlist.get(settings.get("activeTab"));
+        const trackElements = document.getElementById(`js-${pl.id}`).children;
+        const query = target.value.trim().toLowerCase();
 
-            filterTracks(pl.tracks, trackElements, query);
-        }
+        filterTracks(pl.tracks, trackElements, query);
     }, 400);
 });
 
