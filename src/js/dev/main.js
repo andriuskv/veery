@@ -39,7 +39,16 @@ function toggleTab(id, ignoreSidebar) {
     removeClassFromElement("js-tab-select-btn", "active");
     removeClassFromElement("tab", "active");
 
-    settings.set("activeTab", id);
+    if (id.startsWith("playlist-")) {
+        const tabId = id.split("playlist-")[1];
+
+        settings.set("activeTab", tabId);
+        document.getElementById("js-tab-header").classList.add("show");
+    }
+    else {
+        settings.set("activeTab", id);
+        document.getElementById("js-tab-header").classList.remove("show");
+    }
     document.getElementById(`js-tab-${id}`).classList.add("active");
 
     if (!ignoreSidebar) {

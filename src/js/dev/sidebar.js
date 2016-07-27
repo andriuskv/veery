@@ -1,5 +1,5 @@
 function getEntry(id) {
-    return document.querySelector(`[data-tab-item=${id}]`);
+    return document.querySelector(`[data-tab-item=playlist-${id}]`);
 }
 
 function createSidebarEntry(title, id) {
@@ -7,7 +7,7 @@ function createSidebarEntry(title, id) {
     const newEntry = `
         <li>
             <a href="#/playlist/${id}" class="font-btn sidebar-btn js-tab-select-btn"
-                data-tab-item="${id}">
+                data-tab-item="playlist-${id}">
                 <span class="sidebar-playlist-title">${title}</span>
                 <span class="icon-volume-up is-playlist-active hidden"></span>
             </a>

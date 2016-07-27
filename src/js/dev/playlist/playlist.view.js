@@ -71,17 +71,7 @@ function createPlaylistTab(pl) {
     else if (pl.type === "grid") {
         playlist = createGrid(pl.id, createItems(createGridItem, pl.tracks));
     }
-
-    return `
-        <div id="js-tab-${pl.id}" class="tab">
-            <div class="playlist-header">
-                <input type="text" class="input filter-input"
-                    id="js-${pl.id}-filter-input"
-                    placeholder="Filter">
-            </div>
-            <div class="playlist-container">${playlist}</div>
-        </div>
-    `;
+    return `<div id="js-tab-playlist-${pl.id}" class="tab">${playlist}</div>`;
 }
 
 function addPlaylistTab(pl) {
@@ -140,7 +130,7 @@ function updatePlaylist(pl) {
 }
 
 function removePlaylistTab(id) {
-    const playlistTab = document.getElementById(`js-tab-${id}`);
+    const playlistTab = document.getElementById(`js-tab-playlist-${id}`);
 
     playlistTab.parentElement.removeChild(playlistTab);
 }

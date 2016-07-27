@@ -31,54 +31,55 @@
         </div>
     </div>
     <div class="main">
+        <div id="js-tab-header" class="tab-header">
+            <input type="text" id="js-filter-input" class="input filter-input" placeholder="Filter">
+        </div>
         <div id="js-tab-container" class="tab-container">
             <div id="js-tab-add" class="tab">
-                <div class="tab-content">
-                    <h2 class="tab-title">Add playlist</h2>
-                    <div id="js-playlist-add-options" class="playlist-add-options">
-                        <div class="playlist-add-option">
-                            <ul class="list playlist-provider-container">
-                                <li class="playlist-provider" data-choice="youtube">
-                                    <img src="assets/images/youtube-logo.png" alt="" class="playlist-provider-logo">
-                                    <div>YouTube</div>
-                                </li>
-                                <li class="playlist-provider" data-choice="soundcloud">
-                                    <img src="assets/images/soundcloud-logo.png" alt="" class="playlist-provider-logo">
-                                    <div>SoundCloud</div>
-                                </li>
-                            </ul>
-                            <div id="js-import-form-container" class="form-container">
-                                <form id="js-playlist-import-form">
-                                    <input type="text" name="playlist-id" class="input" placeholder="Playlist url">
-                                    <button id="js-playlist-import-btn" class="btn">
-                                        <div class="btn-content">Import</div>
-                                        <div class="icon-spin6 animate-spin btn-content hidden"></div>
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                        <div class="playlist-add-option">
-                            <button data-choice="file" class="font-btn">
-                                <div class="local-btn-icon icon-doc-inv"></div>
-                                <div class="local-btn-title">Add from files</div>
-                            </button>
-                            <button data-choice="folder" class="font-btn">
-                                <div class="local-btn-icon icon-folder"></div>
-                                <div class="local-btn-title">Add from folder</div>
-                            </button>
-                            <input type="file" id="js-file-chooser" class="file-chooser">
-                            <div>
-                                <progress id="js-file-progress" class="file-progress" value="0" step="1"></progress>
-                                <div id="js-local-notice" class="playlist-add-local-notice">Duplicate/unsupported tracks are ignored</div>
-                            </div>
+                <h2 class="tab-title">Add playlist</h2>
+                <div id="js-playlist-add-options" class="playlist-add-options">
+                    <div class="playlist-add-option">
+                        <ul class="list playlist-provider-container">
+                            <li class="playlist-provider" data-choice="youtube">
+                                <img src="assets/images/youtube-logo.png" alt="" class="playlist-provider-logo">
+                                <div>YouTube</div>
+                            </li>
+                            <li class="playlist-provider" data-choice="soundcloud">
+                                <img src="assets/images/soundcloud-logo.png" alt="" class="playlist-provider-logo">
+                                <div>SoundCloud</div>
+                            </li>
+                        </ul>
+                        <div id="js-import-form-container" class="form-container">
+                            <form id="js-playlist-import-form">
+                                <input type="text" name="playlist-id" class="input" placeholder="Playlist url">
+                                <button id="js-playlist-import-btn" class="btn">
+                                    <div class="btn-content">Import</div>
+                                    <div class="icon-spin6 animate-spin btn-content hidden"></div>
+                                </button>
+                            </form>
                         </div>
                     </div>
-                    <div id="js-playlist-add-notice" class="playlist-add-notice">asdasd asda</div>
-                    <ul id="js-playlist-entries" class="list playlist-entries"></ul>
+                    <div class="playlist-add-option">
+                        <button data-choice="file" class="font-btn">
+                            <div class="local-btn-icon icon-doc-inv"></div>
+                            <div class="local-btn-title">Add from files</div>
+                        </button>
+                        <button data-choice="folder" class="font-btn">
+                            <div class="local-btn-icon icon-folder"></div>
+                            <div class="local-btn-title">Add from folder</div>
+                        </button>
+                        <input type="file" id="js-file-chooser" class="file-chooser">
+                        <div>
+                            <progress id="js-file-progress" class="file-progress" value="0" step="1"></progress>
+                            <div id="js-local-notice" class="playlist-add-local-notice">Duplicate/unsupported tracks are ignored</div>
+                        </div>
+                    </div>
                 </div>
+                <div id="js-playlist-add-notice" class="playlist-add-notice"></div>
+                <ul id="js-playlist-entries" class="list playlist-entries"></ul>
             </div>
             <div id="js-tab-404" class="tab">
-                <div class="tab-content tab-404-content">
+                <div class="tab-404-content">
                     <h2>404</h2>
                     <h3>Not found</h3>
                 </div>
