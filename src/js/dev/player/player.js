@@ -174,7 +174,7 @@ function playTrack() {
     const player = settings.get("player");
 
     if (!player) {
-        const id = settings.get("activeTab");
+        const id = settings.get("activeTabId");
 
         if (playlist.get(id)) {
             playlist.setActive(id);
@@ -274,7 +274,7 @@ function toggleRepeat(repeat) {
 }
 
 function toggleShuffle(shuffle) {
-    const pl = playlist.getActive() || playlist.get(settings.get("activeTab"));
+    const pl = playlist.getActive() || playlist.get(settings.get("activeTabId"));
 
     settings.set("shuffle", shuffle);
     if (pl) {
@@ -319,7 +319,7 @@ document.getElementById("js-tab-container").addEventListener("dblclick", ({ targ
 
     if (element) {
         const index = element.attrValue;
-        const id = settings.get("activeTab");
+        const id = settings.get("activeTabId");
 
         settings.set("manual", true);
         playlist.setActive(id);

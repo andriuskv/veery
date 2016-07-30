@@ -13,21 +13,13 @@ function createListItem(track) {
 
 function createList(id, items) {
     return `
-        <ul class="list list-view-header">
-            <li class="list-view-header-item">
-                <span data-sort="title">TITLE</span>
-            </li>
-            <li class="list-view-header-item">
-                <span data-sort="artist">ARTIST</span>
-            </li>
-            <li class="list-view-header-item">
-                <span data-sort="album">ALBUM</span>
-            </li>
-            <li class="list-view-header-item">
-                <span data-sort="duration">LENGTH</span>
-            </li>
+        <ul class="list-view-header">
+            <li class="list-view-header-item">TITLE</li>
+            <li class="list-view-header-item">ARTIST</li>
+            <li class="list-view-header-item">ALBUM</li>
+            <li class="list-view-header-item">LENGTH</li>
         </ul>
-        <ul id="js-${id}" class="list list-view">${items}</ul>
+        <ul id="js-${id}" class="list-view">${items}</ul>
     `;
 }
 
@@ -49,13 +41,7 @@ function createGridItem(item) {
 }
 
 function createGrid(id, items) {
-    return `
-        <div class="grid-view-sort-select">
-            <button class="font-btn" data-sort="title">Title</button>
-            <button class="font-btn" data-sort="duration">Duration</button>
-        </div>
-        <ul id="js-${id}" class="list grid-view">${items}</ul>
-    `;
+    return `<ul id="js-${id}" class="grid-view">${items}</ul>`;
 }
 
 function createItems(cb, tracks) {

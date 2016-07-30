@@ -5,7 +5,7 @@ const settings = Object.assign({
     manual: false,
     volume: 0.2,
     seeking: false,
-    activeTab: "add",
+    activeTabId: "add",
     player: ""
 }, JSON.parse(localStorage.getItem("settings")) || {});
 

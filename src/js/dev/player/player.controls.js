@@ -1,5 +1,5 @@
 import * as settings from "./../settings.js";
-import * as main from "./../main.js";
+import { formatTime } from "./../main.js";
 import * as playlist from "./../playlist/playlist.js";
 import * as player from "./player.js";
 
@@ -112,13 +112,13 @@ function updateSlider(slider, percent) {
 }
 
 function setElapsedTime(time) {
-    document.getElementById("js-player-elapsed").textContent = main.formatTime(time);
+    document.getElementById("js-player-elapsed").textContent = formatTime(time);
 }
 
 function showTrackDuration(duration, format = true) {
     const durationElem = document.getElementById("js-player-duration");
 
-    durationElem.textContent = format ? main.formatTime(duration) : duration;
+    durationElem.textContent = format ? formatTime(duration) : duration;
 }
 
 function onPlayerTrackMousemove(event) {

@@ -1,0 +1,39 @@
+.playlist-sorting {
+    display: flex;
+}
+.playlist-sort-option-container {
+    position: relative;
+    width: 100px;
+    margin-right: 2px;
+    border-radius: 2px;
+
+    .btn, .font-btn {
+        width: 100%;
+    }
+}
+.playlist-sort-options {
+    z-index: 1;
+    position: absolute;
+    top: 28px;
+    left: 0;
+    right: 0;
+    display: none;
+    border-radius: 2px;
+    border: 1px solid $color3;
+    background-color: $color1;
+
+    &.visible {
+        display: block;
+    }
+}
+.playlist-sort-option {
+    margin: 2px;
+
+    &.hidden {
+        display: none;
+    }
+}
+.order-toggle-btn {
+    padding: 4px 2px;
+    font-size: 12px;
+}

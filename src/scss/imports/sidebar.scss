@@ -26,18 +26,11 @@
 .sidebar-nav {
     flex-grow: 1;
     user-select: none;
-    padding-top: 4px;
     margin-right: 4px;
     background-color: $color2;
 }
 .add-playlist-btn {
-    display: block;
-    margin: 0 4px 4px 4px;
-    text-align: center;
-
-    &.active {
-        background-color: $color1;
-    }
+    margin: 4px;
 }
 .sidebar-section {
     border-top: 4px solid $color1;
@@ -58,10 +51,9 @@
 }
 .sidebar-btn {
     position: relative;
-    width: 100%;
+    display: block;
     padding-top: 6px;
     padding-bottom: 6px;
-    border-radius: 0;
     text-align: center;
 
     &.active {
@@ -76,9 +68,6 @@
             box-shadow: -2px 0px 6px $color1;
         }
     }
-}
-.sidebar-playlist-title {
-    font-size: 14px;
 }
 .is-playlist-active {
     position: absolute;

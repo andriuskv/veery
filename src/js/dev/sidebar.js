@@ -1,3 +1,5 @@
+let activeSidebarIconElem = null;
+
 function getEntry(id) {
     return document.querySelector(`[data-tab-item=playlist-${id}]`);
 }
@@ -6,9 +8,9 @@ function createSidebarEntry(title, id) {
     const sidebarEntries = document.getElementById("js-sidebar-playlist-entries");
     const newEntry = `
         <li>
-            <a href="#/playlist/${id}" class="font-btn sidebar-btn js-tab-select-btn"
+            <a href="#/playlist/${id}" class="btn btn-transparent sidebar-btn"
                 data-tab-item="playlist-${id}">
-                <span class="sidebar-playlist-title">${title}</span>
+                <span>${title}</span>
                 <span class="icon-volume-up is-playlist-active hidden"></span>
             </a>
         </li>`;
@@ -30,18 +32,16 @@ function removeSidebarEntry(id) {
 
 function showActiveIcon(id) {
     const entry = getEntry(id);
-    const icon = entry.querySelector(".is-playlist-active");
+    const element = entry.querySelector(".is-playlist-active");
 
-    icon.classList.remove("hidden");
+    element.classList.remove("hidden");
+    activeSidebarIconElem = element;
 }
 
 function hideActiveIcon() {
-    for (const btn of document.querySelectorAll(".js-tab-select-btn")) {
-        const icon = btn.children[1];
-
-        if (icon && !icon.classList.contains("hidden")) {
-            icon.classList.add("hidden");
-        }
+    if (activeSidebarIconElem) {
+        activeSidebarIconElem.classList.add("hidden");
+        activeSidebarIconElem = null;
     }
 }
 
