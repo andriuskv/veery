@@ -1,6 +1,7 @@
 import "./dev/settings.js";
 import "./dev/router.js";
 import "./dev/main.js";
+import "./dev/tab.js";
 import "./dev/sidebar.js";
 import "./dev/local.js";
 import "./dev/youtube.js";
@@ -8,6 +9,7 @@ import "./dev/soundcloud.js";
 import "./dev/playlist/playlist.add.js";
 import "./dev/playlist/playlist.manage.js";
 import "./dev/playlist/playlist.view.js";
+import "./dev/playlist/playlist.sorting.js";
 import "./dev/playlist/playlist.js";
 import "./dev/player/player.controls.js";
 import "./dev/player/player.js";

@@ -1,4 +1,4 @@
-import * as main from "./main.js";
+import * as tab from "./tab.js";
 
 const routes = [
     "add",
@@ -32,10 +32,10 @@ function toggleTab(route) {
         toggleRoute("404");
         return;
     }
-    const tab = route.replace(/\//g, "-");
+    const tabName = route.replace(/\//g, "-");
 
-    if (tab && document.getElementById(`js-tab-${tab}`)) {
-        main.toggleTab(tab, tab === "404");
+    if (tabName && document.getElementById(`js-tab-${tabName}`)) {
+        tab.toggle(tabName, tabName === "404");
     }
 }
 

@@ -1,6 +1,7 @@
+import * as settings from "./../settings.js";
 import * as router from "./../router.js";
 import * as main from "./../main.js";
-import * as settings from "./../settings.js";
+import * as tab from "./../tab.js";
 import * as sidebar from "./../sidebar.js";
 import * as local from "./../local.js";
 import * as player from "./../player/player.js";
@@ -27,7 +28,7 @@ function initPlaylist(pl, toggle) {
         router.toggle(route);
     }
     else if (router.isActive(pl.id)) {
-        main.toggleTab(`playlist-${pl.id}`);
+        tab.toggle(`playlist-${pl.id}`);
     }
     playlist.save(pl);
 }
@@ -102,32 +103,14 @@ function createPlaylistEntry(title, id) {
     const entry = `
         <li class="playlist-entry" data-id=${id}>
             <input type="text" class="input playlist-entry-title" value="${title}" readonly>
-            <span>
-                <button class="icon-pencil font-btn playlist-entry-btn"
-                    data-action="edit" title="Edit playlist title"></button>
-                <button class="icon-trash font-btn playlist-entry-btn"
-                    data-action="remove" title="Remove playlist"></button>
-            </span>
+            <button class="icon-pencil btn btn-transparent"
+                data-action="edit" title="Edit playlist title"></button>
+            <button class="icon-trash btn btn-transparent"
+                data-action="remove" title="Remove playlist"></button>
         </li>
     `;
 
     playlistEntryContainer.insertAdjacentHTML("beforeend", entry);
-}
-
-function sortPlaylist(sortBy) {
-    const pl = playlist.get(settings.get("activeTab"));
-    let query = document.getElementById(`js-${pl.id}-filter-input`).value.trim();
-
-    playlist.sort(pl, sortBy);
-    updatePlaylist(pl);
-    playlist.save(pl);
-
-    if (query) {
-        const trackElements = document.getElementById(`js-${pl.id}`).children;
-
-        query = query.toLowerCase();
-        filterTracks(pl.tracks, trackElements, query);
-    }
 }
 
 function selectTrackElement(element) {
@@ -202,17 +185,11 @@ function initPlaylists(playlistAffix) {
 }
 
 document.getElementById("js-tab-container").addEventListener("click", ({ target }) => {
-    const sortBy = target.getAttribute("data-sort");
-
-    if (sortBy) {
-        sortPlaylist(sortBy);
-        return;
-    }
     const item = main.getElementByAttr(target, "data-index");
 
     if (item) {
         playlist.setSelectedTrack({
-            playlistId: settings.get("activeTab"),
+            playlistId: settings.get("activeTabId"),
             index: Number.parseInt(item.attrValue, 10)
         });
         selectTrackElement(item.element);
@@ -225,7 +202,7 @@ document.getElementById("js-filter-input").addEventListener("keyup", ({ target }
     }
 
     timeout = setTimeout(() => {
-        const pl = playlist.get(settings.get("activeTab"));
+        const pl = playlist.get(settings.get("activeTabId"));
         const trackElements = document.getElementById(`js-${pl.id}`).children;
         const query = target.value.trim().toLowerCase();
 
@@ -235,7 +212,7 @@ document.getElementById("js-filter-input").addEventListener("keyup", ({ target }
 
 window.addEventListener("keypress", event => {
     const key = event.key === "Delete" || event.keyCode === 127;
-    const pl = playlist.get(settings.get("activeTab"));
+    const pl = playlist.get(settings.get("activeTabId"));
 
     if (!key || !pl) {
         return;
@@ -256,5 +233,6 @@ export {
     removePlaylist as remove,
     updatePlaylist as update,
     initStoredTrack,
-    initPlaylists
+    initPlaylists,
+    filterTracks
 };

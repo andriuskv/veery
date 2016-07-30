@@ -1,5 +1,3 @@
-import * as settings from "./settings.js";
-
 const scriptLoader = (function() {
     const loaded = [];
 
@@ -24,7 +22,6 @@ const scriptLoader = (function() {
     return {
         load: loadScript
     };
-
 })();
 
 function removeClassFromElement(className, classToRemove) {
@@ -32,27 +29,6 @@ function removeClassFromElement(className, classToRemove) {
 
     if (element) {
         element.classList.remove(classToRemove);
-    }
-}
-
-function toggleTab(id, ignoreSidebar) {
-    removeClassFromElement("js-tab-select-btn", "active");
-    removeClassFromElement("tab", "active");
-
-    if (id.startsWith("playlist-")) {
-        const tabId = id.split("playlist-")[1];
-
-        settings.set("activeTab", tabId);
-        document.getElementById("js-tab-header").classList.add("show");
-    }
-    else {
-        settings.set("activeTab", id);
-        document.getElementById("js-tab-header").classList.remove("show");
-    }
-    document.getElementById(`js-tab-${id}`).classList.add("active");
-
-    if (!ignoreSidebar) {
-        document.querySelector(`[data-tab-item=${id}]`).classList.add("active");
     }
 }
 
@@ -88,7 +64,6 @@ function formatTime(time) {
 
 export {
     scriptLoader,
-    toggleTab,
     getElementByAttr,
     removeClassFromElement,
     formatTime

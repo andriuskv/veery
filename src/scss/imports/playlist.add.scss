@@ -113,6 +113,10 @@
     align-items: center;
     padding: 4px;
     border-bottom: 1px solid $color1;
+
+    .btn.active {
+        background-color: $color1;
+    }
 }
 .playlist-entry-title {
     flex-grow: 1;
@@ -121,7 +125,4 @@
     &:read-only {
         background-color: transparent;
     }
-}
-.playlist-entry-btn.active {
-    background-color: $color1;
 }

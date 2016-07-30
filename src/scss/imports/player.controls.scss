@@ -43,7 +43,6 @@
     flex-grow: 1;
     margin-left: 12px;
     margin-right: 12px;
-
 }
 .player-track-elapsed {
     display: flex;
@@ -57,7 +56,6 @@
 .control-btn {
     padding: 4px;
     margin-right: 4px;
-    font-size: 14px;
 }
 .volume-slider-wrapper {
     user-select: none;
@@ -68,7 +66,8 @@
     height: 32px;
     padding-left: 12px;
     padding-right: 12px;
-    border-radius: 4px;
+    border: 1px solid $color1;
+    border-radius: 2px;
     background-color: $color3;
 
     &.active {

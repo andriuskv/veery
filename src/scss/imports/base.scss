@@ -12,6 +12,12 @@ body {
 a {
     text-decoration: none;
 }
+ul {
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-left: 0;
+    list-style: none;
+}
 ::-webkit-scrollbar {
     width: 10px;
 }
@@ -36,18 +42,12 @@ a {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
-.list {
-    margin-top: 0;
-    margin-bottom: 0;
-    padding-left: 0;
-    list-style: none;
-}
 .input {
     padding: 4px 6px;
     border: none;
     border-radius: 2px;
     background-color: $color1;
-    font-size: 16px;
+    font-size: 14px;
     color: $base-text-color;
 }
 .btn {
@@ -58,68 +58,21 @@ a {
     &:hover {
         color: $brand-color;
     }
+    &.active {
+        color: $brand-color;
+    }
 }
-.font-btn {
-    @extend .btn;
-
-    display: inline-block;
+.btn-transparent {
     background-color: transparent;
 
     &.active {
         background-color: $color3;
-        color: $brand-color;
     }
 }
 .main {
     display: flex;
     flex-direction: column;
     height: 100%;
-}
-.tab-container {
-    flex-grow: 1;
-    height: calc(100% - 74px);
-    background-color: $color2;
-    color: $base-text-color;
-}
-.tab {
-    position: relative;
-    display: none;
-    height: 100%;
-
-    &.active {
-        display: block;
-    }
-}
-.tab-header {
-    display: none;
-    padding: 4px;
-    margin-bottom: 4px;
-    background-color: $color2;
-
-    &.show {
-        display: block;
-    }
-}
-.tab-title {
-    padding-top: 20px;
-    margin-top: 0;
-    margin-bottom: 20px;
-    text-align: center;
-}
-.tab-404-content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    height: 100%;
-
-    h2, h3 {
-        margin-top: 0;
-    }
-    h2 {
-        margin-bottom: 0;
-        font-size: 64px;
-    }
 }
 .track {
     transition: all 0.1s;
