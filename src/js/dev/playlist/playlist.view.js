@@ -57,7 +57,7 @@ function createPlaylistTab(pl) {
     else if (pl.type === "grid") {
         playlist = createGrid(pl.id, createItems(createGridItem, pl.tracks));
     }
-    return `<div id="js-tab-playlist-${pl.id}" class="tab">${playlist}</div>`;
+    return `<div id="js-tab-playlist-${pl.id}" class="tab playlist-tab">${playlist}</div>`;
 }
 
 function addPlaylistTab(pl) {

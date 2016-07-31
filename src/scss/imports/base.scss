@@ -69,10 +69,12 @@ ul {
         background-color: $color3;
     }
 }
-.main {
+.player {
     display: flex;
-    flex-direction: column;
-    height: 100%;
+    height: calc(100% - 36px);
+}
+.main {
+    width: calc(100% - 160px);
 }
 .track {
     transition: all 0.1s;
