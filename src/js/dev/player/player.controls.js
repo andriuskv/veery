@@ -135,10 +135,8 @@ function onPlayerTrackMouseup({ screenX }) {
     document.removeEventListener("mouseup", onPlayerTrackMouseup);
 }
 
-document.getElementById("js-player-track").addEventListener("mousedown", event => {
-    if (event.which !== 1 ||
-        !event.target.getAttribute("data-track-item") ||
-        !playlist.getCurrentTrack()) {
+document.getElementById("js-player-track-slider").addEventListener("mousedown", event => {
+    if (event.which !== 1 || !playlist.getCurrentTrack()) {
         return;
     }
 
@@ -148,8 +146,8 @@ document.getElementById("js-player-track").addEventListener("mousedown", event =
     document.addEventListener("mouseup", onPlayerTrackMouseup);
 });
 
-document.getElementById("js-volume-track").addEventListener("mousedown", event => {
-    if (event.which !== 1 || !event.target.getAttribute("data-volume-item")) {
+document.getElementById("js-player-volume-slider").addEventListener("mousedown", event => {
+    if (event.which !== 1) {
         return;
     }
 
@@ -179,10 +177,6 @@ document.getElementById("js-player-controls").addEventListener("click", ({ targe
         case "shuffle":
             target.classList.toggle("active");
             player[item](target.classList.contains("active"));
-            break;
-        case "volume":
-            document.getElementById("js-volume-track").classList.toggle("active");
-            target.classList.toggle("active");
             break;
     }
 });
