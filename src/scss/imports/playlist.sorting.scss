@@ -14,12 +14,13 @@
 .playlist-sort-options {
     z-index: 1;
     position: absolute;
-    top: 28px;
+    top: 26px;
     left: 0;
     right: 0;
     display: none;
     border-radius: 2px;
-    border: 1px solid $color3;
+    border-left: 1px solid $color3;
+    border-right: 1px solid $color3;
     background-color: $color1;
 
     &.visible {
