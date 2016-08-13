@@ -43,7 +43,7 @@
     margin-top: 4px;
     font-size: 14px;
 
-    &.show {
+    &.visible {
         display: block;
     }
 }
@@ -68,7 +68,7 @@
     margin-top: 4px;
     transition: all 0.2s;
 
-    &.show {
+    &.visible {
         visibility: visible;
         opacity: 1;
     }
@@ -89,7 +89,7 @@
     color: $color2;
     font-size: 12px;
 
-    &.show {
+    &.visible {
         display: block;
     }
 }
@@ -99,7 +99,7 @@
     margin-top: 4px;
     text-align: center;
 
-    &.show {
+    &.visible {
         visibility: visible;
     }
 }

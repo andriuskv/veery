@@ -6,7 +6,6 @@ import * as playlistManage from "./../playlist/playlist.manage.js";
 import * as player from "./player.js";
 
 let ytPlayer = null;
-
 window.onYouTubeIframeAPIReady = initPlayer;
 
 function getTime(player) {
@@ -32,18 +31,7 @@ function onPlayerStateChange({ data: currentState }) {
 }
 
 function onPlayerReady() {
-    const initialized = player.storedTrack.isInitialized();
-
-    if (!initialized) {
-        const containsYouTubePlaylist = playlistManage.initPlaylists("yt-pl-");
-
-        if (containsYouTubePlaylist) {
-            const storedTrack = player.storedTrack.get();
-            const track = playlist.getNextTrack(0);
-
-            ytPlayer.cueVideoById(track.id, storedTrack.currentTime);
-        }
-    }
+    playlistManage.initStoredTrack("yt-pl-");
 }
 
 function onError(error) {
@@ -77,6 +65,10 @@ function playTrack(track) {
     }
 }
 
+function queueTrack(trackId, startTime) {
+    ytPlayer.cueVideoById(trackId, startTime);
+}
+
 function stopTrack() {
     ytPlayer.stopVideo();
 }
@@ -96,6 +88,7 @@ function getElapsed(percent) {
 export {
     stopTrack as stop,
     playTrack,
+    queueTrack,
     togglePlaying,
     getElapsed,
     setVolume

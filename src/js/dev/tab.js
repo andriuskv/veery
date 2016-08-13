@@ -10,12 +10,12 @@ function toggleTab(id, ignoreSidebar) {
         const tabId = id.split("playlist-")[1];
 
         settings.set("activeTabId", tabId);
-        document.getElementById("js-tab-header").classList.add("show");
+        document.getElementById("js-tab-header").classList.add("visible");
         setSortOptions(tabId);
     }
     else {
         settings.set("activeTabId", id);
-        document.getElementById("js-tab-header").classList.remove("show");
+        document.getElementById("js-tab-header").classList.remove("visible");
     }
     document.getElementById(`js-tab-${id}`).classList.add("active");
 

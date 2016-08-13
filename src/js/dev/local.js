@@ -1,7 +1,6 @@
 /* global parse_audio_metadata */
 
 import { formatTime } from "./main.js";
-import * as player from "./player/player.js";
 import * as playlist from "./playlist/playlist.js";
 import * as playlistManage from "./playlist/playlist.manage.js";
 import * as playlistAdd from "./playlist/playlist.add.js";
@@ -14,8 +13,8 @@ const progress = (function() {
     }
 
     function toggleElement() {
-        progress.classList.toggle("show");
-        document.getElementById("js-local-notice").classList.toggle("show");
+        progress.classList.toggle("visible");
+        document.getElementById("js-local-notice").classList.toggle("visible");
     }
 
     return {
@@ -40,7 +39,7 @@ const worker = (function initWorker() {
                 playlist.sortTracks(pl.tracks, pl.sortedBy, pl.order);
                 playlistManage.update(pl);
             }
-            initStoredTrack();
+            playlistManage.initStoredTrack("local-files");
         };
 
         worker.onerror = function(event) {
@@ -57,14 +56,6 @@ const worker = (function initWorker() {
         init
     };
 })();
-
-function initStoredTrack() {
-    const initialized = player.storedTrack.isInitialized();
-
-    if (!initialized) {
-        playlistManage.initStoredTrack("local-files");
-    }
-}
 
 function getPlaylist() {
     const localPlaylist = playlist.get("local-files");
@@ -120,7 +111,7 @@ function filterDuplicateTracks(tracks, existingTracks) {
     }, []);
 }
 
-function parseTrackMetadata(track) {
+function getTrackMetadata(track) {
     return new Promise(resolve => {
         parse_audio_metadata(track, data => {
             resolve(data);
@@ -130,7 +121,7 @@ function parseTrackMetadata(track) {
 
 function parseTracks(tracks, parsedTracks, startIndex) {
     return Promise.all([
-        parseTrackMetadata(tracks[0].audioTrack),
+        getTrackMetadata(tracks[0].audioTrack),
         getTrackDuration(tracks[0].audioTrack)
     ])
     .then(data => {
