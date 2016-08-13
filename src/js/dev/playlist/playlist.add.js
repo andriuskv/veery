@@ -24,11 +24,11 @@ function showNotice(message) {
     const element = document.getElementById("js-playlist-add-notice");
 
     element.textContent = message;
-    element.classList.add("show");
+    element.classList.add("visible");
 
     setTimeout(() => {
         element.textContent = "";
-        element.classList.remove("show");
+        element.classList.remove("visible");
     }, 4000);
 }
 
@@ -58,7 +58,7 @@ function setProvider(item) {
         provider = newProvider;
         main.removeClassFromElement("playlist-provider", "selected");
         item.element.classList.add("selected");
-        document.getElementById("js-import-form-container").classList.add("show");
+        document.getElementById("js-import-form-container").classList.add("visible");
     }
 }
 

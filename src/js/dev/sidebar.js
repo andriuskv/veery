@@ -11,7 +11,7 @@ function createSidebarEntry(title, id) {
             <a href="#/playlist/${id}" class="btn btn-transparent sidebar-btn"
                 data-tab-item="playlist-${id}">
                 <span>${title}</span>
-                <span class="icon-volume-up is-playlist-active hidden"></span>
+                <span class="icon-volume-up active-playlist-icon hidden"></span>
             </a>
         </li>`;
 
@@ -32,7 +32,7 @@ function removeSidebarEntry(id) {
 
 function showActiveIcon(id) {
     const entry = getEntry(id);
-    const element = entry.querySelector(".is-playlist-active");
+    const element = entry.querySelector(".active-playlist-icon");
 
     element.classList.remove("hidden");
     activeSidebarIconElem = element;
@@ -45,17 +45,8 @@ function hideActiveIcon() {
     }
 }
 
-function showSidebarFooter() {
-    const sidebarFooter = document.getElementById("js-sidebar-footer");
-
-    if (!sidebarFooter.classList.contains("show")) {
-        sidebarFooter.classList.add("show");
-    }
-}
-
 function setTrackArt(track) {
     const artwork = document.getElementById("js-player-track-art");
-    const artPlaceholder = "./assets/images/album-art-placeholder.png";
 
     if (track && track.thumbnail) {
         let art = track.thumbnail;
@@ -66,7 +57,7 @@ function setTrackArt(track) {
         artwork.src = art;
     }
     else {
-        artwork.src = artPlaceholder;
+        artwork.src = "./assets/images/album-art-placeholder.png";
     }
 }
 
@@ -94,7 +85,6 @@ function showTrackInfo(track) {
         trackArtist.textContent = title;
         document.title = title;
     }
-    showSidebarFooter();
 }
 
 export {

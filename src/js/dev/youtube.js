@@ -88,28 +88,29 @@ function getPlaylistItems(playlist) {
     });
 }
 
+function getPlaylistTitle(data) {
+    if (!data.items.length) {
+        playlistAdd.showNotice("Playlist was not found");
+        playlistAdd.importBtn.toggle();
+        return;
+    }
+    return {
+        id: data.items[0].id,
+        title: data.items[0].snippet.title,
+        tracks: []
+    };
+}
+
 function fetchPlaylist(url) {
     if (!url.includes("list=")) {
         playlistAdd.showNotice("Invalid url");
         playlistAdd.importBtn.toggle();
         return;
     }
-
     const id = url.split("list=")[1];
 
     getYoutube("playlists", "snippet", "id", id)
-    .then(data => {
-        if (!data.items.length) {
-            playlistAdd.showNotice("Playlist was not found");
-            playlistAdd.importBtn.toggle();
-            return;
-        }
-        return {
-            id,
-            title: data.items[0].snippet.title,
-            tracks: []
-        };
-    })
+    .then(getPlaylistTitle)
     .then(getPlaylistItems)
     .then(parseItems)
     .then(playlistAdd.add)

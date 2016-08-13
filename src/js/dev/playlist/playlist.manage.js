@@ -164,24 +164,23 @@ function removeTrack(pl, playlistElement, trackElement) {
     }
 }
 
-function initStoredTrack(id) {
-    const allPlaylistsInitialized = playlist.setAsInitialized(id);
-
-    if (allPlaylistsInitialized) {
-        player.storedTrack.init();
+function initStoredTrack(playlistIdPrefix) {
+    if (player.storedTrack.isInitialized()) {
+        return;
     }
-}
+    const playlistIds = Object.keys(playlist.getAll()).filter(id => id.startsWith(playlistIdPrefix));
 
-function initPlaylists(playlistAffix) {
-    let containsPlaylist = false;
+    playlistIds.forEach(id => {
+        const { initialized } = playlist.get(id);
 
-    Object.keys(playlist.getAll()).forEach(id => {
-        if (id.startsWith(playlistAffix)) {
-            containsPlaylist = true;
-            initStoredTrack(id);
+        if (!initialized) {
+            const allPlaylistsInitialized = playlist.setAsInitialized(id);
+
+            if (allPlaylistsInitialized) {
+                player.storedTrack.init();
+            }
         }
     });
-    return containsPlaylist;
 }
 
 document.getElementById("js-tab-container").addEventListener("click", ({ target }) => {
@@ -233,6 +232,5 @@ export {
     removePlaylist as remove,
     updatePlaylist as update,
     initStoredTrack,
-    initPlaylists,
     filterTracks
 };

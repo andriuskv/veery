@@ -54,6 +54,9 @@ const storedTrack = (function () {
         else if (player === "soundcloud") {
             scPlayer.playTrack(track, storedTrack.currentTime);
         }
+        else if (player === "youtube") {
+            ytPlayer.queueTrack(track.id, storedTrack.currentTime);
+        }
     }
 
     return {

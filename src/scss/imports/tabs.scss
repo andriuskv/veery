@@ -21,7 +21,7 @@
     margin-bottom: 4px;
     background-color: $color2;
 
-    &.show {
+    &.visible {
         display: flex;
         justify-content: space-between;
     }
