@@ -1,4 +1,4 @@
-import * as main from "./../main.js";
+import { removeElementClass, getElementByAttr, scriptLoader } from "./../main.js";
 import * as router from "./../router.js";
 import * as sidebar from "./../sidebar.js";
 import * as local from "./../local.js";
@@ -56,7 +56,7 @@ function setProvider(item) {
 
     if (newProvider !== provider) {
         provider = newProvider;
-        main.removeClassFromElement("playlist-provider", "selected");
+        removeElementClass("playlist-provider", "selected");
         item.element.classList.add("selected");
         document.getElementById("js-import-form-container").classList.add("visible");
     }
@@ -128,7 +128,7 @@ document.getElementById("js-playlist-import-form").addEventListener("submit", ev
 
 document.getElementById("js-playlist-entries").addEventListener("click", ({ target }) => {
     const action = target.getAttribute("data-action");
-    const entry = main.getElementByAttr(target, "data-id");
+    const entry = getElementByAttr(target, "data-id");
 
     if (!entry) {
         return;
@@ -156,7 +156,7 @@ document.getElementById("js-playlist-entries").addEventListener("click", ({ targ
 });
 
 document.getElementById("js-playlist-add-options").addEventListener("click", ({ target }) => {
-    const item = main.getElementByAttr(target, "data-choice");
+    const item = getElementByAttr(target, "data-choice");
 
     if (!item) {
         return;
@@ -174,9 +174,9 @@ document.getElementById("js-playlist-add-options").addEventListener("click", ({ 
 window.addEventListener("load", function onLoad() {
     const savedPlaylists = playlist.getSavedPlaylists();
 
-    main.scriptLoader.load("js/libs/sdk.js", sc.init);
-    main.scriptLoader.load("https://www.youtube.com/iframe_api");
-    main.scriptLoader.load("js/libs/metadata-audio-parser.js");
+    scriptLoader.load("js/libs/sdk.js", sc.init);
+    scriptLoader.load("https://www.youtube.com/iframe_api");
+    scriptLoader.load("js/libs/metadata-audio-parser.js");
 
     Object.keys(savedPlaylists).forEach(id => {
         const pl = savedPlaylists[id];

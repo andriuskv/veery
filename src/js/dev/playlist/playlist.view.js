@@ -1,4 +1,4 @@
-import { removeClassFromElement } from "./../main.js";
+import { removeElementClass } from "./../main.js";
 
 function createListItem(track) {
     return `
@@ -132,7 +132,7 @@ function showPlayingTrack(index, id, manual) {
     const container = document.getElementById(`js-${id}`);
     const track = container.children[index];
 
-    removeClassFromElement("track", "playing");
+    removeElementClass("track", "playing");
     track.classList.add("playing");
 
     if (!manual) {
