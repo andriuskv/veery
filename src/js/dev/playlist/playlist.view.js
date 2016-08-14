@@ -24,18 +24,13 @@ function createList(id, items) {
 }
 
 function createGridItem(item) {
-    let title = item.title;
-
-    if (title.length > 64) {
-        title = `${title.slice(0, 64)}...`;
-    }
     return `
         <li class="grid-item track" data-index="${item.index}">
             <div class="grid-item-thumb-container">
                 <div class="grid-item-duration">${item.duration}</div>
                 <img src="${item.thumbnail}" class="grid-item-thumb">
             </div>
-            <div title="${item.title}">${title}</div>
+            <div title="${item.title}">${item.title}</div>
         </li>
     `;
 }
