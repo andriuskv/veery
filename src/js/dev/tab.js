@@ -1,10 +1,10 @@
 import * as settings from "./settings.js";
-import { removeClassFromElement } from "./main.js";
+import { removeElementClass } from "./main.js";
 import { setSortOptions } from "./playlist/playlist.sorting.js";
 
 function toggleTab(id, ignoreSidebar) {
-    removeClassFromElement("sidebar-btn", "active");
-    removeClassFromElement("tab", "active");
+    removeElementClass("sidebar-btn", "active");
+    removeElementClass("tab", "active");
 
     if (id.startsWith("playlist-")) {
         const tabId = id.split("playlist-")[1];

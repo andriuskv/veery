@@ -1,4 +1,4 @@
-import * as main from "./../main.js";
+import { removeElementClass, getElementByAttr } from "./../main.js";
 import * as settings from "./../settings.js";
 import * as sidebar from "./../sidebar.js";
 import * as playlist from "./../playlist/playlist.js";
@@ -140,20 +140,6 @@ function playNewTrack(track, player) {
     }
 }
 
-function playFirstTrack(id) {
-    const selectedTrack = playlist.getSelectedTrack();
-    let index = 0;
-
-    if (selectedTrack) {
-        index = selectedTrack.index;
-        settings.set("manual", true);
-    }
-    else {
-        index = playlist.getNextTrackIndex(0);
-    }
-    playTrackAtIndex(index, id);
-}
-
 function togglePlaying(player) {
     const track = playlist.getTrackAtCurrentIndex();
 
@@ -181,7 +167,7 @@ function playTrack() {
 
         if (playlist.get(id)) {
             playlist.setActive(id);
-            playFirstTrack(id);
+            playTrackAtIndex(playlist.getNextTrackIndex(0), id);
         }
         return;
     }
@@ -258,7 +244,7 @@ function stopPlayer(track = playlist.getCurrentTrack(), player = settings.get("p
 
     if (player) {
         sidebar.hideActiveIcon();
-        main.removeClassFromElement("track", "playing");
+        removeElementClass("track", "playing");
         resetPlayer();
     }
 }
@@ -318,7 +304,7 @@ function seekTime(percent) {
 }
 
 document.getElementById("js-tab-container").addEventListener("dblclick", ({ target }) => {
-    const element = main.getElementByAttr(target, "data-index");
+    const element = getElementByAttr(target, "data-index");
 
     if (element) {
         const index = element.attrValue;

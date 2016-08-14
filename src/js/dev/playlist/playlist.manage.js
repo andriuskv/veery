@@ -1,6 +1,6 @@
+import { removeElementClass, getElementByAttr } from "./../main.js";
 import * as settings from "./../settings.js";
 import * as router from "./../router.js";
-import * as main from "./../main.js";
 import * as tab from "./../tab.js";
 import * as sidebar from "./../sidebar.js";
 import * as local from "./../local.js";
@@ -73,7 +73,7 @@ function removePlaylist(id, entry) {
 function updatePlaylist(pl) {
     const currentTrack = playlist.getCurrentTrack();
 
-    main.removeClassFromElement("track", "selected");
+    removeElementClass("track", "selected");
     playlistView.update(pl);
 
     if (currentTrack && playlist.isActive(pl.id)) {
@@ -113,9 +113,11 @@ function createPlaylistEntry(title, id) {
     playlistEntryContainer.insertAdjacentHTML("beforeend", entry);
 }
 
-function selectTrackElement(element) {
-    main.removeClassFromElement("track", "selected");
-    element.classList.add("selected");
+function selectTrackElement(element, selectMultiple) {
+    if (!selectMultiple) {
+        removeElementClass("track", "selected");
+    }
+    element.classList.toggle("selected");
 }
 
 function removeTrack(pl, playlistElement, trackElement) {
@@ -183,15 +185,11 @@ function initStoredTrack(playlistIdPrefix) {
     });
 }
 
-document.getElementById("js-tab-container").addEventListener("click", ({ target }) => {
-    const item = main.getElementByAttr(target, "data-index");
+document.getElementById("js-tab-container").addEventListener("click", ({ target, ctrlKey }) => {
+    const item = getElementByAttr(target, "data-index");
 
     if (item) {
-        playlist.setSelectedTrack({
-            playlistId: settings.get("activeTabId"),
-            index: Number.parseInt(item.attrValue, 10)
-        });
-        selectTrackElement(item.element);
+        selectTrackElement(item.element, ctrlKey);
     }
 });
 

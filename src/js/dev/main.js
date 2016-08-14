@@ -24,12 +24,12 @@ const scriptLoader = (function() {
     };
 })();
 
-function removeClassFromElement(className, classToRemove) {
-    const element = document.querySelector(`.${className}.${classToRemove}`);
+function removeElementClass(className, classToRemove) {
+    const elements = Array.from(document.querySelectorAll(`.${className}.${classToRemove}`));
 
-    if (element) {
+    elements.forEach(element => {
         element.classList.remove(classToRemove);
-    }
+    });
 }
 
 function getElementByAttr(element, attr) {
@@ -65,6 +65,6 @@ function formatTime(time) {
 export {
     scriptLoader,
     getElementByAttr,
-    removeClassFromElement,
+    removeElementClass,
     formatTime
 };

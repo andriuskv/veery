@@ -1,7 +1,7 @@
 /* global SC */
 
 import * as settings from "./../settings.js";
-import * as player from "./player.js";
+import { onTrackStart, onTrackEnd, toggleTrackPlaying } from "./player.js";
 
 let scPlayer = null;
 
@@ -25,9 +25,9 @@ function playTrack(track, startTime) {
         trackPlayer.setVolume(settings.get("volume"));
 
         trackPlayer.on("play-resume", () => {
-            player.onTrackStart(track, getTime(trackPlayer))
+            onTrackStart(track, getTime(trackPlayer))
             .then(() => {
-                player.onTrackEnd(repeatTrack);
+                onTrackEnd(repeatTrack);
             });
         });
 
@@ -55,7 +55,7 @@ function togglePlaying() {
     const play = scPlayer.play.bind(scPlayer);
     const pause = scPlayer.pause.bind(scPlayer);
 
-    player.toggleTrackPlaying(play, pause);
+    toggleTrackPlaying(play, pause);
 }
 
 function stopTrack() {
