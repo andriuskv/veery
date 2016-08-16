@@ -1,6 +1,7 @@
 /* global SC */
 
 import * as settings from "./../settings.js";
+import { setCurrentTrack } from "./../playlist/playlist.js";
 import { onTrackStart, onTrackEnd, toggleTrackPlaying } from "./player.js";
 
 let scPlayer = null;
@@ -18,19 +19,17 @@ function repeatTrack() {
 }
 
 function playTrack(track, startTime) {
-    console.log(track);
+    setCurrentTrack(track);
     SC.stream(`/tracks/${track.id}`).then(trackPlayer => {
         scPlayer = trackPlayer;
 
         trackPlayer.setVolume(settings.get("volume"));
-
         trackPlayer.on("play-resume", () => {
-            onTrackStart(track, getTime(trackPlayer))
+            onTrackStart(getTime(trackPlayer))
             .then(() => {
                 onTrackEnd(repeatTrack);
             });
         });
-
         trackPlayer.on("state-change", state => {
             if (!startTime) {
                 return;
@@ -43,7 +42,6 @@ function playTrack(track, startTime) {
                 startTime = 0;
             }
         });
-
         trackPlayer.play();
     })
     .catch(error => {

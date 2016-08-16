@@ -1,8 +1,7 @@
 const playlists = {};
 let activePlaylistId = "";
 let currentTrack = null;
-let currentIndex = 0;
-let selectedTrack = null;
+let playbackIndex = 0;
 
 function getAllPlaylists() {
     return playlists;
@@ -80,53 +79,47 @@ function getActivePlaylist() {
 }
 
 function setCurrentTrack(track) {
-    currentTrack = track;
+    currentTrack = track ? Object.assign({}, track): track;
 }
 
 function getCurrentTrack() {
     return currentTrack;
 }
 
-function setCurrentIndex(index) {
-    const playlist = getActivePlaylist();
-
-    currentIndex = playlist.playbackOrder.indexOf(Number.parseInt(index, 10));
+function updateCurrentTrackIndex(newIndex) {
+    currentTrack.index = newIndex;
+    setCurrentTrack(currentTrack);
 }
 
-function resetCurrentIndex() {
+function findTrack(id, trackId) {
+    const { tracks } = getPlaylistById(id);
+
+    return tracks.find(track => track.title === trackId || track.name === trackId);
+}
+
+function setPlaybackIndex(index) {
+    const playlist = getActivePlaylist();
+
+    playbackIndex = playlist.playbackOrder.indexOf(Number.parseInt(index, 10));
+}
+
+function setDefaultPlaybackIndex() {
+    playbackIndex = 0;
+}
+
+function resetPlaybackIndex() {
     const currentTrack = getCurrentTrack();
 
     if (currentTrack) {
-        setCurrentIndex(currentTrack.index);
+        setPlaybackIndex(currentTrack.index);
     }
-}
-
-function getCurrentTrackIndex() {
-    const playlist = getActivePlaylist();
-
-    return playlist.playbackOrder[currentIndex];
-}
-
-function getTrackAtCurrentIndex() {
-    const index = getCurrentTrackIndex();
-
-    return getTrackAtIndex(index);
-}
-
-function setSelectedTrack(track) {
-    selectedTrack = Object.assign({}, track);
-}
-
-function getSelectedTrack() {
-    return selectedTrack;
 }
 
 function setTrackIndexes(pl, shuffle) {
     pl.playbackOrder = pl.tracks.map(track => track.index);
 
     if (shuffle) {
-        shufflePlaybackOrder(shuffle, pl);
-        resetCurrentIndex();
+        shufflePlaybackOrder(pl, shuffle);
     }
 }
 
@@ -142,7 +135,7 @@ function shuffleArray(array) {
     return array;
 }
 
-function shufflePlaybackOrder(shuffle, pl) {
+function shufflePlaybackOrder(pl, shuffle) {
     pl.shuffled = shuffle;
     if (shuffle) {
         pl.playbackOrder = shuffleArray(pl.playbackOrder);
@@ -152,25 +145,17 @@ function shufflePlaybackOrder(shuffle, pl) {
     }
 }
 
-function decrementIndex() {
-    currentIndex -= 1;
-}
-
 function getNextTrackIndex(direction) {
     const { playbackOrder } = getActivePlaylist();
 
-    currentIndex += direction;
-    if (currentIndex === playbackOrder.length) {
-        currentIndex = 0;
+    playbackIndex += direction;
+    if (playbackIndex >= playbackOrder.length) {
+        playbackIndex = 0;
     }
-    if (currentIndex === -1) {
-        currentIndex = playbackOrder.length - 1;
+    if (playbackIndex === -1) {
+        playbackIndex = playbackOrder.length - 1;
     }
-    return playbackOrder[currentIndex];
-}
-
-function findTranck(id, searchTerm) {
-    return playlists[id].tracks.find(track => track.name === searchTerm || track.title === searchTerm);
+    return playbackOrder[playbackIndex];
 }
 
 function getTrackAtIndex(index) {
@@ -185,7 +170,7 @@ function getNextTrack(direction) {
 
     if (track) {
         setCurrentTrack(track);
-        setCurrentIndex(track.index);
+        setPlaybackIndex(track.index);
         return track;
     }
 }
@@ -225,7 +210,6 @@ export {
     getAllPlaylists as getAll,
     getActivePlaylist as getActive,
     setActivePlaylist as setActive,
-    findTranck,
     sortTracks,
     setAsInitialized,
     getSavedPlaylists,
@@ -233,15 +217,14 @@ export {
     getActivePlaylistId,
     setCurrentTrack,
     getCurrentTrack,
+    updateCurrentTrackIndex,
+    findTrack,
     getNextTrackIndex,
     getNextTrack,
-    setCurrentIndex,
-    resetCurrentIndex,
-    getTrackAtCurrentIndex,
+    setPlaybackIndex,
+    resetPlaybackIndex,
+    setDefaultPlaybackIndex,
     getTrackAtIndex,
-    setSelectedTrack,
-    getSelectedTrack,
     setTrackIndexes,
-    shufflePlaybackOrder,
-    decrementIndex
+    shufflePlaybackOrder
 };
