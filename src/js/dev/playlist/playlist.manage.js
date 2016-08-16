@@ -79,7 +79,7 @@ function updatePlaylist(pl) {
     playlistView.update(pl);
 
     if (currentTrack && playlist.isActive(pl.id)) {
-        const track = playlist.findTrack(pl.id, currentTrack.name || currentTrack.title);
+        const track = playlist.findTrack(pl.id, currentTrack.name);
 
         if (track) {
             playlist.updateCurrentTrackIndex(track.index);
@@ -95,8 +95,10 @@ function filterTracks(tracks, trackElements, query) {
         const title = track.title ? track.title.toLowerCase() : "";
         const artist = track.artist ? track.artist.toLowerCase() : "";
         const album = track.album ? track.album.toLowerCase() : "";
+        const name = track.name ? track.name.toLowerCase() : "";
 
-        if (!title.includes(query) && !artist.includes(query) && !album.includes(query)) {
+        if (!title.includes(query) && !artist.includes(query) && !album.includes(query)
+            && !name.includes(query)) {
             trackElement.classList.add("hidden");
         }
         else {
@@ -172,7 +174,7 @@ function removeSelectedPlaylistTracks(pl, selectedTrackIndexes) {
         if (includesTrack && pl.id === "local-files") {
             local.worker.post({
                 action: "remove",
-                name: track.name || track.title
+                name: track.name
             });
         }
         return !includesTrack;
@@ -191,7 +193,7 @@ function updateCurrentTrack(playlistId, selectedTrackIndexes) {
             playlist.updateCurrentTrackIndex(-1);
         }
         else {
-            const { index } = playlist.findTrack(playlistId, currentTrack.name || currentTrack.title);
+            const { index } = playlist.findTrack(playlistId, currentTrack.name);
 
             playlist.updateCurrentTrackIndex(index);
             playlist.setPlaybackIndex(index);

@@ -33,7 +33,7 @@ const storedTrack = (function () {
         if (isInitialized()) {
             return;
         }
-        const track = playlist.findTrack(storedTrack.playlistId, storedTrack.name || storedTrack.title);
+        const track = playlist.findTrack(storedTrack.playlistId, storedTrack.name);
         initialized = true;
 
         if (!track) {
@@ -91,7 +91,7 @@ function onTrackStart(time) {
 
     return controls.elapsedTime.start({
         playlistId: id,
-        name: track.name || track.title,
+        name: track.name,
         duration: time.duration,
         currentTime: time.currentTime
     });

@@ -6,7 +6,7 @@ function parseItems(playlist) {
         index,
         id: track.snippet.resourceId.videoId,
         duration: track.snippet.duration,
-        title: track.snippet.title,
+        name: track.snippet.title,
         thumbnail: track.snippet.thumbnails.default.url
     }));
     delete playlist.token;

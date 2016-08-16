@@ -79,7 +79,7 @@ function showTrackInfo(track) {
         document.title = `${track.artist} - ${track.title}`;
     }
     else {
-        const title = track.name || track.title;
+        const title = track.name;
 
         trackTitle.textContent = "";
         trackArtist.textContent = title;
