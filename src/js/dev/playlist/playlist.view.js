@@ -30,7 +30,7 @@ function createGridItem(item) {
                 <div class="grid-item-duration">${item.duration}</div>
                 <img src="${item.thumbnail}" class="grid-item-thumb">
             </div>
-            <div title="${item.title}">${item.title}</div>
+            <div>${item.name}</div>
         </li>
     `;
 }
@@ -85,7 +85,6 @@ function updateTrackListView(track, trackElement) {
 function updateTrackGridView(track, trackElement) {
     trackElement[0].children[0].textContent = track.duration;
     trackElement[0].children[1].setAttribute("src", track.thumbnail);
-    trackElement[1].setAttribute("title", track.title);
     trackElement[1].textContent = track.title;
 }
 

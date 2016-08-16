@@ -17,7 +17,7 @@ function parseTracks(tracks) {
         duration: formatTime(track.duration / 1000),
         id: track.id,
         thumbnail: track.artwork_url || "assets/images/album-art-placeholder.png",
-        title: track.title
+        name: track.title
     }));
 }
 
