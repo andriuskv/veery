@@ -15,6 +15,7 @@ function initPlaylist(pl, toggle) {
 
     router.add(route);
     playlist.setTrackIndexes(pl, settings.get("shuffle"));
+    playlist.resetPlaybackIndex();
     playlistView.add(pl);
     sidebar.createEntry(pl.title, pl.id);
     createPlaylistEntry(pl.title, pl.id);
@@ -35,6 +36,7 @@ function initPlaylist(pl, toggle) {
 
 function appendToPlaylist(pl, tracks, toggle) {
     playlist.setTrackIndexes(pl, settings.get("shuffle"));
+    playlist.resetPlaybackIndex();
     playlistView.append(pl, tracks);
 
     if (toggle && router.isActive("add")) {
@@ -77,8 +79,13 @@ function updatePlaylist(pl) {
     playlistView.update(pl);
 
     if (currentTrack && playlist.isActive(pl.id)) {
-        playlistView.showPlayingTrack(currentTrack.index, pl.id, true);
-        playlist.setCurrentIndex(currentTrack.index);
+        const track = playlist.findTrack(pl.id, currentTrack.name || currentTrack.title);
+
+        if (track) {
+            playlist.updateCurrentTrackIndex(track.index);
+            playlist.setPlaybackIndex(track.index);
+            playlistView.showPlayingTrack(track.index, pl.id, true);
+        }
     }
 }
 
@@ -120,52 +127,6 @@ function selectTrackElement(element, selectMultiple) {
     element.classList.toggle("selected");
 }
 
-function removeTrack(pl, playlistElement, trackElement) {
-    const index = Number.parseInt(trackElement.getAttribute("data-index"), 10);
-    const currentTrack = playlist.getCurrentTrack();
-    const currentIndex = currentTrack ? currentTrack.index : -1;
-    const shuffle = settings.get("shuffle");
-    const track = pl.tracks[index];
-    const trackName = track.name || track.title;
-    const storedTrack = player.storedTrack.get();
-
-    if (storedTrack.playlistId === pl.id && storedTrack.name === trackName) {
-        player.storedTrack.remove();
-    }
-
-    if (pl.id === "local-files") {
-        local.worker.post({
-            action: "remove",
-            name: trackName
-        });
-    }
-
-    playlistElement.removeChild(trackElement);
-    pl.tracks.splice(index, 1);
-    pl.tracks.forEach((track, index) => {
-        track.index = index;
-        playlistElement.children[index].setAttribute("data-index", index);
-    });
-    playlist.setTrackIndexes(pl, shuffle, true);
-    playlist.save(pl);
-
-    if (pl.id !== playlist.getActivePlaylistId()) {
-        return;
-    }
-
-    if (currentTrack && currentIndex === index) {
-        if (!settings.get("paused")) {
-            player.playNext(0);
-        }
-        else {
-            player.stop();
-        }
-    }
-    else if (currentIndex > index && !shuffle) {
-        playlist.decrementIndex();
-    }
-}
-
 function initStoredTrack(playlistIdPrefix) {
     if (player.storedTrack.isInitialized()) {
         return;
@@ -185,6 +146,75 @@ function initStoredTrack(playlistIdPrefix) {
     });
 }
 
+function getSelectedTrackIndexes(selectedElements) {
+    return selectedElements.map(element => {
+        return Number.parseInt(element.getAttribute("data-index"), 10);
+    });
+}
+
+function removeSelectedTrackElements(selectedElements) {
+    selectedElements.forEach(element => {
+        element.parentElement.removeChild(element);
+    });
+}
+
+function resetTrackElementIndexes(elements) {
+    elements.forEach((element, index) => {
+        element.setAttribute("data-index", index);
+    });
+}
+
+function removeSelectedPlaylistTracks(pl, selectedTrackIndexes) {
+    return pl.tracks
+    .filter(track => {
+        const includesTrack = selectedTrackIndexes.includes(track.index);
+
+        if (includesTrack && pl.id === "local-files") {
+            local.worker.post({
+                action: "remove",
+                name: track.name || track.title
+            });
+        }
+        return !includesTrack;
+    })
+    .map((track, index) => {
+        track.index = index;
+        return track;
+    });
+}
+
+function updateCurrentTrack(playlistId, selectedTrackIndexes) {
+    const currentTrack = playlist.getCurrentTrack();
+
+    if (playlistId === playlist.getActivePlaylistId() && currentTrack) {
+        if (selectedTrackIndexes.includes(currentTrack.index)) {
+            playlist.updateCurrentTrackIndex(-1);
+        }
+        else {
+            const { index } = playlist.findTrack(playlistId, currentTrack.name || currentTrack.title);
+
+            playlist.updateCurrentTrackIndex(index);
+            playlist.setPlaybackIndex(index);
+        }
+    }
+}
+
+function removeSelectedTracks(pl) {
+    const playlistContainer = document.getElementById(`js-${pl.id}`);
+    const selectedElements = Array.from(playlistContainer.querySelectorAll(".track.selected"));
+
+    if (selectedElements.length) {
+        const selectedTrackIndexes = getSelectedTrackIndexes(selectedElements);
+
+        removeSelectedTrackElements(selectedElements);
+        resetTrackElementIndexes(Array.from(playlistContainer.children));
+        pl.tracks = removeSelectedPlaylistTracks(pl, selectedTrackIndexes);
+        playlist.setTrackIndexes(pl, settings.get("shuffle"));
+        playlist.save(pl);
+        updateCurrentTrack(pl.id, selectedTrackIndexes);
+    }
+}
+
 document.getElementById("js-tab-container").addEventListener("click", ({ target, ctrlKey }) => {
     const item = getElementByAttr(target, "data-index");
 
@@ -197,7 +227,6 @@ document.getElementById("js-filter-input").addEventListener("keyup", ({ target }
     if (timeout) {
         clearTimeout(timeout);
     }
-
     timeout = setTimeout(() => {
         const pl = playlist.get(settings.get("activeTabId"));
         const trackElements = document.getElementById(`js-${pl.id}`).children;
@@ -214,14 +243,7 @@ window.addEventListener("keypress", event => {
     if (!key || !pl) {
         return;
     }
-
-    const playlistContainer = document.getElementById(`js-${pl.id}`);
-    const selected = playlistContainer.querySelector(".track.selected");
-
-    if (!selected) {
-        return;
-    }
-    removeTrack(pl, playlistContainer, selected);
+    removeSelectedTracks(pl);
 });
 
 export {

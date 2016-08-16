@@ -83,12 +83,10 @@ function updateTrackListView(track, trackElement) {
 }
 
 function updateTrackGridView(track, trackElement) {
-    const title = track.title.length > 64 ? `${track.title.slice(0, 64)}...` : track.title;
-
     trackElement[0].children[0].textContent = track.duration;
     trackElement[0].children[1].setAttribute("src", track.thumbnail);
     trackElement[1].setAttribute("title", track.title);
-    trackElement[1].textContent = title;
+    trackElement[1].textContent = track.title;
 }
 
 function updatePlaylist(pl) {

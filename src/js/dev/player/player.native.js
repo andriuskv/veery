@@ -1,5 +1,5 @@
 import * as settings from "./../settings.js";
-import { getCurrentTrack } from "./../playlist/playlist.js";
+import { getCurrentTrack, setCurrentTrack } from "./../playlist/playlist.js";
 import { onTrackStart, onTrackEnd, toggleTrackPlaying } from "./player.js";
 
 function getTime(audio) {
@@ -10,13 +10,13 @@ function getTime(audio) {
 }
 
 function playTrack(track, startTime) {
-    console.log(track);
     track.audioBlobURL = URL.createObjectURL(track.audioTrack);
     track.audio = new Audio(track.audioBlobURL);
     track.audio.volume = settings.get("volume");
 
+    setCurrentTrack(track);
     track.audio.onplaying = function() {
-        onTrackStart(track, getTime(track.audio))
+        onTrackStart(getTime(track.audio))
         .then(() => {
             const play = track.audio.play.bind(track.audio);
 
@@ -34,7 +34,7 @@ function playTrack(track, startTime) {
     };
 }
 
-function playTrackOnButtonPress(track) {
+function togglePlaying(track) {
     const audio = track.audio;
 
     if (audio) {
@@ -78,9 +78,9 @@ function getElapsed(percent) {
 }
 
 export {
-    playTrackOnButtonPress as play,
     stopTrack as stop,
     playTrack,
+    togglePlaying,
     getElapsed,
     setVolume
 };

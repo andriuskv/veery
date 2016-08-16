@@ -1,7 +1,7 @@
 /* global YT */
 
 import * as settings from "./../settings.js";
-import { getCurrentTrack, getNextTrack } from "./../playlist/playlist.js";
+import { setCurrentTrack } from "./../playlist/playlist.js";
 import { initStoredTrack } from "./../playlist/playlist.manage.js";
 import { onTrackStart, onTrackEnd, toggleTrackPlaying } from "./player.js";
 
@@ -17,11 +17,8 @@ function getTime(player) {
 
 function onPlayerStateChange({ data: currentState }) {
     if (currentState === YT.PlayerState.PLAYING) {
-        const track = getCurrentTrack() || getNextTrack(0);
-
-        console.log(track);
         setVolume(settings.get("volume"));
-        onTrackStart(track, getTime(ytPlayer))
+        onTrackStart(getTime(ytPlayer))
         .then(() => {
             const play = ytPlayer.playVideo.bind(ytPlayer);
 
@@ -60,13 +57,15 @@ function togglePlaying() {
 
 function playTrack(track) {
     if (ytPlayer) {
+        setCurrentTrack(track);
         ytPlayer.loadVideoById(track.id);
         return;
     }
 }
 
-function queueTrack(trackId, startTime) {
-    ytPlayer.cueVideoById(trackId, startTime);
+function queueTrack(track, startTime) {
+    setCurrentTrack(track);
+    ytPlayer.cueVideoById(track.id, startTime);
 }
 
 function stopTrack() {

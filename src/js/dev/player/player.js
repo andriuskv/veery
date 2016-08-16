@@ -33,18 +33,21 @@ const storedTrack = (function () {
         if (isInitialized()) {
             return;
         }
+        const track = playlist.findTrack(storedTrack.playlistId, storedTrack.name || storedTrack.title);
         initialized = true;
+
+        if (!track) {
+            return;
+        }
+
         playlist.setActive(storedTrack.playlistId);
-
-        const track = playlist.findTranck(storedTrack.playlistId, storedTrack.name);
-        const player = getPlayer(storedTrack.playlistId);
-
-        playlist.setCurrentIndex(track.index);
-        playlist.setCurrentTrack(track);
+        playlist.setPlaybackIndex(track.index);
 
         controls.updateSlider("track", storedTrack.elapsed);
         controls.setElapsedTime(storedTrack.currentTime);
         beforeTrackStart(track, storedTrack.playlistId, true);
+
+        const player = getPlayer(storedTrack.playlistId);
 
         settings.set("player", player);
 
@@ -55,7 +58,7 @@ const storedTrack = (function () {
             scPlayer.playTrack(track, storedTrack.currentTime);
         }
         else if (player === "youtube") {
-            ytPlayer.queueTrack(track.id, storedTrack.currentTime);
+            ytPlayer.queueTrack(track, storedTrack.currentTime);
         }
     }
 
@@ -71,10 +74,13 @@ const storedTrack = (function () {
 function beforeTrackStart(track, id, manual) {
     sidebar.showTrackInfo(track);
     controls.showTrackDuration(track.duration, false);
-    playlistView.showPlayingTrack(track.index, id, manual);
+    if (track.index !== -1) {
+        playlistView.showPlayingTrack(track.index, id, manual);
+    }
 }
 
-function onTrackStart(track, time) {
+function onTrackStart(time) {
+    const track = playlist.getCurrentTrack();
     const id = playlist.getActivePlaylistId();
 
     beforeTrackStart(track, id, settings.get("manual"));
@@ -141,15 +147,14 @@ function playNewTrack(track, player) {
 }
 
 function togglePlaying(player) {
-    const track = playlist.getTrackAtCurrentIndex();
+    const track = playlist.getCurrentTrack();
 
     if (!track) {
         return;
     }
-    playlist.setCurrentTrack(track);
 
     if (player === "native") {
-        nPlayer.play(track);
+        nPlayer.togglePlaying(track);
     }
     else if (player === "youtube") {
         ytPlayer.togglePlaying();
@@ -188,6 +193,11 @@ function playNextTrack(direction) {
     if (track) {
         playNewTrack(track, player);
     }
+    else {
+
+        // If playlist is empty reset player
+        resetPlayer();
+    }
 }
 
 function playTrackAtIndex(index, id) {
@@ -213,13 +223,12 @@ function playTrackAtIndex(index, id) {
     settings.set("player", player);
 
     if (settings.get("shuffle") && !pl.shuffled) {
-        playlist.shufflePlaybackOrder(true, pl);
-        playlist.resetCurrentIndex();
+        playlist.shufflePlaybackOrder(pl, true);
+        playlist.resetPlaybackIndex();
     }
     else {
-        playlist.setCurrentIndex(track.index);
+        playlist.setPlaybackIndex(track.index);
     }
-    playlist.setCurrentTrack(track);
     playNewTrack(track, player);
 }
 
@@ -243,18 +252,19 @@ function stopPlayer(track = playlist.getCurrentTrack(), player = settings.get("p
     stopTrack(track, player);
 
     if (player) {
-        sidebar.hideActiveIcon();
-        removeElementClass("track", "playing");
         resetPlayer();
     }
 }
 
 function resetPlayer() {
+    removeElementClass("track", "playing");
+    settings.set("player", "");
     settings.set("paused", true);
     playlist.setCurrentTrack(null);
     controls.resetTrackSlider();
     controls.showTrackDuration(0);
     controls.addClassOnPlayBtn("icon-play");
+    sidebar.hideActiveIcon();
     sidebar.showTrackInfo();
 }
 
@@ -267,8 +277,8 @@ function toggleShuffle(shuffle) {
 
     settings.set("shuffle", shuffle);
     if (pl) {
-        playlist.shufflePlaybackOrder(shuffle, pl);
-        playlist.resetCurrentIndex();
+        playlist.shufflePlaybackOrder(pl, shuffle);
+        playlist.resetPlaybackIndex();
     }
 }
 
