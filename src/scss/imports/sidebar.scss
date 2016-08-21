@@ -1,4 +1,5 @@
 .sidebar {
+    user-select: none;
     flex-grow: 0;
     flex-shrink: 0;
     display: flex;
@@ -28,7 +29,6 @@
     flex-basis: 50%;
     flex-grow: 1;
     overflow-y: hidden;
-    user-select: none;
     margin-top: 4px;
     margin-bottom: 4px;
 }

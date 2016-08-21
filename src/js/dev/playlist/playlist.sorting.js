@@ -1,6 +1,7 @@
 import * as settings from "./../settings.js";
 import * as playlist from "./playlist.js";
 import * as playlistManage from "./playlist.manage.js";
+import { filterTracks } from "./playlist.view.js";
 
 const sortToggleBtn = document.getElementById("js-sort-toggle");
 const orderToggleBtn = document.getElementById("js-order-toggle");
@@ -35,7 +36,7 @@ function toggleBtnClasses(btn, order = 1) {
 }
 
 function sortPlaylist(pl, sortBy) {
-    let query = document.getElementById("js-filter-input").value.trim();
+    const query = document.getElementById("js-filter-input").value;
 
     playlist.sort(pl, sortBy);
     playlistManage.update(pl);
@@ -44,8 +45,7 @@ function sortPlaylist(pl, sortBy) {
     if (query) {
         const trackElements = document.getElementById(`js-${pl.id}`).children;
 
-        query = query.toLowerCase();
-        playlistManage.filterTracks(pl.tracks, trackElements, query);
+        filterTracks(pl.tracks, trackElements, query);
     }
 }
 
