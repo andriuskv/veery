@@ -1,4 +1,5 @@
 .list-view-header {
+    user-select: none;
     display: flex;
 
     // -14px to account for scrollbar
@@ -20,9 +21,6 @@
     }
 }
 .list-view {
-    user-select: none;
-    backface-visibility: hidden;
-    overflow-y: scroll;
 
     // -26px because of .list-view-header
     height: calc(100% - 26px);
@@ -40,6 +38,9 @@
     &:last-of-type {
         border-bottom: none;
     }
+    &.selected {
+        border-bottom: 1px solid $color2;
+    }
     span {
         @extend %text-overflow;
 
@@ -49,6 +50,5 @@
         &:last-of-type {
             flex-basis: 10%
         }
-
     }
 }

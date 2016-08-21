@@ -1,17 +1,19 @@
 import * as settings from "./settings.js";
 import { removeElementClass } from "./main.js";
 import { setSortOptions } from "./playlist/playlist.sorting.js";
+import { enableTrackSelection } from "./playlist/playlist.track-selection.js";
 
 function toggleTab(id, ignoreSidebar) {
     removeElementClass("sidebar-btn", "active");
     removeElementClass("tab", "active");
 
     if (id.startsWith("playlist-")) {
-        const tabId = id.split("playlist-")[1];
+        const playlistId = id.split("playlist-")[1];
 
-        settings.set("activeTabId", tabId);
+        settings.set("activeTabId", playlistId);
         document.getElementById("js-tab-header").classList.add("visible");
-        setSortOptions(tabId);
+        setSortOptions(playlistId);
+        enableTrackSelection(playlistId);
     }
     else {
         settings.set("activeTabId", id);

@@ -1,4 +1,8 @@
 import { removeElementClass } from "./../main.js";
+import * as settings from "./../settings.js";
+import * as playlist from "./playlist.js";
+
+let timeout = 0;
 
 function createListItem(track) {
     return `
@@ -19,7 +23,7 @@ function createList(id, items) {
             <li class="list-view-header-item">ALBUM</li>
             <li class="list-view-header-item">LENGTH</li>
         </ul>
-        <ul id="js-${id}" class="list-view">${items}</ul>
+        <ul id="js-${id}" class="playlist-items list-view">${items}</ul>
     `;
 }
 
@@ -36,7 +40,7 @@ function createGridItem(item) {
 }
 
 function createGrid(id, items) {
-    return `<ul id="js-${id}" class="grid-view">${items}</ul>`;
+    return `<ul id="js-${id}" class="playlist-items grid-view">${items}</ul>`;
 }
 
 function createItems(cb, tracks) {
@@ -137,11 +141,44 @@ function showPlayingTrack(index, id, manual) {
     }
 }
 
+function filterTracks(tracks, trackElements, query) {
+    query = query.trim().toLowerCase();
+
+    tracks.forEach(track => {
+        const trackElement = trackElements[track.index];
+        const title = track.title ? track.title.toLowerCase() : "";
+        const artist = track.artist ? track.artist.toLowerCase() : "";
+        const album = track.album ? track.album.toLowerCase() : "";
+        const name = track.name ? track.name.toLowerCase() : "";
+
+        if (!title.includes(query) && !artist.includes(query) && !album.includes(query)
+            && !name.includes(query)) {
+            trackElement.classList.add("hidden");
+        }
+        else {
+            trackElement.classList.remove("hidden");
+        }
+    });
+}
+
+document.getElementById("js-filter-input").addEventListener("keyup", ({ target }) => {
+    if (timeout) {
+        clearTimeout(timeout);
+    }
+    timeout = setTimeout(() => {
+        const pl = playlist.get(settings.get("activeTabId"));
+        const trackElements = document.getElementById(`js-${pl.id}`).children;
+
+        filterTracks(pl.tracks, trackElements, target.value);
+    }, 400);
+});
+
 export {
     addPlaylistTab as add,
     removePlaylistTab as remove,
     updatePlaylist as update,
     appendToPlaylist as append,
     scrollToTrack,
-    showPlayingTrack
+    showPlayingTrack,
+    filterTracks
 };

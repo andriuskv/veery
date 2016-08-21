@@ -1,4 +1,4 @@
-import { removeElementClass, getElementByAttr } from "./../main.js";
+import { removeElementClass } from "./../main.js";
 import * as settings from "./../settings.js";
 import * as router from "./../router.js";
 import * as tab from "./../tab.js";
@@ -7,8 +7,6 @@ import * as local from "./../local.js";
 import * as player from "./../player/player.js";
 import * as playlist from "./playlist.js";
 import * as playlistView from "./playlist.view.js";
-
-let timeout = 0;
 
 function initPlaylist(pl, toggle) {
     const route = `playlist/${pl.id}`;
@@ -67,7 +65,6 @@ function removePlaylist(id, entry) {
         entry = document.querySelector(`[data-id=${id}]`);
     }
     entry.parentElement.removeChild(entry);
-
     playlist.remove(id);
     sidebar.removeEntry(id);
 }
@@ -89,24 +86,6 @@ function updatePlaylist(pl) {
     }
 }
 
-function filterTracks(tracks, trackElements, query) {
-    tracks.forEach(track => {
-        const trackElement = trackElements[track.index];
-        const title = track.title ? track.title.toLowerCase() : "";
-        const artist = track.artist ? track.artist.toLowerCase() : "";
-        const album = track.album ? track.album.toLowerCase() : "";
-        const name = track.name ? track.name.toLowerCase() : "";
-
-        if (!title.includes(query) && !artist.includes(query) && !album.includes(query)
-            && !name.includes(query)) {
-            trackElement.classList.add("hidden");
-        }
-        else {
-            trackElement.classList.remove("hidden");
-        }
-    });
-}
-
 function createPlaylistEntry(title, id) {
     const playlistEntryContainer = document.getElementById("js-playlist-entries");
     const entry = `
@@ -120,13 +99,6 @@ function createPlaylistEntry(title, id) {
     `;
 
     playlistEntryContainer.insertAdjacentHTML("beforeend", entry);
-}
-
-function selectTrackElement(element, selectMultiple) {
-    if (!selectMultiple) {
-        removeElementClass("track", "selected");
-    }
-    element.classList.toggle("selected");
 }
 
 function initStoredTrack(playlistIdPrefix) {
@@ -217,27 +189,6 @@ function removeSelectedTracks(pl) {
     }
 }
 
-document.getElementById("js-tab-container").addEventListener("click", ({ target, ctrlKey }) => {
-    const item = getElementByAttr(target, "data-index");
-
-    if (item) {
-        selectTrackElement(item.element, ctrlKey);
-    }
-});
-
-document.getElementById("js-filter-input").addEventListener("keyup", ({ target }) => {
-    if (timeout) {
-        clearTimeout(timeout);
-    }
-    timeout = setTimeout(() => {
-        const pl = playlist.get(settings.get("activeTabId"));
-        const trackElements = document.getElementById(`js-${pl.id}`).children;
-        const query = target.value.trim().toLowerCase();
-
-        filterTracks(pl.tracks, trackElements, query);
-    }, 400);
-});
-
 window.addEventListener("keypress", event => {
     const key = event.key === "Delete" || event.keyCode === 127;
     const pl = playlist.get(settings.get("activeTabId"));
@@ -253,6 +204,5 @@ export {
     appendToPlaylist as appendTo,
     removePlaylist as remove,
     updatePlaylist as update,
-    initStoredTrack,
-    filterTracks
+    initStoredTrack
 };
