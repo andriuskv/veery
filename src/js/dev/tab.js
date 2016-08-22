@@ -4,6 +4,8 @@ import { setSortOptions } from "./playlist/playlist.sorting.js";
 import { enableTrackSelection } from "./playlist/playlist.track-selection.js";
 
 function toggleTab(id, ignoreSidebar) {
+    const tabHeaderElement = document.getElementById("js-tab-header");
+
     removeElementClass("sidebar-btn", "active");
     removeElementClass("tab", "active");
 
@@ -11,13 +13,14 @@ function toggleTab(id, ignoreSidebar) {
         const playlistId = id.split("playlist-")[1];
 
         settings.set("activeTabId", playlistId);
-        document.getElementById("js-tab-header").classList.add("visible");
+        tabHeaderElement.classList.add("visible");
         setSortOptions(playlistId);
+        removeElementClass("track", "selected");
         enableTrackSelection(playlistId);
     }
     else {
         settings.set("activeTabId", id);
-        document.getElementById("js-tab-header").classList.remove("visible");
+        tabHeaderElement.classList.remove("visible");
     }
     document.getElementById(`js-tab-${id}`).classList.add("active");
 

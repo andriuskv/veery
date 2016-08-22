@@ -104,16 +104,35 @@ function selectTrackElement(element, selectMultiple) {
     }
 }
 
-function selectTrackElements(elements, area) {
+function selectTrackElements(elements, area, ctrlKey) {
     elements.forEach(element => {
+        const elementClassList = element.ref.classList;
+
         if (area.right > element.left && area.left < element.right
             && area.bottom > element.top && area.top < element.bottom) {
-            element.ref.classList.add("selected");
+            if (ctrlKey && !element.selected && elementClassList.contains("selected")) {
+                elementClassList.remove("selected");
+                element.removed = true;
+            }
+
+            if (!element.removed) {
+                elementClassList.add("selected");
+                element.selected = true;
+            }
         }
-        else {
-            element.ref.classList.remove("selected");
+        else if (element.selected) {
+            elementClassList.remove("selected");
+            element.selected = false;
+        }
+        else if (element.removed) {
+            elementClassList.add("selected");
+            element.removed = false;
         }
     });
+}
+
+function deselectTrackElements(elements) {
+    elements.forEach(element => element.ref.classList.remove("selected"));
 }
 
 function adjustMousePosition(pos, max) {
@@ -143,16 +162,16 @@ function resetSelection() {
     trackElements.length = 0;
 }
 
-function update() {
+function update(ctrlKey) {
     updating = true;
     requestAnimationFrame(() => {
         updateSelectedArea(mousePos, startingPoint, selectionElement.style);
-        selectTrackElements(trackElements, selectedArea);
+        selectTrackElements(trackElements, selectedArea, ctrlKey);
         updating = false;
     });
 }
 
-function scrollDown() {
+function scrollDown(ctrlKey) {
     playlistElement.scrollTop += 36;
     mousePos.y = playlistElement.scrollTop + playlistElementRect.height;
 
@@ -161,11 +180,11 @@ function scrollDown() {
         stopScrolling();
     }
     if (!updating) {
-        update();
+        update(ctrlKey);
     }
 }
 
-function scrollUp() {
+function scrollUp(ctrlKey) {
     playlistElement.scrollTop -= 36;
     mousePos.y = playlistElement.scrollTop;
 
@@ -174,7 +193,7 @@ function scrollUp() {
         stopScrolling();
     }
     if (!updating) {
-        update();
+        update(ctrlKey);
     }
 }
 
@@ -189,26 +208,32 @@ function onMousemove(event) {
         if (selectionEnabled && !selectionElement) {
             trackElements = getTrackElements(playlistElement.children);
             selectionElement = initSelectionArea(playlistElement);
+
+            if (!event.ctrlKey) {
+                deselectTrackElements(trackElements);
+            }
         }
         return;
     }
 
     if (!intervalId && mouseYRelatedToViewport > playlistElementRect.height && mousePos.y < maxScrollHeight) {
-        intervalId = setInterval(scrollDown, 40);
+        intervalId = setInterval(() => {
+            scrollDown(event.ctrlKey);
+        }, 40);
         return;
     }
     else if (!intervalId && mouseYRelatedToViewport < 0 && mousePos.y > 0) {
-        intervalId = setInterval(scrollUp, 40);
+        intervalId = setInterval(() => {
+            scrollUp(event.ctrlKey);
+        }, 40);
         return;
     }
     else if (!updating) {
-        update();
+        update(event.ctrlKey);
     }
 
-    if (mouseYRelatedToViewport > 0 && mouseYRelatedToViewport < playlistElementRect.height) {
-        if (intervalId) {
-            stopScrolling();
-        }
+    if (intervalId && mouseYRelatedToViewport > 0 && mouseYRelatedToViewport < playlistElementRect.height) {
+        stopScrolling();
     }
 }
 
