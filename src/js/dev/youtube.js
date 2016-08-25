@@ -17,29 +17,13 @@ function parseItems(playlist) {
 }
 
 function parseDuration(duration) {
-    const units = ["H", "M", "S"];
-
-    duration = duration.slice(2);
-    return units.map(unit => {
-        let newDuration = "";
-
-        if (duration.includes(unit)) {
-            duration = duration.split(unit);
-            if (duration.length === 2) {
-                const value = Number.parseInt(duration[0], 10);
-
-                newDuration += value >= 10 ? value : `0${value}`;
-                if (unit !== "S") {
-                    newDuration += ":";
-                    duration = duration.slice(1)[0];
-                }
+    return duration.replace(/[H,M]/g, ":").split(":")
+        .map((value, index) => {
+            if (index !== 0 && value < 10) {
+                value = `0${value}`;
             }
-        }
-        else if (unit === "S") {
-            newDuration += "00";
-        }
-        return newDuration;
-    }).join("");
+            return value;
+        }).join(":");
 }
 
 function getVideoDuration(playlist) {
@@ -48,7 +32,11 @@ function getVideoDuration(playlist) {
     return getYoutube("videos", "contentDetails", "id", ids)
     .then(data => {
         playlist.items = playlist.items.map((item, index) => {
-            item.snippet.duration = parseDuration(data.items[index].contentDetails.duration);
+
+            // Remove unnecessery parts
+            const duration = data.items[index].contentDetails.duration.slice(2, -1);
+
+            item.snippet.duration = parseDuration(duration);
             return item;
         });
         return playlist;
