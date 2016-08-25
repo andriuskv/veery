@@ -57,7 +57,7 @@ function removePlaylist(id, entry) {
 
     const storedTrack = player.storedTrack.get();
 
-    if (storedTrack.playlistId === id) {
+    if (storedTrack && storedTrack.playlistId === id) {
         player.storedTrack.remove();
     }
 
@@ -203,6 +203,6 @@ export {
     initPlaylist as init,
     appendToPlaylist as appendTo,
     removePlaylist as remove,
-    updatePlaylist as update,
+    updatePlaylist,
     initStoredTrack
 };

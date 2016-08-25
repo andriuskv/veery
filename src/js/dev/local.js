@@ -37,7 +37,7 @@ const worker = (function initWorker() {
             playlistManage.appendTo(pl, tracks, false);
             if (pl.sortedBy) {
                 playlist.sortTracks(pl.tracks, pl.sortedBy, pl.order);
-                playlistManage.update(pl);
+                playlistManage.updatePlaylist(pl);
             }
             playlistManage.initStoredTrack("local-files");
         };
@@ -131,7 +131,7 @@ function parseTracks(tracks, parsedTracks, startIndex) {
             artist: data[0].artist ? data[0].artist.trim() : "",
             album: data[0].album ? data[0].album.trim() : "",
             name: tracks[0].name,
-            thumbnail: data[0].picture,
+            thumbnail: data[0].picture || "assets/images/album-art-placeholder.png",
             audioTrack: tracks[0].audioTrack,
             duration: data[1]
         });

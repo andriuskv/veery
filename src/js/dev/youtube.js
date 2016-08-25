@@ -7,6 +7,9 @@ function parseItems(playlist) {
         id: track.snippet.resourceId.videoId,
         duration: track.snippet.duration,
         name: track.snippet.title,
+        title: track.snippet.title,
+        artist: "",
+        album: "",
         thumbnail: track.snippet.thumbnails.default.url
     }));
     delete playlist.token;
@@ -66,16 +69,18 @@ function getYoutube(path, part, filter, id, token) {
     });
 }
 
+function filterInvalidVideos(playlist) {
+    playlist.items = playlist.items.filter(item => {
+        const title = item.snippet.title;
+
+        return title !== "Deleted video" && title !== "Private video";
+    });
+    return playlist;
+}
+
 function getPlaylistItems(playlist) {
     return getYoutube("playlistItems", "snippet", "playlistId", playlist.id, playlist.token)
-    .then(data => {
-        data.items = data.items.filter(item => {
-            const title = item.snippet.title;
-
-            return title !== "Deleted video" && title !== "Private video";
-        });
-        return data;
-    })
+    .then(filterInvalidVideos)
     .then(getVideoDuration)
     .then(data => {
         playlist.token = data.nextPageToken;

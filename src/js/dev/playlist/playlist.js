@@ -25,7 +25,8 @@ function savePlaylist(pl) {
         id: pl.id,
         order: pl.order,
         sortedBy: pl.sortedBy,
-        title: pl.title
+        title: pl.title,
+        type: pl.type
     };
 
     if (pl.id.startsWith("yt-pl-") || pl.id.startsWith("sc-pl-")) {

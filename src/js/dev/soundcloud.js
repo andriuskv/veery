@@ -16,8 +16,11 @@ function parseTracks(tracks) {
         index,
         duration: formatTime(track.duration / 1000),
         id: track.id,
-        thumbnail: track.artwork_url || "assets/images/album-art-placeholder.png",
-        name: track.title
+        name: track.title,
+        title: track.title,
+        artist: "",
+        album: "",
+        thumbnail: track.artwork_url || "assets/images/album-art-placeholder.png"
     }));
 }
 

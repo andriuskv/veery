@@ -24,8 +24,10 @@
 
     &.visible {
         display: flex;
-        justify-content: space-between;
     }
+}
+.tab-header-item {
+    margin-left: 4px;
 }
 .tab-title {
     padding-top: 20px;
