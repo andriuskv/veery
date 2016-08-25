@@ -1,6 +1,8 @@
-import { removeElementClass } from "./../main.js";
 import * as settings from "./../settings.js";
 import * as playlist from "./playlist.js";
+import { removeElementClass } from "./../main.js";
+import { isSortOptionSupported, resetPlaylistSort } from "./playlist.sorting.js";
+import { enableTrackSelection } from "./playlist.track-selection.js";
 
 let timeout = 0;
 
@@ -47,15 +49,16 @@ function createItems(cb, tracks) {
     return tracks.map(item => cb(item)).join("");
 }
 
-function createPlaylistTab(pl) {
-    let playlist = "";
-
+function createPlaylist(pl) {
     if (pl.type === "list") {
-        playlist = createList(pl.id, createItems(createListItem, pl.tracks));
+        return createList(pl.id, createItems(createListItem, pl.tracks));
     }
-    else if (pl.type === "grid") {
-        playlist = createGrid(pl.id, createItems(createGridItem, pl.tracks));
-    }
+    return createGrid(pl.id, createItems(createGridItem, pl.tracks));
+}
+
+function createPlaylistTab(pl) {
+    const playlist = createPlaylist(pl);
+
     return `<div id="js-tab-playlist-${pl.id}" class="tab playlist-tab">${playlist}</div>`;
 }
 
@@ -68,14 +71,8 @@ function addPlaylistTab(pl) {
 
 function appendToPlaylist(pl, tracks) {
     const playlist = document.getElementById(`js-${pl.id}`);
-    let cb = null;
+    const cb = pl.type === "list" ? createListItem: createGridItem;
 
-    if (pl.type === "list") {
-        cb = createListItem;
-    }
-    else if (pl.type === "grid") {
-        cb = createGridItem;
-    }
     playlist.insertAdjacentHTML("beforeend", createItems(cb, tracks));
 }
 
@@ -89,19 +86,12 @@ function updateTrackListView(track, trackElement) {
 function updateTrackGridView(track, trackElement) {
     trackElement[0].children[0].textContent = track.duration;
     trackElement[0].children[1].setAttribute("src", track.thumbnail);
-    trackElement[1].textContent = track.title;
+    trackElement[1].textContent = track.name;
 }
 
 function updatePlaylist(pl) {
     const trackElements = document.getElementById(`js-${pl.id}`).children;
-    let cb = null;
-
-    if (pl.id === "local-files") {
-        cb = updateTrackListView;
-    }
-    else {
-        cb = updateTrackGridView;
-    }
+    const cb = pl.type === "list" ? updateTrackListView: updateTrackGridView;
 
     pl.tracks.forEach((track, index) => {
         const trackElement = trackElements[index].children;
@@ -161,15 +151,48 @@ function filterTracks(tracks, trackElements, query) {
     });
 }
 
+function togglePlaylistTypeBtn(type) {
+    const listToggleBtn = document.getElementById("js-list-toggle-btn");
+    const gridToggleBtn = document.getElementById("js-grid-toggle-btn");
+
+    if (type === "list") {
+        listToggleBtn.classList.add("active");
+        gridToggleBtn.classList.remove("active");
+    }
+    else {
+        gridToggleBtn.classList.add("active");
+        listToggleBtn.classList.remove("active");
+    }
+}
+
+function changePlaylistType(newType, pl) {
+    if (!isSortOptionSupported(pl.sortedBy, newType)) {
+        resetPlaylistSort(pl);
+    }
+    pl.type = newType;
+    togglePlaylistTypeBtn(newType);
+    enableTrackSelection(pl.id);
+    playlist.save(pl);
+    document.getElementById(`js-tab-playlist-${pl.id}`).innerHTML = createPlaylist(pl);
+
+    if (pl.id === playlist.getActivePlaylistId()) {
+        const track = playlist.getCurrentTrack();
+
+        if (track) {
+            showPlayingTrack(track.index, pl.id, true);
+        }
+    }
+}
+
 document.getElementById("js-filter-input").addEventListener("keyup", ({ target }) => {
     if (timeout) {
         clearTimeout(timeout);
     }
     timeout = setTimeout(() => {
-        const pl = playlist.get(settings.get("activeTabId"));
-        const trackElements = document.getElementById(`js-${pl.id}`).children;
+        const { id, tracks } = playlist.get(settings.get("activeTabId"));
+        const trackElements = document.getElementById(`js-${id}`).children;
 
-        filterTracks(pl.tracks, trackElements, target.value);
+        filterTracks(tracks, trackElements, target.value);
     }, 400);
 });
 
@@ -180,5 +203,7 @@ export {
     appendToPlaylist as append,
     scrollToTrack,
     showPlayingTrack,
-    filterTracks
+    filterTracks,
+    togglePlaylistTypeBtn,
+    changePlaylistType
 };
