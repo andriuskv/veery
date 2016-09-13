@@ -2,8 +2,7 @@
 
 import * as settings from "./../settings.js";
 import { setCurrentTrack } from "./../playlist/playlist.js";
-import { initStoredTrack } from "./../playlist/playlist.manage.js";
-import { onTrackStart, onTrackEnd, toggleTrackPlaying } from "./player.js";
+import { storedTrack, onTrackStart, onTrackEnd, toggleTrackPlaying } from "./player.js";
 
 let ytPlayer = null;
 window.onYouTubeIframeAPIReady = initPlayer;
@@ -28,7 +27,7 @@ function onPlayerStateChange({ data: currentState }) {
 }
 
 function onPlayerReady() {
-    initStoredTrack("yt-pl-");
+    storedTrack.setPlayerAsReady("youtube");
 }
 
 function onError(error) {

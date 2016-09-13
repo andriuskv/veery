@@ -11,57 +11,23 @@ function getPlaylistById(id) {
     return playlists[id];
 }
 
-function getSavedPlaylists() {
-    return JSON.parse(localStorage.getItem("playlists")) || {};
-}
-
-function savePlaylists(playlists) {
-    localStorage.setItem("playlists", JSON.stringify(playlists));
-}
-
-function savePlaylist(pl) {
-    const savedPlaylists = getSavedPlaylists();
-    const toSave = {
-        id: pl.id,
-        order: pl.order,
-        sortedBy: pl.sortedBy,
-        title: pl.title,
-        type: pl.type
-    };
-
-    if (pl.id.startsWith("yt-pl-") || pl.id.startsWith("sc-pl-")) {
-        toSave.tracks = pl.tracks;
-    }
-    savedPlaylists[pl.id] = toSave;
-    savePlaylists(savedPlaylists);
-}
-
 function createPlaylist(pl) {
     playlists[pl.id] = Object.assign({
         sortedBy: "",
         order: 0,
         shuffled: false,
         tracks: pl.tracks || [],
-        type: pl.id === "local-files" ? "list": "grid",
+        type: pl.type,
         playbackOrder: []
     }, pl);
     return playlists[pl.id];
 }
 
-function setAsInitialized(id) {
-    playlists[id].initialized = true;
-    return Object.keys(playlists).every(id => playlists[id].initialized);
-}
-
 function removePlaylist(id) {
-    const savedPlaylists = getSavedPlaylists();
-
     delete playlists[id];
-    delete savedPlaylists[id];
-    savePlaylists(savedPlaylists);
 }
 
-function setActivePlaylist(id) {
+function setPlaylistAsActive(id) {
     if (playlists.hasOwnProperty(id)) {
         activePlaylistId = id;
     }
@@ -94,8 +60,9 @@ function updateCurrentTrackIndex(newIndex) {
 
 function findTrack(id, trackId) {
     const { tracks } = getPlaylistById(id);
+    const track = tracks.find(track => track.name === trackId);
 
-    return tracks.find(track => track.name === trackId);
+    return track ? Object.assign({}, track): null;
 }
 
 function setPlaybackIndex(index) {
@@ -172,7 +139,7 @@ function getNextTrack(direction) {
     if (track) {
         setCurrentTrack(track);
         setPlaybackIndex(track.index);
-        return track;
+        return Object.assign({}, track);
     }
 }
 
@@ -185,7 +152,7 @@ function sortTracks(tracks, sort, order) {
             return -1 * order;
         }
         if (aValue > bValue) {
-            return 1 * order;
+            return order;
         }
         return 0;
     });
@@ -203,17 +170,13 @@ function sortPlaylist(pl, sortBy) {
 }
 
 export {
-    getPlaylistById as get,
-    createPlaylist as create,
-    removePlaylist as remove,
-    savePlaylist as save,
-    sortPlaylist as sort,
-    getAllPlaylists as getAll,
-    getActivePlaylist as getActive,
-    setActivePlaylist as setActive,
+    setPlaylistAsActive,
+    getPlaylistById,
+    removePlaylist,
+    getAllPlaylists,
+    createPlaylist,
     sortTracks,
-    setAsInitialized,
-    getSavedPlaylists,
+    sortPlaylist,
     isActive,
     getActivePlaylistId,
     setCurrentTrack,

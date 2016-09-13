@@ -37,10 +37,28 @@ function getElementByAttr(element, attr) {
         const attrValue = element.getAttribute(attr);
 
         if (attrValue) {
-            return { element, attrValue };
+            return {
+                elementRef: element,
+                attrValue
+            };
         }
         element = element.parentElement;
     }
+}
+
+function isOutsideElement(element, targetElementId) {
+    const targetElement = document.getElementById(targetElementId);
+
+    if (!targetElement) {
+        return false;
+    }
+    while (element) {
+        if (element === targetElement) {
+            return false;
+        }
+        element = element.parentElement;
+    }
+    return true;
 }
 
 function formatTime(time) {
@@ -66,5 +84,6 @@ export {
     scriptLoader,
     getElementByAttr,
     removeElementClass,
-    formatTime
+    formatTime,
+    isOutsideElement
 };

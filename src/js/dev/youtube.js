@@ -1,4 +1,4 @@
-import * as playlistAdd from "./playlist/playlist.add.js";
+import { addRemotePlaylist, showNotice, importBtn } from "./playlist/playlist.add.js";
 
 function parseItems(playlist) {
     playlist.id = `yt-pl-${playlist.id}`;
@@ -35,7 +35,6 @@ function getVideoDuration(playlist) {
 
             // Remove unnecessery parts
             const duration = data.items[index].contentDetails.duration.slice(2, -1);
-
             item.snippet.duration = parseDuration(duration);
             return item;
         });
@@ -83,21 +82,22 @@ function getPlaylistItems(playlist) {
 
 function getPlaylistTitle(data) {
     if (!data.items.length) {
-        playlistAdd.showNotice("Playlist was not found");
-        playlistAdd.importBtn.toggle();
+        showNotice("Playlist was not found");
+        importBtn.toggle();
         return;
     }
     return {
         id: data.items[0].id,
         title: data.items[0].snippet.title,
-        tracks: []
+        tracks: [],
+        type: "grid"
     };
 }
 
 function fetchPlaylist(url) {
     if (!url.includes("list=")) {
-        playlistAdd.showNotice("Invalid url");
-        playlistAdd.importBtn.toggle();
+        showNotice("Invalid url");
+        importBtn.toggle();
         return;
     }
     const id = url.split("list=")[1];
@@ -106,7 +106,8 @@ function fetchPlaylist(url) {
     .then(getPlaylistTitle)
     .then(getPlaylistItems)
     .then(parseItems)
-    .then(playlistAdd.add)
+    .then(addRemotePlaylist)
+    .then(importBtn.toggle)
     .catch(error => {
         console.log(error);
     });

@@ -9,12 +9,14 @@ import * as ytPlayer from "./player.youtube.js";
 import * as scPlayer from "./player.soundcloud.js";
 
 const storedTrack = (function () {
-    let storedTrack = JSON.parse(localStorage.getItem("track"));
-    let initialized = false;
+    const players = {
+        native: false,
+        youtube: false,
+        soundcloud: false
+    };
 
     function getTrack() {
-        storedTrack = JSON.parse(localStorage.getItem("track"));
-        return storedTrack;
+        return JSON.parse(localStorage.getItem("track"));
     }
 
     function setTrack(track) {
@@ -25,22 +27,19 @@ const storedTrack = (function () {
         localStorage.removeItem("track");
     }
 
-    function isInitialized() {
-        return !storedTrack || initialized;
-    }
-
     function initTrack() {
-        if (isInitialized()) {
+        const storedTrack = getTrack();
+
+        if (!storedTrack) {
             return;
         }
         const track = playlist.findTrack(storedTrack.playlistId, storedTrack.name);
-        initialized = true;
 
         if (!track) {
             return;
         }
 
-        playlist.setActive(storedTrack.playlistId);
+        playlist.setPlaylistAsActive(storedTrack.playlistId);
         playlist.setPlaybackIndex(track.index);
 
         controls.updateSlider("track", storedTrack.elapsed);
@@ -62,12 +61,19 @@ const storedTrack = (function () {
         }
     }
 
+    function setPlayerAsReady(player) {
+        players[player] = true;
+
+        if (Object.keys(players).every(player => players[player])) {
+            initTrack();
+        }
+    }
+
     return {
-        init: initTrack,
         set: setTrack,
         get: getTrack,
         remove: removeTrack,
-        isInitialized
+        setPlayerAsReady
     };
 })();
 
@@ -170,8 +176,8 @@ function playTrack() {
     if (!player) {
         const id = settings.get("activeTabId");
 
-        if (playlist.get(id)) {
-            playlist.setActive(id);
+        if (playlist.getPlaylistById(id)) {
+            playlist.setPlaylistAsActive(id);
             playTrackAtIndex(playlist.getNextTrackIndex(0), id);
         }
         return;
@@ -203,8 +209,8 @@ function playNextTrack(direction) {
 function playTrackAtIndex(index, id) {
     const currentTrack = playlist.getCurrentTrack();
     const player = getPlayer(id);
-    const pl = playlist.get(id);
-    const track = pl.tracks[index];
+    const pl = playlist.getPlaylistById(id);
+    const track = Object.assign({}, pl.tracks[index]);
 
     if (!settings.get("paused") || currentTrack) {
         const currentPlayer = settings.get("player");
@@ -217,12 +223,12 @@ function playTrackAtIndex(index, id) {
         }
     }
 
-    if (!track) {
+    if (!track.name) {
         return;
     }
     settings.set("player", player);
 
-    if (settings.get("shuffle") && !pl.shuffled) {
+    if (!pl.shuffled && settings.get("shuffle")) {
         playlist.shufflePlaybackOrder(pl, true);
         playlist.resetPlaybackIndex();
     }
@@ -273,7 +279,7 @@ function toggleRepeat(repeat) {
 }
 
 function toggleShuffle(shuffle) {
-    const pl = playlist.getActive() || playlist.get(settings.get("activeTabId"));
+    const pl = playlist.getPlaylistById(settings.get("activeTabId"));
 
     settings.set("shuffle", shuffle);
     if (pl) {
@@ -321,7 +327,7 @@ document.getElementById("js-tab-container").addEventListener("dblclick", ({ targ
         const id = settings.get("activeTabId");
 
         settings.set("manual", true);
-        playlist.setActive(id);
+        playlist.setPlaylistAsActive(id);
         playTrackAtIndex(index, id);
     }
 });

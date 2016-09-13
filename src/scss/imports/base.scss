@@ -42,7 +42,7 @@ ul {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
-.input {
+%default-input-styles {
     padding: 4px 6px;
     border: none;
     border-radius: 2px;
@@ -50,8 +50,11 @@ ul {
     font-size: 14px;
     color: $base-text-color;
 }
+.input {
+    @extend %default-input-styles;
+}
 .btn {
-    @extend .input;
+    @extend %default-input-styles;
 
     transition: all 0.1s;
 

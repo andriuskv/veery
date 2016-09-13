@@ -1,11 +1,11 @@
 import { removeElementClass, getElementByAttr, scriptLoader } from "./../main.js";
-import * as router from "./../router.js";
-import * as sidebar from "./../sidebar.js";
+import { initializeWorker, postMessageToWorker } from "./../worker.js";
+import { editSidebarEntry } from "./../sidebar.js";
+import { getPlaylistById, createPlaylist } from "./playlist.js";
+import { initPlaylist, removePlaylist, replacePlaylist } from "./playlist.manage.js";
 import * as local from "./../local.js";
 import * as yt from "./../youtube.js";
 import * as sc from "./../soundcloud.js";
-import * as playlist from "./playlist.js";
-import * as playlistManage from "./playlist.manage.js";
 
 let provider = "";
 
@@ -41,14 +41,23 @@ function importPlaylist(name, value) {
     }
 }
 
-function addPlaylist(pl) {
-    const existingPlaylist = playlist.get(pl.id);
+function addRemotePlaylist(pl) {
+    const existingPlaylist = getPlaylistById(pl.id);
+    let newPlaylist = null;
 
     if (existingPlaylist) {
-        playlistManage.remove(existingPlaylist.id);
+        existingPlaylist.tracks = pl.tracks;
+        newPlaylist = Object.assign({}, existingPlaylist);
+        replacePlaylist(newPlaylist, true);
     }
-    importBtn.toggle();
-    playlistManage.init(playlist.create(pl), true);
+    else {
+        newPlaylist = createPlaylist(pl);
+        initPlaylist(newPlaylist, true);
+    }
+    postMessageToWorker({
+        action: "update-playlist",
+        playlist: newPlaylist
+    });
 }
 
 function setProvider(item) {
@@ -57,7 +66,7 @@ function setProvider(item) {
     if (newProvider !== provider) {
         provider = newProvider;
         removeElementClass("playlist-provider", "selected");
-        item.element.classList.add("selected");
+        item.elementRef.classList.add("selected");
         document.getElementById("js-import-form-container").classList.add("visible");
     }
 }
@@ -91,7 +100,7 @@ function editPlaylistTitle(action, target, titleElement, playlistId) {
         titleElement.selectionEnd = titleElement.value.length;
     }
     else if (action === "edit") {
-        const pl = playlist.get(playlistId);
+        const pl = getPlaylistById(playlistId);
 
         if (!titleElement.value) {
             titleElement.value = pl.title;
@@ -101,9 +110,12 @@ function editPlaylistTitle(action, target, titleElement, playlistId) {
 
         if (newTitle !== pl.title) {
             pl.title = newTitle;
-            sidebar.editEntry(playlistId, newTitle);
+            editSidebarEntry(playlistId, newTitle);
             titleElement.setAttribute("value", newTitle);
-            playlist.save(pl);
+            postMessageToWorker({
+                action: "update-playlist",
+                playlist: pl
+            });
         }
         titleElement.setAttribute("readonly", "readonly");
     }
@@ -135,10 +147,9 @@ document.getElementById("js-playlist-entries").addEventListener("click", ({ targ
     }
 
     if (action === "remove") {
-        playlistManage.remove(entry.attrValue, entry.element);
+        removePlaylist(entry.attrValue, entry.elementRef);
         return;
     }
-
     let nextAction = "";
 
     if (action === "save") {
@@ -149,7 +160,7 @@ document.getElementById("js-playlist-entries").addEventListener("click", ({ targ
     }
 
     if (nextAction) {
-        const titleElement = entry.element.querySelector(".playlist-entry-title");
+        const titleElement = entry.elementRef.querySelector(".playlist-entry-title");
 
         editPlaylistTitle(nextAction, target, titleElement, entry.attrValue);
     }
@@ -161,7 +172,6 @@ document.getElementById("js-playlist-add-options").addEventListener("click", ({ 
     if (!item) {
         return;
     }
-
     const choice = item.attrValue;
 
     if (choice === "file" || choice === "folder") {
@@ -172,25 +182,16 @@ document.getElementById("js-playlist-add-options").addEventListener("click", ({ 
 });
 
 window.addEventListener("load", function onLoad() {
-    const savedPlaylists = playlist.getSavedPlaylists();
-
     scriptLoader.load("js/libs/sdk.js", sc.init);
     scriptLoader.load("https://www.youtube.com/iframe_api");
     scriptLoader.load("js/libs/metadata-audio-parser.js");
 
-    Object.keys(savedPlaylists).forEach(id => {
-        const pl = savedPlaylists[id];
-
-        playlistManage.init(playlist.create(pl), false);
-    });
-
-    local.worker.init();
-    router.toggleCurrent();
+    initializeWorker();
     window.removeEventListener("load", onLoad);
 });
 
 export {
-    addPlaylist as add,
+    addRemotePlaylist,
     showNotice,
     importBtn
 };

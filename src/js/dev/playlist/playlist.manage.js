@@ -1,9 +1,9 @@
 import { removeElementClass } from "./../main.js";
+import { postMessageToWorker } from "./../worker.js";
+import { createSidebarEntry, removeSidebarEntry } from "./../sidebar.js";
 import * as settings from "./../settings.js";
 import * as router from "./../router.js";
 import * as tab from "./../tab.js";
-import * as sidebar from "./../sidebar.js";
-import * as local from "./../local.js";
 import * as player from "./../player/player.js";
 import * as playlist from "./playlist.js";
 import * as playlistView from "./playlist.view.js";
@@ -15,10 +15,10 @@ function initPlaylist(pl, toggle) {
     playlist.setTrackIndexes(pl, settings.get("shuffle"));
     playlist.resetPlaybackIndex();
     playlistView.add(pl);
-    sidebar.createEntry(pl.title, pl.id);
+    createSidebarEntry(pl.title, pl.id);
     createPlaylistEntry(pl.title, pl.id);
 
-    if (pl.id !== "local-files" && pl.sortedBy) {
+    if (pl.sortedBy) {
         playlist.sortTracks(pl.tracks, pl.sortedBy, pl.order);
         updatePlaylist(pl);
     }
@@ -29,7 +29,6 @@ function initPlaylist(pl, toggle) {
     else if (router.isActive(pl.id)) {
         tab.toggle(`playlist-${pl.id}`);
     }
-    playlist.save(pl);
 }
 
 function appendToPlaylist(pl, tracks, toggle) {
@@ -37,7 +36,19 @@ function appendToPlaylist(pl, tracks, toggle) {
     playlist.resetPlaybackIndex();
     playlistView.append(pl, tracks);
 
-    if (toggle && router.isActive("add")) {
+    if (toggle) {
+        const route = `playlist/${pl.id}`;
+
+        router.toggle(route);
+    }
+}
+
+function replacePlaylist(pl, toggle) {
+    playlist.setTrackIndexes(pl, settings.get("shuffle"));
+    playlist.resetPlaybackIndex();
+    playlistView.replacePlaylistView(pl);
+
+    if (toggle) {
         const route = `playlist/${pl.id}`;
 
         router.toggle(route);
@@ -45,28 +56,25 @@ function appendToPlaylist(pl, tracks, toggle) {
 }
 
 function removePlaylist(id, entry) {
-    playlistView.remove(id);
-
-    if (id === "local-files") {
-        local.worker.post({ action: "clear" });
-    }
-
-    if (playlist.isActive(id)) {
-        player.stop();
-    }
-
     const storedTrack = player.storedTrack.get();
 
     if (storedTrack && storedTrack.playlistId === id) {
         player.storedTrack.remove();
     }
-
+    if (playlist.isActive(id)) {
+        player.stop();
+    }
     if (!entry) {
         entry = document.querySelector(`[data-id=${id}]`);
     }
     entry.parentElement.removeChild(entry);
-    playlist.remove(id);
-    sidebar.removeEntry(id);
+    playlist.removePlaylist(id);
+    removeSidebarEntry(id);
+    playlistView.remove(id);
+    postMessageToWorker({
+        action: "remove-playlist",
+        playlistId: id
+    });
 }
 
 function updatePlaylist(pl) {
@@ -101,29 +109,8 @@ function createPlaylistEntry(title, id) {
     playlistEntryContainer.insertAdjacentHTML("beforeend", entry);
 }
 
-function initStoredTrack(playlistIdPrefix) {
-    if (player.storedTrack.isInitialized()) {
-        return;
-    }
-    const playlistIds = Object.keys(playlist.getAll()).filter(id => id.startsWith(playlistIdPrefix));
-
-    playlistIds.forEach(id => {
-        const { initialized } = playlist.get(id);
-
-        if (!initialized) {
-            const allPlaylistsInitialized = playlist.setAsInitialized(id);
-
-            if (allPlaylistsInitialized) {
-                player.storedTrack.init();
-            }
-        }
-    });
-}
-
 function getSelectedTrackIndexes(selectedElements) {
-    return selectedElements.map(element => {
-        return Number.parseInt(element.getAttribute("data-index"), 10);
-    });
+    return selectedElements.map(element => Number.parseInt(element.getAttribute("data-index"), 10));
 }
 
 function removeSelectedTrackElements(selectedElements) {
@@ -140,17 +127,7 @@ function resetTrackElementIndexes(elements) {
 
 function removeSelectedPlaylistTracks(pl, selectedTrackIndexes) {
     return pl.tracks
-    .filter(track => {
-        const includesTrack = selectedTrackIndexes.includes(track.index);
-
-        if (includesTrack && pl.id === "local-files") {
-            local.worker.post({
-                action: "remove",
-                name: track.name
-            });
-        }
-        return !includesTrack;
-    })
+    .filter(track => !selectedTrackIndexes.includes(track.index))
     .map((track, index) => {
         track.index = index;
         return track;
@@ -184,14 +161,17 @@ function removeSelectedTracks(pl) {
         resetTrackElementIndexes(Array.from(playlistContainer.children));
         pl.tracks = removeSelectedPlaylistTracks(pl, selectedTrackIndexes);
         playlist.setTrackIndexes(pl, settings.get("shuffle"));
-        playlist.save(pl);
         updateCurrentTrack(pl.id, selectedTrackIndexes);
+        postMessageToWorker({
+            action: "update-playlist",
+            playlist: pl
+        });
     }
 }
 
 window.addEventListener("keypress", event => {
     const key = event.key === "Delete" || event.keyCode === 127;
-    const pl = playlist.get(settings.get("activeTabId"));
+    const pl = playlist.getPlaylistById(settings.get("activeTabId"));
 
     if (!key || !pl) {
         return;
@@ -200,9 +180,9 @@ window.addEventListener("keypress", event => {
 });
 
 export {
-    initPlaylist as init,
-    appendToPlaylist as appendTo,
-    removePlaylist as remove,
-    updatePlaylist,
-    initStoredTrack
+    initPlaylist,
+    appendToPlaylist,
+    replacePlaylist,
+    removePlaylist,
+    updatePlaylist
 };

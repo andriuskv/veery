@@ -12,11 +12,14 @@ const settings = Object.assign({
 function set(setting, value) {
     if (settings.hasOwnProperty(setting)) {
         settings[setting] = value;
-        localStorage.setItem("settings", JSON.stringify({
-            repeat: settings.repeat,
-            shuffle: settings.shuffle,
-            volume: settings.volume
-        }));
+
+        if (setting === "repeate" || setting === "shuffle" || setting === "volume") {
+            localStorage.setItem("settings", JSON.stringify({
+                repeat: settings.repeat,
+                shuffle: settings.shuffle,
+                volume: settings.volume
+            }));
+        }
         return value;
     }
 }

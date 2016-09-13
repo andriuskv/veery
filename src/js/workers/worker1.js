@@ -8,79 +8,39 @@ importScripts("../libs/db.min.js");
 
 let server = null;
 
-(function init() {
-    initDb()
-    .then(loadTracks);
-})();
-
-function initDb() {
-    return db.open({
-        server: "local-playlist",
+(function initDb() {
+    db.open({
+        server: "playlists",
         version: 1,
         noServerMethods: true,
         schema: {
-            tracks: {
+            playlists: {
                 key: { keyPath: "_id", autoIncrement: true }
             }
         }
     })
     .then(s => {
         server = s;
-    });
-}
-
-function loadTracks() {
-    server.query("tracks")
-    .all()
-    .execute()
-    .then(storedTracks => {
-        if (!storedTracks.length) {
-            return;
-        }
-        const tracks = storedTracks.map((track, index) => {
-            track.index = index;
-            return track;
-        });
-
-        postMessage(tracks);
-    });
-}
-
-onmessage = function(event) {
-    const data = event.data;
-
-    if (data.action === "add") {
-        if (server) {
-            server.add("tracks", data.tracks);
-        }
-        else {
-            initDb()
-            .then(() => {
-                server.add("tracks", data.tracks);
-            });
-        }
-    }
-    else if (data.action === "remove") {
-        server.query("tracks")
-        .filter("name", data.name)
+        s.query("playlists")
+        .all()
         .execute()
-        .then(results => {
-            if (results.length) {
-                server.remove("tracks", results[0]._id);
-            }
-        })
+        .then(postMessage);
+    });
+})();
+
+onmessage = function({ data }) {
+    if (data.action === "update-playlist") {
+        server.update("playlists", data.playlist)
         .catch(error => {
             console.log(error);
         });
     }
-    else if (data.action === "clear") {
-        server.clear("tracks")
-        .then(() => {
-
-            // close db connection
-            server.close();
-            server = null;
-            indexedDB.deleteDatabase("local-playlist");
+    else if (data.action === "remove-playlist") {
+        server.query("playlists")
+        .filter("id", data.playlistId)
+        .execute()
+        .then(results => {
+            server.remove("playlists", results[0]._id);
         })
         .catch(error => {
             console.log(error);

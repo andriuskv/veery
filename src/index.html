@@ -41,29 +41,13 @@
         <div class="main">
             <div id="js-tab-header" class="tab-header">
                 <input type="text" id="js-filter-input" class="input filter-input" placeholder="Filter">
+                <div id="js-move-to-panel-container" class="tab-header-item"></div>
                 <button id="js-list-toggle-btn" class="icon-th-list btn tab-header-item"
                     data-header-item="list" title="List"></button>
                 <button id="js-grid-toggle-btn" class="icon-th btn tab-header-item"
                     data-header-item="grid" title="Grid"></button>
-                <div class="tab-header-item playlist-sort-option-container">
+                <div id="js-playlist-sort-panel-container" class="tab-header-item playlist-sort-panel-container">
                     <button id="js-sort-toggle" class="btn" data-header-item="sorting">Sorting</button>
-                    <ul id="js-playlist-sort-options" class="playlist-sort-options">
-                        <li class="playlist-sort-option">
-                            <button class="btn btn-transparent" data-sort="title">Title</button>
-                        </li>
-                        <li class="playlist-sort-option">
-                            <button class="btn btn-transparent" data-sort="artist">Artist</button>
-                        </li>
-                        <li class="playlist-sort-option">
-                            <button class="btn btn-transparent" data-sort="album">Album</button>
-                        </li>
-                        <li class="playlist-sort-option">
-                            <button class="btn btn-transparent" data-sort="duration">Duration</button>
-                        </li>
-                        <li class="playlist-sort-option">
-                            <button class="btn btn-transparent" data-sort="name">Name</button>
-                        </li>
-                    </ul>
                 </div>
                 <button id="js-order-toggle" class="icon-down-big btn tab-header-item order-toggle-btn"
                     title="Ascending/Descending" data-header-item="order"></button>
