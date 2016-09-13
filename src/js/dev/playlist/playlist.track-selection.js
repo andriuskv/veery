@@ -1,4 +1,5 @@
-import { removeElementClass, getElementByAttr } from "./../main.js";
+import { removeElementClass, getElementByAttr, isOutsideElement } from "./../main.js";
+import { showMoveToBtn, hideMoveToBtn } from "./playlist.move-to.js";
 
 const startingPoint = {};
 const mousePos = {};
@@ -11,6 +12,7 @@ let selectionElement = null;
 let selectionEnabled = false;
 let intervalId = 0;
 let updating = false;
+let keepTracksSelected = false;
 
 function enableTrackSelection(id) {
     if (playlistElement) {
@@ -93,6 +95,21 @@ function updateSelectedArea(mousePos, startingPoint, areaStyle) {
     areaStyle.height = `${height}px`;
 }
 
+function prevendTrackDeselection(gotSelectedTracks) {
+    if (gotSelectedTracks) {
+        keepTracksSelected = true;
+        showMoveToBtn();
+    }
+}
+
+function deselectTrackElements(startElement) {
+    if (!keepTracksSelected && isOutsideElement(startElement, "js-tab-header")) {
+        removeElementClass("track", "selected");
+        hideMoveToBtn();
+    }
+    keepTracksSelected = false;
+}
+
 function selectTrackElement(element, selectMultiple) {
     const item = getElementByAttr(element, "data-index");
 
@@ -100,7 +117,8 @@ function selectTrackElement(element, selectMultiple) {
         if (!selectMultiple) {
             removeElementClass("track", "selected");
         }
-        item.element.classList.toggle("selected");
+        item.elementRef.classList.toggle("selected");
+        prevendTrackDeselection(item.elementRef.classList.contains("selected"));
     }
 }
 
@@ -129,10 +147,6 @@ function selectTrackElements(elements, area, ctrlKey) {
             element.removed = false;
         }
     });
-}
-
-function deselectTrackElements(elements) {
-    elements.forEach(element => element.ref.classList.remove("selected"));
 }
 
 function adjustMousePosition(pos, max) {
@@ -210,7 +224,7 @@ function onMousemove(event) {
             selectionElement = initSelectionArea(playlistElement);
 
             if (!event.ctrlKey) {
-                deselectTrackElements(trackElements);
+                trackElements.forEach(element => element.ref.classList.remove("selected"));
             }
         }
         return;
@@ -244,6 +258,7 @@ function onMouseup({ target, ctrlKey }) {
 
     if (selectionEnabled) {
         resetSelection();
+        prevendTrackDeselection(document.querySelectorAll(".track.selected").length);
     }
     else {
         selectTrackElement(target, ctrlKey);
@@ -266,4 +281,7 @@ function onMousedown(event) {
     window.addEventListener("mouseup", onMouseup);
 }
 
-export { enableTrackSelection };
+export {
+    enableTrackSelection,
+    deselectTrackElements
+};

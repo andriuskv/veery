@@ -1,9 +1,10 @@
 /* global parse_audio_metadata */
 
 import { formatTime } from "./main.js";
-import * as playlist from "./playlist/playlist.js";
-import * as playlistManage from "./playlist/playlist.manage.js";
-import * as playlistAdd from "./playlist/playlist.add.js";
+import { postMessageToWorker } from "./worker.js";
+import { getPlaylistById, createPlaylist } from "./playlist/playlist.js";
+import { initPlaylist, appendToPlaylist } from "./playlist/playlist.manage.js";
+import { showNotice } from "./playlist/playlist.add.js";
 
 const progress = (function() {
     const progress = document.getElementById("js-file-progress");
@@ -23,49 +24,11 @@ const progress = (function() {
     };
 })();
 
-const worker = (function initWorker() {
-    let worker = null;
-
-    function init() {
-        worker = new Worker("js/workers/worker1.js");
-
-        worker.onmessage = function(event) {
-            const tracks = event.data;
-            const pl = getPlaylist();
-
-            pl.tracks.push(...tracks);
-            playlistManage.appendTo(pl, tracks, false);
-            if (pl.sortedBy) {
-                playlist.sortTracks(pl.tracks, pl.sortedBy, pl.order);
-                playlistManage.updatePlaylist(pl);
-            }
-            playlistManage.initStoredTrack("local-files");
-        };
-
-        worker.onerror = function(event) {
-            console.log(event);
-        };
-    }
-
-    function postMessage(message) {
-        worker.postMessage(message);
-    }
-
-    return {
-        post: postMessage,
-        init
-    };
-})();
-
 function getPlaylist() {
-    const localPlaylist = playlist.get("local-files");
-
-    if (localPlaylist) {
-        return localPlaylist;
-    }
-    return playlist.create({
+    return getPlaylistById("local-files") || createPlaylist({
         id: "local-files",
-        title: "Local files"
+        title: "Local files",
+        type: "list"
     });
 }
 
@@ -154,14 +117,14 @@ function processNewTracks(pl, newTracks) {
         pl.tracks.push(...tracks);
 
         if (document.getElementById(`js-${pl.id}`)) {
-            playlistManage.appendTo(pl, tracks, true);
+            appendToPlaylist(pl, tracks, true);
         }
         else {
-            playlistManage.init(pl, true);
+            initPlaylist(pl, true);
         }
-        worker.post({
-            action: "add",
-            tracks
+        postMessageToWorker({
+            action: "update-playlist",
+            playlist: pl
         });
     })
     .catch(error => {
@@ -169,11 +132,11 @@ function processNewTracks(pl, newTracks) {
     });
 }
 
-function addNewTracks(files) {
+function addTracks(files) {
     const supportedTracks = filterUnsupportedFiles(files);
 
     if (!supportedTracks.length) {
-        playlistAdd.showNotice("No valid audio files found");
+        showNotice("No valid audio files found");
         return;
     }
 
@@ -181,13 +144,10 @@ function addNewTracks(files) {
     const tracks = filterDuplicateTracks(supportedTracks, pl.tracks);
 
     if (!tracks.length) {
-        playlistAdd.showNotice("Tracks already exist");
+        showNotice("Tracks already exist");
         return;
     }
     processNewTracks(pl, tracks);
 }
 
-export {
-    addNewTracks as addTracks,
-    worker
-};
+export { addTracks };

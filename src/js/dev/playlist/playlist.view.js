@@ -1,8 +1,10 @@
 import * as settings from "./../settings.js";
-import * as playlist from "./playlist.js";
+import { postMessageToWorker } from "./../worker.js";
+import { getPlaylistById, getActivePlaylistId, getCurrentTrack } from "./playlist.js";
 import { removeElementClass } from "./../main.js";
-import { isSortOptionSupported, resetPlaylistSort } from "./playlist.sorting.js";
+import { resetPlaylistSort } from "./playlist.sorting.js";
 import { enableTrackSelection } from "./playlist.track-selection.js";
+import { hideMoveToBtn } from "./playlist.move-to.js";
 
 let timeout = 0;
 
@@ -45,15 +47,15 @@ function createGrid(id, items) {
     return `<ul id="js-${id}" class="playlist-items grid-view">${items}</ul>`;
 }
 
-function createItems(cb, tracks) {
-    return tracks.map(item => cb(item)).join("");
+function createItems(tracks, cb) {
+    return tracks.map(cb).join("");
 }
 
 function createPlaylist(pl) {
     if (pl.type === "list") {
-        return createList(pl.id, createItems(createListItem, pl.tracks));
+        return createList(pl.id, createItems(pl.tracks, createListItem));
     }
-    return createGrid(pl.id, createItems(createGridItem, pl.tracks));
+    return createGrid(pl.id, createItems(pl.tracks, createGridItem));
 }
 
 function createPlaylistTab(pl) {
@@ -73,7 +75,13 @@ function appendToPlaylist(pl, tracks) {
     const playlist = document.getElementById(`js-${pl.id}`);
     const cb = pl.type === "list" ? createListItem: createGridItem;
 
-    playlist.insertAdjacentHTML("beforeend", createItems(cb, tracks));
+    playlist.insertAdjacentHTML("beforeend", createItems(tracks, cb));
+}
+
+function replacePlaylistView(pl) {
+    const cb = pl.type === "list" ? createListItem: createGridItem;
+
+    document.getElementById(`js-${pl.id}`).innerHTML = createItems(pl.tracks, cb);
 }
 
 function updateTrackListView(track, trackElement) {
@@ -166,17 +174,19 @@ function togglePlaylistTypeBtn(type) {
 }
 
 function changePlaylistType(newType, pl) {
-    if (!isSortOptionSupported(pl.sortedBy, newType)) {
-        resetPlaylistSort(pl);
-    }
     pl.type = newType;
-    togglePlaylistTypeBtn(newType);
-    enableTrackSelection(pl.id);
-    playlist.save(pl);
+    resetPlaylistSort(pl);
     document.getElementById(`js-tab-playlist-${pl.id}`).innerHTML = createPlaylist(pl);
+    enableTrackSelection(pl.id);
+    togglePlaylistTypeBtn(newType);
+    hideMoveToBtn();
+    postMessageToWorker({
+        action: "update-playlist",
+        playlist: Object.assign({}, pl)
+    });
 
-    if (pl.id === playlist.getActivePlaylistId()) {
-        const track = playlist.getCurrentTrack();
+    if (pl.id === getActivePlaylistId()) {
+        const track = getCurrentTrack();
 
         if (track) {
             showPlayingTrack(track.index, pl.id, true);
@@ -189,7 +199,7 @@ document.getElementById("js-filter-input").addEventListener("keyup", ({ target }
         clearTimeout(timeout);
     }
     timeout = setTimeout(() => {
-        const { id, tracks } = playlist.get(settings.get("activeTabId"));
+        const { id, tracks } = getPlaylistById(settings.get("activeTabId"));
         const trackElements = document.getElementById(`js-${id}`).children;
 
         filterTracks(tracks, trackElements, target.value);
@@ -201,6 +211,7 @@ export {
     removePlaylistTab as remove,
     updatePlaylist as update,
     appendToPlaylist as append,
+    replacePlaylistView,
     scrollToTrack,
     showPlayingTrack,
     filterTracks,

@@ -1,4 +1,4 @@
-.playlist-sort-option-container {
+.playlist-sort-panel-container {
     user-select: none;
     position: relative;
     width: 100px;
@@ -8,28 +8,18 @@
         width: 100%;
     }
 }
-.playlist-sort-options {
+.playlist-sort-panel {
     z-index: 1;
     position: absolute;
     top: 26px;
     left: 0;
     right: 0;
-    display: none;
     border-radius: 2px;
-    border-left: 1px solid $color3;
-    border-right: 1px solid $color3;
+    border: 1px solid $color3;
     background-color: $color1;
-
-    &.visible {
-        display: block;
-    }
 }
 .playlist-sort-option {
     margin: 2px;
-
-    &.hidden {
-        display: none;
-    }
 }
 .order-toggle-btn {
     padding: 4px 2px;

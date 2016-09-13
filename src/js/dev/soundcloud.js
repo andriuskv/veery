@@ -1,14 +1,14 @@
 /* global SC */
 
 import { formatTime } from "./main.js";
-import * as playlistAdd from "./playlist/playlist.add.js";
-import * as playlistManage from "./playlist/playlist.manage.js";
+import { addRemotePlaylist, showNotice, importBtn } from "./playlist/playlist.add.js";
+import { storedTrack } from "./player/player.js";
 
 function init() {
     SC.initialize({
         client_id: ""
     });
-    playlistManage.initStoredTrack("sc-pl-");
+    storedTrack.setPlayerAsReady("soundcloud");
 }
 
 function parseTracks(tracks) {
@@ -26,25 +26,30 @@ function parseTracks(tracks) {
 
 function fetchPlaylist(url) {
     SC.resolve(url).then(playlist => {
+        const newPlaylist = {
+            type: "grid"
+        };
+
         if (Array.isArray(playlist)) {
-            return {
+            return Object.assign(newPlaylist, {
                 id: `sc-pl-${playlist[0].user_id}`,
-                title: `${playlist[0].user.username} tracks`,
+                title: `${playlist[0].user.username} playlist`,
                 tracks: parseTracks(playlist)
-            };
+            });
         }
-        return {
+        return Object.assign(newPlaylist, {
             id: `sc-pl-${playlist.id}`,
             title: playlist.title,
             tracks: parseTracks(playlist.tracks)
-        };
+        });
     })
-    .then(playlistAdd.add)
+    .then(addRemotePlaylist)
+    .then(importBtn.toggle)
     .catch(error => {
         console.log(error);
         if (error.status === 404) {
-            playlistAdd.showNotice("Playlist was not found");
-            playlistAdd.importBtn.toggle();
+            showNotice("Playlist was not found");
+            importBtn.toggle();
         }
     });
 }

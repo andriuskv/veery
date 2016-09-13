@@ -1,0 +1,51 @@
+.move-to-panel {
+    z-index: 1;
+    position: absolute;
+    top: 30px;
+    width: 200px;
+    padding: 8px;
+    border-radius: 2px;
+    border: 1px solid $color3;
+    background-color: $color1;
+}
+.move-to-panel-title {
+    margin-top: 0;
+    margin-bottom: 8px;
+    color: $base-text-color;
+    font-size: 16px;
+    font-weight: normal;
+}
+.move-to-list {
+    padding-top: 2px;
+    padding-bottom: 2px;
+    margin-bottom: 8px;
+    border-top: 1px solid $color3;
+    border-bottom: 1px solid $color3;
+}
+.move-to-list-item {
+    margin-top: 2px;
+    margin-bottom: 2px;
+
+    .btn {
+        width: 100%;
+        text-align: left;
+    }
+}
+.move-to-new-pl-btn {
+    width: 100%;
+    text-align: left;
+}
+.move-to-form {
+    display: none;
+
+    &.visible {
+        display: flex;
+    }
+    .input {
+        width: 124px;
+        margin-right: 4px;
+    }
+    .input, .btn {
+        background-color: $color3;
+    }
+}

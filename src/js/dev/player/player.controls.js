@@ -1,7 +1,7 @@
 import * as settings from "./../settings.js";
-import { formatTime } from "./../main.js";
-import * as playlist from "./../playlist/playlist.js";
 import * as player from "./player.js";
+import { formatTime } from "./../main.js";
+import { getCurrentTrack } from "./../playlist/playlist.js";
 
 const elapsedTime = (function() {
     let timeout = 0;
@@ -126,7 +126,7 @@ function onPlayerTrackMousemove(event) {
 }
 
 function onPlayerTrackMouseup({ screenX }) {
-    if (playlist.getCurrentTrack()) {
+    if (getCurrentTrack()) {
         player.seek(getElapsedValue("track", screenX));
     }
 
@@ -136,7 +136,7 @@ function onPlayerTrackMouseup({ screenX }) {
 }
 
 document.getElementById("js-player-track-slider").addEventListener("mousedown", event => {
-    if (event.which !== 1 || !playlist.getCurrentTrack()) {
+    if (event.which !== 1 || !getCurrentTrack()) {
         return;
     }
 

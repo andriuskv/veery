@@ -1,25 +1,14 @@
-import * as playlist from "./playlist.js";
+import * as settings from "./../settings.js";
+import { removePresentPanels } from "./../panels.js";
+import { postMessageToWorker } from "./../worker.js";
+import { getPlaylistById, sortPlaylist } from "./playlist.js";
 import { updatePlaylist } from "./playlist.manage.js";
 import { filterTracks } from "./playlist.view.js";
 
 const sortToggleBtn = document.getElementById("js-sort-toggle");
-const optionsElement = document.getElementById("js-playlist-sort-options");
-let currentActiveOption = null;
 
 function capitalize(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
-}
-
-function resetSelection() {
-    sortToggleBtn.classList.remove("active");
-    optionsElement.classList.remove("visible");
-}
-
-function resetCurrentActiveOption() {
-    if (currentActiveOption) {
-        currentActiveOption.classList.remove("active");
-        currentActiveOption = null;
-    }
 }
 
 function toggleOrderBtn(order = 1) {
@@ -35,12 +24,15 @@ function toggleOrderBtn(order = 1) {
     }
 }
 
-function sortPlaylist(pl, sortBy) {
+function changePlaylistSorting(pl, sortBy) {
     const query = document.getElementById("js-filter-input").value;
 
-    playlist.sort(pl, sortBy);
+    sortPlaylist(pl, sortBy);
     updatePlaylist(pl);
-    playlist.save(pl);
+    postMessageToWorker({
+        action: "update-playlist",
+        playlist: pl
+    });
 
     if (query) {
         const trackElements = document.getElementById(`js-${pl.id}`).children;
@@ -57,19 +49,13 @@ function setSortOptions({ sortedBy, order }) {
     }
     sortToggleBtn.textContent = btnTitle;
     toggleOrderBtn(order);
-    resetSelection();
 }
 
-function isSortOptionSupported(sortOption, playlistType) {
-    let supportedOptions = [];
-
+function getSupportedSortOptions(playlistType) {
     if (playlistType === "list") {
-        supportedOptions = ["title", "artist", "album", "duration"];
+        return ["title", "artist", "album", "duration"];
     }
-    else {
-        supportedOptions = ["name", "duration"];
-    }
-    return supportedOptions.includes(sortOption);
+    return ["name", "duration"];
 }
 
 function resetPlaylistSort(pl) {
@@ -79,58 +65,53 @@ function resetPlaylistSort(pl) {
     toggleOrderBtn();
 }
 
-function toggleSortOptions({ type, sortedBy }) {
-    sortToggleBtn.classList.toggle("active");
-    optionsElement.classList.toggle("visible");
+function getSortOtions(supportedOptions, sortedBy) {
+    return supportedOptions.map(option => {
+        const activeClass = option === sortedBy ? "active" : "";
 
-    if (optionsElement.classList.contains("visible")) {
-        resetCurrentActiveOption();
-        Array.from(optionsElement.children).forEach(option => {
-            const sortOptionBtn = option.firstElementChild;
-            const sortBy = sortOptionBtn.getAttribute("data-sort");
+        return `
+            <li class="playlist-sort-option">
+                <button class="btn btn-transparent ${activeClass}" data-sort="${option}">
+                    ${capitalize(option)}
+                </button>
+            </li>
+        `;
+    }).join("");
+}
 
-            if (sortBy === sortedBy) {
-                sortOptionBtn.classList.add("active");
-                currentActiveOption = sortOptionBtn;
-            }
+function createSortPanel(panelId, { type, sortedBy }) {
+    const supportedOptions = getSupportedSortOptions(type);
+    const sortOptions = getSortOtions(supportedOptions, sortedBy);
+    const sortPanelElement = `
+        <ul id="${panelId}" class="playlist-sort-panel">${sortOptions}</ul>
+    `;
 
-            if (type === "grid" && (sortBy === "duration" || sortBy === "name")) {
-                option.classList.remove("hidden");
-            }
-            else if (type === "list" && sortBy !== "name") {
-                option.classList.remove("hidden");
-            }
-            else {
-                option.classList.add("hidden");
-            }
-        });
-    }
+    document.getElementById("js-playlist-sort-panel-container").insertAdjacentHTML("beforeend", sortPanelElement);
+    document.getElementById(panelId).addEventListener("click", selectSortOption, { once: true });
 }
 
 function changePlaylistOrder(pl) {
-    sortPlaylist(pl, pl.sortedBy);
+    changePlaylistSorting(pl, pl.sortedBy);
     toggleOrderBtn(pl.order);
 }
 
-function selectSortOption(sortBy, optionElement, pl) {
-    resetSelection();
+function selectSortOption({ target }) {
+    const pl = getPlaylistById(settings.get("activeTabId"));
+    const sortBy = target.getAttribute("data-sort");
 
-    if (currentActiveOption === optionElement) {
+    removePresentPanels();
+
+    if (!sortBy || pl.sortedby === sortBy) {
         return;
     }
-    resetCurrentActiveOption();
     toggleOrderBtn();
-    optionElement.classList.add("active");
-    currentActiveOption = optionElement;
     sortToggleBtn.textContent = capitalize(sortBy);
-    sortPlaylist(pl, sortBy);
+    changePlaylistSorting(pl, sortBy);
 }
 
 export {
     setSortOptions,
-    toggleSortOptions,
-    selectSortOption,
+    createSortPanel,
     changePlaylistOrder,
-    isSortOptionSupported,
     resetPlaylistSort
 };

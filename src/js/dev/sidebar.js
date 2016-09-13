@@ -88,9 +88,9 @@ function showTrackInfo(track) {
 }
 
 export {
-    createSidebarEntry as createEntry,
-    editSidebarEntry as editEntry,
-    removeSidebarEntry as removeEntry,
+    createSidebarEntry,
+    editSidebarEntry,
+    removeSidebarEntry,
     showTrackInfo,
     showActiveIcon,
     hideActiveIcon
