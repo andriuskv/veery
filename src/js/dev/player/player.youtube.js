@@ -1,28 +1,17 @@
 /* global YT */
 
-import * as settings from "./../settings.js";
 import { setCurrentTrack } from "./../playlist/playlist.js";
-import { storedTrack, onTrackStart, onTrackEnd, toggleTrackPlaying } from "./player.js";
+import { storedTrack, onTrackStart } from "./player.js";
 
 let ytPlayer = null;
 window.onYouTubeIframeAPIReady = initPlayer;
 
-function getTime(player) {
-    return {
-        currentTime: player.getCurrentTime(),
-        duration:  player.getDuration()
-    };
-}
-
 function onPlayerStateChange({ data: currentState }) {
     if (currentState === YT.PlayerState.PLAYING) {
-        setVolume(settings.get("volume"));
-        onTrackStart(getTime(ytPlayer))
-        .then(() => {
-            const play = ytPlayer.playVideo.bind(ytPlayer);
-
-            onTrackEnd(play);
-        });
+        onTrackStart({
+            currentTime: Math.floor(ytPlayer.getCurrentTime()),
+            duration:  ytPlayer.getDuration()
+        }, ytPlayer.playVideo.bind(ytPlayer));
     }
 }
 
@@ -47,24 +36,22 @@ function initPlayer() {
     });
 }
 
-function togglePlaying() {
-    const play = ytPlayer.playVideo.bind(ytPlayer);
-    const pause = ytPlayer.pauseVideo.bind(ytPlayer);
-
-    toggleTrackPlaying(play, pause);
+function getPlayPauseCallbacks() {
+    return {
+        play: ytPlayer.playVideo.bind(ytPlayer),
+        pause: ytPlayer.pauseVideo.bind(ytPlayer)
+    };
 }
 
-function playTrack(track) {
-    if (ytPlayer) {
-        setCurrentTrack(track);
-        ytPlayer.loadVideoById(track.id);
-        return;
-    }
-}
-
-function queueTrack(track, startTime) {
+function playTrack(track, volume, startTime) {
+    setVolume(volume);
     setCurrentTrack(track);
-    ytPlayer.cueVideoById(track.id, startTime);
+    if (typeof startTime === "number") {
+        ytPlayer.cueVideoById(track.id, startTime);
+    }
+    else {
+        ytPlayer.loadVideoById(track.id);
+    }
 }
 
 function stopTrack() {
@@ -84,10 +71,9 @@ function getElapsed(percent) {
 }
 
 export {
-    stopTrack as stop,
     playTrack,
-    queueTrack,
-    togglePlaying,
+    stopTrack,
+    getPlayPauseCallbacks,
     getElapsed,
     setVolume
 };

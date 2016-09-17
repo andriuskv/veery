@@ -7,7 +7,6 @@
     width: 160px;
     margin-right: 4px;
 }
-
 .sidebar-header {
     display: flex;
     align-items: center;
@@ -91,10 +90,6 @@
     transform: translateY(-50%);
     background-color: $color2;
     box-shadow: -2px 0px 6px $color2;
-
-    &.hidden {
-        display: none;
-    }
 }
 .player-track-art-container {
     margin-bottom: 1px;

@@ -96,7 +96,8 @@ function parseTracks(tracks, parsedTracks, startIndex) {
             name: tracks[0].name,
             thumbnail: data[0].picture || "assets/images/album-art-placeholder.png",
             audioTrack: tracks[0].audioTrack,
-            duration: data[1]
+            duration: data[1],
+            player: "native"
         });
         tracks.splice(0, 1);
         progress.setAttrValue("value", parsedTracks.length);
@@ -123,7 +124,7 @@ function processNewTracks(pl, newTracks) {
             initPlaylist(pl, true);
         }
         postMessageToWorker({
-            action: "update-playlist",
+            action: "put",
             playlist: pl
         });
     })

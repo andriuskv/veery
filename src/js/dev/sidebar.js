@@ -1,17 +1,14 @@
-let activeSidebarIconElem = null;
-
-function getEntry(id) {
-    return document.querySelector(`[data-tab-item=playlist-${id}]`);
+function getSidebarEntry(id) {
+    return document.getElementById(`js-sidebar-entry-${id}`);
 }
 
 function createSidebarEntry(title, id) {
     const sidebarEntries = document.getElementById("js-sidebar-playlist-entries");
     const newEntry = `
         <li>
-            <a href="#/playlist/${id}" class="btn btn-transparent sidebar-btn"
-                data-tab-item="playlist-${id}">
+            <a href="#/playlist/${id}" id="js-sidebar-entry-${id}"
+                class="btn btn-transparent sidebar-btn">
                 <span>${title}</span>
-                <span class="icon-volume-up active-playlist-icon hidden"></span>
             </a>
         </li>`;
 
@@ -19,29 +16,33 @@ function createSidebarEntry(title, id) {
 }
 
 function editSidebarEntry(id, title) {
-    const entry = getEntry(id);
+    const entry = getSidebarEntry(id);
 
     entry.children[0].textContent = title;
 }
 
 function removeSidebarEntry(id) {
-    const entry = getEntry(id);
+    const entry = getSidebarEntry(id);
 
     entry.parentElement.removeChild(entry);
 }
 
-function showActiveIcon(id) {
-    const entry = getEntry(id);
-    const element = entry.querySelector(".active-playlist-icon");
-
-    element.classList.remove("hidden");
-    activeSidebarIconElem = element;
+function createActiveIcon() {
+    return `<span id="js-active-playlist-icon" class="icon-volume-up active-playlist-icon"></span>`;
 }
 
-function hideActiveIcon() {
-    if (activeSidebarIconElem) {
-        activeSidebarIconElem.classList.add("hidden");
-        activeSidebarIconElem = null;
+function showActiveIcon(id) {
+    const entry = getSidebarEntry(id);
+
+    removeActiveIcon();
+    entry.insertAdjacentHTML("beforeend", createActiveIcon());
+}
+
+function removeActiveIcon() {
+    const activeIcon = document.getElementById("js-active-playlist-icon");
+
+    if (activeIcon) {
+        activeIcon.parentElement.removeChild(activeIcon);
     }
 }
 
@@ -91,7 +92,8 @@ export {
     createSidebarEntry,
     editSidebarEntry,
     removeSidebarEntry,
+    getSidebarEntry,
     showTrackInfo,
     showActiveIcon,
-    hideActiveIcon
+    removeActiveIcon
 };

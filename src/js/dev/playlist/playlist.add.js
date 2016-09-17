@@ -2,7 +2,7 @@ import { removeElementClass, getElementByAttr, scriptLoader } from "./../main.js
 import { initializeWorker, postMessageToWorker } from "./../worker.js";
 import { editSidebarEntry } from "./../sidebar.js";
 import { getPlaylistById, createPlaylist } from "./playlist.js";
-import { initPlaylist, removePlaylist, replacePlaylist } from "./playlist.manage.js";
+import { initPlaylist, removePlaylist, replacePlaylistTracks } from "./playlist.manage.js";
 import * as local from "./../local.js";
 import * as yt from "./../youtube.js";
 import * as sc from "./../soundcloud.js";
@@ -43,20 +43,19 @@ function importPlaylist(name, value) {
 
 function addRemotePlaylist(pl) {
     const existingPlaylist = getPlaylistById(pl.id);
-    let newPlaylist = null;
+    let playlist = null;
 
     if (existingPlaylist) {
-        existingPlaylist.tracks = pl.tracks;
-        newPlaylist = Object.assign({}, existingPlaylist);
-        replacePlaylist(newPlaylist, true);
+        playlist = Object.assign({}, existingPlaylist, { tracks: pl.tracks });
+        replacePlaylistTracks(playlist, true);
     }
     else {
-        newPlaylist = createPlaylist(pl);
-        initPlaylist(newPlaylist, true);
+        playlist = createPlaylist(pl);
+        initPlaylist(playlist, true);
     }
     postMessageToWorker({
-        action: "update-playlist",
-        playlist: newPlaylist
+        action: "put",
+        playlist
     });
 }
 
@@ -105,7 +104,6 @@ function editPlaylistTitle(action, target, titleElement, playlistId) {
         if (!titleElement.value) {
             titleElement.value = pl.title;
         }
-
         const newTitle = titleElement.value;
 
         if (newTitle !== pl.title) {
@@ -113,8 +111,11 @@ function editPlaylistTitle(action, target, titleElement, playlistId) {
             editSidebarEntry(playlistId, newTitle);
             titleElement.setAttribute("value", newTitle);
             postMessageToWorker({
-                action: "update-playlist",
-                playlist: pl
+                action: "update",
+                playlist: {
+                    id: pl.id,
+                    title: pl.title
+                }
             });
         }
         titleElement.setAttribute("readonly", "readonly");

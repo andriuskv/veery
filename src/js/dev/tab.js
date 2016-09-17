@@ -1,5 +1,6 @@
 import * as settings from "./settings.js";
 import { removeElementClass } from "./main.js";
+import { getSidebarEntry } from "./sidebar.js";
 import { removePresentPanels, togglePanel } from "./panels.js";
 import { getPlaylistById } from "./playlist/playlist.js";
 import { changePlaylistType, togglePlaylistTypeBtn } from "./playlist/playlist.view.js";
@@ -7,29 +8,30 @@ import { enableTrackSelection, deselectTrackElements } from "./playlist/playlist
 import { setSortOptions, createSortPanel, changePlaylistOrder } from "./playlist/playlist.sorting.js";
 import { createMoveToPanel } from "./playlist/playlist.move-to.js";
 
-const tabHeaderElement = document.getElementById("js-tab-header");
+function toggleTab(id, playlistTab, ignoreSidebar) {
+    const tabHeaderElement = document.getElementById("js-tab-header");
 
-function toggleTab(id, ignoreSidebar) {
     removeElementClass("sidebar-btn", "active");
     removeElementClass("tab", "active");
 
-    if (id.startsWith("playlist-")) {
-        const pl = getPlaylistById(id.split("playlist-")[1]);
+    if (playlistTab) {
+        const pl = getPlaylistById(id);
 
-        settings.set("activeTabId", pl.id);
         togglePlaylistTypeBtn(pl.type);
         setSortOptions(pl);
         enableTrackSelection(pl.id);
         tabHeaderElement.classList.add("visible");
     }
     else {
-        settings.set("activeTabId", id);
         tabHeaderElement.classList.remove("visible");
     }
+    settings.set("activeTabId", id);
     document.getElementById(`js-tab-${id}`).classList.add("active");
 
     if (!ignoreSidebar) {
-        document.querySelector(`[data-tab-item=${id}]`).classList.add("active");
+        const entry = getSidebarEntry(id);
+
+        entry.classList.add("active");
     }
 }
 

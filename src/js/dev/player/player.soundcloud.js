@@ -1,37 +1,28 @@
 /* global SC */
 
-import * as settings from "./../settings.js";
 import { setCurrentTrack } from "./../playlist/playlist.js";
-import { onTrackStart, onTrackEnd, toggleTrackPlaying } from "./player.js";
+import { onTrackStart } from "./player.js";
 
 let scPlayer = null;
-
-function getTime(player) {
-    return {
-        currentTime: player.currentTime() / 1000,
-        duration: Math.floor(player.streamInfo.duration / 1000)
-    };
-}
 
 function repeatTrack() {
     scPlayer.seek(0);
     scPlayer.play();
 }
 
-function playTrack(track, startTime) {
+function playTrack(track, volume, startTime) {
     setCurrentTrack(track);
     SC.stream(`/tracks/${track.id}`).then(trackPlayer => {
         scPlayer = trackPlayer;
-
-        trackPlayer.setVolume(settings.get("volume"));
+        trackPlayer.setVolume(volume);
         trackPlayer.on("play-resume", () => {
-            onTrackStart(getTime(trackPlayer))
-            .then(() => {
-                onTrackEnd(repeatTrack);
-            });
+            onTrackStart({
+                currentTime: Math.floor(trackPlayer.currentTime() / 1000),
+                duration: Math.floor(trackPlayer.streamInfo.duration / 1000)
+            }, repeatTrack);
         });
         trackPlayer.on("state-change", state => {
-            if (!startTime) {
+            if (typeof startTime !== "number") {
                 return;
             }
             else if (state === "loading") {
@@ -39,7 +30,7 @@ function playTrack(track, startTime) {
                 trackPlayer.pause();
             }
             else if (state === "seeking") {
-                startTime = 0;
+                startTime = null;
             }
         });
         trackPlayer.play();
@@ -49,11 +40,11 @@ function playTrack(track, startTime) {
     });
 }
 
-function togglePlaying() {
-    const play = scPlayer.play.bind(scPlayer);
-    const pause = scPlayer.pause.bind(scPlayer);
-
-    toggleTrackPlaying(play, pause);
+function getPlayPauseCallbacks() {
+    return {
+        play: scPlayer.play.bind(scPlayer),
+        pause: scPlayer.pause.bind(scPlayer)
+    };
 }
 
 function stopTrack() {
@@ -66,20 +57,17 @@ function setVolume(volume) {
 }
 
 function getElapsed(percent) {
-    if (scPlayer) {
-        const duration = scPlayer.streamInfo.duration / 1000;
-        const elapsed = duration / 100 * percent;
+    const duration = scPlayer.streamInfo.duration / 1000;
+    const elapsed = duration / 100 * percent;
 
-        scPlayer.seek(elapsed * 1000);
-        return elapsed;
-    }
-    return 0;
+    scPlayer.seek(elapsed * 1000);
+    return elapsed;
 }
 
 export {
-    stopTrack as stop,
     playTrack,
-    togglePlaying,
+    stopTrack,
+    getPlayPauseCallbacks,
     getElapsed,
     setVolume
 };
