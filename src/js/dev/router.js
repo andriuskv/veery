@@ -32,11 +32,10 @@ function toggleTab(route) {
         toggleRoute("404");
         return;
     }
-    const tabName = route.replace(/\//g, "-");
+    const playlistTab = route.startsWith("playlist/");
+    const tabName = playlistTab ? route.split("playlist/")[1] : route;
 
-    if (tabName && document.getElementById(`js-tab-${tabName}`)) {
-        tab.toggle(tabName, tabName === "404");
-    }
+    tab.toggle(tabName, playlistTab, tabName === "404");
 }
 
 function toggleCurrentRoute() {

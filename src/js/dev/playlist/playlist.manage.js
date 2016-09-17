@@ -1,10 +1,10 @@
 import { removeElementClass } from "./../main.js";
 import { postMessageToWorker } from "./../worker.js";
 import { createSidebarEntry, removeSidebarEntry } from "./../sidebar.js";
+import { storedTrack, stopPlayer } from "./../player/player.js";
 import * as settings from "./../settings.js";
 import * as router from "./../router.js";
 import * as tab from "./../tab.js";
-import * as player from "./../player/player.js";
 import * as playlist from "./playlist.js";
 import * as playlistView from "./playlist.view.js";
 
@@ -23,11 +23,11 @@ function initPlaylist(pl, toggle) {
         updatePlaylist(pl);
     }
 
-    if (toggle && router.isActive("add")) {
+    if (toggle) {
         router.toggle(route);
     }
     else if (router.isActive(pl.id)) {
-        tab.toggle(`playlist-${pl.id}`);
+        tab.toggle(pl.id);
     }
 }
 
@@ -37,32 +37,28 @@ function appendToPlaylist(pl, tracks, toggle) {
     playlistView.append(pl, tracks);
 
     if (toggle) {
-        const route = `playlist/${pl.id}`;
-
-        router.toggle(route);
+        router.toggle(`playlist/${pl.id}`);
     }
 }
 
-function replacePlaylist(pl, toggle) {
+function replacePlaylistTracks(pl, toggle) {
     playlist.setTrackIndexes(pl, settings.get("shuffle"));
     playlist.resetPlaybackIndex();
-    playlistView.replacePlaylistView(pl);
+    playlistView.replacePlaylistTrackView(pl);
 
     if (toggle) {
-        const route = `playlist/${pl.id}`;
-
-        router.toggle(route);
+        router.toggle(`playlist/${pl.id}`);
     }
 }
 
 function removePlaylist(id, entry) {
-    const storedTrack = player.storedTrack.get();
+    const track = storedTrack.get();
 
-    if (storedTrack && storedTrack.playlistId === id) {
-        player.storedTrack.remove();
+    if (track && track.playlistId === id) {
+        storedTrack.remove();
     }
     if (playlist.isActive(id)) {
-        player.stop();
+        stopPlayer();
     }
     if (!entry) {
         entry = document.querySelector(`[data-id=${id}]`);
@@ -72,7 +68,7 @@ function removePlaylist(id, entry) {
     removeSidebarEntry(id);
     playlistView.remove(id);
     postMessageToWorker({
-        action: "remove-playlist",
+        action: "remove",
         playlistId: id
     });
 }
@@ -163,7 +159,7 @@ function removeSelectedTracks(pl) {
         playlist.setTrackIndexes(pl, settings.get("shuffle"));
         updateCurrentTrack(pl.id, selectedTrackIndexes);
         postMessageToWorker({
-            action: "update-playlist",
+            action: "put",
             playlist: pl
         });
     }
@@ -182,7 +178,7 @@ window.addEventListener("keypress", event => {
 export {
     initPlaylist,
     appendToPlaylist,
-    replacePlaylist,
+    replacePlaylistTracks,
     removePlaylist,
     updatePlaylist
 };

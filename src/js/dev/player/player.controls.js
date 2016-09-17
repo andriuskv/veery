@@ -12,40 +12,41 @@ const elapsedTime = (function() {
         }
     }
 
-    function update(track) {
-        const startTime = performance.now();
+    function updateTrackSlider(track, startTime, elapsed, trackEndCb) {
+        const ideal = performance.now() - startTime;
+        const diff = ideal - elapsed;
 
-        return new Promise(resolve => {
-            (function update(currentTime, startTime, elapsed) {
-                const ideal = performance.now() - startTime;
-                const diff = ideal - elapsed;
+        setElapsedTime(track.currentTime);
+        if (!settings.get("seeking")) {
+            const elapsedInPercentage = track.currentTime / track.duration * 100;
 
-                setElapsedTime(currentTime);
-                track.currentTime = currentTime;
-                if (!settings.get("seeking")) {
-                    const elapsedInPercent = currentTime / track.duration * 100;
-
-                    updateSlider("track", elapsedInPercent);
-                    track.elapsed = elapsedInPercent;
-                    player.storedTrack.set(track);
-                }
-                timeout = setTimeout(() => {
-                    if (currentTime < track.duration) {
-                        currentTime += 1;
-                        elapsed += 1000;
-                        update(currentTime, startTime, elapsed);
-                    }
-                    else {
-                        resolve();
-                    }
-                }, 1000 - diff);
-            })(Math.floor(track.currentTime), startTime, 0);
-        });
+            setSliderElementWidth("track", elapsedInPercentage);
+            player.storedTrack.updateSavedTrack({
+                elapsed: elapsedInPercentage,
+                currentTime: track.currentTime
+            });
+        }
+        timeout = setTimeout(() => {
+            if (track.currentTime < track.duration) {
+                track.currentTime += 1;
+                elapsed += 1000;
+                updateTrackSlider(track, startTime, elapsed, trackEndCb);
+            }
+            else {
+                trackEndCb();
+            }
+        }, 1000 - diff);
     }
 
-    function start(track) {
+    function update(track, trackEndCb) {
+        const startTime = performance.now();
+
+        updateTrackSlider(track, startTime, 0, trackEndCb);
+    }
+
+    function start(track, onTrackEnd) {
         stop();
-        return update(track);
+        update(track, onTrackEnd);
     }
 
     return { stop, start };
@@ -92,14 +93,20 @@ function getElapsedValue(slider, screenX) {
 function resetTrackSlider() {
     elapsedTime.stop();
     setElapsedTime(0);
-    updateSlider("track", 0);
+    setSliderElementWidth("track", 0);
 }
 
 function onVolumeTrackMousemove(event) {
-    const volume = getElapsedValue("volume", event.screenX);
+    const volumeInPercentage = getElapsedValue("volume", event.screenX);
+    const volume = volumeInPercentage / 100;
+    const track = getCurrentTrack();
 
-    updateSlider("volume", volume);
-    player.setVolume(volume / 100);
+    setSliderElementWidth("volume", volumeInPercentage);
+    settings.set("volume", volume);
+
+    if (track) {
+        player.setVolume(track, volume);
+    }
 }
 
 function onVolumeTrackMouseup() {
@@ -107,7 +114,7 @@ function onVolumeTrackMouseup() {
     document.removeEventListener("mouseup", onVolumeTrackMouseup);
 }
 
-function updateSlider(slider, percent) {
+function setSliderElementWidth(slider, percent) {
     document.getElementById(`js-player-${slider}-elapsed`).style.width = `${percent}%`;
 }
 
@@ -122,14 +129,15 @@ function showTrackDuration(duration, format = true) {
 }
 
 function onPlayerTrackMousemove(event) {
-    updateSlider("track", getElapsedValue("track", event.screenX));
+    setSliderElementWidth("track", getElapsedValue("track", event.screenX));
 }
 
 function onPlayerTrackMouseup({ screenX }) {
-    if (getCurrentTrack()) {
-        player.seek(getElapsedValue("track", screenX));
-    }
+    const track = getCurrentTrack();
 
+    if (track) {
+        player.seekTo(track, getElapsedValue("track", screenX));
+    }
     settings.set("seeking", false);
     document.removeEventListener("mousemove", onPlayerTrackMousemove);
     document.removeEventListener("mouseup", onPlayerTrackMouseup);
@@ -139,9 +147,8 @@ document.getElementById("js-player-track-slider").addEventListener("mousedown", 
     if (event.which !== 1 || !getCurrentTrack()) {
         return;
     }
-
     settings.set("seeking", true);
-    updateSlider("track", getElapsedValue("track", event.screenX));
+    setSliderElementWidth("track", getElapsedValue("track", event.screenX));
     document.addEventListener("mousemove", onPlayerTrackMousemove);
     document.addEventListener("mouseup", onPlayerTrackMouseup);
 });
@@ -150,7 +157,6 @@ document.getElementById("js-player-volume-slider").addEventListener("mousedown",
     if (event.which !== 1) {
         return;
     }
-
     onVolumeTrackMousemove(event);
     document.addEventListener("mousemove", onVolumeTrackMousemove);
     document.addEventListener("mouseup", onVolumeTrackMouseup);
@@ -158,20 +164,21 @@ document.getElementById("js-player-volume-slider").addEventListener("mousedown",
 
 document.getElementById("js-player-controls").addEventListener("click", ({ target }) => {
     const item = target.getAttribute("data-control-item");
+    const track = getCurrentTrack();
 
     switch (item) {
         case "previous":
-            player.playNext(-1);
+            player.playNextTrack(track, -1);
             break;
         case "play":
-            player.play();
+            player.playTrack(track);
             break;
         case "stop":
-            player.stop();
+            player.stopPlayer(track);
             player.storedTrack.remove();
             break;
         case "next":
-            player.playNext(1);
+            player.playNextTrack(track, 1);
             break;
         case "repeat":
         case "shuffle":
@@ -192,7 +199,7 @@ window.addEventListener("DOMContentLoaded", function onLoad() {
     if (shuffle) {
         document.querySelector(`[data-control-item="shuffle"]`).classList.add("active");
     }
-    updateSlider("volume", volume * 100);
+    setSliderElementWidth("volume", volume * 100);
     window.removeEventListener("DOMContentLoaded", onLoad);
 });
 
@@ -200,7 +207,7 @@ export {
     elapsedTime,
     togglePlayBtnClass,
     addClassOnPlayBtn,
-    updateSlider,
+    setSliderElementWidth,
     setElapsedTime,
     showTrackDuration,
     resetTrackSlider

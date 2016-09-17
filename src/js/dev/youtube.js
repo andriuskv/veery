@@ -10,7 +10,8 @@ function parseItems(playlist) {
         title: track.snippet.title,
         artist: "",
         album: "",
-        thumbnail: track.snippet.thumbnails.default.url
+        thumbnail: track.snippet.thumbnails.default.url,
+        player: "youtube"
     }));
     delete playlist.token;
     return playlist;

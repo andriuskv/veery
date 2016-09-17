@@ -30,7 +30,7 @@ function changePlaylistSorting(pl, sortBy) {
     sortPlaylist(pl, sortBy);
     updatePlaylist(pl);
     postMessageToWorker({
-        action: "update-playlist",
+        action: "put",
         playlist: pl
     });
 

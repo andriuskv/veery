@@ -1,27 +1,17 @@
-import * as settings from "./../settings.js";
-import { getCurrentTrack, setCurrentTrack } from "./../playlist/playlist.js";
-import { onTrackStart, onTrackEnd, toggleTrackPlaying } from "./player.js";
+import { setCurrentTrack } from "./../playlist/playlist.js";
+import { onTrackStart } from "./player.js";
 
-function getTime(audio) {
-    return {
-        currentTime: audio.currentTime,
-        duration: Math.floor(audio.duration)
-    };
-}
-
-function playTrack(track, startTime) {
+function playTrack(track, volume, startTime) {
     track.audioBlobURL = URL.createObjectURL(track.audioTrack);
     track.audio = new Audio(track.audioBlobURL);
-    track.audio.volume = settings.get("volume");
+    track.audio.volume = volume;
 
     setCurrentTrack(track);
     track.audio.onplaying = function() {
-        onTrackStart(getTime(track.audio))
-        .then(() => {
-            const play = track.audio.play.bind(track.audio);
-
-            onTrackEnd(play);
-        });
+        onTrackStart({
+            currentTime: Math.floor(track.audio.currentTime),
+            duration: Math.floor(track.audio.duration)
+        }, track.audio.play.bind(track.audio));
     };
 
     if (typeof startTime === "number") {
@@ -34,17 +24,11 @@ function playTrack(track, startTime) {
     };
 }
 
-function togglePlaying(track) {
-    const audio = track.audio;
-
-    if (audio) {
-        const play = audio.play.bind(audio);
-        const pause = audio.pause.bind(audio);
-
-        toggleTrackPlaying(play, pause);
-        return;
-    }
-    playTrack(track);
+function getPlayPauseCallbacks({ audio }) {
+    return {
+        play: audio.play.bind(audio),
+        pause: audio.pause.bind(audio)
+    };
 }
 
 function stopTrack(track) {
@@ -57,30 +41,21 @@ function stopTrack(track) {
     delete track.audio;
 }
 
-function setVolume(volume) {
-    const track = getCurrentTrack();
-
-    if (track) {
-        track.audio.volume = volume;
-    }
+function setVolume(track, volume) {
+    track.audio.volume = volume;
 }
 
-function getElapsed(percent) {
-    const { audio } = getCurrentTrack();
+function getElapsed(track, percent) {
+    const elapsed = track.audio.duration / 100 * percent;
 
-    if (audio) {
-        const elapsed = audio.duration / 100 * percent;
-
-        audio.currentTime = elapsed;
-        return elapsed;
-    }
-    return 0;
+    track.audio.currentTime = elapsed;
+    return elapsed;
 }
 
 export {
-    stopTrack as stop,
     playTrack,
-    togglePlaying,
+    stopTrack,
+    getPlayPauseCallbacks,
     getElapsed,
     setVolume
 };

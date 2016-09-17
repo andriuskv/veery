@@ -20,7 +20,8 @@ function parseTracks(tracks) {
         title: track.title,
         artist: "",
         album: "",
-        thumbnail: track.artwork_url || "assets/images/album-art-placeholder.png"
+        thumbnail: track.artwork_url || "assets/images/album-art-placeholder.png",
+        player: "soundcloud"
     }));
 }
 

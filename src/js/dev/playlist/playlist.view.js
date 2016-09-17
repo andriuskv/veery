@@ -61,7 +61,7 @@ function createPlaylist(pl) {
 function createPlaylistTab(pl) {
     const playlist = createPlaylist(pl);
 
-    return `<div id="js-tab-playlist-${pl.id}" class="tab playlist-tab">${playlist}</div>`;
+    return `<div id="js-tab-${pl.id}" class="tab playlist-tab">${playlist}</div>`;
 }
 
 function addPlaylistTab(pl) {
@@ -78,7 +78,7 @@ function appendToPlaylist(pl, tracks) {
     playlist.insertAdjacentHTML("beforeend", createItems(tracks, cb));
 }
 
-function replacePlaylistView(pl) {
+function replacePlaylistTrackView(pl) {
     const cb = pl.type === "list" ? createListItem: createGridItem;
 
     document.getElementById(`js-${pl.id}`).innerHTML = createItems(pl.tracks, cb);
@@ -110,7 +110,7 @@ function updatePlaylist(pl) {
 }
 
 function removePlaylistTab(id) {
-    const playlistTab = document.getElementById(`js-tab-playlist-${id}`);
+    const playlistTab = document.getElementById(`js-tab-${id}`);
 
     playlistTab.parentElement.removeChild(playlistTab);
 }
@@ -176,13 +176,18 @@ function togglePlaylistTypeBtn(type) {
 function changePlaylistType(newType, pl) {
     pl.type = newType;
     resetPlaylistSort(pl);
-    document.getElementById(`js-tab-playlist-${pl.id}`).innerHTML = createPlaylist(pl);
+    document.getElementById(`js-tab-${pl.id}`).innerHTML = createPlaylist(pl);
     enableTrackSelection(pl.id);
     togglePlaylistTypeBtn(newType);
     hideMoveToBtn();
     postMessageToWorker({
-        action: "update-playlist",
-        playlist: Object.assign({}, pl)
+        action: "update",
+        playlist: {
+            id: pl.id,
+            type: pl.type,
+            sortedBy: pl.sortedBy,
+            order: pl.order
+        }
     });
 
     if (pl.id === getActivePlaylistId()) {
@@ -211,7 +216,7 @@ export {
     removePlaylistTab as remove,
     updatePlaylist as update,
     appendToPlaylist as append,
-    replacePlaylistView,
+    replacePlaylistTrackView,
     scrollToTrack,
     showPlayingTrack,
     filterTracks,

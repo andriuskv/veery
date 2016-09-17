@@ -51,7 +51,7 @@ function moveTracks(playlistId) {
     });
     appendToPlaylist(destinationPlaylist, selectedTracks, true);
     postMessageToWorker({
-        action: "update-playlist",
+        action: "put",
         playlist: destinationPlaylist
     });
 }
@@ -79,6 +79,10 @@ function onFormSubmit(event) {
     });
 
     initPlaylist(pl);
+    postMessageToWorker({
+        action: "put",
+        playlist: pl
+    });
     document.getElementById("js-move-to-list").innerHTML = createPlaylistList(settings.get("activeTabId"));
     event.preventDefault();
     form.reset();

@@ -19,8 +19,14 @@ const storedTrack = (function () {
         return JSON.parse(localStorage.getItem("track"));
     }
 
-    function setTrack(track) {
+    function saveTrack(track) {
         localStorage.setItem("track", JSON.stringify(track));
+    }
+
+    function updateSavedTrack(newTrack) {
+        const track = Object.assign(getTrack(), newTrack);
+
+        saveTrack(track);
     }
 
     function removeTrack() {
@@ -38,27 +44,13 @@ const storedTrack = (function () {
         if (!track) {
             return;
         }
-
         playlist.setPlaylistAsActive(storedTrack.playlistId);
         playlist.setPlaybackIndex(track.index);
 
-        controls.updateSlider("track", storedTrack.elapsed);
+        controls.setSliderElementWidth("track", storedTrack.elapsed);
         controls.setElapsedTime(storedTrack.currentTime);
         beforeTrackStart(track, storedTrack.playlistId, true);
-
-        const player = getPlayer(storedTrack.playlistId);
-
-        settings.set("player", player);
-
-        if (player === "native") {
-            nPlayer.playTrack(track, storedTrack.currentTime);
-        }
-        else if (player === "soundcloud") {
-            scPlayer.playTrack(track, storedTrack.currentTime);
-        }
-        else if (player === "youtube") {
-            ytPlayer.queueTrack(track, storedTrack.currentTime);
-        }
+        playNewTrack(track, storedTrack.currentTime);
     }
 
     function setPlayerAsReady(player) {
@@ -70,9 +62,10 @@ const storedTrack = (function () {
     }
 
     return {
-        set: setTrack,
         get: getTrack,
         remove: removeTrack,
+        saveTrack,
+        updateSavedTrack,
         setPlayerAsReady
     };
 })();
@@ -85,9 +78,10 @@ function beforeTrackStart(track, id, manual) {
     }
 }
 
-function onTrackStart(time) {
+function onTrackStart(time, repeatCb) {
     const track = playlist.getCurrentTrack();
     const id = playlist.getActivePlaylistId();
+    const onTrackEndCbWithRepeat = onTrackEnd(repeatCb);
 
     beforeTrackStart(track, id, settings.get("manual"));
     sidebar.showActiveIcon(id);
@@ -95,85 +89,71 @@ function onTrackStart(time) {
     settings.set("paused", false);
     settings.set("manual", false);
 
-    return controls.elapsedTime.start({
+    storedTrack.saveTrack({
         playlistId: id,
-        name: track.name,
-        duration: time.duration,
-        currentTime: time.currentTime
+        name: track.name
     });
+    controls.elapsedTime.start(time, onTrackEndCbWithRepeat);
 }
 
 function onTrackEnd(repeatCb) {
-    if (!settings.get("repeat")) {
-        playNextTrack(1);
-        return;
-    }
-    controls.resetTrackSlider();
-    repeatCb();
+    return function() {
+        if (!settings.get("repeat")) {
+            playNextTrack(playlist.getCurrentTrack(), 1);
+            return;
+        }
+        controls.resetTrackSlider();
+        repeatCb();
+    };
 }
 
-function getPlayer(playlistId) {
-    if (playlistId === "local-files") {
-        return "native";
-    }
-    else if (playlistId.includes("yt-pl-")) {
-        return "youtube";
-    }
-    else if (playlistId.includes("sc-pl-")) {
-        return "soundcloud";
-    }
-}
-
-function toggleTrackPlaying(playCb, pauseCb) {
+function toggleTrackPlaying({ play, pause }) {
     const paused = settings.get("paused");
 
     if (paused) {
         settings.set("manual", true);
-        playCb();
+        play();
     }
     else {
-        pauseCb();
-        sidebar.hideActiveIcon();
+        pause();
+        sidebar.removeActiveIcon();
         controls.elapsedTime.stop();
         controls.addClassOnPlayBtn("icon-play");
     }
     settings.set("paused", !paused);
 }
 
-function playNewTrack(track, player) {
-    if (player === "native") {
-        nPlayer.playTrack(track);
+function playNewTrack(track, startTime) {
+    const volume = settings.get("volume");
+
+    if (track.player === "native") {
+        nPlayer.playTrack(track, volume, startTime);
     }
-    else if (player === "youtube") {
-        ytPlayer.playTrack(track);
+    else if (track.player === "youtube") {
+        ytPlayer.playTrack(track, volume, startTime);
     }
-    else if (player === "soundcloud") {
-        scPlayer.playTrack(track);
+    else if (track.player === "soundcloud") {
+        scPlayer.playTrack(track, volume, startTime);
     }
 }
 
-function togglePlaying(player) {
-    const track = playlist.getCurrentTrack();
+function togglePlaying(track) {
+    let callbacks = null;
 
+    if (track.player === "native") {
+        callbacks = nPlayer.getPlayPauseCallbacks(track);
+    }
+    else if (track.player === "youtube") {
+        callbacks = ytPlayer.getPlayPauseCallbacks();
+    }
+    else if (track.player === "soundcloud") {
+        callbacks = scPlayer.getPlayPauseCallbacks();
+    }
+    toggleTrackPlaying(callbacks);
+}
+
+function playTrack(track) {
     if (!track) {
-        return;
-    }
-
-    if (player === "native") {
-        nPlayer.togglePlaying(track);
-    }
-    else if (player === "youtube") {
-        ytPlayer.togglePlaying();
-    }
-    else if (player === "soundcloud") {
-        scPlayer.togglePlaying();
-    }
-}
-
-function playTrack() {
-    const player = settings.get("player");
-
-    if (!player) {
         const id = settings.get("activeTabId");
 
         if (playlist.getPlaylistById(id)) {
@@ -182,22 +162,19 @@ function playTrack() {
         }
         return;
     }
-    togglePlaying(player);
+    togglePlaying(track);
 }
 
-function playNextTrack(direction) {
-    const player = settings.get("player");
-    const currentTrack = playlist.getCurrentTrack();
-
-    if (!player || !currentTrack) {
+function playNextTrack(currentTrack, direction) {
+    if (!currentTrack) {
         return;
     }
-    stopTrack(currentTrack, player);
+    stopTrack(currentTrack);
 
     const track = playlist.getNextTrack(direction);
 
     if (track) {
-        playNewTrack(track, player);
+        playNewTrack(track);
     }
     else {
 
@@ -208,25 +185,21 @@ function playNextTrack(direction) {
 
 function playTrackAtIndex(index, id) {
     const currentTrack = playlist.getCurrentTrack();
-    const player = getPlayer(id);
     const pl = playlist.getPlaylistById(id);
     const track = Object.assign({}, pl.tracks[index]);
 
     if (!settings.get("paused") || currentTrack) {
-        const currentPlayer = settings.get("player");
-
-        if (player !== currentPlayer) {
-            stopPlayer(currentTrack, currentPlayer);
+        if (track.player !== currentTrack.player) {
+            stopPlayer(currentTrack);
         }
         else {
-            stopTrack(currentTrack, currentPlayer);
+            stopTrack(currentTrack);
         }
     }
 
     if (!track.name) {
         return;
     }
-    settings.set("player", player);
 
     if (!pl.shuffled && settings.get("shuffle")) {
         playlist.shufflePlaybackOrder(pl, true);
@@ -235,42 +208,36 @@ function playTrackAtIndex(index, id) {
     else {
         playlist.setPlaybackIndex(track.index);
     }
-    playNewTrack(track, player);
+    playNewTrack(track);
 }
 
-function stopTrack(track, player) {
-    if (!track) {
-        return;
+function stopTrack(track) {
+    if (track.player === "native") {
+        nPlayer.stopTrack(track);
     }
-
-    if (player === "native") {
-        nPlayer.stop(track);
+    else if (track.player === "youtube") {
+        ytPlayer.stopTrack();
     }
-    else if (player === "youtube") {
-        ytPlayer.stop();
-    }
-    else if (player === "soundcloud") {
-        scPlayer.stop();
+    else if (track.player === "soundcloud") {
+        scPlayer.stopTrack();
     }
 }
 
-function stopPlayer(track = playlist.getCurrentTrack(), player = settings.get("player")) {
-    stopTrack(track, player);
-
-    if (player) {
-        resetPlayer();
+function stopPlayer(track) {
+    if (track) {
+        stopTrack(track);
     }
+    resetPlayer();
 }
 
 function resetPlayer() {
     removeElementClass("track", "playing");
-    settings.set("player", "");
     settings.set("paused", true);
     playlist.setCurrentTrack(null);
     controls.resetTrackSlider();
     controls.showTrackDuration(0);
     controls.addClassOnPlayBtn("icon-play");
-    sidebar.hideActiveIcon();
+    sidebar.removeActiveIcon();
     sidebar.showTrackInfo();
 }
 
@@ -288,32 +255,28 @@ function toggleShuffle(shuffle) {
     }
 }
 
-function setVolume(volume) {
-    const player = settings.get("player");
-
-    settings.set("volume", volume);
-    if (player === "native") {
-        nPlayer.setVolume(volume);
+function setVolume(track, volume) {
+    if (track.player === "native") {
+        nPlayer.setVolume(track, volume);
     }
-    else if (player === "youtube") {
+    else if (track.player === "youtube") {
         ytPlayer.setVolume(volume);
     }
-    else if (player === "soundcloud") {
+    else if (track.player === "soundcloud") {
         scPlayer.setVolume(volume);
     }
 }
 
-function seekTime(percent) {
-    const player = settings.get("player");
+function seekTo(track, percent) {
     let elapsed = 0;
 
-    if (player === "native") {
-        elapsed = nPlayer.getElapsed(percent);
+    if (track.player === "native") {
+        elapsed = nPlayer.getElapsed(track, percent);
     }
-    else if (player === "youtube") {
+    else if (track.player === "youtube") {
         elapsed = ytPlayer.getElapsed(percent);
     }
-    else if (player === "soundcloud") {
+    else if (track.player === "soundcloud") {
         elapsed = scPlayer.getElapsed(percent);
     }
     controls.setElapsedTime(elapsed);
@@ -333,13 +296,12 @@ document.getElementById("js-tab-container").addEventListener("dblclick", ({ targ
 });
 
 export {
-    playTrack as play,
-    playNextTrack as playNext,
-    stopPlayer as stop,
     toggleRepeat as repeat,
     toggleShuffle as shuffle,
-    seekTime as seek,
-    toggleTrackPlaying,
+    playTrack,
+    playNextTrack,
+    stopPlayer,
+    seekTo,
     setVolume,
     onTrackStart,
     onTrackEnd,
