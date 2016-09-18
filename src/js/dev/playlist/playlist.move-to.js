@@ -70,11 +70,9 @@ function onListClick(event) {
 
 function onFormSubmit(event) {
     const form = event.target;
-    const playlistTitle = form.title.value;
-    const playlistId = `new-pl-${Math.random().toString(36).slice(2, 10)}`;
     const pl = createPlaylist({
-        id: playlistId,
-        title: playlistTitle,
+        id: Math.random().toString(36).slice(2),
+        title: form.title.value,
         type: "list"
     });
 
