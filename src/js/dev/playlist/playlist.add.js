@@ -20,16 +20,30 @@ const importBtn = (function() {
     return { toggle };
 })();
 
-function showNotice(message) {
+function removeNotice() {
     const element = document.getElementById("js-playlist-add-notice");
 
-    element.textContent = message;
-    element.classList.add("visible");
+    if (element) {
+        element.parentElement.removeChild(element);
+    }
+}
 
-    setTimeout(() => {
-        element.textContent = "";
-        element.classList.remove("visible");
-    }, 4000);
+function createNotice(message) {
+    const div = document.createElement("div");
+
+    div.setAttribute("id", "js-playlist-add-notice");
+    div.classList.add("playlist-add-notice");
+    div.textContent = message;
+    return div;
+}
+
+function showNotice(message) {
+    const noticeElement = createNotice(message);
+    const parentElement = document.getElementById("js-tab-add");
+
+    removeNotice();
+    parentElement.insertBefore(noticeElement, document.getElementById("js-playlist-entries"));
+    setTimeout(removeNotice, 3200);
 }
 
 function importPlaylist(name, value) {
@@ -53,6 +67,7 @@ function addRemotePlaylist(pl) {
         playlist = createPlaylist(pl);
         initPlaylist(playlist, true);
     }
+    importBtn.toggle();
     postMessageToWorker({
         action: "put",
         playlist

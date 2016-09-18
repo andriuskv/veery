@@ -45,7 +45,6 @@ function fetchPlaylist(url) {
         });
     })
     .then(addRemotePlaylist)
-    .then(importBtn.toggle)
     .catch(error => {
         console.log(error);
         if (error.status === 404) {

@@ -107,7 +107,6 @@ function fetchPlaylist(url) {
     .then(getPlaylistItems)
     .then(parseItems)
     .then(addRemotePlaylist)
-    .then(importBtn.toggle)
     .catch(error => {
         console.log(error);
     });
