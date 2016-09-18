@@ -1,12 +1,13 @@
-import { removeElementClass } from "./../main.js";
-import { postMessageToWorker } from "./../worker.js";
-import { createSidebarEntry, removeSidebarEntry } from "./../sidebar.js";
-import { storedTrack, stopPlayer } from "./../player/player.js";
 import * as settings from "./../settings.js";
 import * as router from "./../router.js";
 import * as tab from "./../tab.js";
 import * as playlist from "./playlist.js";
 import * as playlistView from "./playlist.view.js";
+import { removeElementClass } from "./../main.js";
+import { postMessageToWorker } from "./../worker.js";
+import { createSidebarEntry, removeSidebarEntry } from "./../sidebar.js";
+import { storedTrack, stopPlayer } from "./../player/player.js";
+import { sortTracks } from "./playlist.sorting.js";
 
 function initPlaylist(pl, toggle) {
     const route = `playlist/${pl.id}`;
@@ -19,7 +20,7 @@ function initPlaylist(pl, toggle) {
     createPlaylistEntry(pl.title, pl.id);
 
     if (pl.sortedBy) {
-        playlist.sortTracks(pl.tracks, pl.sortedBy, pl.order);
+        sortTracks(pl.tracks, pl.sortedBy, pl.order);
         updatePlaylist(pl);
     }
 

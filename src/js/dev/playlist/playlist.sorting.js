@@ -1,7 +1,7 @@
 import * as settings from "./../settings.js";
 import { removePresentPanels } from "./../panels.js";
 import { postMessageToWorker } from "./../worker.js";
-import { getPlaylistById, sortPlaylist } from "./playlist.js";
+import { getPlaylistById } from "./playlist.js";
 import { updatePlaylist } from "./playlist.manage.js";
 import { filterTracks } from "./playlist.view.js";
 
@@ -22,6 +22,33 @@ function toggleOrderBtn(order = 1) {
         btn.classList.remove("icon-down-big");
         btn.classList.add("icon-up-big");
     }
+}
+
+function getDurationInSeconds(duration) {
+    const durationArray = duration.split(":");
+
+    return Number.parseInt(durationArray[0], 10) * 60 + Number.parseInt(durationArray[1], 10);
+}
+
+function sortTracks(tracks, sortBy, order) {
+    tracks.sort((a, b) => {
+        const aValue = sortBy === "duration" ? getDurationInSeconds(a[sortBy]) : a[sortBy].toLowerCase();
+        const bValue = sortBy === "duration" ? getDurationInSeconds(b[sortBy]) : b[sortBy].toLowerCase();
+
+        if (aValue < bValue) {
+            return -1 * order;
+        }
+        if (aValue > bValue) {
+            return order;
+        }
+        return 0;
+    });
+}
+
+function sortPlaylist(pl, sortBy) {
+    pl.order = pl.sortedBy === sortBy && pl.order === 1 ? -1 : 1;
+    pl.sortedBy = sortBy;
+    sortTracks(pl.tracks, sortBy, pl.order);
 }
 
 function changePlaylistSorting(pl, sortBy) {
@@ -112,6 +139,7 @@ function selectSortOption({ target }) {
 export {
     setSortOptions,
     createSortPanel,
+    sortTracks,
     changePlaylistOrder,
     resetPlaylistSort
 };
