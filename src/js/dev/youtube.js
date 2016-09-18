@@ -1,7 +1,6 @@
 import { addRemotePlaylist, showNotice, importBtn } from "./playlist/playlist.add.js";
 
 function parseItems(playlist) {
-    playlist.id = `yt-pl-${playlist.id}`;
     playlist.tracks = playlist.tracks.map((track, index) => ({
         index,
         id: track.snippet.resourceId.videoId,

@@ -33,13 +33,13 @@ function fetchPlaylist(url) {
 
         if (Array.isArray(playlist)) {
             return Object.assign(newPlaylist, {
-                id: `sc-pl-${playlist[0].user_id}`,
+                id: playlist[0].user_id,
                 title: `${playlist[0].user.username} playlist`,
                 tracks: parseTracks(playlist)
             });
         }
         return Object.assign(newPlaylist, {
-            id: `sc-pl-${playlist.id}`,
+            id: playlist.id,
             title: playlist.title,
             tracks: parseTracks(playlist.tracks)
         });
