@@ -94,18 +94,13 @@
     }
 }
 .playlist-add-notice {
-    visibility: hidden;
-    height: 18px;
-    margin-top: 4px;
+    position: absolute;
+    left: 0;
+    right: 0;
     text-align: center;
-
-    &.visible {
-        visibility: visible;
-    }
 }
 .playlist-entries {
-    margin: 4px;
-    padding: 4px;
+    margin-top: 16px;
 }
 .playlist-entry {
     display: flex;
