@@ -71,10 +71,6 @@ function setPlaybackIndex(index) {
     playbackIndex = playlist.playbackOrder.indexOf(Number.parseInt(index, 10));
 }
 
-function setDefaultPlaybackIndex() {
-    playbackIndex = 0;
-}
-
 function resetPlaybackIndex() {
     const currentTrack = getCurrentTrack();
 
@@ -143,40 +139,12 @@ function getNextTrack(direction) {
     }
 }
 
-function sortTracks(tracks, sort, order) {
-    tracks.sort((a, b) => {
-        const aValue = a[sort].toLowerCase();
-        const bValue = b[sort].toLowerCase();
-
-        if (aValue < bValue) {
-            return -1 * order;
-        }
-        if (aValue > bValue) {
-            return order;
-        }
-        return 0;
-    });
-}
-
-function sortPlaylist(pl, sortBy) {
-    if (pl.sortedBy === sortBy && pl.order === 1) {
-        pl.order = -1;
-    }
-    else {
-        pl.order = 1;
-    }
-    pl.sortedBy = sortBy;
-    sortTracks(pl.tracks, sortBy, pl.order);
-}
-
 export {
     setPlaylistAsActive,
     getPlaylistById,
     removePlaylist,
     getAllPlaylists,
     createPlaylist,
-    sortTracks,
-    sortPlaylist,
     isActive,
     getActivePlaylistId,
     setCurrentTrack,
@@ -187,7 +155,6 @@ export {
     getNextTrack,
     setPlaybackIndex,
     resetPlaybackIndex,
-    setDefaultPlaybackIndex,
     getTrackAtIndex,
     setTrackIndexes,
     shufflePlaybackOrder
