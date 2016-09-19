@@ -1,4 +1,3 @@
-import * as settings from "./settings.js";
 import { removeElementClass } from "./main.js";
 import { getSidebarEntry } from "./sidebar.js";
 import { removePresentPanels, togglePanel } from "./panels.js";
@@ -7,6 +6,16 @@ import { changePlaylistType, togglePlaylistTypeBtn } from "./playlist/playlist.v
 import { enableTrackSelection, deselectTrackElements } from "./playlist/playlist.track-selection.js";
 import { setSortOptions, createSortPanel, changePlaylistOrder } from "./playlist/playlist.sorting.js";
 import { createMoveToPanel } from "./playlist/playlist.move-to.js";
+
+let activeTabId = "add";
+
+function setActiveTabId(id) {
+    activeTabId = id;
+}
+
+function getActiveTabId() {
+    return activeTabId;
+}
 
 function toggleTab(id, playlistTab, ignoreSidebar) {
     const tabHeaderElement = document.getElementById("js-tab-header");
@@ -25,7 +34,7 @@ function toggleTab(id, playlistTab, ignoreSidebar) {
     else {
         tabHeaderElement.classList.remove("visible");
     }
-    settings.set("activeTabId", id);
+    setActiveTabId(id);
     document.getElementById(`js-tab-${id}`).classList.add("active");
 
     if (!ignoreSidebar) {
@@ -37,7 +46,7 @@ function toggleTab(id, playlistTab, ignoreSidebar) {
 
 window.addEventListener("click", event => {
     const item = event.target.getAttribute("data-header-item");
-    const pl = getPlaylistById(settings.get("activeTabId"));
+    const pl = getPlaylistById(getActiveTabId());
     let panelId = "";
 
     if (item === "move-to") {
@@ -59,5 +68,7 @@ window.addEventListener("click", event => {
 });
 
 export {
-    toggleTab as toggle
+    toggleTab,
+    setActiveTabId,
+    getActiveTabId
 };

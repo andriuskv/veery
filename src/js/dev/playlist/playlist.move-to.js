@@ -1,5 +1,5 @@
-import * as settings from "./../settings.js";
 import { getElementByAttr } from "./../main.js";
+import { getActiveTabId } from "./../tab.js";
 import { removePresentPanels } from "./../panels.js";
 import { postMessageToWorker } from "./../worker.js";
 import { initPlaylist, appendToPlaylist } from "./playlist.manage.js";
@@ -35,7 +35,7 @@ function showInputContainer(event) {
 function moveTracks(playlistId) {
     const selectedTrackElements = Array.from(document.querySelectorAll(".track.selected"));
     const trackIndexes = selectedTrackElements.map(element => Number.parseInt(element.getAttribute("data-index"), 10));
-    const pl = getPlaylistById(settings.get("activeTabId"));
+    const pl = getPlaylistById(getActiveTabId());
     const destinationPlaylist = getPlaylistById(playlistId);
     const selectedTracks = [];
 
@@ -81,7 +81,7 @@ function onFormSubmit(event) {
         action: "put",
         playlist: pl
     });
-    document.getElementById("js-move-to-list").innerHTML = createPlaylistList(settings.get("activeTabId"));
+    document.getElementById("js-move-to-list").innerHTML = createPlaylistList(getActiveTabId());
     event.preventDefault();
     form.reset();
 }

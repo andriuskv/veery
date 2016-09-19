@@ -1,4 +1,4 @@
-import * as settings from "./../settings.js";
+import { getActiveTabId } from "./../tab.js";
 import { removePresentPanels } from "./../panels.js";
 import { postMessageToWorker } from "./../worker.js";
 import { getPlaylistById } from "./playlist.js";
@@ -123,7 +123,7 @@ function changePlaylistOrder(pl) {
 }
 
 function selectSortOption({ target }) {
-    const pl = getPlaylistById(settings.get("activeTabId"));
+    const pl = getPlaylistById(getActiveTabId());
     const sortBy = target.getAttribute("data-sort");
 
     removePresentPanels();

@@ -1,4 +1,5 @@
 import { removeElementClass, getElementByAttr } from "./../main.js";
+import { getActiveTabId } from "./../tab.js";
 import * as settings from "./../settings.js";
 import * as sidebar from "./../sidebar.js";
 import * as playlist from "./../playlist/playlist.js";
@@ -7,6 +8,9 @@ import * as controls from "./player.controls.js";
 import * as nPlayer from "./player.native.js";
 import * as ytPlayer from "./player.youtube.js";
 import * as scPlayer from "./player.soundcloud.js";
+
+let paused = true;
+let scrollToTrack = false;
 
 const storedTrack = (function () {
     const players = {
@@ -49,7 +53,7 @@ const storedTrack = (function () {
 
         controls.setSliderElementWidth("track", storedTrack.elapsed);
         controls.setElapsedTime(storedTrack.currentTime);
-        beforeTrackStart(track, storedTrack.playlistId, true);
+        beforeTrackStart(track, storedTrack.playlistId);
         playNewTrack(track, storedTrack.currentTime);
     }
 
@@ -70,11 +74,11 @@ const storedTrack = (function () {
     };
 })();
 
-function beforeTrackStart(track, id, manual) {
+function beforeTrackStart(track, id, scrollToTrack) {
     sidebar.showTrackInfo(track);
     controls.showTrackDuration(track.duration, false);
     if (track.index !== -1) {
-        playlistView.showPlayingTrack(track.index, id, manual);
+        playlistView.showPlayingTrack(track.index, id, scrollToTrack);
     }
 }
 
@@ -83,11 +87,11 @@ function onTrackStart(time, repeatCb) {
     const id = playlist.getActivePlaylistId();
     const onTrackEndCbWithRepeat = onTrackEnd(repeatCb);
 
-    beforeTrackStart(track, id, settings.get("manual"));
+    beforeTrackStart(track, id, scrollToTrack);
     sidebar.showActiveIcon(id);
     controls.addClassOnPlayBtn("icon-pause");
-    settings.set("paused", false);
-    settings.set("manual", false);
+    paused = false;
+    scrollToTrack = false;
 
     storedTrack.saveTrack({
         playlistId: id,
@@ -98,7 +102,7 @@ function onTrackStart(time, repeatCb) {
 
 function onTrackEnd(repeatCb) {
     return function() {
-        if (!settings.get("repeat")) {
+        if (!settings.getSetting("repeat")) {
             playNextTrack(playlist.getCurrentTrack(), 1);
             return;
         }
@@ -108,10 +112,7 @@ function onTrackEnd(repeatCb) {
 }
 
 function toggleTrackPlaying({ play, pause }) {
-    const paused = settings.get("paused");
-
     if (paused) {
-        settings.set("manual", true);
         play();
     }
     else {
@@ -120,11 +121,11 @@ function toggleTrackPlaying({ play, pause }) {
         controls.elapsedTime.stop();
         controls.addClassOnPlayBtn("icon-play");
     }
-    settings.set("paused", !paused);
+    paused = !paused;
 }
 
 function playNewTrack(track, startTime) {
-    const volume = settings.get("volume");
+    const volume = settings.getSetting("volume");
 
     if (track.player === "native") {
         nPlayer.playTrack(track, volume, startTime);
@@ -154,10 +155,11 @@ function togglePlaying(track) {
 
 function playTrack(track) {
     if (!track) {
-        const id = settings.get("activeTabId");
+        const id = getActiveTabId();
 
         if (playlist.getPlaylistById(id)) {
             playlist.setPlaylistAsActive(id);
+            scrollToTrack = true;
             playTrackAtIndex(playlist.getNextTrackIndex(0), id);
         }
         return;
@@ -174,6 +176,7 @@ function playNextTrack(currentTrack, direction) {
     const track = playlist.getNextTrack(direction);
 
     if (track) {
+        scrollToTrack = true;
         playNewTrack(track);
     }
     else {
@@ -188,7 +191,7 @@ function playTrackAtIndex(index, id) {
     const pl = playlist.getPlaylistById(id);
     const track = Object.assign({}, pl.tracks[index]);
 
-    if (!settings.get("paused") || currentTrack) {
+    if (!paused || currentTrack) {
         if (track.player !== currentTrack.player) {
             stopPlayer(currentTrack);
         }
@@ -201,7 +204,7 @@ function playTrackAtIndex(index, id) {
         return;
     }
 
-    if (!pl.shuffled && settings.get("shuffle")) {
+    if (!pl.shuffled && settings.getSetting("shuffle")) {
         playlist.shufflePlaybackOrder(pl, true);
         playlist.resetPlaybackIndex();
     }
@@ -231,8 +234,8 @@ function stopPlayer(track) {
 }
 
 function resetPlayer() {
+    paused = true;
     removeElementClass("track", "playing");
-    settings.set("paused", true);
     playlist.setCurrentTrack(null);
     controls.resetTrackSlider();
     controls.showTrackDuration(0);
@@ -242,13 +245,13 @@ function resetPlayer() {
 }
 
 function toggleRepeat(repeat) {
-    settings.set("repeat", repeat);
+    settings.setSetting("repeat", repeat);
 }
 
 function toggleShuffle(shuffle) {
-    const pl = playlist.getPlaylistById(settings.get("activeTabId"));
+    const pl = playlist.getPlaylistById(getActiveTabId());
 
-    settings.set("shuffle", shuffle);
+    settings.setSetting("shuffle", shuffle);
     if (pl) {
         playlist.shufflePlaybackOrder(pl, shuffle);
         playlist.resetPlaybackIndex();
@@ -287,9 +290,8 @@ document.getElementById("js-tab-container").addEventListener("dblclick", ({ targ
 
     if (element) {
         const index = element.attrValue;
-        const id = settings.get("activeTabId");
+        const id = getActiveTabId();
 
-        settings.set("manual", true);
         playlist.setPlaylistAsActive(id);
         playTrackAtIndex(index, id);
     }
