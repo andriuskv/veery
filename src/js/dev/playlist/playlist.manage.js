@@ -1,8 +1,8 @@
-import * as settings from "./../settings.js";
 import * as router from "./../router.js";
-import * as tab from "./../tab.js";
 import * as playlist from "./playlist.js";
 import * as playlistView from "./playlist.view.js";
+import { getSetting } from "./../settings.js";
+import { toggleTab, getActiveTabId } from "./../tab.js";
 import { removeElementClass } from "./../main.js";
 import { postMessageToWorker } from "./../worker.js";
 import { createSidebarEntry, removeSidebarEntry } from "./../sidebar.js";
@@ -13,7 +13,7 @@ function initPlaylist(pl, toggle) {
     const route = `playlist/${pl.id}`;
 
     router.add(route);
-    playlist.setTrackIndexes(pl, settings.get("shuffle"));
+    playlist.setTrackIndexes(pl, getSetting("shuffle"));
     playlist.resetPlaybackIndex();
     playlistView.add(pl);
     createSidebarEntry(pl.title, pl.id);
@@ -28,12 +28,12 @@ function initPlaylist(pl, toggle) {
         router.toggle(route);
     }
     else if (router.isActive(pl.id)) {
-        tab.toggle(pl.id);
+        toggleTab(pl.id);
     }
 }
 
 function appendToPlaylist(pl, tracks, toggle) {
-    playlist.setTrackIndexes(pl, settings.get("shuffle"));
+    playlist.setTrackIndexes(pl, getSetting("shuffle"));
     playlist.resetPlaybackIndex();
     playlistView.append(pl, tracks);
 
@@ -43,7 +43,7 @@ function appendToPlaylist(pl, tracks, toggle) {
 }
 
 function replacePlaylistTracks(pl, toggle) {
-    playlist.setTrackIndexes(pl, settings.get("shuffle"));
+    playlist.setTrackIndexes(pl, getSetting("shuffle"));
     playlist.resetPlaybackIndex();
     playlistView.replacePlaylistTrackView(pl);
 
@@ -157,7 +157,7 @@ function removeSelectedTracks(pl) {
         removeSelectedTrackElements(selectedElements);
         resetTrackElementIndexes(Array.from(playlistContainer.children));
         pl.tracks = removeSelectedPlaylistTracks(pl, selectedTrackIndexes);
-        playlist.setTrackIndexes(pl, settings.get("shuffle"));
+        playlist.setTrackIndexes(pl, getSetting("shuffle"));
         updateCurrentTrack(pl.id, selectedTrackIndexes);
         postMessageToWorker({
             action: "put",
@@ -168,7 +168,7 @@ function removeSelectedTracks(pl) {
 
 window.addEventListener("keypress", event => {
     const key = event.key === "Delete" || event.keyCode === 127;
-    const pl = playlist.getPlaylistById(settings.get("activeTabId"));
+    const pl = playlist.getPlaylistById(getActiveTabId());
 
     if (!key || !pl) {
         return;

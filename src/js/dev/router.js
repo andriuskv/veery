@@ -1,4 +1,4 @@
-import * as tab from "./tab.js";
+import { toggleTab } from "./tab.js";
 
 const routes = [
     "add",
@@ -23,7 +23,7 @@ function toggleRoute(route) {
     window.location.hash = `/${route}`;
 }
 
-function toggleTab(route) {
+function toggleRouteTab(route) {
     if (!route) {
         toggleRoute("add");
         return;
@@ -35,19 +35,19 @@ function toggleTab(route) {
     const playlistTab = route.startsWith("playlist/");
     const tabName = playlistTab ? route.split("playlist/")[1] : route;
 
-    tab.toggle(tabName, playlistTab, tabName === "404");
+    toggleTab(tabName, playlistTab, tabName === "404");
 }
 
 function toggleCurrentRoute() {
     const route = window.location.hash.slice(2);
 
-    toggleTab(route);
+    toggleRouteTab(route);
 }
 
 window.addEventListener("hashchange", event => {
     const route = event.newURL.split("#/")[1];
 
-    toggleTab(route);
+    toggleRouteTab(route);
 });
 
 export {

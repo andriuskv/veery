@@ -1,4 +1,4 @@
-import * as settings from "./../settings.js";
+import { getActiveTabId } from "./../tab.js";
 import { postMessageToWorker } from "./../worker.js";
 import { getPlaylistById, getActivePlaylistId, getCurrentTrack } from "./playlist.js";
 import { removeElementClass } from "./../main.js";
@@ -115,7 +115,7 @@ function removePlaylistTab(id) {
     playlistTab.parentElement.removeChild(playlistTab);
 }
 
-function scrollToTrack(trackElement, playlistElement) {
+function scrollToTrackElement(trackElement, playlistElement) {
     const elementHeight = trackElement.offsetHeight;
     const trackTop = trackElement.offsetTop;
     const playlistScrollTop = playlistElement.scrollTop;
@@ -127,15 +127,15 @@ function scrollToTrack(trackElement, playlistElement) {
     }
 }
 
-function showPlayingTrack(index, id, manual) {
+function showPlayingTrack(index, id, scrollToTrack) {
     const container = document.getElementById(`js-${id}`);
     const track = container.children[index];
 
     removeElementClass("track", "playing");
     track.classList.add("playing");
 
-    if (!manual) {
-        scrollToTrack(track, container);
+    if (scrollToTrack) {
+        scrollToTrackElement(track, container);
     }
 }
 
@@ -204,7 +204,7 @@ document.getElementById("js-filter-input").addEventListener("keyup", ({ target }
         clearTimeout(timeout);
     }
     timeout = setTimeout(() => {
-        const { id, tracks } = getPlaylistById(settings.get("activeTabId"));
+        const { id, tracks } = getPlaylistById(getActiveTabId());
         const trackElements = document.getElementById(`js-${id}`).children;
 
         filterTracks(tracks, trackElements, target.value);
@@ -217,7 +217,6 @@ export {
     updatePlaylist as update,
     appendToPlaylist as append,
     replacePlaylistTrackView,
-    scrollToTrack,
     showPlayingTrack,
     filterTracks,
     togglePlaylistTypeBtn,

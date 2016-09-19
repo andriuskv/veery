@@ -3,6 +3,7 @@ import * as player from "./player.js";
 import { formatTime } from "./../main.js";
 import { getCurrentTrack } from "./../playlist/playlist.js";
 
+let seeking = false;
 const elapsedTime = (function() {
     let timeout = 0;
 
@@ -17,7 +18,7 @@ const elapsedTime = (function() {
         const diff = ideal - elapsed;
 
         setElapsedTime(track.currentTime);
-        if (!settings.get("seeking")) {
+        if (!seeking) {
             const elapsedInPercentage = track.currentTime / track.duration * 100;
 
             setSliderElementWidth("track", elapsedInPercentage);
@@ -102,7 +103,7 @@ function onVolumeTrackMousemove(event) {
     const track = getCurrentTrack();
 
     setSliderElementWidth("volume", volumeInPercentage);
-    settings.set("volume", volume);
+    settings.setSetting("volume", volume);
 
     if (track) {
         player.setVolume(track, volume);
@@ -138,7 +139,7 @@ function onPlayerTrackMouseup({ screenX }) {
     if (track) {
         player.seekTo(track, getElapsedValue("track", screenX));
     }
-    settings.set("seeking", false);
+    seeking = false;
     document.removeEventListener("mousemove", onPlayerTrackMousemove);
     document.removeEventListener("mouseup", onPlayerTrackMouseup);
 }
@@ -147,7 +148,7 @@ document.getElementById("js-player-track-slider").addEventListener("mousedown", 
     if (event.which !== 1 || !getCurrentTrack()) {
         return;
     }
-    settings.set("seeking", true);
+    seeking = true;
     setSliderElementWidth("track", getElapsedValue("track", event.screenX));
     document.addEventListener("mousemove", onPlayerTrackMousemove);
     document.addEventListener("mouseup", onPlayerTrackMouseup);
@@ -189,9 +190,9 @@ document.getElementById("js-player-controls").addEventListener("click", ({ targe
 });
 
 window.addEventListener("DOMContentLoaded", function onLoad() {
-    const repeat = settings.get("repeat");
-    const shuffle = settings.get("shuffle");
-    const volume = settings.get("volume");
+    const repeat = settings.getSetting("repeat");
+    const shuffle = settings.getSetting("shuffle");
+    const volume = settings.getSetting("volume");
 
     if (repeat) {
         document.querySelector(`[data-control-item="repeat"]`).classList.add("active");
