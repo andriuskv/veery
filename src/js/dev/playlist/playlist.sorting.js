@@ -128,7 +128,7 @@ function selectSortOption({ target }) {
 
     removePresentPanels();
 
-    if (!sortBy || pl.sortedby === sortBy) {
+    if (!sortBy || pl.sortedBy === sortBy) {
         return;
     }
     toggleOrderBtn();
