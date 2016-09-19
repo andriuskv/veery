@@ -62,18 +62,17 @@ function setVolume(volume) {
     ytPlayer.setVolume(volume * 100);
 }
 
-function getElapsed(percent) {
+function setElapsed(percent) {
     const duration = ytPlayer.getDuration();
     const elapsed = duration / 100 * percent;
 
     ytPlayer.seekTo(elapsed, true);
-    return elapsed;
 }
 
 export {
     playTrack,
     stopTrack,
     getPlayPauseCallbacks,
-    getElapsed,
+    setElapsed,
     setVolume
 };

@@ -85,7 +85,6 @@ function beforeTrackStart(track, id, scrollToTrack) {
 function onTrackStart(time, repeatCb) {
     const track = playlist.getCurrentTrack();
     const id = playlist.getActivePlaylistId();
-    const onTrackEndCbWithRepeat = onTrackEnd(repeatCb);
 
     beforeTrackStart(track, id, scrollToTrack);
     sidebar.showActiveIcon(id);
@@ -97,7 +96,7 @@ function onTrackStart(time, repeatCb) {
         playlistId: id,
         name: track.name
     });
-    controls.elapsedTime.start(time, onTrackEndCbWithRepeat);
+    controls.elapsedTime.start(time, onTrackEnd(repeatCb));
 }
 
 function onTrackEnd(repeatCb) {
@@ -271,18 +270,17 @@ function setVolume(track, volume) {
 }
 
 function seekTo(track, percent) {
-    let elapsed = 0;
+    controls.elapsedTime.stop();
 
     if (track.player === "native") {
-        elapsed = nPlayer.getElapsed(track, percent);
+        nPlayer.setElapsed(track, percent);
     }
     else if (track.player === "youtube") {
-        elapsed = ytPlayer.getElapsed(percent);
+        ytPlayer.setElapsed(percent);
     }
     else if (track.player === "soundcloud") {
-        elapsed = scPlayer.getElapsed(percent);
+        scPlayer.setElapsed(percent);
     }
-    controls.setElapsedTime(elapsed);
 }
 
 document.getElementById("js-tab-container").addEventListener("dblclick", ({ target }) => {

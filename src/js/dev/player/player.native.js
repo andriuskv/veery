@@ -45,17 +45,14 @@ function setVolume(track, volume) {
     track.audio.volume = volume;
 }
 
-function getElapsed(track, percent) {
-    const elapsed = track.audio.duration / 100 * percent;
-
-    track.audio.currentTime = elapsed;
-    return elapsed;
+function setElapsed(track, percent) {
+    track.audio.currentTime = track.audio.duration / 100 * percent;
 }
 
 export {
     playTrack,
     stopTrack,
     getPlayPauseCallbacks,
-    getElapsed,
+    setElapsed,
     setVolume
 };
