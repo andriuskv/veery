@@ -1,5 +1,3 @@
-"use strict";
-
 /* global importScripts, db, onmessage, postMessage */
 
 window = self;
