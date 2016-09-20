@@ -17,64 +17,61 @@
                 <h1 class="main-title">ve<span>2</span>ry</h1>
             </header>
             <nav class="sidebar-nav">
-                <a href="#/add" class="btn btn-transparent sidebar-btn add-playlist-btn" data-tab-item="add" title="Add playlist">Add playlist</a>
-                <div class="sidebar-section">
+                <div class="new-playlist-btn-container">
+                    <a href="#/add" id="js-sidebar-entry-add" class="btn btn-transparent sidebar-btn"
+                        title="New playlist">
+                        <span>+ New playlist</span>
+                    </a>
+                </div>
+                <div class="sidebar-playlist-entry-container">
                     <h3 class="sidebar-section-title">Playlists</h3>
                     <ul id="js-sidebar-playlist-entries" class="sidebar-playlist-entries"></ul>
                 </div>
             </nav>
-            <div id="js-sidebar-footer" class="sidebar-footer">
-                <div class="player-track-art-container">
-                    <img src="" id="js-player-track-art" class="player-track-art" alt="track art">
-                </div>
-                <div id="js-player-track-info" class="player-track-info">
-                    <div class="track-title"></div>
-                    <div class="track-artist"></div>
-                </div>
+            <div class="player-track-art-container">
+                <img src="./assets/images/album-art-placeholder.png"
+                    id="js-player-track-art" class="player-track-art" alt="track art">
+            </div>
+            <div id="js-player-track-info" class="player-track-info">
+                <div class="track-title"></div>
+                <div class="track-artist"></div>
             </div>
         </div>
         <div class="main">
             <div id="js-tab-header" class="tab-header">
                 <input type="text" id="js-filter-input" class="input filter-input" placeholder="Filter">
-                <div class="playlist-sorting">
-                    <div class="playlist-sort-option-container">
-                        <button id="js-sort-toggle" class="btn">Sorting</button>
-                        <ul id="js-playlist-sort-options" class="playlist-sort-options">
-                            <li class="playlist-sort-option">
-                                <button class="btn btn-transparent" data-sort="title">Title</button>
-                            </li>
-                            <li class="playlist-sort-option">
-                                <button class="btn btn-transparent" data-sort="artist">Artist</button>
-                            </li>
-                            <li class="playlist-sort-option">
-                                <button class="btn btn-transparent" data-sort="album">Album</button>
-                            </li>
-                            <li class="playlist-sort-option">
-                                <button class="btn btn-transparent" data-sort="duration">Duration</button>
-                            </li>
-                        </ul>
-                    </div>
-                    <button id="js-order-toggle" class="icon-down-big btn order-toggle-btn" title="Ascending/Descending"></button>
+                <div id="js-move-to-panel-container" class="tab-header-item"></div>
+                <button id="js-list-toggle-btn" class="icon-th-list btn tab-header-item"
+                    data-header-item="list" title="List"></button>
+                <button id="js-grid-toggle-btn" class="icon-th btn tab-header-item"
+                    data-header-item="grid" title="Grid"></button>
+                <div id="js-playlist-sort-panel-container" class="tab-header-item playlist-sort-panel-container">
+                    <button id="js-sort-toggle" class="btn" data-header-item="sorting">Sorting</button>
                 </div>
+                <button id="js-order-toggle" class="icon-down-big btn tab-header-item order-toggle-btn"
+                    title="Ascending/Descending" data-header-item="order"></button>
             </div>
             <div id="js-tab-container" class="tab-container">
-                <div id="js-tab-add" class="tab">
-                    <h2 class="tab-title">Add playlist</h2>
+                <div id="js-tab-add" class="tab add-tab">
+                    <h2 class="tab-title">Add new playlist</h2>
                     <div id="js-playlist-add-options" class="playlist-add-options">
                         <div class="playlist-add-option">
                             <ul class="playlist-provider-container">
                                 <li class="playlist-provider" data-choice="youtube">
-                                    <img src="assets/images/youtube-logo.png" alt="" class="playlist-provider-logo">
+                                    <img src="assets/images/youtube-logo.png" alt=""
+                                        class="playlist-provider-logo">
                                     <div>YouTube</div>
                                 </li>
                                 <li class="playlist-provider" data-choice="soundcloud">
-                                    <img src="assets/images/soundcloud-logo.png" alt="" class="playlist-provider-logo">
+                                    <img src="assets/images/soundcloud-logo.png" alt=""
+                                        class="playlist-provider-logo">
                                     <div>SoundCloud</div>
                                 </li>
                             </ul>
                             <div id="js-import-form-container" class="form-container">
                                 <form id="js-playlist-import-form">
-                                    <input type="text" name="playlist-id" class="input" placeholder="Playlist url">
+                                    <input type="text" name="playlist-id" class="input"
+                                        placeholder="Playlist url">
                                     <button id="js-playlist-import-btn" class="btn">
                                         <div class="btn-content">Import</div>
                                         <div class="icon-spin4 animate-spin btn-content hidden"></div>
@@ -85,20 +82,22 @@
                         <div class="playlist-add-option">
                             <button data-choice="file" class="btn btn-transparent">
                                 <div class="local-btn-icon icon-doc-inv"></div>
-                                <div class="local-btn-title">Add from files</div>
+                                <div class="local-btn-title">Add files</div>
                             </button>
                             <button data-choice="folder" class="btn btn-transparent">
                                 <div class="local-btn-icon icon-folder"></div>
-                                <div class="local-btn-title">Add from folder</div>
+                                <div class="local-btn-title">Add folder</div>
                             </button>
                             <input type="file" id="js-file-chooser" class="file-chooser">
                             <div>
-                                <progress id="js-file-progress" class="file-progress" value="0" step="1"></progress>
-                                <div id="js-local-notice" class="playlist-add-local-notice">Duplicate/unsupported tracks are ignored</div>
+                                <progress id="js-file-progress" class="file-progress"
+                                    value="0" step="1"></progress>
+                                <div id="js-local-notice" class="playlist-add-local-notice">
+                                    Duplicate/unsupported tracks are ignored
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div id="js-playlist-add-notice" class="playlist-add-notice"></div>
                     <ul id="js-playlist-entries" class="playlist-entries"></ul>
                 </div>
                 <div id="js-tab-404" class="tab">
@@ -111,10 +110,14 @@
         </div>
     </div>
     <div id="js-player-controls" class="player-controls">
-        <button class="icon-to-start btn btn-transparent main-control-btn" data-control-item="previous" title="Previous"></button>
-        <button id="js-player-play" class="icon-play btn btn-transparent main-control-btn" data-control-item="play" title="Play"></button>
-        <button class="icon-stop btn btn-transparent main-control-btn" data-control-item="stop" title="Stop"></button>
-        <button class="icon-to-end btn btn-transparent main-control-btn" data-control-item="next" title="Next"></button>
+        <button class="icon-to-start btn btn-transparent main-control-btn"
+            data-control-item="previous" title="Previous"></button>
+        <button id="js-player-play" class="icon-play btn btn-transparent main-control-btn"
+            data-control-item="play" title="Play"></button>
+        <button class="icon-stop btn btn-transparent main-control-btn"
+            data-control-item="stop" title="Stop"></button>
+        <button class="icon-to-end btn btn-transparent main-control-btn"
+            data-control-item="next" title="Next"></button>
         <div id="js-player-elapsed" class="player-time">0:00</div>
         <div id="js-player-track-slider" class="player-control-slider player-track-slider">
             <div id="js-player-track-elapsed" class="player-track-elapsed">
@@ -122,8 +125,10 @@
             </div>
         </div>
         <div id="js-player-duration" class="player-time">0:00</div>
-        <button class="icon-cw btn btn-transparent control-btn" data-control-item="repeat" title="Repeat"></button>
-        <button class="icon-shuffle btn btn-transparent control-btn" data-control-item="shuffle" title="Shuffle"></button>
+        <button class="icon-cw btn btn-transparent control-btn"
+            data-control-item="repeat" title="Repeat"></button>
+        <button class="icon-shuffle btn btn-transparent control-btn"
+            data-control-item="shuffle" title="Shuffle"></button>
         <span class="icon-volume-up volume-slider-icon"></span>
         <div id="js-player-volume-slider" class="player-control-slider player-volume-slider">
             <div id="js-player-volume-elapsed" class="player-track-elapsed volume-elapsed">
