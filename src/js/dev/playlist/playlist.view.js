@@ -78,12 +78,6 @@ function appendToPlaylist(pl, tracks) {
     playlist.insertAdjacentHTML("beforeend", createItems(tracks, cb));
 }
 
-function replacePlaylistTrackView(pl) {
-    const cb = pl.type === "list" ? createListItem: createGridItem;
-
-    document.getElementById(`js-${pl.id}`).innerHTML = createItems(pl.tracks, cb);
-}
-
 function updateTrackListView(track, trackElement) {
     trackElement[0].textContent = track.title;
     trackElement[1].textContent = track.artist;
@@ -216,7 +210,6 @@ export {
     removePlaylistTab as remove,
     updatePlaylist as update,
     appendToPlaylist as append,
-    replacePlaylistTrackView,
     showPlayingTrack,
     filterTracks,
     togglePlaylistTypeBtn,

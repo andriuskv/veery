@@ -3,7 +3,7 @@ import { getActiveTabId } from "./../tab.js";
 import { removePresentPanels } from "./../panels.js";
 import { postMessageToWorker } from "./../worker.js";
 import { initPlaylist, appendToPlaylist } from "./playlist.manage.js";
-import { getPlaylistById, getAllPlaylists, createPlaylist, findTrack } from "./playlist.js";
+import { getPlaylistById, getAllPlaylists, createPlaylist, findTrack, resetTrackIndexes } from "./playlist.js";
 
 const panelContainerElement = document.getElementById("js-move-to-panel-container");
 
@@ -45,10 +45,7 @@ function moveTracks(playlistId) {
         }
     });
     destinationPlaylist.tracks.push(...selectedTracks);
-    destinationPlaylist.tracks = destinationPlaylist.tracks.map((track, index) => {
-        track.index = index;
-        return track;
-    });
+    destinationPlaylist.tracks = resetTrackIndexes(destinationPlaylist.tracks);
     appendToPlaylist(destinationPlaylist, selectedTracks, true);
     postMessageToWorker({
         action: "put",

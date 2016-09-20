@@ -1,7 +1,7 @@
 /* global SC */
 
 import { formatTime } from "./main.js";
-import { addRemotePlaylist, showNotice, importBtn } from "./playlist/playlist.add.js";
+import { addImportedPlaylist, showNotice, importBtn } from "./playlist/playlist.add.js";
 import { storedTrack } from "./player/player.js";
 
 function init() {
@@ -44,7 +44,7 @@ function fetchPlaylist(url) {
             tracks: parseTracks(playlist.tracks)
         });
     })
-    .then(addRemotePlaylist)
+    .then(addImportedPlaylist)
     .catch(error => {
         console.log(error);
         if (error.status === 404) {

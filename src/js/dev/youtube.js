@@ -1,4 +1,4 @@
-import { addRemotePlaylist, showNotice, importBtn } from "./playlist/playlist.add.js";
+import { addImportedPlaylist, showNotice, importBtn } from "./playlist/playlist.add.js";
 
 function parseItems(playlist) {
     playlist.tracks = playlist.tracks.map((track, index) => ({
@@ -106,7 +106,7 @@ function fetchPlaylist(url) {
     .then(getPlaylistTitle)
     .then(getPlaylistItems)
     .then(parseItems)
-    .then(addRemotePlaylist)
+    .then(addImportedPlaylist)
     .catch(error => {
         console.log(error);
     });
