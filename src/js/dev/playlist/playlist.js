@@ -79,7 +79,7 @@ function resetPlaybackIndex() {
     }
 }
 
-function setTrackIndexes(pl, shuffle) {
+function setPlaybackOrder(pl, shuffle) {
     pl.playbackOrder = pl.tracks.map(track => track.index);
 
     if (shuffle) {
@@ -139,6 +139,13 @@ function getNextTrack(direction) {
     }
 }
 
+function resetTrackIndexes(tracks) {
+    return tracks.map((track, index) => {
+        track.index = index;
+        return track;
+    });
+}
+
 export {
     setPlaylistAsActive,
     getPlaylistById,
@@ -156,6 +163,7 @@ export {
     setPlaybackIndex,
     resetPlaybackIndex,
     getTrackAtIndex,
-    setTrackIndexes,
-    shufflePlaybackOrder
+    setPlaybackOrder,
+    shufflePlaybackOrder,
+    resetTrackIndexes
 };

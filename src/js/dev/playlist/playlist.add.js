@@ -1,8 +1,8 @@
 import { removeElementClass, getElementByAttr, scriptLoader } from "./../main.js";
 import { initializeWorker, postMessageToWorker } from "./../worker.js";
 import { editSidebarEntry } from "./../sidebar.js";
-import { getPlaylistById, createPlaylist } from "./playlist.js";
-import { initPlaylist, removePlaylist, replacePlaylistTracks } from "./playlist.manage.js";
+import { getPlaylistById, createPlaylist, resetTrackIndexes } from "./playlist.js";
+import { initPlaylist, removePlaylist, appendToPlaylist } from "./playlist.manage.js";
 import * as local from "./../local.js";
 import * as yt from "./../youtube.js";
 import * as sc from "./../soundcloud.js";
@@ -55,13 +55,28 @@ function importPlaylist(name, value) {
     }
 }
 
-function addRemotePlaylist(pl) {
+function filterDuplicateTracks(tracks, existingTracks) {
+    return tracks.reduce((tracks, track) => {
+        const duplicate = existingTracks.some(localTrack => localTrack.name === track.name);
+
+        if (!duplicate) {
+            tracks.push(track);
+        }
+        return tracks;
+    }, []);
+}
+
+function addImportedPlaylist(pl) {
     const existingPlaylist = getPlaylistById(pl.id);
     let playlist = null;
 
     if (existingPlaylist) {
-        playlist = Object.assign({}, existingPlaylist, { tracks: pl.tracks });
-        replacePlaylistTracks(playlist, true);
+        const tracks = filterDuplicateTracks(pl.tracks, existingPlaylist.tracks);
+
+        playlist = Object.assign({}, existingPlaylist);
+        playlist.tracks.push(...tracks);
+        playlist.tracks = resetTrackIndexes(playlist.tracks);
+        appendToPlaylist(playlist, tracks, true);
     }
     else {
         playlist = createPlaylist(pl);
@@ -207,7 +222,7 @@ window.addEventListener("load", function onLoad() {
 });
 
 export {
-    addRemotePlaylist,
+    addImportedPlaylist,
     showNotice,
     importBtn
 };
