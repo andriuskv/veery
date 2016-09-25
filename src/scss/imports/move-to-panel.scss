@@ -27,6 +27,8 @@
     margin-bottom: 2px;
 
     .btn {
+        @include text-truncate;
+
         width: 100%;
         text-align: left;
     }

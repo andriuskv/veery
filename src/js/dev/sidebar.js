@@ -8,7 +8,7 @@ function createSidebarEntry(title, id) {
         <li>
             <a href="#/playlist/${id}" id="js-sidebar-entry-${id}"
                 class="btn btn-transparent sidebar-btn">
-                <span>${title}</span>
+                <div>${title}</div>
             </a>
         </li>`;
 
