@@ -103,15 +103,17 @@
     margin-top: 16px;
 }
 .playlist-entry {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     padding: 4px;
     border-bottom: 1px solid $color1;
 
     .btn.active {
         background-color: $color1;
     }
+}
+.playlist-entry-form {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 .playlist-entry-title {
     flex-grow: 1;

@@ -1,3 +1,4 @@
+import { capitalize } from "./../main.js";
 import { getActiveTabId } from "./../tab.js";
 import { removePresentPanels } from "./../panels.js";
 import { postMessageToWorker } from "./../worker.js";
@@ -6,10 +7,6 @@ import { updatePlaylist } from "./playlist.manage.js";
 import { filterTracks } from "./playlist.view.js";
 
 const sortToggleBtn = document.getElementById("js-sort-toggle");
-
-function capitalize(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-}
 
 function toggleOrderBtn(order = 1) {
     const btn = document.getElementById("js-order-toggle");
