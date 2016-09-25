@@ -1,4 +1,4 @@
-import { removeElementClass, getElementByAttr, scriptLoader } from "./../main.js";
+import { removeElementClass, getElementByAttr, scriptLoader, capitalize } from "./../main.js";
 import { initializeWorker, postMessageToWorker } from "./../worker.js";
 import { editSidebarEntry } from "./../sidebar.js";
 import { getPlaylistById, createPlaylist, resetTrackIndexes } from "./playlist.js";
@@ -117,18 +117,41 @@ function showFilePicker(choice) {
     filePicker.dispatchEvent(clickEvent);
 }
 
-function editPlaylistTitle(action, target, titleElement, playlistId) {
-    target.setAttribute("title", action[0].toUpperCase() + action.slice(1));
-    target.setAttribute("data-action", action);
-    target.classList.toggle("active");
+function createPlaylistEntry(title, id) {
+    const playlistEntryContainer = document.getElementById("js-playlist-entries");
+    const entry = `
+        <li class="playlist-entry" data-id=${id}>
+            <form class="playlist-entry-form">
+                <input type="text" class="input playlist-entry-title" value="${title}" readonly>
+                <button type="submit" class="icon-pencil btn btn-transparent"
+                data-action="edit" title="Edit"></button>
+                <button class="icon-trash btn btn-transparent"
+                data-action="remove" title="Remove playlist"></button>
+            </form>
+        </li>
+    `;
 
-    if (action === "save") {
+    playlistEntryContainer.insertAdjacentHTML("beforeend", entry);
+}
+
+function updatePlaylistEntryBtn(btn, action) {
+    const nextAction = action === "edit" ? "save": "edit";
+
+    btn.setAttribute("title", capitalize(nextAction));
+    btn.setAttribute("data-action", nextAction);
+    btn.classList.toggle("active");
+}
+
+function editPlaylistTitle(action, parentElement, playlistId) {
+    const titleElement = parentElement.querySelector(".playlist-entry-title");
+
+    if (action === "edit") {
         titleElement.removeAttribute("readonly");
         titleElement.focus();
         titleElement.selectionStart = 0;
         titleElement.selectionEnd = titleElement.value.length;
     }
-    else if (action === "edit") {
+    else if (action === "save") {
         const pl = getPlaylistById(playlistId);
 
         if (!titleElement.value) {
@@ -170,31 +193,19 @@ document.getElementById("js-playlist-import-form").addEventListener("submit", ev
 });
 
 document.getElementById("js-playlist-entries").addEventListener("click", ({ target }) => {
-    const action = target.getAttribute("data-action");
     const entry = getElementByAttr(target, "data-id");
+    const action = target.getAttribute("data-action");
 
-    if (!entry) {
+    if (!entry || !action) {
         return;
     }
-
     if (action === "remove") {
-        removePlaylist(entry.attrValue, entry.elementRef);
+        removePlaylist(entry.attrValue);
+        entry.elementRef.parentElement.removeChild(entry.elementRef);
         return;
     }
-    let nextAction = "";
-
-    if (action === "save") {
-        nextAction = "edit";
-    }
-    else if (action === "edit") {
-        nextAction = "save";
-    }
-
-    if (nextAction) {
-        const titleElement = entry.elementRef.querySelector(".playlist-entry-title");
-
-        editPlaylistTitle(nextAction, target, titleElement, entry.attrValue);
-    }
+    editPlaylistTitle(action, entry.elementRef, entry.attrValue);
+    updatePlaylistEntryBtn(target, action);
 });
 
 document.getElementById("js-playlist-add-options").addEventListener("click", ({ target }) => {
@@ -224,5 +235,6 @@ window.addEventListener("load", function onLoad() {
 export {
     addImportedPlaylist,
     showNotice,
-    importBtn
+    importBtn,
+    createPlaylistEntry
 };

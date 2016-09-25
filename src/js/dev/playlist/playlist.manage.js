@@ -8,6 +8,7 @@ import { postMessageToWorker } from "./../worker.js";
 import { createSidebarEntry, removeSidebarEntry } from "./../sidebar.js";
 import { storedTrack, stopPlayer } from "./../player/player.js";
 import { sortTracks } from "./playlist.sorting.js";
+import { createPlaylistEntry } from "./playlist.add.js";
 
 function resortTracks(pl, route, toggle) {
     playlist.setPlaybackOrder(pl, getSetting("shuffle"));
@@ -39,7 +40,7 @@ function appendToPlaylist(pl, tracks, toggle) {
     resortTracks(pl, route, toggle);
 }
 
-function removePlaylist(id, entry) {
+function removePlaylist(id) {
     const track = storedTrack.get();
 
     if (track && track.playlistId === id) {
@@ -48,7 +49,6 @@ function removePlaylist(id, entry) {
     if (playlist.isActive(id)) {
         stopPlayer();
     }
-    entry.parentElement.removeChild(entry);
     playlist.removePlaylist(id);
     removeSidebarEntry(id);
     playlistView.remove(id);
@@ -73,21 +73,6 @@ function updatePlaylist(pl) {
             playlistView.showPlayingTrack(track.index, pl.id, true);
         }
     }
-}
-
-function createPlaylistEntry(title, id) {
-    const playlistEntryContainer = document.getElementById("js-playlist-entries");
-    const entry = `
-        <li class="playlist-entry" data-id=${id}>
-            <input type="text" class="input playlist-entry-title" value="${title}" readonly>
-            <button class="icon-pencil btn btn-transparent"
-                data-action="edit" title="Edit playlist title"></button>
-            <button class="icon-trash btn btn-transparent"
-                data-action="remove" title="Remove playlist"></button>
-        </li>
-    `;
-
-    playlistEntryContainer.insertAdjacentHTML("beforeend", entry);
 }
 
 function getSelectedTrackIndexes(selectedElements) {

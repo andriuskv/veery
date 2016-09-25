@@ -24,6 +24,10 @@ const scriptLoader = (function() {
     };
 })();
 
+function capitalize(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
 function removeElementClass(className, classToRemove) {
     const elements = Array.from(document.querySelectorAll(`.${className}.${classToRemove}`));
 
@@ -82,6 +86,7 @@ function formatTime(time) {
 
 export {
     scriptLoader,
+    capitalize,
     getElementByAttr,
     removeElementClass,
     formatTime,
