@@ -62,30 +62,25 @@ function setTrackArt(track) {
     }
 }
 
+function displayTrackArtistAndTitle(artist = "", title = "") {
+    document.getElementById("js-track-title").textContent = title;
+    document.getElementById("js-track-artist").textContent = artist;
+}
+
 function showTrackInfo(track) {
-    const trackInfo = document.getElementById("js-player-track-info");
-    const [trackTitle, trackArtist] = trackInfo.children;
-
-    setTrackArt(track);
-
     if (!track) {
-        trackTitle.textContent = "";
-        trackArtist.textContent = "";
+        displayTrackArtistAndTitle();
         document.title = "ve2ry";
-        return;
     }
-    if (track.artist && track.title) {
-        trackTitle.textContent = track.title;
-        trackArtist.textContent = track.artist;
+    else if (track.artist && track.title) {
+        displayTrackArtistAndTitle(track.artist, track.title);
         document.title = `${track.artist} - ${track.title}`;
     }
     else {
-        const title = track.name;
-
-        trackTitle.textContent = "";
-        trackArtist.textContent = title;
-        document.title = title;
+        displayTrackArtistAndTitle(track.name);
+        document.title = track.name;
     }
+    setTrackArt(track);
 }
 
 export {
