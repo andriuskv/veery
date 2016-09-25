@@ -82,6 +82,10 @@
             box-shadow: -2px 0px 6px $color1;
         }
     }
+
+    div {
+        @include text-truncate;
+    }
 }
 .active-playlist-icon {
     position: absolute;
@@ -109,12 +113,12 @@
     color: $base-text-color;
 }
 .track-title {
-    @extend %text-overflow;
+    @include text-truncate;
 
     font-size: 16px;
 }
 .track-artist {
-    @extend %text-overflow;
+    @include text-truncate;
 
     font-size: 12px;
 }

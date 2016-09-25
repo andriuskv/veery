@@ -36,11 +36,10 @@ ul {
 #flashAudioObject-container {
     display: none;
 }
-
-%text-overflow {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+@mixin text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 %default-input-styles {
     padding: 4px 6px;
