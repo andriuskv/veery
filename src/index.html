@@ -54,48 +54,39 @@
             <div id="js-tab-container" class="tab-container">
                 <div id="js-tab-add" class="tab add-tab">
                     <h2 class="tab-title">Add new playlist</h2>
-                    <div id="js-playlist-add-options" class="playlist-add-options">
-                        <div class="playlist-add-option">
-                            <ul class="playlist-provider-container">
-                                <li class="playlist-provider" data-choice="youtube">
-                                    <img src="assets/images/youtube-logo.png" alt=""
-                                        class="playlist-provider-logo">
-                                    <div>YouTube</div>
-                                </li>
-                                <li class="playlist-provider" data-choice="soundcloud">
-                                    <img src="assets/images/soundcloud-logo.png" alt=""
-                                        class="playlist-provider-logo">
-                                    <div>SoundCloud</div>
-                                </li>
-                            </ul>
-                            <div id="js-import-form-container" class="form-container">
-                                <form id="js-playlist-import-form">
-                                    <input type="text" name="playlist-id" class="input"
-                                        placeholder="Playlist url">
-                                    <button id="js-playlist-import-btn" class="btn">
-                                        <div class="btn-content">Import</div>
-                                        <div class="icon-spin4 animate-spin btn-content hidden"></div>
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                        <div class="playlist-add-option">
-                            <button data-choice="file" class="btn btn-transparent">
-                                <div class="local-btn-icon icon-doc-inv"></div>
-                                <div class="local-btn-title">Add files</div>
+                    <div id="js-playlist-add-options">
+                        <div>
+                            <button data-choice="file" class="btn btn-transparent playlist-add-option">
+                                <span class="icon-doc-inv local-btn-icon"></span>
+                                <div>Add files</div>
                             </button>
-                            <button data-choice="folder" class="btn btn-transparent">
-                                <div class="local-btn-icon icon-folder"></div>
-                                <div class="local-btn-title">Add folder</div>
+                            <button data-choice="folder" class="btn btn-transparent playlist-add-option">
+                                <span class="icon-folder local-btn-icon"></span>
+                                <div>Add folder</div>
+                            </button>
+                            <button data-choice="dropbox" class="btn btn-transparent playlist-add-option">
+                                <span class="icon-dropbox local-btn-icon"></span>
+                                <div>Dropbox chooser</div>
                             </button>
                             <input type="file" id="js-file-chooser" class="file-chooser">
-                            <div>
-                                <progress id="js-file-progress" class="file-progress"
-                                    value="0" step="1"></progress>
-                                <div id="js-local-notice" class="playlist-add-local-notice">
-                                    Duplicate/unsupported tracks are ignored
-                                </div>
-                            </div>
+                        </div>
+                        <div>
+                            <button data-choice="youtube" class="btn btn-transparent playlist-add-option">
+                                <span class="icon-youtube-play local-btn-icon"></span>
+                                <div>YouTube</div>
+                            </button>
+                            <button data-choice="soundcloud" class="btn btn-transparent playlist-add-option">
+                                <span class="icon-soundcloud local-btn-icon"></span>
+                                <div>SoundCloud</div>
+                            </button>
+                            <form id="js-playlist-import-form" class="playlist-import-form">
+                                <input type="text" name="playlist-id" class="input"
+                                    placeholder="Playlist url">
+                                <button id="js-playlist-import-btn" class="btn">
+                                    <span class="btn-content">Import</span>
+                                    <div class="icon-spin4 animate-spin btn-content hidden"></div>
+                                </button>
+                            </form>
                         </div>
                     </div>
                     <ul id="js-playlist-entries" class="playlist-entries"></ul>

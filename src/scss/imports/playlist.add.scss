@@ -1,47 +1,13 @@
-.playlist-add-options {
-    display: flex;
-    align-items: flex-start;
-    height: 124px;
-}
 .playlist-add-option {
-    flex-basis: 50%;
-    text-align: center;
-}
-.playlist-provider-container {
-    display: flex;
-    justify-content: center;
-}
-.playlist-provider {
-    user-select: none;
-    width: 100px;
-    padding: 4px;
-    margin-right: 8px;
-    border-radius: 2px;
-    text-align: center;
-    font-size: 14px;
-    color: $base-text-color;
-    cursor: pointer;
+    min-width: 90px;
 
-    &:hover {
-        color: $brand-color;
-    }
-    &:last-of-type {
-        margin-right: 0;
-    }
-    &.selected {
+    &.active {
         background-color: $color1;
     }
-    div {
-        user-select: none;
-    }
 }
-.playlist-provider-logo {
-    max-width: 100%;
-}
-.form-container {
+.playlist-import-form {
     display: none;
     margin-top: 4px;
-    font-size: 14px;
 
     &.visible {
         display: block;
@@ -51,47 +17,10 @@
     display: none;
 }
 .local-btn-icon {
-    font-size: 59px;
-}
-.local-btn-title {
-    font-size: 14px;
+    font-size: 48px;
 }
 .file-chooser {
     display: none;
-}
-.file-progress {
-    appearance: none;
-    visibility: hidden;
-    opacity: 0;
-    width: 300px;
-    height: 26px;
-    margin-top: 4px;
-    transition: all 0.2s;
-
-    &.visible {
-        visibility: visible;
-        opacity: 1;
-    }
-    &::-webkit-progress-bar {
-        border-radius: 2px;
-        background-color: $color1;
-    }
-    &::-webkit-progress-value {
-        border-radius: 2px;
-        background-color: $brand-color;
-    }
-}
-.playlist-add-local-notice {
-    position: relative;
-    top: -24px;
-    display: none;
-    text-align: center;
-    color: $color2;
-    font-size: 12px;
-
-    &.visible {
-        display: block;
-    }
 }
 .playlist-add-notice {
     position: absolute;

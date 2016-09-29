@@ -1,21 +1,20 @@
 const scriptLoader = (function() {
     const loaded = [];
 
-    function loadScript(src, cb) {
-        if (loaded.includes(src)) {
-            return;
+    function loadScript(attrs, cb) {
+        if (loaded.includes(attrs.src)) {
+            return true;
         }
-
         const script = document.createElement("script");
 
-        script.setAttribute("src", src);
+        Object.keys(attrs).forEach(attr => {
+            script.setAttribute(attr, attrs[attr]);
+        });
         document.getElementsByTagName("body")[0].appendChild(script);
-        loaded.push(src);
+        loaded.push(attrs.src);
 
         if (cb) {
-            script.onload = function() {
-                cb();
-            };
+            script.onload = cb;
         }
     }
 
