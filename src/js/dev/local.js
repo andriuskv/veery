@@ -6,32 +6,6 @@ import { getPlaylistById, createPlaylist } from "./playlist/playlist.js";
 import { initPlaylist, appendToPlaylist } from "./playlist/playlist.manage.js";
 import { showNotice } from "./playlist/playlist.add.js";
 
-const progress = (function() {
-    const progress = document.getElementById("js-file-progress");
-
-    function setAttrValue(attr, value) {
-        progress.setAttribute(attr, value);
-    }
-
-    function toggleElement() {
-        progress.classList.toggle("visible");
-        document.getElementById("js-local-notice").classList.toggle("visible");
-    }
-
-    return {
-        toggle: toggleElement,
-        setAttrValue
-    };
-})();
-
-function getPlaylist() {
-    return getPlaylistById("local-files") || createPlaylist({
-        id: "local-files",
-        title: "Local files",
-        type: "list"
-    });
-}
-
 function getTrackDuration(track) {
     return new Promise(resolve => {
         let audioBlobURL = URL.createObjectURL(track);
@@ -99,22 +73,14 @@ function parseTracks(tracks, parsedTracks, startIndex) {
             duration: data[1],
             player: "native"
         });
-        tracks.splice(0, 1);
-        progress.setAttrValue("value", parsedTracks.length);
-        if (tracks.length) {
-            return parseTracks(tracks, parsedTracks, startIndex);
-        }
-        return parsedTracks;
+        tracks = tracks.slice(1);
+        return tracks.length ? parseTracks(tracks, parsedTracks, startIndex) : parsedTracks;
     });
 }
 
-function processNewTracks(pl, newTracks) {
-    progress.setAttrValue("max", newTracks.length);
-    progress.toggle();
-
+function processNewTracks(pl, newTracks, parseTracks) {
     parseTracks(newTracks, [], pl.tracks.length)
     .then(tracks => {
-        progress.toggle();
         pl.tracks.push(...tracks);
 
         if (document.getElementById(`js-${pl.id}`)) {
@@ -133,22 +99,33 @@ function processNewTracks(pl, newTracks) {
     });
 }
 
-function addTracks(files) {
+function addTracks(pl, newTracks, parseTracks) {
+    const tracks = filterDuplicateTracks(newTracks, pl.tracks);
+
+    if (!tracks.length) {
+        showNotice("Tracks already exist");
+        return;
+    }
+    processNewTracks(pl, tracks, parseTracks);
+}
+
+function selectLocalFiles(files) {
     const supportedTracks = filterUnsupportedFiles(files);
 
     if (!supportedTracks.length) {
         showNotice("No valid audio files found");
         return;
     }
-
-    const pl = getPlaylist();
-    const tracks = filterDuplicateTracks(supportedTracks, pl.tracks);
-
-    if (!tracks.length) {
-        showNotice("Tracks already exist");
-        return;
-    }
-    processNewTracks(pl, tracks);
+    const pl = getPlaylistById("local-files") || createPlaylist({
+        id: "local-files",
+        title: "Local files",
+        type: "list"
+    });
+    addTracks(pl, supportedTracks, parseTracks);
 }
 
-export { addTracks };
+export {
+    getTrackDuration,
+    addTracks,
+    selectLocalFiles
+};

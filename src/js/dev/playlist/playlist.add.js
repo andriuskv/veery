@@ -3,7 +3,8 @@ import { initializeWorker, postMessageToWorker } from "./../worker.js";
 import { editSidebarEntry } from "./../sidebar.js";
 import { getPlaylistById, createPlaylist, resetTrackIndexes } from "./playlist.js";
 import { initPlaylist, removePlaylist, appendToPlaylist } from "./playlist.manage.js";
-import * as local from "./../local.js";
+import { showDropboxChooser } from "./../dropbox.js";
+import { selectLocalFiles } from "./../local.js";
 import * as yt from "./../youtube.js";
 import * as sc from "./../soundcloud.js";
 
@@ -94,9 +95,9 @@ function setProvider(item) {
 
     if (newProvider !== provider) {
         provider = newProvider;
-        removeElementClass("playlist-provider", "selected");
-        item.elementRef.classList.add("selected");
-        document.getElementById("js-import-form-container").classList.add("visible");
+        removeElementClass("playlist-add-option", "active");
+        item.elementRef.classList.add("active");
+        document.getElementById("js-playlist-import-form").classList.add("visible");
     }
 }
 
@@ -176,7 +177,7 @@ function editPlaylistTitle(action, parentElement, playlistId) {
 }
 
 document.getElementById("js-file-chooser").addEventListener("change", ({ target }) => {
-    local.addTracks([...target.files]);
+    selectLocalFiles([...target.files]);
     target.value = "";
 });
 
@@ -220,13 +221,25 @@ document.getElementById("js-playlist-add-options").addEventListener("click", ({ 
         showFilePicker(choice);
         return;
     }
+    if (choice === "dropbox") {
+        const isLoaded = scriptLoader.load({
+            src: "https://www.dropbox.com/static/api/2/dropins.js",
+            id: "dropboxjs",
+            "data-app-key": ""
+        }, showDropboxChooser);
+
+        if (isLoaded) {
+            showDropboxChooser();
+        }
+        return;
+    }
     setProvider(item);
 });
 
 window.addEventListener("load", function onLoad() {
-    scriptLoader.load("js/libs/sdk.js", sc.init);
-    scriptLoader.load("https://www.youtube.com/iframe_api");
-    scriptLoader.load("js/libs/metadata-audio-parser.js");
+    scriptLoader.load({ src: "js/libs/sdk.js" }, sc.init);
+    scriptLoader.load({ src: "https://www.youtube.com/iframe_api" });
+    scriptLoader.load({ src: "js/libs/metadata-audio-parser.js" });
 
     initializeWorker();
     window.removeEventListener("load", onLoad);
