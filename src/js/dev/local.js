@@ -4,7 +4,7 @@ import { formatTime } from "./main.js";
 import { postMessageToWorker } from "./worker.js";
 import { getPlaylistById, createPlaylist } from "./playlist/playlist.js";
 import { initPlaylist, appendToPlaylist } from "./playlist/playlist.manage.js";
-import { showNotice } from "./playlist/playlist.add.js";
+import { createImportOptionMask, removeImportOptionMask, showNotice } from "./playlist/playlist.add.js";
 
 function getTrackDuration(track) {
     return new Promise(resolve => {
@@ -79,7 +79,7 @@ function parseTracks(tracks, parsedTracks, startIndex) {
 }
 
 function processNewTracks(pl, newTracks, parseTracks) {
-    parseTracks(newTracks, [], pl.tracks.length)
+    return parseTracks(newTracks, [], pl.tracks.length)
     .then(tracks => {
         pl.tracks.push(...tracks);
 
@@ -93,35 +93,40 @@ function processNewTracks(pl, newTracks, parseTracks) {
             action: "put",
             playlist: pl
         });
+    });
+}
+
+function addTracks(importOption, pl, newTracks, parseTracks) {
+    const tracks = filterDuplicateTracks(newTracks, pl.tracks);
+
+    createImportOptionMask(importOption);
+
+    if (!newTracks.length) {
+        showNotice(importOption, "No valid audio files found");
+        return;
+    }
+    if (!tracks.length) {
+        showNotice(importOption, "Tracks already exist");
+        return;
+    }
+    processNewTracks(pl, tracks, parseTracks)
+    .then(() => {
+        removeImportOptionMask(importOption);
     })
     .catch(error => {
         console.log(error);
     });
 }
 
-function addTracks(pl, newTracks, parseTracks) {
-    const tracks = filterDuplicateTracks(newTracks, pl.tracks);
-
-    if (!tracks.length) {
-        showNotice("Tracks already exist");
-        return;
-    }
-    processNewTracks(pl, tracks, parseTracks);
-}
-
 function selectLocalFiles(files) {
     const supportedTracks = filterUnsupportedFiles(files);
-
-    if (!supportedTracks.length) {
-        showNotice("No valid audio files found");
-        return;
-    }
     const pl = getPlaylistById("local-files") || createPlaylist({
         id: "local-files",
         title: "Local files",
         type: "list"
     });
-    addTracks(pl, supportedTracks, parseTracks);
+
+    addTracks("local", pl, supportedTracks, parseTracks);
 }
 
 export {

@@ -8,7 +8,7 @@ import { postMessageToWorker } from "./../worker.js";
 import { createSidebarEntry, removeSidebarEntry } from "./../sidebar.js";
 import { storedTrack, stopPlayer } from "./../player/player.js";
 import { sortTracks } from "./playlist.sorting.js";
-import { createPlaylistEntry } from "./playlist.add.js";
+import { createPlaylistEntry } from "./playlist.entries.js";
 
 function resortTracks(pl, route, toggle) {
     playlist.setPlaybackOrder(pl, getSetting("shuffle"));

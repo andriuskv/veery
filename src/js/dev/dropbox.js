@@ -40,7 +40,7 @@ function showDropboxChooser() {
                 type: "grid"
             });
 
-            addTracks(pl, files, parseTracks);
+            addTracks("dropbox", pl, files, parseTracks);
         },
         linkType: "direct",
         multiselect: true,
