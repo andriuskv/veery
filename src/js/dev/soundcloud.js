@@ -1,7 +1,7 @@
 /* global SC */
 
 import { formatTime } from "./main.js";
-import { addImportedPlaylist, showNotice, importBtn } from "./playlist/playlist.add.js";
+import { addImportedPlaylist, showNotice } from "./playlist/playlist.add.js";
 import { storedTrack } from "./player/player.js";
 
 function init() {
@@ -44,12 +44,13 @@ function fetchPlaylist(url) {
             tracks: parseTracks(playlist.tracks)
         });
     })
-    .then(addImportedPlaylist)
+    .then(pl => {
+        addImportedPlaylist("soundcloud", pl);
+    })
     .catch(error => {
         console.log(error);
         if (error.status === 404) {
-            showNotice("Playlist was not found");
-            importBtn.toggle();
+            showNotice("soundcloud", "Playlist was not found");
         }
     });
 }

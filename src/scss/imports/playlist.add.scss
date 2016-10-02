@@ -1,54 +1,96 @@
-.playlist-add-option {
-    min-width: 90px;
+.add-tab-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+.pl-add-options {
+    flex-basis: 268px;
+    padding: 4px;
+    border-radius: 2px;
+    background-color: $color1;
+}
+.pl-option-mask {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: transparentize($color1, 0.2);
+    font-size: 14px;
+}
+.pl-add-option {
+    position: relative;
+    padding: 2px;
+    border-bottom: 1px solid $color3;
+}
+.pl-add-option-btn {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 2px;
+    text-align: left;
 
     &.active {
         background-color: $color1;
-    }
-}
-.playlist-import-form {
-    display: none;
-    margin-top: 4px;
 
-    &.visible {
-        display: block;
+        .pl-add-option-title {
+            display: none;
+        }
     }
 }
-.btn-content.hidden {
+.pl-add-option-icon {
+    margin-right: 4px;
+    font-size: 21px;
+}
+.pl-import-form {
+    .input,
+    .btn {
+        background-color: $color3;
+    }
+}
+.file-picker {
     display: none;
 }
-.local-btn-icon {
-    font-size: 48px;
-}
-.file-chooser {
-    display: none;
-}
-.playlist-add-notice {
-    position: absolute;
-    left: 0;
-    right: 0;
-    text-align: center;
-}
-.playlist-entries {
-    margin-top: 16px;
-}
-.playlist-entry {
+.pl-entries {
+    flex-basis: calc(100% - 276px);
     padding: 4px;
-    border-bottom: 1px solid $color1;
+    border-radius: 2px;
+    background-color: $color1;
+}
+.pl-entry {
+    padding: 4px;
+    border-bottom: 1px solid $color3;
 
+    .input,
     .btn.active {
-        background-color: $color1;
+        background-color: $color3;
     }
 }
-.playlist-entry-form {
+.pl-entry-form {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
-.playlist-entry-title {
+.pl-entry-title {
     flex-grow: 1;
     margin-right: 4px;
 
     &:read-only {
         background-color: transparent;
+    }
+}
+
+@media (max-width: 680px) {
+    .pl-add-options {
+        margin-bottom: 8px;
+    }
+    .pl-add-options,
+    .pl-entries {
+        flex-basis: 100%;
     }
 }

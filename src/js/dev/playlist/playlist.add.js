@@ -1,50 +1,47 @@
-import { removeElementClass, getElementByAttr, scriptLoader, capitalize } from "./../main.js";
+import { removeElementClass, getElementByAttr, scriptLoader } from "./../main.js";
 import { initializeWorker, postMessageToWorker } from "./../worker.js";
-import { editSidebarEntry } from "./../sidebar.js";
 import { getPlaylistById, createPlaylist, resetTrackIndexes } from "./playlist.js";
-import { initPlaylist, removePlaylist, appendToPlaylist } from "./playlist.manage.js";
+import { initPlaylist, appendToPlaylist } from "./playlist.manage.js";
 import { showDropboxChooser } from "./../dropbox.js";
 import { selectLocalFiles } from "./../local.js";
 import * as yt from "./../youtube.js";
 import * as sc from "./../soundcloud.js";
 
-let provider = "";
+let option = "";
 
-const importBtn = (function() {
-    const btn = document.getElementById("js-playlist-import-btn");
+function createImportOptionMask(option) {
+    const optionElements = Array.from(document.querySelectorAll(`[data-option-id*=${option}]`));
 
-    function toggle() {
-        btn.children[0].classList.toggle("hidden");
-        btn.children[1].classList.toggle("hidden");
-    }
+    optionElements.forEach(element => {
+        element.parentElement.insertAdjacentHTML("beforeend", `
+            <div class="pl-option-mask" data-mask-id=${option}>
+                <span class="icon-spin4 animate-spin"></span>
+            </div>
+        `);
+    });
+}
 
-    return { toggle };
-})();
+function removeImportOptionMask(option) {
+    const maskElements = Array.from(document.querySelectorAll(`[data-mask-id*=${option}]`));
 
-function removeNotice() {
-    const element = document.getElementById("js-playlist-add-notice");
-
-    if (element) {
+    maskElements.forEach(element => {
         element.parentElement.removeChild(element);
-    }
+    });
 }
 
-function createNotice(message) {
-    const div = document.createElement("div");
+function showNotice(option, message) {
+    const maskElements = Array.from(document.querySelectorAll(`[data-mask-id*=${option}]`));
 
-    div.setAttribute("id", "js-playlist-add-notice");
-    div.classList.add("playlist-add-notice");
-    div.textContent = message;
-    return div;
-}
+    maskElements.forEach(element => {
+        const spinner = element.children[0];
 
-function showNotice(message) {
-    const noticeElement = createNotice(message);
-    const parentElement = document.getElementById("js-tab-add");
+        spinner.parentElement.removeChild(spinner);
+        element.insertAdjacentHTML("beforeend", `<span>${message}</span>`);
+    });
 
-    removeNotice();
-    parentElement.insertBefore(noticeElement, document.getElementById("js-playlist-entries"));
-    setTimeout(removeNotice, 3200);
+    setTimeout(() => {
+        removeImportOptionMask(option);
+    }, 3200);
 }
 
 function importPlaylist(name, value) {
@@ -67,7 +64,7 @@ function filterDuplicateTracks(tracks, existingTracks) {
     }, []);
 }
 
-function addImportedPlaylist(pl) {
+function addImportedPlaylist(importOption, pl) {
     const existingPlaylist = getPlaylistById(pl.id);
     let playlist = null;
 
@@ -83,145 +80,99 @@ function addImportedPlaylist(pl) {
         playlist = createPlaylist(pl);
         initPlaylist(playlist, true);
     }
-    importBtn.toggle();
+    removeImportOptionMask(importOption);
     postMessageToWorker({
         action: "put",
         playlist
     });
 }
 
-function setProvider(item) {
-    const newProvider = item.attrValue;
+function createPlaylistImportForm() {
+    return `
+        <form id="js-pl-import-form" class="pl-import-form">
+            <input type="text" name="playlist-url" class="input" placeholder="Playlist url">
+            <button class="btn">Import</button>
+        </form>
+    `;
+}
 
-    if (newProvider !== provider) {
-        provider = newProvider;
-        removeElementClass("playlist-add-option", "active");
-        item.elementRef.classList.add("active");
-        document.getElementById("js-playlist-import-form").classList.add("visible");
+function removePlaylistImportForm() {
+    const form = document.getElementById("js-pl-import-form");
+
+    if (form) {
+        form.removeEventListener("submit", handleImportFormSubmit);
+        form.parentElement.removeChild(form);
     }
 }
 
+function selectOption(item) {
+    const newOption = item.attrValue;
+
+    if (newOption !== option) {
+        option = newOption;
+        removePlaylistImportForm();
+        removeElementClass("pl-add-option-btn", "active");
+        item.elementRef.classList.add("active");
+        item.elementRef.insertAdjacentHTML("beforeend", createPlaylistImportForm());
+        document.getElementById("js-pl-import-form").addEventListener("submit", handleImportFormSubmit);
+    }
+}
+
+function handleChangeOnFileInput({ target }) {
+    selectLocalFiles([...target.files]);
+    target.value = "";
+    target.removeEventListener("change", handleChangeOnFileInput);
+    target.parentElement.removeChild(target);
+}
+
+function createFileInput() {
+    const input = document.createElement("input");
+
+    input.setAttribute("type", "file");
+    input.setAttribute("id", "js-file-picker");
+    input.classList.add("file-picker");
+    input.addEventListener("change", handleChangeOnFileInput);
+    document.body.appendChild(input);
+    return input;
+}
+
 function showFilePicker(choice) {
-    const filePicker = document.getElementById("js-file-chooser");
+    const filePicker = document.getElementById("js-file-picker") || createFileInput();
     const clickEvent = new MouseEvent("click");
 
-    if (choice === "file") {
-        filePicker.removeAttribute("webkitdirectory");
-        filePicker.removeAttribute("directory");
+    if (choice === "local-file") {
         filePicker.setAttribute("multiple", true);
     }
-    else if (choice === "folder") {
-        filePicker.removeAttribute("multiple");
+    else if (choice === "local-folder") {
         filePicker.setAttribute("webkitdirectory", true);
         filePicker.setAttribute("directory", true);
     }
     filePicker.dispatchEvent(clickEvent);
 }
 
-function createPlaylistEntry(title, id) {
-    const playlistEntryContainer = document.getElementById("js-playlist-entries");
-    const entry = `
-        <li class="playlist-entry" data-id=${id}>
-            <form class="playlist-entry-form">
-                <input type="text" class="input playlist-entry-title" value="${title}" readonly>
-                <button type="submit" class="icon-pencil btn btn-transparent"
-                data-action="edit" title="Edit"></button>
-                <button class="icon-trash btn btn-transparent"
-                data-action="remove" title="Remove playlist"></button>
-            </form>
-        </li>
-    `;
-
-    playlistEntryContainer.insertAdjacentHTML("beforeend", entry);
-}
-
-function updatePlaylistEntryBtn(btn, action) {
-    const nextAction = action === "edit" ? "save": "edit";
-
-    btn.setAttribute("title", capitalize(nextAction));
-    btn.setAttribute("data-action", nextAction);
-    btn.classList.toggle("active");
-}
-
-function editPlaylistTitle(action, parentElement, playlistId) {
-    const titleElement = parentElement.querySelector(".playlist-entry-title");
-
-    if (action === "edit") {
-        titleElement.removeAttribute("readonly");
-        titleElement.focus();
-        titleElement.selectionStart = 0;
-        titleElement.selectionEnd = titleElement.value.length;
-    }
-    else if (action === "save") {
-        const pl = getPlaylistById(playlistId);
-
-        if (!titleElement.value) {
-            titleElement.value = pl.title;
-        }
-        const newTitle = titleElement.value;
-
-        if (newTitle !== pl.title) {
-            pl.title = newTitle;
-            editSidebarEntry(playlistId, newTitle);
-            titleElement.setAttribute("value", newTitle);
-            postMessageToWorker({
-                action: "update",
-                playlist: {
-                    id: pl.id,
-                    title: pl.title
-                }
-            });
-        }
-        titleElement.setAttribute("readonly", "readonly");
-    }
-}
-
-document.getElementById("js-file-chooser").addEventListener("change", ({ target }) => {
-    selectLocalFiles([...target.files]);
-    target.value = "";
-});
-
-document.getElementById("js-playlist-import-form").addEventListener("submit", event => {
-    const { target: form } = event;
-    const value = form.elements["playlist-id"].value.trim();
+function handleImportFormSubmit(event) {
+    const value = event.target.elements["playlist-url"].value.trim();
 
     if (value) {
-        importBtn.toggle();
-        importPlaylist(provider, value);
-        form.reset();
+        createImportOptionMask(option);
+        importPlaylist(option, value);
+        event.target.reset();
     }
     event.preventDefault();
-});
+}
 
-document.getElementById("js-playlist-entries").addEventListener("click", ({ target }) => {
-    const entry = getElementByAttr(target, "data-id");
-    const action = target.getAttribute("data-action");
-
-    if (!entry || !action) {
-        return;
-    }
-    if (action === "remove") {
-        removePlaylist(entry.attrValue);
-        entry.elementRef.parentElement.removeChild(entry.elementRef);
-        return;
-    }
-    editPlaylistTitle(action, entry.elementRef, entry.attrValue);
-    updatePlaylistEntryBtn(target, action);
-});
-
-document.getElementById("js-playlist-add-options").addEventListener("click", ({ target }) => {
-    const item = getElementByAttr(target, "data-choice");
+document.getElementById("js-pl-add-options").addEventListener("click", ({ target }) => {
+    const item = getElementByAttr(target, "data-option-id");
 
     if (!item) {
         return;
     }
-    const choice = item.attrValue;
+    const option = item.attrValue;
 
-    if (choice === "file" || choice === "folder") {
-        showFilePicker(choice);
-        return;
+    if (option.includes("local")) {
+        showFilePicker(option);
     }
-    if (choice === "dropbox") {
+    else if (option === "dropbox") {
         const isLoaded = scriptLoader.load({
             src: "https://www.dropbox.com/static/api/2/dropins.js",
             id: "dropboxjs",
@@ -231,9 +182,10 @@ document.getElementById("js-playlist-add-options").addEventListener("click", ({ 
         if (isLoaded) {
             showDropboxChooser();
         }
-        return;
     }
-    setProvider(item);
+    else {
+        selectOption(item);
+    }
 });
 
 window.addEventListener("load", function onLoad() {
@@ -248,6 +200,6 @@ window.addEventListener("load", function onLoad() {
 export {
     addImportedPlaylist,
     showNotice,
-    importBtn,
-    createPlaylistEntry
+    createImportOptionMask,
+    removeImportOptionMask
 };

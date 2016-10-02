@@ -1,4 +1,4 @@
-import { addImportedPlaylist, showNotice, importBtn } from "./playlist/playlist.add.js";
+import { addImportedPlaylist, showNotice } from "./playlist/playlist.add.js";
 
 function parseItems(playlist) {
     playlist.tracks = playlist.tracks.map((track, index) => ({
@@ -82,8 +82,7 @@ function getPlaylistItems(playlist) {
 
 function getPlaylistTitle(data) {
     if (!data.items.length) {
-        showNotice("Playlist was not found");
-        importBtn.toggle();
+        showNotice("youtube", "Playlist was not found");
         return;
     }
     return {
@@ -96,8 +95,7 @@ function getPlaylistTitle(data) {
 
 function fetchPlaylist(url) {
     if (!url.includes("list=")) {
-        showNotice("Invalid url");
-        importBtn.toggle();
+        showNotice("youtube", "Invalid url");
         return;
     }
     const id = url.split("list=")[1];
@@ -106,7 +104,9 @@ function fetchPlaylist(url) {
     .then(getPlaylistTitle)
     .then(getPlaylistItems)
     .then(parseItems)
-    .then(addImportedPlaylist)
+    .then(pl => {
+        addImportedPlaylist("youtube", pl);
+    })
     .catch(error => {
         console.log(error);
     });
