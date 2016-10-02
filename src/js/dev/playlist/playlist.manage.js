@@ -18,7 +18,7 @@ function resortTracks(pl, route, toggle) {
         sortTracks(pl.tracks, pl.sortedBy, pl.order);
         updatePlaylist(pl);
     }
-    if (toggle) {
+    if (toggle && router.isActive("add")) {
         router.toggle(route);
     }
 }
