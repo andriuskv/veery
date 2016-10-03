@@ -56,17 +56,18 @@ function setVolume(volume) {
     scPlayer.setVolume(volume);
 }
 
-function setElapsed(percent) {
+function seekTo(percent) {
     const duration = scPlayer.streamInfo.duration;
-    const elapsed = duration / 100 * percent;
+    const currentTime = duration / 100 * percent;
 
-    scPlayer.seek(elapsed);
+    scPlayer.seek(currentTime);
+    return currentTime / 1000;
 }
 
 export {
     playTrack,
     stopTrack,
     getPlayPauseCallbacks,
-    setElapsed,
+    seekTo,
     setVolume
 };

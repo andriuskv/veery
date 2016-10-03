@@ -52,7 +52,7 @@ const storedTrack = (function () {
         playlist.setPlaybackIndex(track.index);
 
         controls.setSliderElementWidth("track", storedTrack.elapsed);
-        controls.setElapsedTime(storedTrack.currentTime);
+        controls.displayCurrentTime(storedTrack.currentTime);
         beforeTrackStart(track, storedTrack.playlistId);
         playNewTrack(track, storedTrack.currentTime);
     }
@@ -270,17 +270,19 @@ function setVolume(track, volume) {
 }
 
 function seekTo(track, percent) {
-    controls.elapsedTime.stop();
+    let currentTime = 0;
 
+    controls.elapsedTime.stop();
     if (track.player === "native") {
-        nPlayer.setElapsed(track, percent);
+        currentTime = nPlayer.seekTo(percent, track);
     }
     else if (track.player === "youtube") {
-        ytPlayer.setElapsed(percent);
+        currentTime = ytPlayer.seekTo(percent);
     }
     else if (track.player === "soundcloud") {
-        scPlayer.setElapsed(percent);
+        currentTime = scPlayer.seekTo(percent);
     }
+    controls.displayCurrentTime(currentTime);
 }
 
 document.getElementById("js-tab-container").addEventListener("dblclick", ({ target }) => {

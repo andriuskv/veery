@@ -17,7 +17,7 @@ const elapsedTime = (function() {
         const ideal = performance.now() - startTime;
         const diff = ideal - elapsed;
 
-        setElapsedTime(track.currentTime);
+        displayCurrentTime(track.currentTime);
         if (!seeking) {
             const elapsedInPercentage = track.currentTime / track.duration * 100;
 
@@ -93,7 +93,7 @@ function getElapsedValue(slider, screenX) {
 
 function resetTrackSlider() {
     elapsedTime.stop();
-    setElapsedTime(0);
+    displayCurrentTime(0);
     setSliderElementWidth("track", 0);
 }
 
@@ -119,7 +119,7 @@ function setSliderElementWidth(slider, percent) {
     document.getElementById(`js-player-${slider}-elapsed`).style.width = `${percent}%`;
 }
 
-function setElapsedTime(time) {
+function displayCurrentTime(time) {
     document.getElementById("js-player-elapsed").textContent = formatTime(time);
 }
 
@@ -209,7 +209,7 @@ export {
     togglePlayBtnClass,
     addClassOnPlayBtn,
     setSliderElementWidth,
-    setElapsedTime,
+    displayCurrentTime,
     showTrackDuration,
     resetTrackSlider
 };
