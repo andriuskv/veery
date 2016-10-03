@@ -18,10 +18,7 @@ function playTrack(track, volume, startTime) {
         track.audio.currentTime = startTime;
         return;
     }
-
-    track.audio.oncanplay = function() {
-        track.audio.play();
-    };
+    track.audio.play();
 }
 
 function getPlayPauseCallbacks({ audio }) {
@@ -34,9 +31,7 @@ function getPlayPauseCallbacks({ audio }) {
 function stopTrack(track) {
     URL.revokeObjectURL(track.audioBlobURL);
     track.audio.load();
-    track.audio.oncanplay = null;
     track.audio.onplaying = null;
-    track.audio.onended = null;
     delete track.audioBlobURL;
     delete track.audio;
 }
@@ -45,14 +40,15 @@ function setVolume(track, volume) {
     track.audio.volume = volume;
 }
 
-function setElapsed(track, percent) {
+function seekTo(percent, track) {
     track.audio.currentTime = track.audio.duration / 100 * percent;
+    return track.audio.currentTime;
 }
 
 export {
     playTrack,
     stopTrack,
     getPlayPauseCallbacks,
-    setElapsed,
+    seekTo,
     setVolume
 };
