@@ -66,6 +66,7 @@ function onListClick(event) {
 }
 
 function onFormSubmit(event) {
+    const moveToList = document.getElementById("js-move-to-list");
     const form = event.target;
     const pl = createPlaylist({
         id: Math.random().toString(36).slice(2),
@@ -78,7 +79,8 @@ function onFormSubmit(event) {
         action: "put",
         playlist: pl
     });
-    document.getElementById("js-move-to-list").innerHTML = createPlaylistList(getActiveTabId());
+    moveToList.classList.remove("hidden");
+    moveToList.innerHTML = createPlaylistList(getActiveTabId());
     event.preventDefault();
     form.reset();
 }
@@ -100,10 +102,12 @@ function createPlaylistList(playlistId) {
 }
 
 function createMoveToPanel(panelId, { id }) {
+    const listContent = createPlaylistList(id);
+    const className = !listContent ? "hidden" : "";
     const moveToPanelElement = `
         <div id="${panelId}" class="move-to-panel">
             <h2 class="move-to-panel-title">Move to</h2>
-            <ul id="js-move-to-list" class="move-to-list">${createPlaylistList(id)}</ul>
+            <ul id="js-move-to-list" class="move-to-list ${className}">${listContent}</ul>
             <button id="js-move-to-new-pl-btn" class="btn move-to-new-pl-btn">Create new playlist</button>
             <form id="js-move-to-form" class="move-to-form">
                 <input type="text" class="input" name="title" autocomplete="off" required>
