@@ -70,7 +70,7 @@ function displayTrackArtistAndTitle(artist = "", title = "") {
 function showTrackInfo(track) {
     if (!track) {
         displayTrackArtistAndTitle();
-        document.title = "ve2ry";
+        document.title = "Ve2ry";
     }
     else if (track.artist && track.title) {
         displayTrackArtistAndTitle(track.artist, track.title);
