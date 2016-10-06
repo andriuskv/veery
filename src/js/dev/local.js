@@ -84,10 +84,10 @@ function processNewTracks(pl, newTracks, parseTracks) {
         pl.tracks.push(...tracks);
 
         if (document.getElementById(`js-${pl.id}`)) {
-            appendToPlaylist(pl, tracks, true);
+            appendToPlaylist(pl, tracks);
         }
         else {
-            initPlaylist(pl, true);
+            initPlaylist(pl);
         }
         postMessageToWorker({
             action: "put",

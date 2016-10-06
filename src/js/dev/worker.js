@@ -15,7 +15,7 @@ function initializeWorker() {
             Object.keys(playlists).forEach(id => {
                 const pl = playlists[id];
 
-                initPlaylist(createPlaylist(pl));
+                initPlaylist(createPlaylist(pl), false);
             });
             storedTrack.setPlayerAsReady("native");
             router.toggleCurrent();
