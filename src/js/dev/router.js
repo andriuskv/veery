@@ -47,7 +47,12 @@ function toggleCurrentRoute() {
 window.addEventListener("hashchange", event => {
     const route = event.newURL.split("#/")[1];
 
-    toggleRouteTab(route);
+    if (route) {
+        toggleRouteTab(route);
+    }
+    else {
+        history.back();
+    }
 });
 
 export {
