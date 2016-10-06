@@ -10,7 +10,7 @@ import { storedTrack, stopPlayer } from "./../player/player.js";
 import { sortTracks } from "./playlist.sorting.js";
 import { createPlaylistEntry } from "./playlist.entries.js";
 
-function resortTracks(pl, route, toggle) {
+function resortTracks(pl) {
     playlist.setPlaybackOrder(pl, getSetting("shuffle"));
     playlist.resetPlaybackIndex();
 
@@ -18,26 +18,31 @@ function resortTracks(pl, route, toggle) {
         sortTracks(pl.tracks, pl.sortedBy, pl.order);
         updatePlaylist(pl);
     }
-    if (toggle && router.isActive("add")) {
-        router.toggle(route);
-    }
 }
 
-function initPlaylist(pl, toggle) {
+function initPlaylist(pl, toggle = router.isActive("add")) {
     const route = `playlist/${pl.id}`;
 
     router.add(route);
     playlistView.add(pl);
     createSidebarEntry(pl.title, pl.id);
     createPlaylistEntry(pl.title, pl.id);
-    resortTracks(pl, route, toggle);
+    resortTracks(pl);
+
+    if (toggle) {
+        router.toggle(route);
+    }
 }
 
-function appendToPlaylist(pl, tracks, toggle) {
+function appendToPlaylist(pl, tracks, toggle = router.isActive("add")) {
     const route = `playlist/${pl.id}`;
 
     playlistView.append(pl, tracks);
-    resortTracks(pl, route, toggle);
+    resortTracks(pl);
+
+    if (toggle) {
+        router.toggle(route);
+    }
 }
 
 function removePlaylist(id) {

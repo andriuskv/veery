@@ -74,11 +74,11 @@ function addImportedPlaylist(importOption, pl) {
         playlist = Object.assign({}, existingPlaylist);
         playlist.tracks.push(...tracks);
         playlist.tracks = resetTrackIndexes(playlist.tracks);
-        appendToPlaylist(playlist, tracks, true);
+        appendToPlaylist(playlist, tracks);
     }
     else {
         playlist = createPlaylist(pl);
-        initPlaylist(playlist, true);
+        initPlaylist(playlist);
     }
     removeImportOptionMask(importOption);
     postMessageToWorker({
