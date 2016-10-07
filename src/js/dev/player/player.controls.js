@@ -77,10 +77,10 @@ function togglePlayBtnClass(paused) {
     addClassOnPlayBtn(iconClassName);
 }
 
-function getElapsedValue(slider, screenX) {
+function getElapsedValue(slider, pageX) {
     const trackSlider = document.getElementById(`js-player-${slider}-slider`);
     const { left, width } = trackSlider.getBoundingClientRect();
-    let value = (screenX - left) / width;
+    let value = (pageX - left) / width;
 
     if (value < 0) {
         value = 0;
@@ -98,7 +98,7 @@ function resetTrackSlider() {
 }
 
 function onVolumeTrackMousemove(event) {
-    const volumeInPercentage = getElapsedValue("volume", event.screenX);
+    const volumeInPercentage = getElapsedValue("volume", event.pageX);
     const volume = volumeInPercentage / 100;
     const track = getCurrentTrack();
 
@@ -128,14 +128,14 @@ function showTrackDuration(duration = "0:00") {
 }
 
 function onPlayerTrackMousemove(event) {
-    setSliderElementWidth("track", getElapsedValue("track", event.screenX));
+    setSliderElementWidth("track", getElapsedValue("track", event.pageX));
 }
 
-function onPlayerTrackMouseup({ screenX }) {
+function onPlayerTrackMouseup({ pageX }) {
     const track = getCurrentTrack();
 
     if (track) {
-        player.seekTo(track, getElapsedValue("track", screenX));
+        player.seekTo(track, getElapsedValue("track", pageX));
     }
     seeking = false;
     document.removeEventListener("mousemove", onPlayerTrackMousemove);
@@ -147,7 +147,7 @@ document.getElementById("js-player-track-slider").addEventListener("mousedown", 
         return;
     }
     seeking = true;
-    setSliderElementWidth("track", getElapsedValue("track", event.screenX));
+    setSliderElementWidth("track", getElapsedValue("track", event.pageX));
     document.addEventListener("mousemove", onPlayerTrackMousemove);
     document.addEventListener("mouseup", onPlayerTrackMouseup);
 });
