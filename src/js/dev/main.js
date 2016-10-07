@@ -64,22 +64,30 @@ function isOutsideElement(element, targetElementId) {
     return true;
 }
 
-function formatTime(time) {
-    let newTime = "";
-
-    if (time >= 60) {
-        const minutes = Math.floor(time / 60);
-
-        newTime = `${minutes}:`;
-    }
-    else {
-        newTime = "0:";
-    }
-
+function getSeconds(time) {
     const seconds = time % 60;
 
-    newTime += seconds < 10 ? `0${seconds}` : seconds;
-    return newTime;
+    return seconds < 10 ? `0${seconds}` : seconds;
+}
+
+function getMinutes(time) {
+    const minutes = Math.floor(time / 60 % 60);
+
+    return time >= 3600 && minutes < 10 ? `0${minutes}` : minutes;
+}
+
+function getHours(time) {
+    const hours = Math.floor(time / 3600);
+
+    return time >= 3600 ? `${hours}:` : "";
+}
+
+function formatTime(time) {
+    const seconds = getSeconds(time);
+    const minutes = getMinutes(time);
+    const hours = getHours(time);
+
+    return `${hours}${minutes}:${seconds}`;
 }
 
 export {
