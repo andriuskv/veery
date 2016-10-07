@@ -1,5 +1,6 @@
 /* global Dropbox */
 
+import { formatTime } from "./main.js";
 import { getTrackDuration, addTracks } from "./local.js";
 import { getPlaylistById, createPlaylist } from "./playlist/playlist.js";
 
@@ -23,8 +24,9 @@ function parseTracks(tracks, parsedTracks, index) {
         track.audioTrack = blob;
         return getTrackDuration(blob);
     })
-    .then(duration => {
-        track.duration = duration;
+    .then(durationInSeconds => {
+        track.durationInSeconds = durationInSeconds;
+        track.duration = formatTime(durationInSeconds);
         parsedTracks.push(track);
         tracks = tracks.slice(1);
         return tracks.length ? parseTracks(tracks, parsedTracks, index) : parsedTracks;

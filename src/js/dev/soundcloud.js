@@ -12,17 +12,22 @@ function init() {
 }
 
 function parseTracks(tracks) {
-    return tracks.map((track, index) => ({
-        index,
-        duration: formatTime(track.duration / 1000),
-        id: track.id,
-        name: track.title,
-        title: track.title,
-        artist: "",
-        album: "",
-        thumbnail: track.artwork_url || "assets/images/album-art-placeholder.png",
-        player: "soundcloud"
-    }));
+    return tracks.map((track, index) => {
+        const duration = Math.floor(track.duration / 1000);
+
+        return {
+            index,
+            durationInSeconds: duration,
+            duration: formatTime(duration),
+            id: track.id,
+            name: track.title,
+            title: track.title,
+            artist: "",
+            album: "",
+            thumbnail: track.artwork_url || "assets/images/album-art-placeholder.png",
+            player: "soundcloud"
+        };
+    });
 }
 
 function fetchPlaylist(url) {

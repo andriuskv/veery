@@ -8,10 +8,10 @@ function playTrack(track, volume, startTime) {
 
     setCurrentTrack(track);
     track.audio.onplaying = function() {
-        onTrackStart({
-            currentTime: Math.floor(track.audio.currentTime),
-            duration: Math.floor(track.audio.duration)
-        }, track.audio.play.bind(track.audio));
+        const startTime = Math.floor(track.audio.currentTime);
+        const repeatTrack = track.audio.play.bind(track.audio);
+
+        onTrackStart(startTime, repeatTrack);
     };
 
     if (typeof startTime === "number") {
@@ -40,9 +40,8 @@ function setVolume(track, volume) {
     track.audio.volume = volume;
 }
 
-function seekTo(percent, track) {
-    track.audio.currentTime = track.audio.duration / 100 * percent;
-    return track.audio.currentTime;
+function seekTo(currentTime, track) {
+    track.audio.currentTime = currentTime;
 }
 
 export {

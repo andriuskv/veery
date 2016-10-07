@@ -67,7 +67,6 @@ function isOutsideElement(element, targetElementId) {
 function formatTime(time) {
     let newTime = "";
 
-    time = Math.floor(time);
     if (time >= 60) {
         const minutes = Math.floor(time / 60);
 

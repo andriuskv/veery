@@ -13,12 +13,10 @@ function getTrackDuration(track) {
 
         audio.preload = "metadata";
         audio.addEventListener("loadedmetadata", function onMetadata() {
-            const duration = formatTime(audio.duration);
-
+            resolve(Math.floor(audio.duration));
             audio.removeEventListener("loadedmetadata", onMetadata);
             audio = null;
             audioBlobURL = URL.revokeObjectURL(audioBlobURL);
-            resolve(duration);
         });
     });
 }
@@ -70,7 +68,8 @@ function parseTracks(tracks, parsedTracks, startIndex) {
             name: tracks[0].name,
             thumbnail: data[0].picture || "assets/images/album-art-placeholder.png",
             audioTrack: tracks[0].audioTrack,
-            duration: data[1],
+            durationInSeconds: data[1],
+            duration: formatTime(data[1]),
             player: "native"
         });
         tracks = tracks.slice(1);

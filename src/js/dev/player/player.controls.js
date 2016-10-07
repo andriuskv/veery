@@ -123,10 +123,8 @@ function displayCurrentTime(time) {
     document.getElementById("js-player-elapsed").textContent = formatTime(time);
 }
 
-function showTrackDuration(duration, format = true) {
-    const durationElem = document.getElementById("js-player-duration");
-
-    durationElem.textContent = format ? formatTime(duration) : duration;
+function showTrackDuration(duration = "0:00") {
+    document.getElementById("js-player-duration").textContent = duration;
 }
 
 function onPlayerTrackMousemove(event) {
