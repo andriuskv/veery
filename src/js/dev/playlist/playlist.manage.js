@@ -52,7 +52,7 @@ function removePlaylist(id) {
         storedTrack.remove();
     }
     if (playlist.isActive(id)) {
-        stopPlayer();
+        stopPlayer(playlist.getCurrentTrack());
     }
     playlist.removePlaylist(id);
     removeSidebarEntry(id);
