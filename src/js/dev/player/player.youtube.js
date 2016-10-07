@@ -4,14 +4,20 @@ import { setCurrentTrack } from "./../playlist/playlist.js";
 import { storedTrack, onTrackStart } from "./player.js";
 
 let ytPlayer = null;
+let isStoredTrack = false;
 window.onYouTubeIframeAPIReady = initPlayer;
 
-function onPlayerStateChange({ data: currentState }) {
-    if (currentState === YT.PlayerState.PLAYING) {
-        onTrackStart({
-            currentTime: Math.floor(ytPlayer.getCurrentTime()),
-            duration:  ytPlayer.getDuration()
-        }, ytPlayer.playVideo.bind(ytPlayer));
+function onPlayerStateChange({ data: state }) {
+    if (state === YT.PlayerState.PLAYING) {
+        if (isStoredTrack) {
+            ytPlayer.pauseVideo();
+            isStoredTrack = false;
+            return;
+        }
+        const startTime = Math.floor(ytPlayer.getCurrentTime());
+        const repeatTrack = ytPlayer.playVideo.bind(ytPlayer);
+
+        onTrackStart(startTime, repeatTrack);
     }
 }
 
@@ -47,7 +53,8 @@ function playTrack(track, volume, startTime) {
     setVolume(volume);
     setCurrentTrack(track);
     if (typeof startTime === "number") {
-        ytPlayer.cueVideoById(track.id, startTime);
+        isStoredTrack = true;
+        ytPlayer.loadVideoById(track.id, startTime);
     }
     else {
         ytPlayer.loadVideoById(track.id);
@@ -62,12 +69,8 @@ function setVolume(volume) {
     ytPlayer.setVolume(volume * 100);
 }
 
-function seekTo(percent) {
-    const duration = ytPlayer.getDuration();
-    const currentTime = duration / 100 * percent;
-
+function seekTo(currentTime) {
     ytPlayer.seekTo(currentTime, true);
-    return currentTime;
 }
 
 export {

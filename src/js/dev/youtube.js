@@ -1,10 +1,12 @@
+import { formatTime } from "./main.js";
 import { addImportedPlaylist, showNotice } from "./playlist/playlist.add.js";
 
 function parseItems(playlist) {
     playlist.tracks = playlist.tracks.map((track, index) => ({
         index,
         id: track.snippet.resourceId.videoId,
-        duration: track.snippet.duration,
+        durationInSeconds: track.durationInSeconds,
+        duration: formatTime(track.durationInSeconds),
         name: track.snippet.title,
         title: track.snippet.title,
         artist: "",
@@ -18,12 +20,11 @@ function parseItems(playlist) {
 
 function parseDuration(duration) {
     return duration.replace(/[H,M]/g, ":").split(":")
-        .map((value, index) => {
-            if (index !== 0 && value < 10) {
-                value = `0${value}`;
-            }
-            return value;
-        }).join(":");
+    .reverse()
+    .reduce((total, value, index) => {
+        total += value * 60 ** index;
+        return total;
+    }, 0);
 }
 
 function getVideoDuration(playlist) {
@@ -35,7 +36,7 @@ function getVideoDuration(playlist) {
 
             // Remove unnecessery parts
             const duration = data.items[index].contentDetails.duration.slice(2, -1);
-            item.snippet.duration = parseDuration(duration);
+            item.durationInSeconds = parseDuration(duration);
             return item;
         });
         return playlist;

@@ -16,10 +16,9 @@ function playTrack(track, volume, startTime) {
         scPlayer = trackPlayer;
         trackPlayer.setVolume(volume);
         trackPlayer.on("play-resume", () => {
-            onTrackStart({
-                currentTime: Math.floor(trackPlayer.currentTime() / 1000),
-                duration: Math.floor(trackPlayer.streamInfo.duration / 1000)
-            }, repeatTrack);
+            const startTime = Math.floor(trackPlayer.currentTime() / 1000);
+
+            onTrackStart(startTime, repeatTrack);
         });
         trackPlayer.on("state-change", state => {
             if (typeof startTime !== "number") {
@@ -56,12 +55,8 @@ function setVolume(volume) {
     scPlayer.setVolume(volume);
 }
 
-function seekTo(percent) {
-    const duration = scPlayer.streamInfo.duration;
-    const currentTime = duration / 100 * percent;
-
-    scPlayer.seek(currentTime);
-    return currentTime / 1000;
+function seekTo(currentTime) {
+    scPlayer.seek(currentTime * 1000);
 }
 
 export {

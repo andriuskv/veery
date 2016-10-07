@@ -76,15 +76,19 @@ const storedTrack = (function () {
 
 function beforeTrackStart(track, id, scrollToTrack) {
     sidebar.showTrackInfo(track);
-    controls.showTrackDuration(track.duration, false);
+    controls.showTrackDuration(track.duration);
     if (track.index !== -1) {
         playlistView.showPlayingTrack(track.index, id, scrollToTrack);
     }
 }
 
-function onTrackStart(time, repeatCb) {
+function onTrackStart(startTime, repeatCb) {
     const track = playlist.getCurrentTrack();
     const id = playlist.getActivePlaylistId();
+    const time = {
+        currentTime: startTime,
+        duration: track.durationInSeconds
+    };
 
     beforeTrackStart(track, id, scrollToTrack);
     sidebar.showActiveIcon(id);
@@ -237,7 +241,7 @@ function resetPlayer() {
     removeElementClass("track", "playing");
     playlist.setCurrentTrack(null);
     controls.resetTrackSlider();
-    controls.showTrackDuration(0);
+    controls.showTrackDuration();
     controls.addClassOnPlayBtn("icon-play");
     sidebar.removeActiveIcon();
     sidebar.showTrackInfo();
@@ -270,17 +274,17 @@ function setVolume(track, volume) {
 }
 
 function seekTo(track, percent) {
-    let currentTime = 0;
+    const currentTime = Math.floor(track.durationInSeconds / 100 * percent);
 
     controls.elapsedTime.stop();
     if (track.player === "native") {
-        currentTime = nPlayer.seekTo(percent, track);
+        nPlayer.seekTo(currentTime, track);
     }
     else if (track.player === "youtube") {
-        currentTime = ytPlayer.seekTo(percent);
+        ytPlayer.seekTo(currentTime);
     }
     else if (track.player === "soundcloud") {
-        currentTime = scPlayer.seekTo(percent);
+        scPlayer.seekTo(currentTime);
     }
     controls.displayCurrentTime(currentTime);
 }
