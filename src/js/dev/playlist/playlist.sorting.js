@@ -3,7 +3,7 @@ import { getActiveTabId } from "./../tab.js";
 import { removePresentPanels } from "./../panels.js";
 import { postMessageToWorker } from "./../worker.js";
 import { getPlaylistById } from "./playlist.js";
-import { updatePlaylist } from "./playlist.manage.js";
+import { refreshPlaylist } from "./playlist.manage.js";
 import { filterTracks } from "./playlist.view.js";
 
 const sortToggleBtn = document.getElementById("js-sort-toggle");
@@ -52,7 +52,7 @@ function changePlaylistSorting(pl, sortBy) {
     const query = document.getElementById("js-filter-input").value;
 
     sortPlaylist(pl, sortBy);
-    updatePlaylist(pl);
+    refreshPlaylist(pl);
     postMessageToWorker({
         action: "put",
         playlist: pl

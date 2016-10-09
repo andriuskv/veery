@@ -89,8 +89,7 @@ function getPlaylistTitle(data) {
     return {
         id: data.items[0].id,
         title: data.items[0].snippet.title,
-        tracks: [],
-        type: "grid"
+        tracks: []
     };
 }
 
