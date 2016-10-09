@@ -1,7 +1,7 @@
 import { removeElementClass, getElementByAttr, scriptLoader } from "./../main.js";
-import { initializeWorker, postMessageToWorker } from "./../worker.js";
-import { getPlaylistById, createPlaylist, resetTrackIndexes } from "./playlist.js";
-import { initPlaylist, appendToPlaylist } from "./playlist.manage.js";
+import { initializeWorker } from "./../worker.js";
+import { getPlaylistById, createPlaylist } from "./playlist.js";
+import { updatePlaylist } from "./playlist.manage.js";
 import { showDropboxChooser } from "./../dropbox.js";
 import { selectLocalFiles } from "./../local.js";
 import * as yt from "./../youtube.js";
@@ -64,27 +64,15 @@ function filterDuplicateTracks(tracks, existingTracks) {
     }, []);
 }
 
-function addImportedPlaylist(importOption, pl) {
-    const existingPlaylist = getPlaylistById(pl.id);
-    let playlist = null;
-
-    if (existingPlaylist) {
-        const tracks = filterDuplicateTracks(pl.tracks, existingPlaylist.tracks);
-
-        playlist = Object.assign({}, existingPlaylist);
-        playlist.tracks.push(...tracks);
-        playlist.tracks = resetTrackIndexes(playlist.tracks);
-        appendToPlaylist(playlist, tracks);
-    }
-    else {
-        playlist = createPlaylist(pl);
-        initPlaylist(playlist);
-    }
-    removeImportOptionMask(importOption);
-    postMessageToWorker({
-        action: "put",
-        playlist
+function addImportedPlaylist(importOption, newPlaylist) {
+    const pl = getPlaylistById(newPlaylist.id) || createPlaylist({
+        id: newPlaylist.id,
+        title: newPlaylist.title,
+        type: "grid"
     });
+    const tracks = filterDuplicateTracks(newPlaylist.tracks, pl.tracks);
+
+    updatePlaylist(pl, tracks, importOption);
 }
 
 function createPlaylistImportForm() {

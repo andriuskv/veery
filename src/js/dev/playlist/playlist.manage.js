@@ -9,6 +9,7 @@ import { createSidebarEntry, removeSidebarEntry } from "./../sidebar.js";
 import { storedTrack, stopPlayer } from "./../player/player.js";
 import { sortTracks } from "./playlist.sorting.js";
 import { createPlaylistEntry } from "./playlist.entries.js";
+import { removeImportOptionMask } from "./playlist.add.js";
 
 function resortTracks(pl) {
     playlist.setPlaybackOrder(pl, getSetting("shuffle"));
@@ -16,7 +17,7 @@ function resortTracks(pl) {
 
     if (pl.sortedBy) {
         sortTracks(pl.tracks, pl.sortedBy, pl.order);
-        updatePlaylist(pl);
+        refreshPlaylist(pl);
     }
 }
 
@@ -63,7 +64,7 @@ function removePlaylist(id) {
     });
 }
 
-function updatePlaylist(pl) {
+function refreshPlaylist(pl) {
     const currentTrack = playlist.getCurrentTrack();
 
     removeElementClass("track", "selected");
@@ -78,6 +79,22 @@ function updatePlaylist(pl) {
             playlistView.showPlayingTrack(track.index, pl.id, true);
         }
     }
+}
+
+function updatePlaylist(pl, tracks, importOption) {
+    pl.tracks.push(...tracks);
+
+    if (document.getElementById(`js-${pl.id}`)) {
+        appendToPlaylist(pl, tracks);
+    }
+    else {
+        initPlaylist(pl);
+    }
+    removeImportOptionMask(importOption);
+    postMessageToWorker({
+        action: "put",
+        playlist: pl
+    });
 }
 
 function getSelectedTrackIndexes(selectedElements) {
@@ -151,5 +168,6 @@ export {
     initPlaylist,
     appendToPlaylist,
     removePlaylist,
+    refreshPlaylist,
     updatePlaylist
 };

@@ -32,22 +32,18 @@ function parseTracks(tracks) {
 
 function fetchPlaylist(url) {
     SC.resolve(url).then(playlist => {
-        const newPlaylist = {
-            type: "grid"
-        };
-
         if (Array.isArray(playlist)) {
-            return Object.assign(newPlaylist, {
+            return {
                 id: playlist[0].user_id.toString(),
                 title: `${playlist[0].user.username} playlist`,
                 tracks: parseTracks(playlist)
-            });
+            };
         }
-        return Object.assign(newPlaylist, {
+        return {
             id: playlist.id.toString(),
             title: playlist.title,
             tracks: parseTracks(playlist.tracks)
-        });
+        };
     })
     .then(pl => {
         addImportedPlaylist("soundcloud", pl);

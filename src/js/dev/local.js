@@ -1,10 +1,9 @@
 /* global parse_audio_metadata */
 
 import { formatTime } from "./main.js";
-import { postMessageToWorker } from "./worker.js";
 import { getPlaylistById, createPlaylist } from "./playlist/playlist.js";
-import { initPlaylist, appendToPlaylist } from "./playlist/playlist.manage.js";
-import { createImportOptionMask, removeImportOptionMask, showNotice } from "./playlist/playlist.add.js";
+import { updatePlaylist } from "./playlist/playlist.manage.js";
+import { createImportOptionMask, showNotice } from "./playlist/playlist.add.js";
 
 function getTrackDuration(track) {
     return new Promise(resolve => {
@@ -77,21 +76,13 @@ function parseTracks(tracks, parsedTracks, startIndex) {
     });
 }
 
-function processNewTracks(pl, newTracks, parseTracks) {
+function processNewTracks(pl, newTracks, parseTracks, importOption) {
     return parseTracks(newTracks, [], pl.tracks.length)
     .then(tracks => {
-        pl.tracks.push(...tracks);
-
-        if (document.getElementById(`js-${pl.id}`)) {
-            appendToPlaylist(pl, tracks);
-        }
-        else {
-            initPlaylist(pl);
-        }
-        postMessageToWorker({
-            action: "put",
-            playlist: pl
-        });
+        updatePlaylist(pl, tracks, importOption);
+    })
+    .catch(error => {
+        console.log(error);
     });
 }
 
@@ -108,13 +99,7 @@ function addTracks(importOption, pl, newTracks, parseTracks) {
         showNotice(importOption, "Tracks already exist");
         return;
     }
-    processNewTracks(pl, tracks, parseTracks)
-    .then(() => {
-        removeImportOptionMask(importOption);
-    })
-    .catch(error => {
-        console.log(error);
-    });
+    processNewTracks(pl, tracks, parseTracks);
 }
 
 function selectLocalFiles(files) {
