@@ -52,16 +52,7 @@ function getElementByAttr(element, attr) {
 function isOutsideElement(element, targetElementId) {
     const targetElement = document.getElementById(targetElementId);
 
-    if (!targetElement) {
-        return false;
-    }
-    while (element) {
-        if (element === targetElement) {
-            return false;
-        }
-        element = element.parentElement;
-    }
-    return true;
+    return targetElement ? !targetElement.contains(element) : false;
 }
 
 function getSeconds(time) {
