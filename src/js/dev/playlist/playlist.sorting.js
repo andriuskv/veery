@@ -111,7 +111,7 @@ function createSortPanel(panelId, { type, sortedBy }) {
     `;
 
     document.getElementById("js-playlist-sort-panel-container").insertAdjacentHTML("beforeend", sortPanelElement);
-    document.getElementById(panelId).addEventListener("click", selectSortOption, { once: true });
+    document.getElementById(panelId).addEventListener("click", selectSortOption);
 }
 
 function changePlaylistOrder(pl) {
@@ -120,17 +120,21 @@ function changePlaylistOrder(pl) {
 }
 
 function selectSortOption({ target }) {
-    const pl = getPlaylistById(getActiveTabId());
     const sortBy = target.getAttribute("data-sort");
 
-    removePresentPanels();
+    if (sortBy) {
+        const pl = getPlaylistById(getActiveTabId());
 
-    if (!sortBy || pl.sortedBy === sortBy) {
-        return;
+        this.removeEventListener("click", selectSortOption);
+        removePresentPanels();
+
+        if (sortBy === pl.sortedBy) {
+            return;
+        }
+        toggleOrderBtn();
+        sortToggleBtn.textContent = capitalize(sortBy);
+        changePlaylistSorting(pl, sortBy);
     }
-    toggleOrderBtn();
-    sortToggleBtn.textContent = capitalize(sortBy);
-    changePlaylistSorting(pl, sortBy);
 }
 
 export {
