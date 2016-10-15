@@ -3,14 +3,13 @@ function getSidebarEntry(id) {
 }
 
 function createSidebarEntry(title, id) {
-    const sidebarEntries = document.getElementById("js-sidebar-playlist-entries");
+    const sidebarEntries = document.getElementById("js-sidebar-entries");
     const newEntry = `
         <li>
             <a href="#/playlist/${id}" id="js-sidebar-entry-${id}"
-                class="btn btn-transparent sidebar-btn">
-                <div>${title}</div>
-            </a>
-        </li>`;
+                class="btn btn-transparent sidebar-btn">${title}</a>
+        </li>
+    `;
 
     sidebarEntries.insertAdjacentHTML("beforeend", newEntry);
 }
