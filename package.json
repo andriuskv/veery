@@ -26,13 +26,13 @@
     "soundcloud": "^3.1.2"
   },
   "devDependencies": {
-    "autoprefixer": "^6.5.0",
+    "autoprefixer": "^6.5.1",
     "babel-cli": "^6.16.0",
     "babel-core": "^6.17.0",
     "babel-eslint": "^7.0.0",
     "babel-preset-latest": "^6.16.0",
     "csso": "^2.2.1",
-    "eslint": "^3.7.1",
+    "eslint": "^3.8.0",
     "live-server": "^1.1.0",
     "node-sass": "^3.10.1",
     "onchange": "^3.0.2",
