@@ -17,7 +17,7 @@
     "build:assets": "cp -R ./src/assets ./dist",
     "build:worker": "babel ./src/js/ww.js -o ./dist/js/ww.js",
     "build:favicon": "cp ./src/favicon.ico ./dist",
-    "prebuild": "rm -rf ./dist && mkdir -p ./dist/{css,js/{libs,workers},assets}",
+    "prebuild": "rm -rf ./dist && mkdir -p ./dist/{css,js/libs,assets}",
     "build": "npm run build:html && npm run build:css && npm run build:js && npm run build:libs && npm run build:assets && npm run build:worker && npm run build:favicon"
   },
   "author": "",
