@@ -46,20 +46,33 @@ function removeActiveIcon() {
     }
 }
 
+function createTrackInfo() {
+    const trackInfoElement = `
+        <div id="js-track-info">
+            <div class="track-art-container">
+                <img src="" id="js-track-art" class="track-art" alt="track art">
+            </div>
+            <div class="track-info">
+                <div id="js-track-title" class="track-title"></div>
+                <div id="js-track-artist" class="track-artist"></div>
+            </div>
+        </div>
+    `;
+
+    document.querySelector(".sidebar").insertAdjacentHTML("beforeend", trackInfoElement);
+}
+
+function removeTrackInfo() {
+    const element = document.getElementById("js-track-info");
+
+    element.parentElement.removeChild(element);
+}
+
 function setTrackArt(track) {
-    const artwork = document.getElementById("js-player-track-art");
+    const artElement = document.getElementById("js-track-art");
+    const art = track.thumbnail || "assets/images/album-art-placeholder.png";
 
-    if (track && track.thumbnail) {
-        let art = track.thumbnail;
-
-        if (typeof art === "object") {
-            art = URL.createObjectURL(art);
-        }
-        artwork.src = art;
-    }
-    else {
-        artwork.src = "./assets/images/album-art-placeholder.png";
-    }
+    artElement.src = typeof art === "object" ? URL.createObjectURL(art) : art;
 }
 
 function displayTrackArtistAndTitle(artist = "", title = "") {
@@ -69,10 +82,16 @@ function displayTrackArtistAndTitle(artist = "", title = "") {
 
 function showTrackInfo(track) {
     if (!track) {
-        displayTrackArtistAndTitle();
+        removeTrackInfo();
         document.title = "Ve2ry";
+        return;
     }
-    else if (track.artist && track.title) {
+
+    if (!document.getElementById("js-track-info")) {
+        createTrackInfo();
+    }
+
+    if (track.artist && track.title) {
         displayTrackArtistAndTitle(track.artist, track.title);
         document.title = `${track.artist} - ${track.title}`;
     }
