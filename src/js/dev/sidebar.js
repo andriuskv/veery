@@ -80,7 +80,9 @@ function showTrackInfo(track) {
     const trackInfoElement = document.getElementById("js-track-info");
 
     if (!track) {
-        removeElement(trackInfoElement);
+        if (trackInfoElement) {
+            removeElement(trackInfoElement);
+        }
         document.title = "Ve2ry";
         return;
     }

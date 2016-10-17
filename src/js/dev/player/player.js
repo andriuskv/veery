@@ -158,7 +158,7 @@ function togglePlaying(track) {
 
 function playTrack(track) {
     if (!track) {
-        const id = getActiveTabId();
+        const id = playlist.getActivePlaylistId() || getActiveTabId();
 
         if (playlist.getPlaylistById(id)) {
             playlist.setPlaylistAsActive(id);
