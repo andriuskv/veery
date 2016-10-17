@@ -1,5 +1,5 @@
 import { formatTime } from "./main.js";
-import { addImportedPlaylist, showNotice } from "./playlist/playlist.add.js";
+import { addImportedPlaylist, showNotice } from "./playlist/playlist.import.js";
 
 function parseItems(playlist) {
     playlist.tracks = playlist.tracks.map((track, index) => ({

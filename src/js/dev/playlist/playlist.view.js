@@ -1,7 +1,7 @@
 import { getActiveTabId } from "./../tab.js";
 import { postMessageToWorker } from "./../worker.js";
 import { getPlaylistById, getActivePlaylistId, getCurrentTrack } from "./playlist.js";
-import { removeElementClass } from "./../main.js";
+import { removeElement, removeElementClass } from "./../main.js";
 import { resetPlaylistSort } from "./playlist.sorting.js";
 import { enableTrackSelection } from "./playlist.track-selection.js";
 import { hideMoveToBtn } from "./playlist.move-to.js";
@@ -106,7 +106,7 @@ function updatePlaylist(pl) {
 function removePlaylistTab(id) {
     const playlistTab = document.getElementById(`js-tab-${id}`);
 
-    playlistTab.parentElement.removeChild(playlistTab);
+    removeElement(playlistTab);
 }
 
 function scrollToTrackElement(trackElement, playlistElement) {

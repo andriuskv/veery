@@ -42,16 +42,13 @@
     text-align: left;
 }
 .move-to-form {
-    display: none;
+    display: flex;
 
-    &.visible {
-        display: flex;
-    }
-    .input {
+    input {
         width: 124px;
         margin-right: 4px;
     }
-    .input, .btn {
+    input, .btn {
         background-color: $color3;
     }
 }

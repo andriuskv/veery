@@ -18,6 +18,9 @@ ul {
     padding-left: 0;
     list-style: none;
 }
+input {
+    @extend %default-input-styles;
+}
 ::-webkit-scrollbar {
     width: 10px;
 }
@@ -48,9 +51,6 @@ ul {
     background-color: $color1;
     font-size: 14px;
     color: $base-text-color;
-}
-.input {
-    @extend %default-input-styles;
 }
 .btn {
     @extend %default-input-styles;

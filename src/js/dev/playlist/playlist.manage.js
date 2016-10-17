@@ -3,13 +3,13 @@ import * as playlist from "./playlist.js";
 import * as playlistView from "./playlist.view.js";
 import { getSetting } from "./../settings.js";
 import { getActiveTabId } from "./../tab.js";
-import { removeElementClass } from "./../main.js";
+import { removeElement, removeElementClass } from "./../main.js";
 import { postMessageToWorker } from "./../worker.js";
 import { createSidebarEntry, removeSidebarEntry } from "./../sidebar.js";
 import { storedTrack, stopPlayer } from "./../player/player.js";
 import { sortTracks } from "./playlist.sorting.js";
 import { createPlaylistEntry } from "./playlist.entries.js";
-import { removeImportOptionMask } from "./playlist.add.js";
+import { removeImportOptionMask } from "./playlist.import.js";
 
 function resortTracks(pl) {
     playlist.setPlaybackOrder(pl, getSetting("shuffle"));
@@ -103,7 +103,7 @@ function getSelectedTrackIndexes(selectedElements) {
 
 function removeSelectedTrackElements(selectedElements) {
     selectedElements.forEach(element => {
-        element.parentElement.removeChild(element);
+        removeElement(element);
     });
 }
 
@@ -154,6 +154,23 @@ function removeSelectedTracks(pl) {
     }
 }
 
+function onNewPlaylistFormSubmit(event) {
+    const form = event.target;
+    const pl = playlist.createPlaylist({
+        id: Math.random().toString(36).slice(2),
+        title: form.title.value,
+        type: "list"
+    });
+
+    initPlaylist(pl);
+    postMessageToWorker({
+        action: "put",
+        playlist: pl
+    });
+    event.preventDefault();
+    form.reset();
+}
+
 window.addEventListener("keypress", event => {
     const key = event.key === "Delete" || event.keyCode === 127;
     const pl = playlist.getPlaylistById(getActiveTabId());
@@ -164,10 +181,24 @@ window.addEventListener("keypress", event => {
     removeSelectedTracks(pl);
 });
 
+function createNewPlaylistInputForm(id, element, handleSubmit) {
+    const formElement = `
+        <form id="js-${id}-form" class="${id}-form">
+            <input type="text" name="title" autocomplete="off" required>
+            <button class="btn">Create</button>
+        </form>
+    `;
+
+    element.insertAdjacentHTML("afterend", formElement);
+    document.getElementById(`js-${id}-form`).addEventListener("submit", handleSubmit);
+}
+
 export {
     initPlaylist,
     appendToPlaylist,
     removePlaylist,
     refreshPlaylist,
-    updatePlaylist
+    updatePlaylist,
+    onNewPlaylistFormSubmit,
+    createNewPlaylistInputForm
 };

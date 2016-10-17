@@ -9,7 +9,7 @@ import "./dev/local.js";
 import "./dev/youtube.js";
 import "./dev/soundcloud.js";
 import "./dev/playlist/playlist.js";
-import "./dev/playlist/playlist.add.js";
+import "./dev/playlist/playlist.import.js";
 import "./dev/playlist/playlist.entries.js";
 import "./dev/playlist/playlist.manage.js";
 import "./dev/playlist/playlist.view.js";
