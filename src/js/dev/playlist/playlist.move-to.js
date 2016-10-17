@@ -1,9 +1,9 @@
-import { getElementByAttr } from "./../main.js";
+import { removeElement, getElementByAttr } from "./../main.js";
 import { getActiveTabId } from "./../tab.js";
 import { removePresentPanels } from "./../panels.js";
 import { postMessageToWorker } from "./../worker.js";
-import { initPlaylist, appendToPlaylist } from "./playlist.manage.js";
-import { getPlaylistById, getAllPlaylists, createPlaylist, findTrack, resetTrackIndexes } from "./playlist.js";
+import { appendToPlaylist, onNewPlaylistFormSubmit, createNewPlaylistInputForm } from "./playlist.manage.js";
+import { getPlaylistById, getAllPlaylists, findTrack, resetTrackIndexes } from "./playlist.js";
 
 const panelContainerElement = document.getElementById("js-move-to-panel-container");
 
@@ -22,13 +22,21 @@ function hideMoveToBtn() {
     const moveToButton = document.getElementById("js-move-to-btn");
 
     if (moveToButton) {
-        moveToButton.parentElement.removeChild(moveToButton);
+        removeElement(moveToButton);
     }
 }
 
+function handleSubmit(event) {
+    const moveToList = document.getElementById("js-move-to-list");
+
+    onNewPlaylistFormSubmit(event);
+    moveToList.classList.remove("hidden");
+    moveToList.innerHTML = createPlaylistList(getActiveTabId());
+}
+
 function showInputContainer(event) {
-    document.getElementById("js-move-to-form").classList.add("visible");
-    event.target.parentElement.removeChild(event.target);
+    createNewPlaylistInputForm("move-to", this, handleSubmit);
+    removeElement(this);
     event.stopPropagation();
 }
 
@@ -65,26 +73,6 @@ function onListClick(event) {
     }
 }
 
-function onFormSubmit(event) {
-    const moveToList = document.getElementById("js-move-to-list");
-    const form = event.target;
-    const pl = createPlaylist({
-        id: Math.random().toString(36).slice(2),
-        title: form.title.value,
-        type: "list"
-    });
-
-    initPlaylist(pl);
-    postMessageToWorker({
-        action: "put",
-        playlist: pl
-    });
-    moveToList.classList.remove("hidden");
-    moveToList.innerHTML = createPlaylistList(getActiveTabId());
-    event.preventDefault();
-    form.reset();
-}
-
 function createPlaylistList(playlistId) {
     const playlists = getAllPlaylists();
 
@@ -109,17 +97,12 @@ function createMoveToPanel(panelId, { id }) {
             <h2 class="move-to-panel-title">Move to</h2>
             <ul id="js-move-to-list" class="move-to-list ${className}">${listContent}</ul>
             <button id="js-move-to-new-pl-btn" class="btn move-to-new-pl-btn">Create new playlist</button>
-            <form id="js-move-to-form" class="move-to-form">
-                <input type="text" class="input" name="title" autocomplete="off" required>
-                <button class="btn">Create</button>
-            </form>
         </div>
     `;
 
     panelContainerElement.insertAdjacentHTML("beforeend", moveToPanelElement);
     document.getElementById("js-move-to-list").addEventListener("click", onListClick);
     document.getElementById("js-move-to-new-pl-btn").addEventListener("click", showInputContainer, { once: true });
-    document.getElementById("js-move-to-form").addEventListener("submit", onFormSubmit, { once: true });
 }
 
 export {

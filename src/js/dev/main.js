@@ -27,6 +27,10 @@ function capitalize(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
+function removeElement(element) {
+    element.parentElement.removeChild(element);
+}
+
 function removeElementClass(className, classToRemove) {
     const elements = Array.from(document.querySelectorAll(`.${className}.${classToRemove}`));
 
@@ -85,6 +89,7 @@ export {
     scriptLoader,
     capitalize,
     getElementByAttr,
+    removeElement,
     removeElementClass,
     formatTime,
     isOutsideElement

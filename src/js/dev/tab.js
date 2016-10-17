@@ -7,7 +7,7 @@ import { enableTrackSelection, deselectTrackElements } from "./playlist/playlist
 import { setSortOptions, createSortPanel, changePlaylistOrder } from "./playlist/playlist.sorting.js";
 import { createMoveToPanel } from "./playlist/playlist.move-to.js";
 
-let activeTabId = "add";
+let activeTabId = "manage";
 
 function setActiveTabId(id) {
     activeTabId = id;

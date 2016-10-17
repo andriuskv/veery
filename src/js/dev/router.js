@@ -1,7 +1,7 @@
 import { toggleTab } from "./tab.js";
 
 const routes = [
-    "add",
+    "manage",
     "404"
 ];
 
@@ -25,7 +25,7 @@ function toggleRoute(route) {
 
 function toggleRouteTab(route) {
     if (!route) {
-        toggleRoute("add");
+        toggleRoute("manage");
         return;
     }
     if (route !== "404" && !contains(route)) {

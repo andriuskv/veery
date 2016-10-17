@@ -1,16 +1,35 @@
-.add-tab-content {
+.manage-tab {
+    overflow-y: auto;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
     align-items: flex-start;
+    align-content: flex-start;
+    height: 100%;
+    padding: 8px;
+    background-color: $color2;
 }
-.pl-add-options {
-    flex-basis: 268px;
+.manage-tab-section-title {
+    margin-top: 4px;
+    margin-bottom: 12px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: normal;
+}
+.import-option-container {
+    flex-basis: 288px;
+    padding: 8px;
+    border: 1px solid $color1;
+    border-radius: 2px;
+    background-color: $color3;
+}
+.import-options {
     padding: 4px;
+    border: 1px solid $color2;
     border-radius: 2px;
     background-color: $color1;
 }
-.pl-option-mask {
+.option-mask {
     content: "";
     position: absolute;
     top: 0;
@@ -23,12 +42,12 @@
     background-color: transparentize($color1, 0.2);
     font-size: 14px;
 }
-.pl-add-option {
+.import-option {
     position: relative;
     padding: 2px;
     border-bottom: 1px solid $color3;
 }
-.pl-add-option-btn {
+.import-option-btn {
     display: flex;
     align-items: center;
     width: 100%;
@@ -38,17 +57,17 @@
     &.active {
         background-color: $color1;
 
-        .pl-add-option-title {
+        .import-option-title {
             display: none;
         }
     }
 }
-.pl-add-option-icon {
+.import-option-icon {
     margin-right: 4px;
     font-size: 21px;
 }
-.pl-import-form {
-    .input,
+.import-form {
+    input,
     .btn {
         background-color: $color3;
     }
@@ -56,9 +75,16 @@
 .file-picker {
     display: none;
 }
+.pl-entry-container {
+    flex-basis: calc(100% - 296px);
+    padding: 8px;
+    border: 1px solid $color1;
+    border-radius: 2px;
+    background-color: $color3;
+}
 .pl-entries {
-    flex-basis: calc(100% - 276px);
     padding: 4px;
+    border: 1px solid $color2;
     border-radius: 2px;
     background-color: $color1;
 }
@@ -66,7 +92,7 @@
     padding: 4px;
     border-bottom: 1px solid $color3;
 
-    .input,
+    input,
     .btn.active {
         background-color: $color3;
     }
@@ -85,12 +111,12 @@
     }
 }
 
-@media (max-width: 680px) {
-    .pl-add-options {
+@media (max-width: 724px) {
+    .import-option-container {
         margin-bottom: 8px;
     }
-    .pl-add-options,
-    .pl-entries {
+    .import-option-container,
+    .pl-entry-container {
         flex-basis: 100%;
     }
 }

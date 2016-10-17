@@ -28,23 +28,27 @@
     flex-basis: 50%;
     flex-grow: 1;
     overflow-y: hidden;
-    margin-top: 4px;
 }
-.new-playlist-btn-container {
+.sidebar-btn-container {
     padding: 4px;
+    margin-top: 4px;
+    margin-bottom: 4px;
     background-color: $color2;
 }
-.sidebar-section-title {
-    margin-top: 4px;
-    margin-bottom: 1px;
+.new-pl-btn-container {
+    margin-bottom: 2px;
+
+    > .btn {
+        width: 100%;
+    }
+}
+.sidebar-form {
     padding-top: 4px;
-    padding-bottom: 4px;
-    background-color: $color2;
-    color: $base-text-color;
-    font-weight: normal;
-    font-size: 18px;
-    text-align: center;
-    cursor: default;
+    border-top: 1px solid $color1;
+
+    input {
+        width: 93px;
+    }
 }
 .sidebar-entries {
     overflow-y: auto;
@@ -93,7 +97,7 @@
 }
 .track-art-container {
     margin-top: 4px;
-    margin-bottom: 1px;
+    margin-bottom: 2px;
     background-color: $color2;
 }
 .track-art {

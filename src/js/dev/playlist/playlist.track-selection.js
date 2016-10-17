@@ -1,4 +1,4 @@
-import { removeElementClass, getElementByAttr, isOutsideElement } from "./../main.js";
+import { removeElement, removeElementClass, getElementByAttr, isOutsideElement } from "./../main.js";
 import { showMoveToBtn, hideMoveToBtn } from "./playlist.move-to.js";
 
 const startingPoint = {};
@@ -36,7 +36,7 @@ function initSelectionArea(parent) {
 }
 
 function removeSelectionArea() {
-    selectionElement.parentElement.removeChild(selectionElement);
+    removeElement(selectionElement);
     selectionElement = null;
 }
 

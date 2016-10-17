@@ -1,4 +1,4 @@
-import { removeElementClass, getElementByAttr, scriptLoader } from "./../main.js";
+import { removeElement, removeElementClass, getElementByAttr, scriptLoader } from "./../main.js";
 import { initializeWorker } from "./../worker.js";
 import { getPlaylistById, createPlaylist } from "./playlist.js";
 import { updatePlaylist } from "./playlist.manage.js";
@@ -14,7 +14,7 @@ function createImportOptionMask(option) {
 
     optionElements.forEach(element => {
         element.parentElement.insertAdjacentHTML("beforeend", `
-            <div class="pl-option-mask" data-mask-id=${option}>
+            <div class="option-mask" data-mask-id=${option}>
                 <span class="icon-spin4 animate-spin"></span>
             </div>
         `);
@@ -25,7 +25,7 @@ function removeImportOptionMask(option) {
     const maskElements = Array.from(document.querySelectorAll(`[data-mask-id*=${option}]`));
 
     maskElements.forEach(element => {
-        element.parentElement.removeChild(element);
+        removeElement(element);
     });
 }
 
@@ -35,7 +35,7 @@ function showNotice(option, message) {
     maskElements.forEach(element => {
         const spinner = element.children[0];
 
-        spinner.parentElement.removeChild(spinner);
+        removeElement(spinner);
         element.insertAdjacentHTML("beforeend", `<span>${message}</span>`);
     });
 
@@ -77,7 +77,7 @@ function addImportedPlaylist(importOption, newPlaylist) {
 
 function createPlaylistImportForm() {
     return `
-        <form id="js-pl-import-form" class="pl-import-form">
+        <form id="js-import-form" class="import-form">
             <input type="text" name="playlist-url" class="input" placeholder="Playlist url">
             <button class="btn">Import</button>
         </form>
@@ -85,11 +85,11 @@ function createPlaylistImportForm() {
 }
 
 function removePlaylistImportForm() {
-    const form = document.getElementById("js-pl-import-form");
+    const form = document.getElementById("js-import-form");
 
     if (form) {
         form.removeEventListener("submit", handleImportFormSubmit);
-        form.parentElement.removeChild(form);
+        removeElement(form);
     }
 }
 
@@ -99,10 +99,10 @@ function selectOption(item) {
     if (newOption !== option) {
         option = newOption;
         removePlaylistImportForm();
-        removeElementClass("pl-add-option-btn", "active");
+        removeElementClass("import-option-btn", "active");
         item.elementRef.classList.add("active");
         item.elementRef.insertAdjacentHTML("beforeend", createPlaylistImportForm());
-        document.getElementById("js-pl-import-form").addEventListener("submit", handleImportFormSubmit);
+        document.getElementById("js-import-form").addEventListener("submit", handleImportFormSubmit);
     }
 }
 
@@ -110,7 +110,7 @@ function handleChangeOnFileInput({ target }) {
     selectLocalFiles([...target.files]);
     target.value = "";
     target.removeEventListener("change", handleChangeOnFileInput);
-    target.parentElement.removeChild(target);
+    removeElement(target);
 }
 
 function createFileInput() {
@@ -149,7 +149,7 @@ function handleImportFormSubmit(event) {
     event.preventDefault();
 }
 
-document.getElementById("js-pl-add-options").addEventListener("click", ({ target }) => {
+document.getElementById("js-import-options").addEventListener("click", ({ target }) => {
     const item = getElementByAttr(target, "data-option-id");
 
     if (!item) {

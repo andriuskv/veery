@@ -1,7 +1,7 @@
 /* global SC */
 
 import { formatTime } from "./main.js";
-import { addImportedPlaylist, showNotice } from "./playlist/playlist.add.js";
+import { addImportedPlaylist, showNotice } from "./playlist/playlist.import.js";
 import { storedTrack } from "./player/player.js";
 
 function init() {

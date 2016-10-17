@@ -1,4 +1,4 @@
-import { isOutsideElement } from "./main.js";
+import { removeElement, isOutsideElement } from "./main.js";
 
 const visiblePanels = {};
 
@@ -9,7 +9,7 @@ function markPanelAsVisible(panelId) {
 function removePanel(panelId) {
     const panelElement = document.getElementById(panelId);
 
-    panelElement.parentElement.removeChild(panelElement);
+    removeElement(panelElement);
     visiblePanels[panelId] = false;
 }
 

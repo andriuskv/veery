@@ -1,3 +1,6 @@
+import { removeElement } from "./main.js";
+import { createNewPlaylistInputForm, onNewPlaylistFormSubmit } from "./playlist/playlist.manage.js";
+
 function getSidebarEntry(id) {
     return document.getElementById(`js-sidebar-entry-${id}`);
 }
@@ -17,13 +20,13 @@ function createSidebarEntry(title, id) {
 function editSidebarEntry(id, title) {
     const entry = getSidebarEntry(id);
 
-    entry.children[0].textContent = title;
+    entry.textContent = title;
 }
 
 function removeSidebarEntry(id) {
     const entry = getSidebarEntry(id);
 
-    entry.parentElement.removeChild(entry);
+    removeElement(entry);
 }
 
 function createActiveIcon() {
@@ -41,7 +44,7 @@ function removeActiveIcon() {
     const activeIcon = document.getElementById("js-active-playlist-icon");
 
     if (activeIcon) {
-        activeIcon.parentElement.removeChild(activeIcon);
+        removeElement(activeIcon);
     }
 }
 
@@ -61,12 +64,6 @@ function createTrackInfo() {
     document.querySelector(".sidebar").insertAdjacentHTML("beforeend", trackInfoElement);
 }
 
-function removeTrackInfo() {
-    const element = document.getElementById("js-track-info");
-
-    element.parentElement.removeChild(element);
-}
-
 function setTrackArt(track) {
     const artElement = document.getElementById("js-track-art");
     const art = track.thumbnail || "assets/images/album-art-placeholder.png";
@@ -80,13 +77,15 @@ function displayTrackArtistAndTitle(artist = "", title = "") {
 }
 
 function showTrackInfo(track) {
+    const trackInfoElement = document.getElementById("js-track-info");
+
     if (!track) {
-        removeTrackInfo();
+        removeElement(trackInfoElement);
         document.title = "Ve2ry";
         return;
     }
 
-    if (!document.getElementById("js-track-info")) {
+    if (!trackInfoElement) {
         createTrackInfo();
     }
 
@@ -100,6 +99,18 @@ function showTrackInfo(track) {
     }
     setTrackArt(track);
 }
+
+function toggleSidebarForm() {
+    const sidebarForm = document.getElementById("js-sidebar-form");
+
+    if (sidebarForm) {
+        removeElement(sidebarForm);
+        return;
+    }
+    createNewPlaylistInputForm("sidebar", this, onNewPlaylistFormSubmit);
+}
+
+document.getElementById("js-sidebar-form-toggle-btn").addEventListener("click", toggleSidebarForm);
 
 export {
     createSidebarEntry,

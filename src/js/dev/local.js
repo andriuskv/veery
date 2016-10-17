@@ -3,7 +3,7 @@
 import { formatTime } from "./main.js";
 import { getPlaylistById, createPlaylist } from "./playlist/playlist.js";
 import { updatePlaylist } from "./playlist/playlist.manage.js";
-import { createImportOptionMask, showNotice } from "./playlist/playlist.add.js";
+import { createImportOptionMask, showNotice } from "./playlist/playlist.import.js";
 
 function getTrackDuration(track) {
     return new Promise(resolve => {

@@ -1,26 +1,41 @@
-import { getElementByAttr, capitalize } from "./../main.js";
+import { removeElement, getElementByAttr, capitalize } from "./../main.js";
 import { postMessageToWorker } from "./../worker.js";
 import { editSidebarEntry } from "./../sidebar.js";
 import { getPlaylistById } from "./playlist.js";
 import { removePlaylist } from "./playlist.manage.js";
 
-function createEntryContainer() {
-    const entryContainer = document.createElement("ul");
+function createEntryContainer(id) {
+    const div = document.createElement("div");
+    const h3 = document.createElement("h3");
+    const ul = document.createElement("ul");
 
-    entryContainer.setAttribute("id", "js-pl-entries");
-    entryContainer.classList.add("pl-entries");
-    entryContainer.addEventListener("click", handleClickOnEntryContainer);
-    document.getElementById("js-add-tab-content").appendChild(entryContainer);
-    return entryContainer;
+    div.classList.add("pl-entry-container");
+    h3.classList.add("manage-tab-section-title");
+    ul.classList.add("pl-entries");
+
+    h3.textContent = "Playlist entries";
+    ul.id = id;
+    ul.addEventListener("click", handleClickOnEntryContainer);
+
+    div.appendChild(h3);
+    div.appendChild(ul);
+    document.getElementById("js-manage-tab-content").appendChild(div);
+    return ul;
 }
 
 function removeEntryContainer(container) {
     container.removeEventListener("click", handleClickOnEntryContainer);
-    container.parentElement.removeChild(container);
+    removeElement(container.parentElement);
+}
+
+function getEntryContainer() {
+    const containerId = "js-pl-entries";
+
+    return document.getElementById(containerId) || createEntryContainer(containerId);
 }
 
 function createPlaylistEntry(title, id) {
-    const playlistEntryContainer = document.getElementById("js-pl-entries") || createEntryContainer();
+    const playlistEntryContainer = getEntryContainer();
     const entry = `
         <li class="pl-entry" data-id=${id}>
             <form class="pl-entry-form">
@@ -39,7 +54,7 @@ function createPlaylistEntry(title, id) {
 function removePlaylistEntry(entryElement) {
     const parentElement = entryElement.parentElement;
 
-    parentElement.removeChild(entryElement);
+    removeElement(entryElement);
 
     if (!parentElement.children.length) {
         removeEntryContainer(parentElement);
