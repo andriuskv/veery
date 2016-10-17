@@ -99,7 +99,7 @@ function addTracks(importOption, pl, newTracks, parseTracks) {
         showNotice(importOption, "Tracks already exist");
         return;
     }
-    processNewTracks(pl, tracks, parseTracks);
+    processNewTracks(pl, tracks, parseTracks, importOption);
 }
 
 function selectLocalFiles(files) {

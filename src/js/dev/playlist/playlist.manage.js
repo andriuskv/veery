@@ -21,7 +21,7 @@ function resortTracks(pl) {
     }
 }
 
-function initPlaylist(pl, toggle = router.isActive("add")) {
+function initPlaylist(pl, toggle = router.isActive("manage")) {
     const route = `playlist/${pl.id}`;
 
     router.add(route);
@@ -35,7 +35,7 @@ function initPlaylist(pl, toggle = router.isActive("add")) {
     }
 }
 
-function appendToPlaylist(pl, tracks, toggle = router.isActive("add")) {
+function appendToPlaylist(pl, tracks, toggle = router.isActive("manage")) {
     const route = `playlist/${pl.id}`;
 
     playlistView.append(pl, tracks);

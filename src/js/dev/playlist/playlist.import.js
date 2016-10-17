@@ -75,13 +75,16 @@ function addImportedPlaylist(importOption, newPlaylist) {
     updatePlaylist(pl, tracks, importOption);
 }
 
-function createPlaylistImportForm() {
-    return `
+function createPlaylistImportForm(container) {
+    const form = `
         <form id="js-import-form" class="import-form">
             <input type="text" name="playlist-url" class="input" placeholder="Playlist url">
             <button class="btn">Import</button>
         </form>
     `;
+
+    container.insertAdjacentHTML("beforeend", form);
+    document.getElementById("js-import-form").addEventListener("submit", handleImportFormSubmit);
 }
 
 function removePlaylistImportForm() {
@@ -101,8 +104,7 @@ function selectOption(item) {
         removePlaylistImportForm();
         removeElementClass("import-option-btn", "active");
         item.elementRef.classList.add("active");
-        item.elementRef.insertAdjacentHTML("beforeend", createPlaylistImportForm());
-        document.getElementById("js-import-form").addEventListener("submit", handleImportFormSubmit);
+        createPlaylistImportForm(item.elementRef);
     }
 }
 
