@@ -17,29 +17,19 @@
                 <h1 class="main-title">Ve<span>2</span>ry</h1>
             </header>
             <nav class="sidebar-nav">
-                <div class="new-playlist-btn-container">
-                    <a href="#/add" id="js-sidebar-entry-add" class="btn btn-transparent sidebar-btn"
-                        title="New playlist">
-                        <span>+ New playlist</span>
-                    </a>
+                <div class="sidebar-btn-container">
+                    <a href="#/manage" id="js-sidebar-entry-manage" class="btn btn-transparent sidebar-btn"
+                        title="New playlist">Manage playlists</a>
                 </div>
-                <div class="sidebar-playlist-entry-container">
-                    <h3 class="sidebar-section-title">Playlists</h3>
-                    <ul id="js-sidebar-playlist-entries" class="sidebar-playlist-entries"></ul>
+                <div class="sidebar-btn-container new-pl-btn-container">
+                    <button id="js-sidebar-form-toggle-btn" class="btn btn-transparent">+ New playlist</button>
                 </div>
+                <ul id="js-sidebar-entries" class="sidebar-entries"></ul>
             </nav>
-            <div class="player-track-art-container">
-                <img src="./assets/images/album-art-placeholder.png"
-                    id="js-player-track-art" class="player-track-art" alt="track art">
-            </div>
-            <div class="player-track-info">
-                <div id="js-track-title" class="track-title"></div>
-                <div id="js-track-artist" class="track-artist"></div>
-            </div>
         </div>
         <div class="main">
             <div id="js-tab-header" class="tab-header">
-                <input type="text" id="js-filter-input" class="input filter-input" placeholder="Filter">
+                <input type="text" id="js-filter-input" class="filter-input" placeholder="Filter">
                 <div id="js-move-to-panel-container" class="tab-header-item"></div>
                 <button id="js-list-toggle-btn" class="icon-th-list btn tab-header-item"
                     data-header-item="list" title="List"></button>
@@ -52,43 +42,48 @@
                     title="Ascending/Descending" data-header-item="order"></button>
             </div>
             <div id="js-tab-container" class="tab-container">
-                <div id="js-tab-add" class="tab add-tab">
-                    <h2 class="tab-title">Add new playlist</h2>
-                    <div id="js-add-tab-content" class="add-tab-content">
-                        <ul id="js-pl-add-options" class="pl-add-options">
-                            <li class="pl-add-option">
-                                <button data-option-id="local-file"
-                                    class="btn btn-transparent pl-add-option-btn">
-                                    <span class="icon-doc-inv pl-add-option-icon"></span>
-                                    <span class="pl-add-option-title">Add files</span>
-                                </button>
-                            </li>
-                            <li class="pl-add-option">
-                                <button data-option-id="local-folder"
-                                    class="btn btn-transparent pl-add-option-btn">
-                                    <span class="icon-folder pl-add-option-icon"></span>
-                                    <span class="pl-add-option-title">Add folder</span>
-                                </button>
-                            </li>
-                            <li class="pl-add-option">
-                                <button data-option-id="dropbox" class="btn btn-transparent pl-add-option-btn">
-                                    <span class="icon-dropbox pl-add-option-icon"></span>
-                                    <span class="pl-add-option-title">Dropbox chooser</span>
-                                </button>
-                            </li>
-                            <li class="pl-add-option">
-                                <button data-option-id="youtube" class="btn btn-transparent pl-add-option-btn">
-                                    <span class="icon-youtube-play pl-add-option-icon"></span>
-                                    <span class="pl-add-option-title">YouTube</span>
-                                </button>
-                            </li>
-                            <li class="pl-add-option">
-                                <button data-option-id="soundcloud" class="btn btn-transparent pl-add-option-btn">
-                                    <span class="icon-soundcloud pl-add-option-icon"></span>
-                                    <span class="pl-add-option-title">SoundCloud</span>
-                                </button>
-                            </li>
-                        </ul>
+                <div id="js-tab-manage" class="tab">
+                    <div id="js-manage-tab-content" class="manage-tab">
+                        <div class="import-option-container">
+                            <h3 class="manage-tab-section-title">Import playlist</h3>
+                            <ul id="js-import-options" class="import-options">
+                                <li class="import-option">
+                                    <button data-option-id="local-file"
+                                        class="btn btn-transparent import-option-btn">
+                                        <span class="icon-doc-inv import-option-icon"></span>
+                                        <span class="import-option-title">Add files</span>
+                                    </button>
+                                </li>
+                                <li class="import-option">
+                                    <button data-option-id="local-folder"
+                                        class="btn btn-transparent import-option-btn">
+                                        <span class="icon-folder import-option-icon"></span>
+                                        <span class="import-option-title">Add folder</span>
+                                    </button>
+                                </li>
+                                <li class="import-option">
+                                    <button data-option-id="dropbox"
+                                        class="btn btn-transparent import-option-btn">
+                                        <span class="icon-dropbox import-option-icon"></span>
+                                        <span class="import-option-title">Dropbox chooser</span>
+                                    </button>
+                                </li>
+                                <li class="import-option">
+                                    <button data-option-id="youtube"
+                                        class="btn btn-transparent import-option-btn">
+                                        <span class="icon-youtube-play import-option-icon"></span>
+                                        <span class="import-option-title">YouTube</span>
+                                    </button>
+                                </li>
+                                <li class="import-option">
+                                    <button data-option-id="soundcloud"
+                                        class="btn btn-transparent import-option-btn">
+                                        <span class="icon-soundcloud import-option-icon"></span>
+                                        <span class="import-option-title">SoundCloud</span>
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
                 <div id="js-tab-404" class="tab">
