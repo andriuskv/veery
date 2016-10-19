@@ -64,6 +64,8 @@
     }
 }
 .sidebar-btn {
+    @include text-truncate;
+
     position: relative;
     display: block;
     padding-top: 6px;
@@ -81,10 +83,6 @@
             background-color: $color1;
             box-shadow: -2px 0px 6px $color1;
         }
-    }
-
-    div {
-        @include text-truncate;
     }
 }
 .active-playlist-icon {

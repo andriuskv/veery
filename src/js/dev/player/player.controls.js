@@ -1,6 +1,6 @@
 import * as settings from "./../settings.js";
 import * as player from "./player.js";
-import { formatTime } from "./../main.js";
+import { capitalize, formatTime } from "./../main.js";
 import { getCurrentTrack } from "./../playlist/playlist.js";
 
 let seeking = false;
@@ -53,28 +53,23 @@ const elapsedTime = (function() {
     return { stop, start };
 })();
 
-function addClassOnPlayBtn(classToAdd) {
+function togglePlayBtnClasses(nextAction, prevAction) {
     const playBtn = document.getElementById("js-player-play");
-    let classToRemove = "";
-    let btnTitle = "";
 
-    if (classToAdd === "icon-play") {
-        classToRemove = "icon-pause";
-        btnTitle = "Play";
-    }
-    else if (classToAdd === "icon-pause") {
-        classToRemove = "icon-play";
-        btnTitle = "Pause";
-    }
-    playBtn.classList.remove(classToRemove);
-    playBtn.classList.add(classToAdd);
-    playBtn.setAttribute("title", btnTitle);
+    playBtn.classList.remove(`icon-${prevAction}`);
+    playBtn.classList.add(`icon-${nextAction}`);
+    playBtn.setAttribute("title", capitalize(nextAction));
 }
 
-function togglePlayBtnClass(paused) {
-    const iconClassName = paused ? "icon-play" : "icon-pause";
+function togglePlayBtn(paused) {
+    let nextAction = "pause";
+    let prevAction = "play";
 
-    addClassOnPlayBtn(iconClassName);
+    if (paused) {
+        nextAction = "play";
+        prevAction = "pause";
+    }
+    togglePlayBtnClasses(nextAction, prevAction);
 }
 
 function getElapsedValue(slider, pageX) {
@@ -204,8 +199,7 @@ window.addEventListener("DOMContentLoaded", function onLoad() {
 
 export {
     elapsedTime,
-    togglePlayBtnClass,
-    addClassOnPlayBtn,
+    togglePlayBtn,
     setSliderElementWidth,
     displayCurrentTime,
     showTrackDuration,
