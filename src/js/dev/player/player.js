@@ -90,12 +90,12 @@ function onTrackStart(startTime, repeatCb) {
         duration: track.durationInSeconds
     };
 
-    beforeTrackStart(track, id, scrollToTrack);
-    sidebar.showActiveIcon(id);
-    controls.addClassOnPlayBtn("icon-pause");
     paused = false;
     scrollToTrack = false;
 
+    beforeTrackStart(track, id, scrollToTrack);
+    sidebar.showActiveIcon(id);
+    controls.togglePlayBtn(paused);
     storedTrack.saveTrack({
         playlistId: id,
         name: track.name
@@ -122,7 +122,7 @@ function toggleTrackPlaying({ play, pause }) {
         pause();
         sidebar.removeActiveIcon();
         controls.elapsedTime.stop();
-        controls.addClassOnPlayBtn("icon-play");
+        controls.togglePlayBtn(!paused);
     }
     paused = !paused;
 }
@@ -242,7 +242,7 @@ function resetPlayer() {
     playlist.setCurrentTrack(null);
     controls.resetTrackSlider();
     controls.showTrackDuration();
-    controls.addClassOnPlayBtn("icon-play");
+    controls.togglePlayBtn(paused);
     sidebar.removeActiveIcon();
     sidebar.showTrackInfo();
 }
