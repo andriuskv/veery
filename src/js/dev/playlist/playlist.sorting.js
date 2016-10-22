@@ -6,7 +6,9 @@ import { getPlaylistById } from "./playlist.js";
 import { refreshPlaylist } from "./playlist.manage.js";
 import { filterTracks } from "./playlist.view.js";
 
-const sortToggleBtn = document.getElementById("js-sort-toggle");
+function setSortBtnText(text = "Sorting") {
+    document.getElementById("js-sort-toggle").textContent = text;
+}
 
 function toggleOrderBtn(order = 1) {
     const btn = document.getElementById("js-order-toggle");
@@ -21,16 +23,10 @@ function toggleOrderBtn(order = 1) {
     }
 }
 
-function getDurationInSeconds(duration) {
-    const durationArray = duration.split(":");
-
-    return Number.parseInt(durationArray[0], 10) * 60 + Number.parseInt(durationArray[1], 10);
-}
-
 function sortTracks(tracks, sortBy, order) {
     tracks.sort((a, b) => {
-        const aValue = sortBy === "duration" ? getDurationInSeconds(a[sortBy]) : a[sortBy].toLowerCase();
-        const bValue = sortBy === "duration" ? getDurationInSeconds(b[sortBy]) : b[sortBy].toLowerCase();
+        const aValue = sortBy === "duration" ? a.durationInSeconds : a[sortBy].toLowerCase();
+        const bValue = sortBy === "duration" ? b.durationInSeconds : b[sortBy].toLowerCase();
 
         if (aValue < bValue) {
             return -1 * order;
@@ -71,7 +67,7 @@ function setSortOptions({ sortedBy, order }) {
     if (sortedBy) {
         btnTitle = capitalize(sortedBy);
     }
-    sortToggleBtn.textContent = btnTitle;
+    setSortBtnText(btnTitle);
     toggleOrderBtn(order);
 }
 
@@ -83,9 +79,9 @@ function getSupportedSortOptions(playlistType) {
 }
 
 function resetPlaylistSort(pl) {
-    sortToggleBtn.textContent = "Sorting";
     pl.sortedBy = "";
     pl.order = 0;
+    setSortBtnText();
     toggleOrderBtn();
 }
 
@@ -131,8 +127,8 @@ function selectSortOption({ target }) {
         if (sortBy === pl.sortedBy) {
             return;
         }
+        setSortBtnText(capitalize(sortBy));
         toggleOrderBtn();
-        sortToggleBtn.textContent = capitalize(sortBy);
         changePlaylistSorting(pl, sortBy);
     }
 }
