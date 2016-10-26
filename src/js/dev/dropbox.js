@@ -3,6 +3,7 @@
 import { formatTime } from "./main.js";
 import { getTrackDuration, addTracks } from "./local.js";
 import { getPlaylistById, createPlaylist } from "./playlist/playlist.js";
+import { setOption } from "./playlist/playlist.import.js";
 
 function getTrackBlob(link) {
     return fetch(link).then(response => response.blob());
@@ -42,7 +43,11 @@ function showDropboxChooser() {
                 type: "grid"
             });
 
+            setOption();
             addTracks("dropbox", pl, files, parseTracks);
+        },
+        cancel() {
+            setOption();
         },
         linkType: "direct",
         multiselect: true,
