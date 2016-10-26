@@ -9,6 +9,14 @@ import * as sc from "./../soundcloud.js";
 
 let option = "";
 
+function setOption(newOption = "") {
+    option = newOption;
+}
+
+function isNewOption(newOption) {
+    return option !== newOption;
+}
+
 function createImportOptionMask(option) {
     const optionElements = Array.from(document.querySelectorAll(`[data-option-id*=${option}]`));
 
@@ -76,15 +84,20 @@ function addImportedPlaylist(importOption, newPlaylist) {
 }
 
 function createPlaylistImportForm(container) {
+    const formId = "js-import-form";
     const form = `
-        <form id="js-import-form" class="import-form">
+        <form id=${formId} class="import-form">
             <input type="text" name="playlist-url" class="input" placeholder="Playlist url">
             <button class="btn">Import</button>
         </form>
     `;
 
     container.insertAdjacentHTML("beforeend", form);
-    document.getElementById("js-import-form").addEventListener("submit", handleImportFormSubmit);
+
+    const formElement = document.getElementById(formId);
+
+    formElement.elements["playlist-url"].focus();
+    formElement.addEventListener("submit", handleImportFormSubmit);
 }
 
 function removePlaylistImportForm() {
@@ -93,19 +106,13 @@ function removePlaylistImportForm() {
     if (form) {
         form.removeEventListener("submit", handleImportFormSubmit);
         removeElement(form);
+        removeElementClass("import-option-btn", "active");
     }
 }
 
-function selectOption(item) {
-    const newOption = item.attrValue;
-
-    if (newOption !== option) {
-        option = newOption;
-        removePlaylistImportForm();
-        removeElementClass("import-option-btn", "active");
-        item.elementRef.classList.add("active");
-        createPlaylistImportForm(item.elementRef);
-    }
+function selectOption(optionElement) {
+    optionElement.classList.add("active");
+    createPlaylistImportForm(optionElement);
 }
 
 function handleChangeOnFileInput({ target }) {
@@ -131,9 +138,12 @@ function showFilePicker(choice) {
     const clickEvent = new MouseEvent("click");
 
     if (choice === "local-file") {
+        filePicker.removeAttribute("webkitdirectory");
+        filePicker.removeAttribute("directory");
         filePicker.setAttribute("multiple", true);
     }
     else if (choice === "local-folder") {
+        filePicker.removeAttribute("multiple");
         filePicker.setAttribute("webkitdirectory", true);
         filePicker.setAttribute("directory", true);
     }
@@ -159,22 +169,21 @@ document.getElementById("js-import-options").addEventListener("click", ({ target
     }
     const option = item.attrValue;
 
+    if (!isNewOption(option)) {
+        return;
+    }
+    setOption(option);
+    removePlaylistImportForm();
+
     if (option.includes("local")) {
         showFilePicker(option);
+        setOption();
     }
     else if (option === "dropbox") {
-        const isLoaded = scriptLoader.load({
-            src: "https://www.dropbox.com/static/api/2/dropins.js",
-            id: "dropboxjs",
-            "data-app-key": ""
-        }, showDropboxChooser);
-
-        if (isLoaded) {
-            showDropboxChooser();
-        }
+        showDropboxChooser();
     }
     else {
-        selectOption(item);
+        selectOption(item.elementRef);
     }
 });
 
@@ -182,12 +191,18 @@ window.addEventListener("load", function onLoad() {
     scriptLoader.load({ src: "js/libs/sdk.js" }, sc.init);
     scriptLoader.load({ src: "https://www.youtube.com/iframe_api" });
     scriptLoader.load({ src: "js/libs/metadata-audio-parser.js" });
+    scriptLoader.load({
+        src: "https://www.dropbox.com/static/api/2/dropins.js",
+        id: "dropboxjs",
+        "data-app-key": ""
+    });
 
     initializeWorker();
     window.removeEventListener("load", onLoad);
 });
 
 export {
+    setOption,
     addImportedPlaylist,
     showNotice,
     createImportOptionMask,
