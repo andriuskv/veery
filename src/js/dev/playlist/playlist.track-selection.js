@@ -216,6 +216,8 @@ function onMousemove(event) {
     mousePos.x = adjustMousePosition(event.clientX - playlistElementRect.left, playlistElementRect.width - 10);
     mousePos.y = adjustMousePosition(playlistElement.scrollTop + mouseYRelatedToViewport, maxScrollHeight);
 
+    event.preventDefault();
+
     if (!selectionEnabled) {
         selectionEnabled = isAboveThreshold(mousePos, startingPoint);
 
@@ -276,7 +278,6 @@ function onMousedown(event) {
     startingPoint.y = playlistElement.scrollTop + event.clientY - playlistElementRect.top;
     maxScrollHeight = playlistElement.scrollHeight;
 
-    event.preventDefault();
     window.addEventListener("mousemove", onMousemove);
     window.addEventListener("mouseup", onMouseup);
 }
