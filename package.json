@@ -28,15 +28,16 @@
   "devDependencies": {
     "autoprefixer": "^6.5.1",
     "babel-cli": "^6.18.0",
-    "babel-core": "^6.18.0",
-    "babel-eslint": "^7.0.0",
+    "babel-core": "^6.18.2",
+    "babel-eslint": "^7.1.0",
+    "babel-loader": "^6.2.7",
     "babel-preset-latest": "^6.16.0",
     "csso": "^2.3.0",
-    "eslint": "^3.8.1",
+    "eslint": "^3.9.1",
     "live-server": "^1.1.0",
     "node-sass": "^3.10.1",
     "onchange": "^3.0.2",
     "postcss-cli": "^2.6.0",
-    "webpack": "^1.13.2"
+    "webpack": "^1.13.3"
   }
 }

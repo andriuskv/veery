@@ -4,9 +4,10 @@ import { onTrackStart } from "./player.js";
 function playTrack(track, volume, startTime) {
     track.audioBlobURL = URL.createObjectURL(track.audioTrack);
     track.audio = new Audio(track.audioBlobURL);
-    track.audio.volume = volume;
 
+    setVolume(volume, track);
     setCurrentTrack(track);
+
     track.audio.onplaying = function() {
         const startTime = Math.floor(track.audio.currentTime);
         const repeatTrack = track.audio.play.bind(track.audio);
@@ -15,7 +16,7 @@ function playTrack(track, volume, startTime) {
     };
 
     if (typeof startTime === "number") {
-        track.audio.currentTime = startTime;
+        seekTo(startTime, track);
         return;
     }
     track.audio.play();
@@ -36,7 +37,7 @@ function stopTrack(track) {
     delete track.audio;
 }
 
-function setVolume(track, volume) {
+function setVolume(volume, track) {
     track.audio.volume = volume;
 }
 

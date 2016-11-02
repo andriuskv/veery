@@ -2,7 +2,7 @@ import * as router from "./../router.js";
 import * as playlist from "./playlist.js";
 import * as playlistView from "./playlist.view.js";
 import { getSetting } from "./../settings.js";
-import { getActiveTabId } from "./../tab.js";
+import { getVisiblePlaylistId } from "./../tab.js";
 import { removeElement, removeElementClass } from "./../main.js";
 import { postMessageToWorker } from "./../worker.js";
 import { createSidebarEntry, removeSidebarEntry } from "./../sidebar.js";
@@ -12,8 +12,7 @@ import { createPlaylistEntry } from "./playlist.entries.js";
 import { removeImportOptionMask } from "./playlist.import.js";
 
 function resortTracks(pl) {
-    playlist.setPlaybackOrder(pl, getSetting("shuffle"));
-    playlist.resetPlaybackIndex();
+    playlist.shufflePlaybackOrder(pl, getSetting("shuffle"));
 
     if (pl.sortedBy) {
         sortTracks(pl.tracks, pl.sortedBy, pl.order);
@@ -53,7 +52,7 @@ function removePlaylist(id) {
         storedTrack.remove();
     }
     if (playlist.isActive(id)) {
-        stopPlayer(playlist.getCurrentTrack());
+        stopPlayer();
     }
     playlist.removePlaylist(id);
     removeSidebarEntry(id);
@@ -122,7 +121,7 @@ function removeSelectedPlaylistTracks(pl, selectedTrackIndexes) {
 function updateCurrentTrack(playlistId, selectedTrackIndexes) {
     const currentTrack = playlist.getCurrentTrack();
 
-    if (playlistId === playlist.getActivePlaylistId() && currentTrack) {
+    if (currentTrack && playlist.isActive(playlistId)) {
         if (selectedTrackIndexes.includes(currentTrack.index)) {
             playlist.updateCurrentTrackIndex(-1);
         }
@@ -130,7 +129,6 @@ function updateCurrentTrack(playlistId, selectedTrackIndexes) {
             const { index } = playlist.findTrack(playlistId, currentTrack.name);
 
             playlist.updateCurrentTrackIndex(index);
-            playlist.setPlaybackIndex(index);
         }
     }
 }
@@ -145,7 +143,7 @@ function removeSelectedTracks(pl) {
         removeSelectedTrackElements(selectedElements);
         resetTrackElementIndexes(Array.from(playlistContainer.children));
         pl.tracks = removeSelectedPlaylistTracks(pl, selectedTrackIndexes);
-        playlist.setPlaybackOrder(pl, getSetting("shuffle"));
+        playlist.shufflePlaybackOrder(pl, getSetting("shuffle"));
         updateCurrentTrack(pl.id, selectedTrackIndexes);
         postMessageToWorker({
             action: "put",
@@ -173,7 +171,7 @@ function onNewPlaylistFormSubmit(event) {
 
 window.addEventListener("keypress", event => {
     const key = event.key === "Delete" || event.keyCode === 127;
-    const pl = playlist.getPlaylistById(getActiveTabId());
+    const pl = playlist.getPlaylistById(getVisiblePlaylistId());
 
     if (!key || !pl) {
         return;

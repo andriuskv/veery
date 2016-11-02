@@ -1,5 +1,5 @@
 import { removeElement, getElementByAttr } from "./../main.js";
-import { getActiveTabId } from "./../tab.js";
+import { getVisiblePlaylistId } from "./../tab.js";
 import { removePresentPanels } from "./../panels.js";
 import { postMessageToWorker } from "./../worker.js";
 import { appendToPlaylist, onNewPlaylistFormSubmit, createNewPlaylistInputForm } from "./playlist.manage.js";
@@ -31,7 +31,7 @@ function handleSubmit(event) {
 
     onNewPlaylistFormSubmit(event);
     moveToList.classList.remove("hidden");
-    moveToList.innerHTML = createPlaylistList(getActiveTabId());
+    moveToList.innerHTML = createPlaylistList(getVisiblePlaylistId());
 }
 
 function showInputContainer(event) {
@@ -43,7 +43,7 @@ function showInputContainer(event) {
 function moveTracks(playlistId) {
     const selectedTrackElements = Array.from(document.querySelectorAll(".track.selected"));
     const trackIndexes = selectedTrackElements.map(element => Number.parseInt(element.getAttribute("data-index"), 10));
-    const pl = getPlaylistById(getActiveTabId());
+    const pl = getPlaylistById(getVisiblePlaylistId());
     const destinationPlaylist = getPlaylistById(playlistId);
     const selectedTracks = [];
 
