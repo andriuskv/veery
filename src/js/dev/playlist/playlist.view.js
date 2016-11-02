@@ -1,4 +1,4 @@
-import { getActiveTabId } from "./../tab.js";
+import { getVisiblePlaylistId } from "./../tab.js";
 import { postMessageToWorker } from "./../worker.js";
 import { getPlaylistById, getActivePlaylistId, getCurrentTrack } from "./playlist.js";
 import { removeElement, removeElementClass } from "./../main.js";
@@ -198,7 +198,7 @@ document.getElementById("js-filter-input").addEventListener("keyup", ({ target }
         clearTimeout(timeout);
     }
     timeout = setTimeout(() => {
-        const { id, tracks } = getPlaylistById(getActiveTabId());
+        const { id, tracks } = getPlaylistById(getVisiblePlaylistId());
         const trackElements = document.getElementById(`js-${id}`).children;
 
         filterTracks(tracks, trackElements, target.value);

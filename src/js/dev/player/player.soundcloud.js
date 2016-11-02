@@ -25,7 +25,7 @@ function playTrack(track, volume, startTime) {
                 return;
             }
             else if (state === "loading") {
-                trackPlayer.seek(startTime * 1000);
+                seekTo(startTime);
                 trackPlayer.pause();
             }
             else if (state === "seeking") {

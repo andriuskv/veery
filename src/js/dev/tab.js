@@ -7,14 +7,14 @@ import { enableTrackSelection, deselectTrackElements } from "./playlist/playlist
 import { setSortOptions, createSortPanel, changePlaylistOrder } from "./playlist/playlist.sorting.js";
 import { createMoveToPanel } from "./playlist/playlist.move-to.js";
 
-let activeTabId = "manage";
+let activePlaylistTabId = "";
 
-function setActiveTabId(id) {
-    activeTabId = id;
+function setVisiblePlaylistId(id = "") {
+    activePlaylistTabId = id;
 }
 
-function getActiveTabId() {
-    return activeTabId;
+function getVisiblePlaylistId() {
+    return activePlaylistTabId;
 }
 
 function toggleTab(id, playlistTab, ignoreSidebar) {
@@ -26,15 +26,16 @@ function toggleTab(id, playlistTab, ignoreSidebar) {
     if (playlistTab) {
         const pl = getPlaylistById(id);
 
+        setVisiblePlaylistId(id);
         togglePlaylistTypeBtn(pl.type);
         setSortOptions(pl);
         enableTrackSelection(pl.id);
         tabHeaderElement.classList.add("visible");
     }
     else {
+        setVisiblePlaylistId();
         tabHeaderElement.classList.remove("visible");
     }
-    setActiveTabId(id);
     document.getElementById(`js-tab-${id}`).classList.add("active");
 
     if (!ignoreSidebar) {
@@ -46,7 +47,7 @@ function toggleTab(id, playlistTab, ignoreSidebar) {
 
 window.addEventListener("click", event => {
     const item = event.target.getAttribute("data-header-item");
-    const pl = getPlaylistById(getActiveTabId());
+    const pl = getPlaylistById(getVisiblePlaylistId());
     let panelId = "";
 
     if (item === "move-to") {
@@ -69,6 +70,6 @@ window.addEventListener("click", event => {
 
 export {
     toggleTab,
-    setActiveTabId,
-    getActiveTabId
+    setVisiblePlaylistId,
+    getVisiblePlaylistId
 };

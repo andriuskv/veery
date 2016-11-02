@@ -1,5 +1,5 @@
 import { capitalize } from "./../main.js";
-import { getActiveTabId } from "./../tab.js";
+import { getVisiblePlaylistId } from "./../tab.js";
 import { removePresentPanels } from "./../panels.js";
 import { postMessageToWorker } from "./../worker.js";
 import { getPlaylistById } from "./playlist.js";
@@ -119,7 +119,7 @@ function selectSortOption({ target }) {
     const sortBy = target.getAttribute("data-sort");
 
     if (sortBy) {
-        const pl = getPlaylistById(getActiveTabId());
+        const pl = getPlaylistById(getVisiblePlaylistId());
 
         this.removeEventListener("click", selectSortOption);
         removePresentPanels();

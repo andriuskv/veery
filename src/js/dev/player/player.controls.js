@@ -1,7 +1,7 @@
-import * as settings from "./../settings.js";
-import * as player from "./player.js";
+import { setSetting, getSetting } from "./../settings.js";
 import { capitalize, formatTime } from "./../main.js";
 import { getCurrentTrack } from "./../playlist/playlist.js";
+import * as player from "./player.js";
 
 let seeking = false;
 const elapsedTime = (function() {
@@ -21,7 +21,7 @@ const elapsedTime = (function() {
         if (!seeking) {
             const elapsedInPercentage = track.currentTime / track.duration * 100;
 
-            setSliderElementWidth("track", elapsedInPercentage);
+            setTrackBarInnerWidth(elapsedInPercentage);
             player.storedTrack.updateSavedTrack({
                 elapsed: elapsedInPercentage,
                 currentTime: track.currentTime
@@ -54,7 +54,7 @@ const elapsedTime = (function() {
 })();
 
 function togglePlayBtnClasses(nextAction, prevAction) {
-    const playBtn = document.getElementById("js-player-play");
+    const playBtn = document.getElementById("js-play-btn");
 
     playBtn.classList.remove(`icon-${prevAction}`);
     playBtn.classList.add(`icon-${nextAction}`);
@@ -72,9 +72,9 @@ function togglePlayBtn(paused) {
     togglePlayBtnClasses(nextAction, prevAction);
 }
 
-function getElapsedValue(slider, pageX) {
-    const trackSlider = document.getElementById(`js-player-${slider}-slider`);
-    const { left, width } = trackSlider.getBoundingClientRect();
+function getElapsedValue(bar, pageX) {
+    const element = document.getElementById(`js-${bar}-bar`);
+    const { left, width } = element.getBoundingClientRect();
     let value = (pageX - left) / width;
 
     if (value < 0) {
@@ -86,10 +86,14 @@ function getElapsedValue(slider, pageX) {
     return value * 100;
 }
 
-function resetTrackSlider() {
+function getTrackElapsedValue(pageX) {
+    return getElapsedValue("track", pageX);
+}
+
+function resetTrackBar() {
     elapsedTime.stop();
-    displayCurrentTime(0);
-    setSliderElementWidth("track", 0);
+    displayCurrentTime();
+    setTrackBarInnerWidth();
 }
 
 function onVolumeTrackMousemove(event) {
@@ -97,8 +101,8 @@ function onVolumeTrackMousemove(event) {
     const volume = volumeInPercentage / 100;
     const track = getCurrentTrack();
 
-    setSliderElementWidth("volume", volumeInPercentage);
-    settings.setSetting("volume", volume);
+    setVolumeBarInnerWidth(volumeInPercentage);
+    setSetting("volume", volume);
 
     if (track) {
         player.setVolume(track, volume);
@@ -110,44 +114,52 @@ function onVolumeTrackMouseup() {
     document.removeEventListener("mouseup", onVolumeTrackMouseup);
 }
 
-function setSliderElementWidth(slider, percent) {
-    document.getElementById(`js-player-${slider}-elapsed`).style.width = `${percent}%`;
+function setBarInnerWidth(bar, percent = 0) {
+    document.getElementById(`js-${bar}-bar-inner`).style.width = `${percent}%`;
 }
 
-function displayCurrentTime(time) {
-    document.getElementById("js-player-elapsed").textContent = formatTime(time);
+function setTrackBarInnerWidth(percent) {
+    setBarInnerWidth("track", percent);
+}
+
+function setVolumeBarInnerWidth(percent) {
+    setBarInnerWidth("volume", percent);
+}
+
+function displayCurrentTime(time = 0) {
+    document.getElementById("js-track-current").textContent = formatTime(time);
 }
 
 function showTrackDuration(duration = "0:00") {
-    document.getElementById("js-player-duration").textContent = duration;
+    document.getElementById("js-track-duration").textContent = duration;
 }
 
-function onPlayerTrackMousemove(event) {
-    setSliderElementWidth("track", getElapsedValue("track", event.pageX));
+function onPlayerTrackMousemove({ pageX }) {
+    setTrackBarInnerWidth(getTrackElapsedValue(pageX));
 }
 
 function onPlayerTrackMouseup({ pageX }) {
     const track = getCurrentTrack();
 
     if (track) {
-        player.seekTo(track, getElapsedValue("track", pageX));
+        player.seekTo(track, getTrackElapsedValue(pageX));
     }
     seeking = false;
     document.removeEventListener("mousemove", onPlayerTrackMousemove);
     document.removeEventListener("mouseup", onPlayerTrackMouseup);
 }
 
-document.getElementById("js-player-track-slider").addEventListener("mousedown", event => {
+document.getElementById("js-track-bar").addEventListener("mousedown", event => {
     if (event.which !== 1 || !getCurrentTrack()) {
         return;
     }
     seeking = true;
-    setSliderElementWidth("track", getElapsedValue("track", event.pageX));
+    onPlayerTrackMousemove(event);
     document.addEventListener("mousemove", onPlayerTrackMousemove);
     document.addEventListener("mouseup", onPlayerTrackMouseup);
 });
 
-document.getElementById("js-player-volume-slider").addEventListener("mousedown", event => {
+document.getElementById("js-volume-bar").addEventListener("mousedown", event => {
     if (event.which !== 1) {
         return;
     }
@@ -156,36 +168,39 @@ document.getElementById("js-player-volume-slider").addEventListener("mousedown",
     document.addEventListener("mouseup", onVolumeTrackMouseup);
 });
 
-document.getElementById("js-player-controls").addEventListener("click", ({ target }) => {
+document.getElementById("js-controls").addEventListener("click", ({ target }) => {
     const item = target.getAttribute("data-control-item");
-    const track = getCurrentTrack();
 
     switch (item) {
         case "previous":
-            player.playNextTrack(track, -1);
+            player.playPreviousTrack();
             break;
         case "play":
-            player.playTrack(track);
+            player.playTrack();
             break;
         case "stop":
-            player.stopPlayer(track);
+            player.stopPlayer();
             player.storedTrack.remove();
             break;
         case "next":
-            player.playNextTrack(track, 1);
+            player.playNextTrack();
             break;
         case "repeat":
+            target.classList.toggle("active");
+            setSetting(item, !getSetting(item));
+            break;
         case "shuffle":
             target.classList.toggle("active");
-            player[item](target.classList.contains("active"));
+            setSetting(item, !getSetting(item));
+            player.toggleShuffle(!getSetting(item));
             break;
     }
 });
 
 window.addEventListener("DOMContentLoaded", function onLoad() {
-    const repeat = settings.getSetting("repeat");
-    const shuffle = settings.getSetting("shuffle");
-    const volume = settings.getSetting("volume");
+    const repeat = getSetting("repeat");
+    const shuffle = getSetting("shuffle");
+    const volume = getSetting("volume");
 
     if (repeat) {
         document.querySelector(`[data-control-item="repeat"]`).classList.add("active");
@@ -193,15 +208,15 @@ window.addEventListener("DOMContentLoaded", function onLoad() {
     if (shuffle) {
         document.querySelector(`[data-control-item="shuffle"]`).classList.add("active");
     }
-    setSliderElementWidth("volume", volume * 100);
+    setVolumeBarInnerWidth(volume * 100);
     window.removeEventListener("DOMContentLoaded", onLoad);
 });
 
 export {
     elapsedTime,
     togglePlayBtn,
-    setSliderElementWidth,
+    setTrackBarInnerWidth,
     displayCurrentTime,
     showTrackDuration,
-    resetTrackSlider
+    resetTrackBar
 };

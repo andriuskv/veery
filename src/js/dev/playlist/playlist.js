@@ -1,7 +1,6 @@
 const playlists = {};
 let activePlaylistId = "";
 let currentTrack = null;
-let playbackIndex = 0;
 
 function getAllPlaylists() {
     return playlists;
@@ -16,8 +15,8 @@ function createPlaylist(pl) {
         sortedBy: "",
         order: 0,
         shuffled: false,
-        tracks: pl.tracks || [],
-        type: pl.type,
+        tracks: [],
+        playbackIndex: 0,
         playbackOrder: []
     }, pl);
     return playlists[pl.id];
@@ -27,10 +26,8 @@ function removePlaylist(id) {
     delete playlists[id];
 }
 
-function setPlaylistAsActive(id) {
-    if (playlists.hasOwnProperty(id)) {
-        activePlaylistId = id;
-    }
+function setPlaylistAsActive(id = "") {
+    activePlaylistId = id;
 }
 
 function getActivePlaylistId() {
@@ -45,8 +42,12 @@ function getActivePlaylist() {
     return playlists[activePlaylistId];
 }
 
+function getTrack(track) {
+    return track ? Object.assign({}, track): null;
+}
+
 function setCurrentTrack(track) {
-    currentTrack = track ? Object.assign({}, track): track;
+    currentTrack = getTrack(track);
 }
 
 function getCurrentTrack() {
@@ -55,20 +56,19 @@ function getCurrentTrack() {
 
 function updateCurrentTrackIndex(newIndex) {
     currentTrack.index = newIndex;
-    setCurrentTrack(currentTrack);
 }
 
 function findTrack(id, trackId) {
     const { tracks } = getPlaylistById(id);
     const track = tracks.find(track => track.name === trackId);
 
-    return track ? Object.assign({}, track): null;
+    return getTrack(track);
 }
 
 function setPlaybackIndex(index) {
-    const playlist = getActivePlaylist();
+    const pl = getActivePlaylist();
 
-    playbackIndex = playlist.playbackOrder.indexOf(Number.parseInt(index, 10));
+    pl.playbackIndex = pl.playbackOrder.indexOf(Number.parseInt(index, 10));
 }
 
 function resetPlaybackIndex() {
@@ -76,14 +76,6 @@ function resetPlaybackIndex() {
 
     if (currentTrack) {
         setPlaybackIndex(currentTrack.index);
-    }
-}
-
-function setPlaybackOrder(pl, shuffle) {
-    pl.playbackOrder = pl.tracks.map(track => track.index);
-
-    if (shuffle) {
-        shufflePlaybackOrder(pl, shuffle);
     }
 }
 
@@ -99,44 +91,33 @@ function shuffleArray(array) {
     return array;
 }
 
+function getPlaybackOrder(tracks, shuffle) {
+    const playbackOrder = tracks.map(track => track.index);
+
+    return shuffle ? shuffleArray(playbackOrder) : playbackOrder;
+}
+
 function shufflePlaybackOrder(pl, shuffle) {
     pl.shuffled = shuffle;
-    if (shuffle) {
-        pl.playbackOrder = shuffleArray(pl.playbackOrder);
-    }
-    else {
-        pl.playbackOrder.sort((a, b) => a - b);
-    }
+    pl.playbackOrder = getPlaybackOrder(pl.tracks, shuffle);
+    resetPlaybackIndex();
 }
 
-function getNextTrackIndex(direction) {
-    const { playbackOrder } = getActivePlaylist();
-
-    playbackIndex += direction;
-    if (playbackIndex >= playbackOrder.length) {
-        playbackIndex = 0;
+function getNextTrackIndex(pl, direction = 0) {
+    pl.playbackIndex += direction;
+    if (pl.playbackIndex >= pl.playbackOrder.length) {
+        pl.playbackIndex = 0;
     }
-    if (playbackIndex === -1) {
-        playbackIndex = playbackOrder.length - 1;
+    else if (pl.playbackIndex === -1) {
+        pl.playbackIndex = pl.playbackOrder.length - 1;
     }
-    return playbackOrder[playbackIndex];
+    return pl.playbackOrder[pl.playbackIndex];
 }
 
-function getTrackAtIndex(index) {
-    const playlist = getActivePlaylist();
+function getNextTrack(pl, direction) {
+    const index = getNextTrackIndex(pl, direction);
 
-    return playlist.tracks[index];
-}
-
-function getNextTrack(direction) {
-    const index = getNextTrackIndex(direction);
-    const track = getTrackAtIndex(index);
-
-    if (track) {
-        setCurrentTrack(track);
-        setPlaybackIndex(track.index);
-        return Object.assign({}, track);
-    }
+    return getTrack(pl.tracks[index]);
 }
 
 function resetTrackIndexes(tracks) {
@@ -153,17 +134,15 @@ export {
     getAllPlaylists,
     createPlaylist,
     isActive,
+    getActivePlaylist,
     getActivePlaylistId,
+    getTrack,
     setCurrentTrack,
     getCurrentTrack,
     updateCurrentTrackIndex,
     findTrack,
-    getNextTrackIndex,
     getNextTrack,
     setPlaybackIndex,
-    resetPlaybackIndex,
-    getTrackAtIndex,
-    setPlaybackOrder,
     shufflePlaybackOrder,
     resetTrackIndexes
 };
