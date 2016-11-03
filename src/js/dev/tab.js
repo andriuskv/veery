@@ -1,4 +1,4 @@
-import { removeElementClass } from "./main.js";
+import { removeElementClass, dispatchEvent } from "./main.js";
 import { getSidebarEntry } from "./sidebar.js";
 import { removePresentPanels, togglePanel } from "./panels.js";
 import { getPlaylistById } from "./playlist/playlist.js";
@@ -17,9 +17,17 @@ function getVisiblePlaylistId() {
     return activePlaylistTabId;
 }
 
-function toggleTab(id, playlistTab, ignoreSidebar) {
+function toggleTabContent(action) {
+    const tabContainer = document.getElementById("js-tab-container");
     const tabHeaderElement = document.getElementById("js-tab-header");
+    const tabFooterElement = document.getElementById("js-tab-footer");
 
+    tabContainer.classList[action]("is-playlist-tab-visible");
+    tabHeaderElement.classList[action]("visible");
+    tabFooterElement.classList[action]("visible");
+}
+
+function toggleTab(id, playlistTab, ignoreSidebar) {
     removeElementClass("sidebar-btn", "active");
     removeElementClass("tab", "active");
 
@@ -30,11 +38,12 @@ function toggleTab(id, playlistTab, ignoreSidebar) {
         togglePlaylistTypeBtn(pl.type);
         setSortOptions(pl);
         enableTrackSelection(pl.id);
-        tabHeaderElement.classList.add("visible");
+        toggleTabContent("add");
+        dispatchEvent("track-length-change", pl.tracks);
     }
     else {
         setVisiblePlaylistId();
-        tabHeaderElement.classList.remove("visible");
+        toggleTabContent("remove");
     }
     document.getElementById(`js-tab-${id}`).classList.add("active");
 
