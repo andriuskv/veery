@@ -85,6 +85,12 @@ function formatTime(time) {
     return `${hours}${minutes}:${seconds}`;
 }
 
+function dispatchEvent(eventName, data) {
+    const event = new CustomEvent(eventName, { detail: data });
+
+    window.dispatchEvent(event);
+}
+
 export {
     scriptLoader,
     capitalize,
@@ -92,5 +98,6 @@ export {
     removeElement,
     removeElementClass,
     formatTime,
-    isOutsideElement
+    isOutsideElement,
+    dispatchEvent
 };

@@ -3,7 +3,7 @@ import * as playlist from "./playlist.js";
 import * as playlistView from "./playlist.view.js";
 import { getSetting } from "./../settings.js";
 import { getVisiblePlaylistId } from "./../tab.js";
-import { removeElement, removeElementClass } from "./../main.js";
+import { removeElement, removeElementClass, dispatchEvent } from "./../main.js";
 import { postMessageToWorker } from "./../worker.js";
 import { createSidebarEntry, removeSidebarEntry } from "./../sidebar.js";
 import { storedTrack, stopPlayer } from "./../player/player.js";
@@ -42,6 +42,9 @@ function appendToPlaylist(pl, tracks, toggle = router.isActive("manage")) {
 
     if (toggle) {
         router.toggle(route);
+    }
+    else {
+        dispatchEvent("track-length-change", pl.tracks);
     }
 }
 
@@ -145,6 +148,7 @@ function removeSelectedTracks(pl) {
         pl.tracks = removeSelectedPlaylistTracks(pl, selectedTrackIndexes);
         playlist.shufflePlaybackOrder(pl, getSetting("shuffle"));
         updateCurrentTrack(pl.id, selectedTrackIndexes);
+        dispatchEvent("track-length-change", pl.tracks);
         postMessageToWorker({
             action: "put",
             playlist: pl

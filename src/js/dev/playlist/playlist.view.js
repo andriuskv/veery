@@ -61,7 +61,7 @@ function createPlaylist(pl) {
 function createPlaylistTab(pl) {
     const playlist = createPlaylist(pl);
 
-    return `<div id="js-tab-${pl.id}" class="tab playlist-tab">${playlist}</div>`;
+    return `<div id="js-tab-${pl.id}" class="tab">${playlist}</div>`;
 }
 
 function addPlaylistTab(pl) {
@@ -193,6 +193,18 @@ function changePlaylistType(newType, pl) {
     }
 }
 
+function getTrackDuration(tracks) {
+    return tracks.reduce((total, track) => {
+        total += track.durationInSeconds;
+        return total;
+    }, 0);
+}
+
+function getValueString(value, valueString) {
+    valueString = value > 1 || !value ? `${valueString}s` : valueString;
+    return `${value} ${valueString}`;
+}
+
 document.getElementById("js-filter-input").addEventListener("keyup", ({ target }) => {
     if (timeout) {
         clearTimeout(timeout);
@@ -203,6 +215,20 @@ document.getElementById("js-filter-input").addEventListener("keyup", ({ target }
 
         filterTracks(tracks, trackElements, target.value);
     }, 400);
+});
+
+window.addEventListener("track-length-change", ({ detail }) => {
+    const tabFooterElement = document.getElementById("js-tab-footer");
+    const duration = getTrackDuration(detail);
+    const trackString = getValueString(detail.length, "track");
+    let durationString = getValueString(Math.floor(duration / 60 % 60), "minute");
+
+    if (duration > 3600) {
+        const hourString = getValueString(Math.floor(duration / 3600), "hour");
+
+        durationString = `${hourString} and ${durationString}`;
+    }
+    tabFooterElement.textContent = `${trackString}, ${durationString} of playtime`;
 });
 
 export {
