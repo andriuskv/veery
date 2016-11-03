@@ -6,6 +6,7 @@
     flex-direction: column;
     width: 160px;
     margin-right: 4px;
+    cursor: default;
 }
 .sidebar-header {
     display: flex;
@@ -28,20 +29,16 @@
 .sidebar-nav {
     flex-basis: 50%;
     flex-grow: 1;
-    overflow-y: hidden;
+    display: flex;
+    flex-direction: column;
 }
 .sidebar-btn-container {
     padding: 4px;
-    margin-top: 4px;
-    margin-bottom: 4px;
+    margin-top: 2px;
     background-color: $color2;
 }
-.new-pl-btn-container {
-    margin-bottom: 2px;
-
-    > .btn {
-        width: 100%;
-    }
+.new-pl-btn-container > .btn {
+    width: 100%;
 }
 .sidebar-form {
     padding-top: 4px;
@@ -53,9 +50,10 @@
 }
 .sidebar-entries {
     overflow-y: auto;
-    height: calc(100% - 70px);
+    flex-grow: 1;
     padding-left: 4px;
     padding-right: 4px;
+    margin-top: 2px;
     background-color: $color2;
 
     li {
@@ -95,7 +93,7 @@
     box-shadow: -2px 0px 6px $color2;
 }
 .track-art-container {
-    margin-top: 4px;
+    margin-top: 2px;
     margin-bottom: 2px;
     background-color: $color2;
 }

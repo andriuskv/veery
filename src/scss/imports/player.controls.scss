@@ -2,13 +2,16 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    user-select: none;
     height: 36px;
+    user-select: none;
+    cursor: default;
 }
 .control-bar {
     position: relative;
     height: 4px;
     border-radius: 2px;
+    margin-left: 8px;
+    margin-right: 8px;
     background: #666;
     cursor: pointer;
     transition: all 0.1s;
@@ -23,18 +26,25 @@
     }
 }
 .main-control-btn {
-    flex-grow: 0;
     width: 26px;
     padding: 0;
     margin-left: 2px;
     margin-right: 2px;
     font-size: 22px;
+
+    &:first-of-type {
+        margin-left: 4px;
+    }
 }
 .track-time {
-    margin-left: 8px;
-    margin-right: 8px;
     color: $base-text-color;
     font-size: 12px;
+}
+.track-current {
+    margin-left: 6px;
+}
+.track-duration {
+    margin-right: 8px;
 }
 .track-bar {
     flex-grow: 1;
@@ -58,8 +68,6 @@
 }
 .volume-bar {
     width: 100px;
-    margin-left: 4px;
-    margin-right: 8px;
 }
 .volume-bar-inner {
     width: 20%;
