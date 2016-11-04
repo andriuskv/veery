@@ -2,7 +2,7 @@
 
 /* global importScripts, db, onmessage, postMessage */
 
-var window = self;
+window = self;
 
 importScripts("./libs/db.min.js");
 
