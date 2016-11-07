@@ -190,7 +190,7 @@ document.getElementById("js-import-options").addEventListener("click", ({ target
 window.addEventListener("load", function onLoad() {
     scriptLoader.load({ src: "js/libs/sdk.js" }, sc.init);
     scriptLoader.load({ src: "https://www.youtube.com/iframe_api" });
-    scriptLoader.load({ src: "js/libs/metadata-audio-parser.js" });
+    scriptLoader.load({ src: "js/libs/metadata-audio-parser.min.js" });
     scriptLoader.load({
         src: "https://www.dropbox.com/static/api/2/dropins.js",
         id: "dropboxjs",

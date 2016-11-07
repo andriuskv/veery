@@ -1,6 +1,6 @@
 /* global importScripts, db, onmessage, postMessage */
 
-window = self;
+const window = self;
 
 importScripts("./libs/db.min.js");
 
