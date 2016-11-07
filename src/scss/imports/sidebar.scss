@@ -11,15 +11,19 @@
 .sidebar-header {
     display: flex;
     align-items: center;
-    justify-content: center;
     height: 80px;
     background-color: $color2;
+}
+.main-icon {
+    width: 80px;
+    height: 80px;
+    margin-right: 6px;
 }
 .main-title {
     margin-top: 0;
     margin-bottom: 0;
     color: $base-text-color;
-    font-size: 40px;
+    font-size: 24px;
     cursor: default;
 
     span {

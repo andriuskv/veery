@@ -83,7 +83,7 @@ function showTrackInfo(track) {
         if (trackInfoElement) {
             removeElement(trackInfoElement);
         }
-        document.title = "Ve2ry";
+        document.title = "Veery";
         return;
     }
 
