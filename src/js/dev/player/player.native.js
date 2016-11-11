@@ -9,10 +9,7 @@ function playTrack(track, volume, startTime) {
     setCurrentTrack(track);
 
     track.audio.onplaying = function() {
-        const startTime = Math.floor(track.audio.currentTime);
-        const repeatTrack = track.audio.play.bind(track.audio);
-
-        onTrackStart(startTime, repeatTrack);
+        onTrackStart(Math.floor(track.audio.currentTime));
     };
 
     if (typeof startTime === "number") {

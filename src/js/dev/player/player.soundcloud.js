@@ -1,38 +1,30 @@
-/* global SC */
-
+import { stream } from "soundcloud";
 import { setCurrentTrack } from "./../playlist/playlist.js";
 import { onTrackStart } from "./player.js";
 
 let scPlayer = null;
 
-function repeatTrack() {
-    scPlayer.seek(0);
-    scPlayer.play();
-}
-
 function playTrack(track, volume, startTime) {
     setCurrentTrack(track);
-    SC.stream(`/tracks/${track.id}`).then(trackPlayer => {
+    stream(`/tracks/${track.id}`).then(trackPlayer => {
+        if (scPlayer) {
+            scPlayer.dispose();
+        }
         scPlayer = trackPlayer;
-        trackPlayer.setVolume(volume);
-        trackPlayer.on("play-resume", () => {
-            const startTime = Math.floor(trackPlayer.currentTime() / 1000);
-
-            onTrackStart(startTime, repeatTrack);
+        scPlayer.on("play-resume", () => {
+            onTrackStart(Math.floor(scPlayer.currentTime() / 1000));
         });
-        trackPlayer.on("state-change", state => {
-            if (typeof startTime !== "number") {
-                return;
-            }
-            else if (state === "loading") {
-                seekTo(startTime);
-                trackPlayer.pause();
-            }
-            else if (state === "seeking") {
-                startTime = null;
-            }
-        });
-        trackPlayer.play();
+        if (typeof startTime === "number") {
+            scPlayer.once("state-change", state => {
+                if (state === "loading") {
+                    seekTo(startTime);
+                    scPlayer.pause();
+                }
+            });
+        }
+        setVolume(volume);
+        scPlayer.seek(0);
+        scPlayer.play();
     })
     .catch(error => {
         console.log(error);

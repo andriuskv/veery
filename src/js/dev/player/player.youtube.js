@@ -14,10 +14,7 @@ function onPlayerStateChange({ data: state }) {
             isStoredTrack = false;
             return;
         }
-        const startTime = Math.floor(ytPlayer.getCurrentTime());
-        const repeatTrack = ytPlayer.playVideo.bind(ytPlayer);
-
-        onTrackStart(startTime, repeatTrack);
+        onTrackStart(Math.floor(ytPlayer.getCurrentTime()));
     }
 }
 
