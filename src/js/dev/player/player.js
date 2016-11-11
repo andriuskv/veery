@@ -82,7 +82,7 @@ function beforeTrackStart(track, id, scrollToTrack) {
     scrollToTrack = false;
 }
 
-function onTrackStart(startTime, repeatCb) {
+function onTrackStart(startTime) {
     const track = playlist.getCurrentTrack();
     const id = playlist.getActivePlaylistId();
     const time = {
@@ -98,18 +98,7 @@ function onTrackStart(startTime, repeatCb) {
         playlistId: id,
         name: track.name
     });
-    controls.elapsedTime.start(time, onTrackEnd(repeatCb));
-}
-
-function onTrackEnd(repeatCb) {
-    return function() {
-        if (!getSetting("repeat")) {
-            playNextTrack();
-            return;
-        }
-        controls.resetTrackBar();
-        repeatCb();
-    };
+    controls.elapsedTime.start(time);
 }
 
 function toggleTrackPlaying({ play, pause }) {
@@ -298,6 +287,14 @@ document.getElementById("js-tab-container").addEventListener("dblclick", ({ targ
     }
 });
 
+window.addEventListener("track-end", () => {
+    if (!getSetting("repeat")) {
+        playNextTrack();
+        return;
+    }
+    playNewTrack(playlist.getCurrentTrack());
+});
+
 export {
     playTrack,
     playNextTrack,
@@ -307,6 +304,5 @@ export {
     seekTo,
     setVolume,
     onTrackStart,
-    onTrackEnd,
     storedTrack
 };

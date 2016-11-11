@@ -1,5 +1,5 @@
 import { setSetting, getSetting } from "./../settings.js";
-import { capitalize, formatTime } from "./../main.js";
+import { capitalize, formatTime, dispatchEvent } from "./../main.js";
 import { getCurrentTrack } from "./../playlist/playlist.js";
 import * as player from "./player.js";
 
@@ -13,7 +13,7 @@ const elapsedTime = (function() {
         }
     }
 
-    function updateTrackSlider(track, startTime, elapsed, trackEndCb) {
+    function updateTrackSlider(track, startTime, elapsed) {
         const ideal = performance.now() - startTime;
         const diff = ideal - elapsed;
 
@@ -31,23 +31,19 @@ const elapsedTime = (function() {
             if (track.currentTime < track.duration) {
                 track.currentTime += 1;
                 elapsed += 1000;
-                updateTrackSlider(track, startTime, elapsed, trackEndCb);
+                updateTrackSlider(track, startTime, elapsed);
             }
             else {
-                trackEndCb();
+                dispatchEvent("track-end");
             }
         }, 1000 - diff);
     }
 
-    function update(track, trackEndCb) {
+    function start(track) {
         const startTime = performance.now();
 
-        updateTrackSlider(track, startTime, 0, trackEndCb);
-    }
-
-    function start(track, onTrackEnd) {
         stop();
-        update(track, onTrackEnd);
+        updateTrackSlider(track, startTime, 0);
     }
 
     return { stop, start };

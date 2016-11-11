@@ -1,15 +1,14 @@
-/* global SC */
-
+import { initialize, resolve } from "soundcloud";
 import { formatTime } from "./main.js";
 import { addImportedPlaylist, showNotice } from "./playlist/playlist.import.js";
 import { storedTrack } from "./player/player.js";
 
-function init() {
-    SC.initialize({
+(function() {
+    initialize({
         client_id: ""
     });
     storedTrack.setPlayerAsReady("soundcloud");
-}
+})();
 
 function parseTracks(tracks) {
     return tracks.map((track, index) => {
@@ -31,7 +30,7 @@ function parseTracks(tracks) {
 }
 
 function fetchPlaylist(url) {
-    SC.resolve(url).then(playlist => {
+    resolve(url).then(playlist => {
         if (Array.isArray(playlist)) {
             return {
                 id: playlist[0].user_id.toString(),
@@ -56,4 +55,6 @@ function fetchPlaylist(url) {
     });
 }
 
-export { init, fetchPlaylist };
+export {
+    fetchPlaylist
+};

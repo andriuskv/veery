@@ -15,9 +15,8 @@
     background-color: $color2;
 }
 .main-icon {
-    width: 80px;
-    height: 80px;
-    margin-right: 6px;
+    width: 100%;
+    height: 100%;
 }
 .main-title {
     margin-top: 0;
@@ -25,10 +24,6 @@
     color: $base-text-color;
     font-size: 24px;
     cursor: default;
-
-    span {
-        color: $brand-color;
-    }
 }
 .sidebar-nav {
     flex-basis: 50%;
