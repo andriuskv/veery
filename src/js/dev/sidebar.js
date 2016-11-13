@@ -1,6 +1,9 @@
 import { removeElement } from "./main.js";
 import { createNewPlaylistInputForm, onNewPlaylistFormSubmit } from "./playlist/playlist.manage.js";
 
+let animationId = 0;
+let timeoutId = 0;
+
 function getSidebarEntry(id) {
     return document.getElementById(`js-sidebar-entry-${id}`);
 }
@@ -48,13 +51,41 @@ function removeActiveIcon() {
     }
 }
 
+function slideElementLeft(element, width, maxWidth) {
+    const left = Number.parseInt(element.style.left || 0, 10);
+
+    element.style.left = Math.abs(left) < width + 10 ? `${left - 1}px` : `${maxWidth}px`;
+    animationId = requestAnimationFrame(() => {
+        slideElementLeft(element, width, maxWidth);
+    });
+}
+
+function handleMouseenter({ target }) {
+    const width = target.scrollWidth;
+    const maxWidth = target.parentElement.offsetWidth - 8;
+
+    if (width > maxWidth) {
+        this.addEventListener("mouseleave", handleMouseleave);
+        timeoutId = setTimeout(() => {
+            slideElementLeft(target, width, maxWidth);
+        }, 400);
+    }
+}
+
+function handleMouseleave({ target }) {
+    this.removeEventListener("mouseleave", handleMouseleave);
+    clearTimeout(timeoutId);
+    cancelAnimationFrame(animationId);
+    target.style.left = 0;
+}
+
 function createTrackInfo() {
     const trackInfoElement = `
         <div id="js-track-info">
             <div class="track-art-container">
                 <img src="" id="js-track-art" class="track-art" alt="track art">
             </div>
-            <div class="track-info">
+            <div class="track-name">
                 <div id="js-track-title" class="track-title"></div>
                 <div id="js-track-artist" class="track-artist"></div>
             </div>
@@ -62,6 +93,8 @@ function createTrackInfo() {
     `;
 
     document.querySelector(".sidebar").insertAdjacentHTML("beforeend", trackInfoElement);
+    document.getElementById("js-track-title").addEventListener("mouseenter", handleMouseenter);
+    document.getElementById("js-track-artist").addEventListener("mouseenter", handleMouseenter);
 }
 
 function setTrackArt(track) {
@@ -81,6 +114,8 @@ function showTrackInfo(track) {
 
     if (!track) {
         if (trackInfoElement) {
+            document.getElementById("js-track-title").removeEventListener("mouseenter", handleMouseenter);
+            document.getElementById("js-track-artist").removeEventListener("mouseenter", handleMouseenter);
             removeElement(trackInfoElement);
         }
         document.title = "Veery";
