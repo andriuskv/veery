@@ -102,20 +102,21 @@
     height: 100px;
     object-fit: scale-down;
 }
-.track-info {
+.track-name {
     height: 40px;
-    padding: 4px;
+    padding: 4px 0;
+    border-left: 4px solid $color2;
+    border-right: 4px solid $color2;
     background-color: $color2;
-    white-space: nowrap;
     color: $base-text-color;
+    white-space: nowrap;
+    overflow: hidden;
 }
 .track-title {
-    @include text-truncate;
-
+    position: relative;
     font-size: 16px;
 }
 .track-artist {
-    @include text-truncate;
-
+    position: relative;
     font-size: 12px;
 }
