@@ -72,6 +72,31 @@ function filterDuplicateTracks(tracks, existingTracks) {
     }, []);
 }
 
+function replaceInvalidImages(tracks) {
+    return new Promise(resolve => {
+        let i = 0;
+
+        tracks.forEach(track => {
+            const image = new Image();
+
+            image.onload = function() {
+                i += 1;
+                if (i === tracks.length) {
+                    resolve(tracks);
+                }
+            };
+            image.onerror = function() {
+                track.thumbnail = "assets/images/album-art-placeholder.png";
+                i += 1;
+                if (i === tracks.length) {
+                    resolve(tracks);
+                }
+            };
+            image.src = track.thumbnail;
+        });
+    });
+}
+
 function addImportedPlaylist(importOption, newPlaylist) {
     const pl = getPlaylistById(newPlaylist.id) || createPlaylist({
         id: newPlaylist.id,
@@ -80,7 +105,10 @@ function addImportedPlaylist(importOption, newPlaylist) {
     });
     const tracks = filterDuplicateTracks(newPlaylist.tracks, pl.tracks);
 
-    updatePlaylist(pl, tracks, importOption);
+    replaceInvalidImages(tracks)
+    .then(tracks => {
+        updatePlaylist(pl, tracks, importOption);
+    });
 }
 
 function createPlaylistImportForm(container) {
