@@ -35,7 +35,7 @@
     "csso": "^2.3.0",
     "eslint": "^3.10.0",
     "live-server": "^1.1.0",
-    "node-sass": "^3.11.3",
+    "node-sass": "^3.12.2",
     "onchange": "^3.0.2",
     "postcss-cli": "^2.6.0",
     "webpack": "^1.13.3"
