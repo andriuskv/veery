@@ -52,12 +52,12 @@ function showNotice(option, message) {
     }, 3200);
 }
 
-function importPlaylist(name, value) {
-    if (name === "youtube") {
-        yt.fetchPlaylist(value);
+function importPlaylist(url) {
+    if (url.includes("youtube")) {
+        yt.fetchPlaylist(url);
     }
-    else if (name === "soundcloud") {
-        sc.fetchPlaylist(value);
+    else if (url.includes("soundcloud")) {
+        sc.fetchPlaylist(url);
     }
 }
 
@@ -101,6 +101,7 @@ function addImportedPlaylist(importOption, newPlaylist) {
     const pl = getPlaylistById(newPlaylist.id) || createPlaylist({
         id: newPlaylist.id,
         title: newPlaylist.title,
+        url: newPlaylist.url,
         type: "grid"
     });
     const tracks = filterDuplicateTracks(newPlaylist.tracks, pl.tracks);
@@ -179,11 +180,11 @@ function showFilePicker(choice) {
 }
 
 function handleImportFormSubmit(event) {
-    const value = event.target.elements["playlist-url"].value.trim();
+    const url = event.target.elements["playlist-url"].value.trim();
 
-    if (value) {
+    if (url) {
         createImportOptionMask(option);
-        importPlaylist(option, value);
+        importPlaylist(url);
         event.target.reset();
     }
     event.preventDefault();
@@ -230,6 +231,7 @@ window.addEventListener("load", function onLoad() {
 
 export {
     setOption,
+    importPlaylist,
     addImportedPlaylist,
     showNotice,
     createImportOptionMask,

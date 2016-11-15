@@ -45,6 +45,7 @@ function fetchPlaylist(url) {
         };
     })
     .then(pl => {
+        pl.url = url;
         addImportedPlaylist("soundcloud", pl);
     })
     .catch(error => {

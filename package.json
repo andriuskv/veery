@@ -33,9 +33,9 @@
     "babel-loader": "^6.2.7",
     "babel-preset-latest": "^6.16.0",
     "csso": "^2.3.0",
-    "eslint": "^3.10.0",
+    "eslint": "^3.10.1",
     "live-server": "^1.1.0",
-    "node-sass": "^3.12.2",
+    "node-sass": "^3.12.5",
     "onchange": "^3.0.2",
     "postcss-cli": "^2.6.0",
     "webpack": "^1.13.3"
