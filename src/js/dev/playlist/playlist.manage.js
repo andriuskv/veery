@@ -26,7 +26,7 @@ function initPlaylist(pl, toggle = router.isActive("manage")) {
     router.add(route);
     playlistView.add(pl);
     createSidebarEntry(pl.title, pl.id);
-    createPlaylistEntry(pl.title, pl.id);
+    createPlaylistEntry(pl.title, pl.id, pl.url);
     resortTracks(pl);
 
     if (toggle) {

@@ -113,6 +113,7 @@ function fetchPlaylist(url) {
     .then(getPlaylistItems)
     .then(parseItems)
     .then(pl => {
+        pl.url = url;
         addImportedPlaylist("youtube", pl);
     })
     .catch(error => {

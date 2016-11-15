@@ -3,6 +3,7 @@ import { postMessageToWorker } from "./../worker.js";
 import { editSidebarEntry } from "./../sidebar.js";
 import { getPlaylistById } from "./playlist.js";
 import { removePlaylist } from "./playlist.manage.js";
+import { importPlaylist, createImportOptionMask } from "./playlist.import.js";
 
 function createEntryContainer(id) {
     const div = document.createElement("div");
@@ -34,17 +35,19 @@ function getEntryContainer() {
     return document.getElementById(containerId) || createEntryContainer(containerId);
 }
 
-function createPlaylistEntry(title, id) {
+function createPlaylistEntry(title, id, url) {
     const playlistEntryContainer = getEntryContainer();
     const entry = `
         <li class="pl-entry" data-id=${id}>
             <form class="pl-entry-form">
                 <input type="text" class="input pl-entry-title" value="${title}" readonly>
                 <button type="submit" class="icon-pencil btn btn-transparent"
-                data-action="edit" title="Edit"></button>
-                <button class="icon-trash btn btn-transparent"
-                data-action="remove" title="Remove playlist"></button>
+                    data-action="edit" title="Edit"></button>
             </form>
+            <button type="submit" class="icon-cw btn btn-transparent ${!url ? "hidden" : ""}"
+                data-action="refresh" title="Refresh"></button>
+            <button class="icon-trash btn btn-transparent"
+                data-action="remove" title="Remove playlist"></button>
         </li>
     `;
 
@@ -113,6 +116,21 @@ function handleClickOnEntryContainer(event) {
     if (action === "remove") {
         removePlaylist(entry.attrValue);
         removePlaylistEntry(entry.elementRef);
+        return;
+    }
+    if (action === "refresh") {
+        const { url } = getPlaylistById(entry.attrValue);
+        let option = "";
+
+        if (url.includes("youtube")) {
+            option = "youtube";
+        }
+        else if (url.includes("soundcloud")) {
+            option = "soundcloud";
+        }
+        createImportOptionMask(option);
+        importPlaylist(url);
+        event.target.classList.add("hidden");
         return;
     }
     editPlaylistTitle(action, entry.elementRef, entry.attrValue);

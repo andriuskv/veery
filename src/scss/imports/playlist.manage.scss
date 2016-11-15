@@ -89,18 +89,24 @@
     background-color: $color1;
 }
 .pl-entry {
+    display: flex;
     padding: 4px;
     border-bottom: 1px solid $color3;
+
+    .btn.hidden {
+        display: none;
+    }
+}
+.pl-entry-form {
+    flex-grow: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 
     input,
     .btn.active {
         background-color: $color3;
     }
-}
-.pl-entry-form {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
 }
 .pl-entry-title {
     flex-grow: 1;
@@ -111,7 +117,7 @@
     }
 }
 
-@media (max-width: 724px) {
+@media (max-width: 750px) {
     .import-option-container {
         margin-bottom: 8px;
     }
