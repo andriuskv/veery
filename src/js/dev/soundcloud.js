@@ -29,25 +29,19 @@ function parseTracks(tracks) {
     });
 }
 
+function addPlaylist(playlist) {
+    addImportedPlaylist("soundcloud", playlist);
+}
+
 function fetchPlaylist(url) {
-    resolve(url).then(playlist => {
-        if (Array.isArray(playlist)) {
-            return {
-                id: playlist[0].user_id.toString(),
-                title: `${playlist[0].user.username} playlist`,
-                tracks: parseTracks(playlist)
-            };
-        }
-        return {
-            id: playlist.id.toString(),
-            title: playlist.title,
-            tracks: parseTracks(playlist.tracks)
-        };
-    })
-    .then(pl => {
-        pl.url = url;
-        addImportedPlaylist("soundcloud", pl);
-    })
+    resolve(url)
+    .then(playlist => ({
+        url,
+        id: playlist.id ? playlist.id.toString() : playlist[0].user_id.toString(),
+        title: playlist.title || playlist[0].user.username,
+        tracks: playlist.tracks ? parseTracks(playlist.tracks) : parseTracks(playlist)
+    }))
+    .then(addPlaylist)
     .catch(error => {
         console.log(error);
         if (error.status === 404) {

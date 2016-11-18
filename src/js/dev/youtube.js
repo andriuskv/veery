@@ -39,30 +39,27 @@ function parseDuration(duration) {
 }
 
 function getVideoDuration(playlist) {
-    const ids = playlist.items.map(item => item.snippet.resourceId.videoId).join();
+    playlist.id = playlist.items.map(item => item.snippet.resourceId.videoId).join();
 
-    return getYoutube("videos", "contentDetails", "id", ids)
-    .then(data => {
-        playlist.items = playlist.items.map((item, index) => {
-            item.durationInSeconds = parseDuration(data.items[index].contentDetails.duration);
-            return item;
+    return getYoutube("videos", "contentDetails", "id", playlist)
+        .then(data => {
+            playlist.items = playlist.items.map((item, index) => {
+                item.durationInSeconds = parseDuration(data.items[index].contentDetails.duration);
+                return item;
+            });
+            return playlist;
         });
-        return playlist;
-    });
 }
 
-function getYoutube(path, part, filter, id, token) {
+function getYoutube(path, part, filter, pl) {
     const key = "";
-    let params = `part=${part}&${filter}=${id}&maxResults=50&key=${key}`;
+    let params = `part=${part}&${filter}=${pl.id}&maxResults=50&key=${key}`;
 
-    if (token) {
-        params += `&pageToken=${token}`;
+    if (pl.token) {
+        params += `&pageToken=${pl.token}`;
     }
     return fetch(`https://www.googleapis.com/youtube/v3/${path}?${params}`)
-    .then(response => response.json())
-    .catch(error => {
-        console.log(error);
-    });
+        .then(response => response.json());
 }
 
 function filterInvalidVideos(playlist) {
@@ -75,30 +72,31 @@ function filterInvalidVideos(playlist) {
 }
 
 function getPlaylistItems(playlist) {
-    return getYoutube("playlistItems", "snippet", "playlistId", playlist.id, playlist.token)
-    .then(filterInvalidVideos)
-    .then(getVideoDuration)
-    .then(data => {
-        playlist.token = data.nextPageToken;
-        playlist.tracks.push(...data.items);
+    return getYoutube("playlistItems", "snippet", "playlistId", playlist)
+        .then(filterInvalidVideos)
+        .then(getVideoDuration)
+        .then(data => {
+            playlist.token = data.nextPageToken;
+            playlist.tracks.push(...data.items);
 
-        if (playlist.token) {
-            return getPlaylistItems(playlist);
-        }
-        return playlist;
-    });
+            return playlist.token ? getPlaylistItems(playlist) : playlist;
+        });
 }
 
-function getPlaylistTitle(data) {
-    if (!data.items.length) {
-        showNotice("youtube", "Playlist was not found");
-        return;
-    }
-    return {
-        id: data.items[0].id,
-        title: data.items[0].snippet.title,
-        tracks: []
-    };
+function getPlaylistTitle(playlist) {
+    return getYoutube("playlists", "snippet", "id", playlist)
+        .then(data => {
+            if (!data.items.length) {
+                showNotice("youtube", "Playlist was not found");
+                return;
+            }
+            playlist.title = data.items[0].snippet.title;
+            return playlist;
+        });
+}
+
+function addPlaylist(playlist) {
+    addImportedPlaylist("youtube", playlist);
 }
 
 function fetchPlaylist(url) {
@@ -106,19 +104,21 @@ function fetchPlaylist(url) {
         showNotice("youtube", "Invalid url");
         return;
     }
-    const id = url.split("list=")[1];
+    const playlist = {
+        url,
+        id: url.split("list=")[1],
+        tracks: []
+    };
 
-    getYoutube("playlists", "snippet", "id", id)
-    .then(getPlaylistTitle)
+    getPlaylistTitle(playlist)
     .then(getPlaylistItems)
     .then(parseItems)
-    .then(pl => {
-        pl.url = url;
-        addImportedPlaylist("youtube", pl);
-    })
+    .then(addPlaylist)
     .catch(error => {
         console.log(error);
     });
 }
 
-export { fetchPlaylist };
+export {
+    fetchPlaylist
+};
