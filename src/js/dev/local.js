@@ -61,7 +61,7 @@ function parseTracks(tracks, parsedTracks, startIndex) {
     .then(data => {
         parsedTracks.push({
             index: startIndex + parsedTracks.length,
-            title: data[0].title.trim(),
+            title: data[0].artist ? data[0].title.trim(): tracks[0].name,
             artist: data[0].artist ? data[0].artist.trim() : "",
             album: data[0].album ? data[0].album.trim() : "",
             name: tracks[0].name,

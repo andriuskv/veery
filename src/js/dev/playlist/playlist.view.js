@@ -7,6 +7,7 @@ import { enableTrackSelection } from "./playlist.track-selection.js";
 import { hideMoveToBtn } from "./playlist.move-to.js";
 
 let timeout = 0;
+let filteredPlaylistId = "";
 
 function createListItem(track) {
     return `
@@ -134,17 +135,15 @@ function showPlayingTrack(index, id, scrollToTrack) {
 }
 
 function filterTracks(tracks, trackElements, query) {
-    query = query.trim().toLowerCase();
-
     tracks.forEach(track => {
         const trackElement = trackElements[track.index];
-        const title = track.title ? track.title.toLowerCase() : "";
-        const artist = track.artist ? track.artist.toLowerCase() : "";
-        const album = track.album ? track.album.toLowerCase() : "";
-        const name = track.name ? track.name.toLowerCase() : "";
+        const filterString = `
+            ${track.title.toLowerCase()}
+            ${track.artist.toLowerCase()}
+            ${track.album.toLowerCase()}
+        `;
 
-        if (!title.includes(query) && !artist.includes(query) && !album.includes(query)
-            && !name.includes(query)) {
+        if (!filterString.includes(query)) {
             trackElement.classList.add("hidden");
         }
         else {
@@ -205,15 +204,27 @@ function getValueString(value, valueString) {
     return `${value} ${valueString}`;
 }
 
+function filterPlaylist(query = "", id) {
+    const { tracks } = getPlaylistById(id);
+    const trackElements = document.getElementById(`js-${id}`).children;
+
+    filteredPlaylistId = query ? id : "";
+    filterTracks(tracks, trackElements, query);
+}
+
+function resetFilteredPlaylist() {
+    if (filteredPlaylistId) {
+        document.getElementById("js-filter-input").value = "";
+        filterPlaylist("", filteredPlaylistId);
+    }
+}
+
 document.getElementById("js-filter-input").addEventListener("keyup", ({ target }) => {
     if (timeout) {
         clearTimeout(timeout);
     }
     timeout = setTimeout(() => {
-        const { id, tracks } = getPlaylistById(getVisiblePlaylistId());
-        const trackElements = document.getElementById(`js-${id}`).children;
-
-        filterTracks(tracks, trackElements, target.value);
+        filterPlaylist(target.value.trim().toLowerCase(), getVisiblePlaylistId());
     }, 400);
 });
 
@@ -239,5 +250,6 @@ export {
     showPlayingTrack,
     filterTracks,
     togglePlaylistTypeBtn,
-    changePlaylistType
+    changePlaylistType,
+    resetFilteredPlaylist
 };

@@ -2,7 +2,7 @@ import { removeElementClass, dispatchEvent } from "./main.js";
 import { getSidebarEntry } from "./sidebar.js";
 import { removePresentPanels, togglePanel } from "./panels.js";
 import { getPlaylistById } from "./playlist/playlist.js";
-import { changePlaylistType, togglePlaylistTypeBtn } from "./playlist/playlist.view.js";
+import { changePlaylistType, togglePlaylistTypeBtn, resetFilteredPlaylist } from "./playlist/playlist.view.js";
 import { enableTrackSelection, deselectTrackElements } from "./playlist/playlist.track-selection.js";
 import { setSortOptions, createSortPanel, changePlaylistOrder } from "./playlist/playlist.sorting.js";
 import { createMoveToPanel } from "./playlist/playlist.move-to.js";
@@ -45,6 +45,7 @@ function toggleTab(id, playlistTab, ignoreSidebar) {
         setVisiblePlaylistId();
         toggleTabContent("remove");
     }
+    resetFilteredPlaylist();
     document.getElementById(`js-tab-${id}`).classList.add("active");
 
     if (!ignoreSidebar) {
