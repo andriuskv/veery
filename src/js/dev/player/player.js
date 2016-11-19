@@ -46,6 +46,7 @@ const storedTrack = (function () {
         const track = playlist.findTrack(storedTrack.playlistId, storedTrack.name);
 
         if (!track) {
+            removeTrack(track);
             return;
         }
         playlist.setPlaylistAsActive(storedTrack.playlistId);

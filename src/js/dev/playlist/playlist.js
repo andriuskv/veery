@@ -59,8 +59,8 @@ function updateCurrentTrackIndex(newIndex) {
 }
 
 function findTrack(id, trackId) {
-    const { tracks } = getPlaylistById(id);
-    const track = tracks.find(track => track.name === trackId);
+    const pl = getPlaylistById(id);
+    const track = pl ? pl.tracks.find(track => track.name === trackId) : null;
 
     return getTrack(track);
 }
