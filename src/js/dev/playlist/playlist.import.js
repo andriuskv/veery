@@ -1,5 +1,4 @@
 import { removeElement, removeElementClass, getElementByAttr, scriptLoader } from "./../main.js";
-import { initializeWorker } from "./../worker.js";
 import { getPlaylistById, createPlaylist } from "./playlist.js";
 import { updatePlaylist } from "./playlist.manage.js";
 import { showDropboxChooser } from "./../dropbox.js";
@@ -205,24 +204,16 @@ document.getElementById("js-import-options").addEventListener("click", ({ target
         setOption();
     }
     else if (option === "dropbox") {
-        showDropboxChooser();
+        scriptLoader.load({
+            src: "https://www.dropbox.com/static/api/2/dropins.js",
+            id: "dropboxjs",
+            "data-app-key": ""
+        })
+        .then(showDropboxChooser);
     }
     else {
         selectOption(item.elementRef);
     }
-});
-
-window.addEventListener("load", function onLoad() {
-    scriptLoader.load({ src: "https://www.youtube.com/iframe_api" });
-    scriptLoader.load({ src: "js/libs/metadata-audio-parser.min.js" });
-    scriptLoader.load({
-        src: "https://www.dropbox.com/static/api/2/dropins.js",
-        id: "dropboxjs",
-        "data-app-key": ""
-    });
-
-    initializeWorker();
-    window.removeEventListener("load", onLoad);
 });
 
 export {

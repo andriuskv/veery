@@ -1,6 +1,6 @@
 /* global parse_audio_metadata */
 
-import { formatTime } from "./main.js";
+import { scriptLoader, formatTime } from "./main.js";
 import { getPlaylistById, createPlaylist } from "./playlist/playlist.js";
 import { updatePlaylist } from "./playlist/playlist.manage.js";
 import { createImportOptionMask, showNotice } from "./playlist/playlist.import.js";
@@ -77,13 +77,14 @@ function parseTracks(tracks, parsedTracks, startIndex) {
 }
 
 function processNewTracks(pl, newTracks, parseTracks, importOption) {
-    return parseTracks(newTracks, [], pl.tracks.length)
-    .then(tracks => {
-        updatePlaylist(pl, tracks, importOption);
-    })
-    .catch(error => {
-        console.log(error);
-    });
+    return scriptLoader.load({ src: "js/libs/metadata-audio-parser.min.js" })
+        .then(() => parseTracks(newTracks, [], pl.tracks.length))
+        .then(tracks => {
+            updatePlaylist(pl, tracks, importOption);
+        })
+        .catch(error => {
+            console.log(error);
+        });
 }
 
 function addTracks(importOption, pl, newTracks, parseTracks) {
@@ -107,7 +108,8 @@ function selectLocalFiles(files) {
     const pl = getPlaylistById("local-files") || createPlaylist({
         id: "local-files",
         title: "Local files",
-        type: "list"
+        type: "list",
+        player: "native"
     });
 
     addTracks("local", pl, supportedTracks, parseTracks);

@@ -18,9 +18,10 @@ const storedTrack = (function () {
         youtube: false,
         soundcloud: false
     };
+    let initialized = false;
 
     function getTrack() {
-        return JSON.parse(localStorage.getItem("track"));
+        return JSON.parse(localStorage.getItem("track")) || {};
     }
 
     function saveTrack(track) {
@@ -37,9 +38,7 @@ const storedTrack = (function () {
         localStorage.removeItem("track");
     }
 
-    function initTrack() {
-        const storedTrack = getTrack();
-
+    function initTrack(storedTrack) {
         if (!storedTrack) {
             return;
         }
@@ -57,10 +56,15 @@ const storedTrack = (function () {
     }
 
     function setPlayerAsReady(player) {
+        if (initialized) {
+            return;
+        }
+        const storedTrack = getTrack();
         players[player] = true;
 
-        if (Object.keys(players).every(player => players[player])) {
-            initTrack();
+        if (player === storedTrack.player || Object.keys(players).every(player => players[player])) {
+            initialized = true;
+            initTrack(storedTrack);
         }
     }
 
@@ -97,7 +101,8 @@ function onTrackStart(startTime) {
     controls.togglePlayBtn(paused);
     storedTrack.saveTrack({
         playlistId: id,
-        name: track.name
+        name: track.name,
+        player: track.player
     });
     controls.elapsedTime.start(time);
 }

@@ -22,9 +22,6 @@
   },
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "soundcloud": "^3.1.2"
-  },
   "devDependencies": {
     "autoprefixer": "^6.5.3",
     "babel-cli": "^6.18.0",

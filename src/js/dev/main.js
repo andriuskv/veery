@@ -1,21 +1,21 @@
 const scriptLoader = (function() {
     const loaded = [];
 
-    function loadScript(attrs, cb) {
+    function loadScript(attrs) {
         if (loaded.includes(attrs.src)) {
-            return true;
+            return Promise.resolve();
         }
-        const script = document.createElement("script");
+        return new Promise(resolve => {
+            const script = document.createElement("script");
 
-        Object.keys(attrs).forEach(attr => {
-            script.setAttribute(attr, attrs[attr]);
+            Object.keys(attrs).forEach(attr => {
+                script.setAttribute(attr, attrs[attr]);
+            });
+            document.getElementsByTagName("body")[0].appendChild(script);
+            loaded.push(attrs.src);
+
+            script.onload = resolve;
         });
-        document.getElementsByTagName("body")[0].appendChild(script);
-        loaded.push(attrs.src);
-
-        if (cb) {
-            script.onload = cb;
-        }
     }
 
     return {
