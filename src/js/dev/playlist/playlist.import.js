@@ -97,18 +97,14 @@ function replaceInvalidImages(tracks) {
     });
 }
 
-function addImportedPlaylist(importOption, newPlaylist) {
-    const pl = getPlaylistById(newPlaylist.id) || createPlaylist({
-        id: newPlaylist.id,
-        title: newPlaylist.title,
-        url: newPlaylist.url,
-        type: "grid"
-    });
-    const tracks = filterDuplicateTracks(newPlaylist.tracks, pl.tracks);
+function addImportedPlaylist(playlist) {
+    const tracks = playlist.tracks.splice(0);
+    const pl = getPlaylistById(playlist.id) || createPlaylist(playlist);
+    const newTracks = filterDuplicateTracks(tracks, pl.tracks);
 
-    replaceInvalidImages(tracks)
+    replaceInvalidImages(newTracks)
     .then(tracks => {
-        updatePlaylist(pl, tracks, importOption);
+        updatePlaylist(pl, tracks, playlist.player);
     });
 }
 
