@@ -1,4 +1,4 @@
-import { formatTime } from "./main.js";
+import { scriptLoader, formatTime } from "./main.js";
 import { addImportedPlaylist, showNotice } from "./playlist/playlist.import.js";
 
 function parseItems(playlist) {
@@ -112,6 +112,9 @@ function fetchPlaylist(url) {
     .then(getPlaylistItems)
     .then(parseItems)
     .then(addImportedPlaylist)
+    .then(() => {
+        scriptLoader.load({ src: "https://www.youtube.com/iframe_api" });
+    })
     .catch(error => {
         console.log(error);
     });

@@ -40,7 +40,8 @@ function showDropboxChooser() {
             const pl = getPlaylistById("dropbox-tracks") || createPlaylist({
                 id: "dropbox-tracks",
                 title: "Dropbox tracks",
-                type: "grid"
+                type: "grid",
+                player: "native"
             });
 
             setOption();

@@ -1,4 +1,6 @@
-import { stream } from "soundcloud";
+/* global SC */
+
+import { initSoundCloud } from "./../soundcloud.js";
 import { setCurrentTrack } from "./../playlist/playlist.js";
 import { onTrackStart } from "./player.js";
 
@@ -6,7 +8,9 @@ let scPlayer = null;
 
 function playTrack(track, volume, startTime) {
     setCurrentTrack(track);
-    stream(`/tracks/${track.id}`).then(trackPlayer => {
+    initSoundCloud()
+    .then(() => SC.stream(`/tracks/${track.id}`))
+    .then(trackPlayer => {
         if (scPlayer) {
             scPlayer.dispose();
         }

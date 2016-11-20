@@ -1,14 +1,19 @@
-import { initialize, resolve } from "soundcloud";
-import { formatTime } from "./main.js";
-import { addImportedPlaylist, showNotice } from "./playlist/playlist.import.js";
-import { storedTrack } from "./player/player.js";
+/* global SC */
 
-(function() {
-    initialize({
-        client_id: ""
-    });
-    storedTrack.setPlayerAsReady("soundcloud");
-})();
+import { scriptLoader, formatTime } from "./main.js";
+import { addImportedPlaylist, showNotice } from "./playlist/playlist.import.js";
+
+let initialized = false;
+
+function initSoundCloud() {
+    if (initialized) {
+        return Promise.resolve();
+    }
+    initialized = true;
+
+    return scriptLoader.load({ src: "js/libs/sdk.min.js" })
+        .then(() => SC.initialize({ client_id: "" }));
+}
 
 function parseTracks(tracks) {
     return tracks.map((track, index) => {
@@ -30,7 +35,8 @@ function parseTracks(tracks) {
 }
 
 function fetchPlaylist(url) {
-    resolve(url)
+    initSoundCloud()
+    .then(() => SC.resolve(url))
     .then(playlist => ({
         url,
         id: playlist.id ? playlist.id.toString() : playlist[0].user_id.toString(),
@@ -49,5 +55,6 @@ function fetchPlaylist(url) {
 }
 
 export {
+    initSoundCloud,
     fetchPlaylist
 };
