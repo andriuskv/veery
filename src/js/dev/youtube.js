@@ -95,10 +95,6 @@ function getPlaylistTitle(playlist) {
         });
 }
 
-function addPlaylist(playlist) {
-    addImportedPlaylist("youtube", playlist);
-}
-
 function fetchPlaylist(url) {
     if (!url.includes("list=")) {
         showNotice("youtube", "Invalid url");
@@ -107,13 +103,15 @@ function fetchPlaylist(url) {
     const playlist = {
         url,
         id: url.split("list=")[1],
-        tracks: []
+        tracks: [],
+        player: "youtube",
+        type: "grid"
     };
 
     getPlaylistTitle(playlist)
     .then(getPlaylistItems)
     .then(parseItems)
-    .then(addPlaylist)
+    .then(addImportedPlaylist)
     .catch(error => {
         console.log(error);
     });

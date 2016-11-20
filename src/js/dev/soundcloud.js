@@ -29,19 +29,17 @@ function parseTracks(tracks) {
     });
 }
 
-function addPlaylist(playlist) {
-    addImportedPlaylist("soundcloud", playlist);
-}
-
 function fetchPlaylist(url) {
     resolve(url)
     .then(playlist => ({
         url,
         id: playlist.id ? playlist.id.toString() : playlist[0].user_id.toString(),
         title: playlist.title || playlist[0].user.username,
-        tracks: playlist.tracks ? parseTracks(playlist.tracks) : parseTracks(playlist)
+        tracks: playlist.tracks ? parseTracks(playlist.tracks) : parseTracks(playlist),
+        player: "soundcloud",
+        type: "grid"
     }))
-    .then(addPlaylist)
+    .then(addImportedPlaylist)
     .catch(error => {
         console.log(error);
         if (error.status === 404) {

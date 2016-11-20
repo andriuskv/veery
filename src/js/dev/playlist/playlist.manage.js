@@ -37,6 +37,7 @@ function initPlaylist(pl, toggle = router.isActive("manage")) {
 function appendToPlaylist(pl, tracks, toggle = router.isActive("manage")) {
     const route = `playlist/${pl.id}`;
 
+    pl.tracks = playlist.resetTrackIndexes(pl.tracks);
     playlistView.append(pl, tracks);
     resortTracks(pl);
 
