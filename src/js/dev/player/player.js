@@ -216,8 +216,8 @@ function playPreviousTrack() {
     play("direction", -1);
 }
 
-function stopTrack(track) {
-    if (track.player === "native") {
+function stopTrack(track, once) {
+    if (!once && track.player === "native") {
         nPlayer.stopTrack(track);
     }
     else if (track.player === "youtube") {
@@ -228,24 +228,26 @@ function stopTrack(track) {
     }
 }
 
-function stopPlayer() {
+function stopPlayer(once) {
     const currentTrack = playlist.getCurrentTrack();
 
     if (currentTrack) {
-        stopTrack(currentTrack);
+        stopTrack(currentTrack, once);
     }
-    resetPlayer();
+    resetPlayer(once);
 }
 
-function resetPlayer() {
+function resetPlayer(once) {
+    if (!once) {
+        playlist.setCurrentTrack();
+        playlist.setPlaylistAsActive();
+        showTrackInfo();
+    }
     paused = true;
-    playlist.setCurrentTrack();
-    playlist.setPlaylistAsActive();
     controls.resetTrackBar();
     controls.showTrackDuration();
     controls.togglePlayBtn(paused);
     removeActiveIcon();
-    showTrackInfo();
     removeElementClass("track", "playing");
 }
 
@@ -294,6 +296,10 @@ document.getElementById("js-tab-container").addEventListener("dblclick", ({ targ
 });
 
 window.addEventListener("track-end", () => {
+    if (getSetting("once")) {
+        stopPlayer(true);
+        return;
+    }
     if (!getSetting("repeat")) {
         playNextTrack();
         return;
