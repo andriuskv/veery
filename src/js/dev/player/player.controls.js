@@ -167,6 +167,16 @@ document.getElementById("js-volume-bar").addEventListener("mousedown", event => 
 document.getElementById("js-controls").addEventListener("click", ({ target }) => {
     const item = target.getAttribute("data-control-item");
 
+    if (item === "repeat" || item === "shuffle" || item === "once") {
+        target.classList.toggle("active");
+        setSetting(item, !getSetting(item));
+
+        if (item === "shuffle") {
+            player.toggleShuffle(!getSetting(item));
+        }
+        return;
+    }
+
     switch (item) {
         case "previous":
             player.playPreviousTrack();
@@ -181,29 +191,23 @@ document.getElementById("js-controls").addEventListener("click", ({ target }) =>
         case "next":
             player.playNextTrack();
             break;
-        case "repeat":
-            target.classList.toggle("active");
-            setSetting(item, !getSetting(item));
-            break;
-        case "shuffle":
-            target.classList.toggle("active");
-            setSetting(item, !getSetting(item));
-            player.toggleShuffle(!getSetting(item));
-            break;
     }
 });
 
+function toggleSetting(settingName) {
+    const setting = getSetting(settingName);
+
+    if (setting) {
+        document.querySelector(`[data-control-item="${settingName}"]`).classList.add("active");
+    }
+}
+
 window.addEventListener("DOMContentLoaded", function onLoad() {
-    const repeat = getSetting("repeat");
-    const shuffle = getSetting("shuffle");
     const volume = getSetting("volume");
 
-    if (repeat) {
-        document.querySelector(`[data-control-item="repeat"]`).classList.add("active");
-    }
-    if (shuffle) {
-        document.querySelector(`[data-control-item="shuffle"]`).classList.add("active");
-    }
+    toggleSetting("repeat");
+    toggleSetting("shuffle");
+    toggleSetting("once");
     setVolumeBarInnerWidth(volume * 100);
     window.removeEventListener("DOMContentLoaded", onLoad);
 });
