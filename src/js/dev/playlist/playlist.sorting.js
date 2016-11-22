@@ -15,10 +15,8 @@ function toggleOrderBtn(order = 1) {
 
     if (order === 1) {
         btn.classList.remove("icon-up-big");
-        btn.classList.add("icon-down-big");
     }
     else {
-        btn.classList.remove("icon-down-big");
         btn.classList.add("icon-up-big");
     }
 }
@@ -90,7 +88,7 @@ function getSortOtions(supportedOptions, sortedBy) {
         const activeClass = option === sortedBy ? "active" : "";
 
         return `
-            <li class="playlist-sort-option">
+            <li class="sort-option">
                 <button class="btn btn-transparent ${activeClass}" data-sort="${option}">
                     ${capitalize(option)}
                 </button>
@@ -103,10 +101,10 @@ function createSortPanel(panelId, { type, sortedBy }) {
     const supportedOptions = getSupportedSortOptions(type);
     const sortOptions = getSortOtions(supportedOptions, sortedBy);
     const sortPanelElement = `
-        <ul id="${panelId}" class="playlist-sort-panel">${sortOptions}</ul>
+        <ul id="${panelId}" class="sort-panel">${sortOptions}</ul>
     `;
 
-    document.getElementById("js-playlist-sort-panel-container").insertAdjacentHTML("beforeend", sortPanelElement);
+    document.getElementById("js-sort-panel-container").insertAdjacentHTML("beforeend", sortPanelElement);
     document.getElementById(panelId).addEventListener("click", selectSortOption);
 }
 

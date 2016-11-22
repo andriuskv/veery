@@ -68,7 +68,7 @@ window.addEventListener("click", event => {
         changePlaylistType(item, pl);
     }
     else if (item === "sorting") {
-        panelId = "js-playlist-sort-panel";
+        panelId = "js-sort-panel";
         togglePanel(panelId, pl, createSortPanel);
     }
     else if (item === "order" && pl.sortedBy) {

@@ -72,6 +72,9 @@ function filterDuplicateTracks(tracks, existingTracks) {
 }
 
 function replaceInvalidImages(tracks) {
+    if (!tracks.length) {
+        return Promise.resolve(tracks);
+    }
     return new Promise(resolve => {
         let i = 0;
 
