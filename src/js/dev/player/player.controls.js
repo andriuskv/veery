@@ -1,5 +1,5 @@
 import { setSetting, getSetting } from "./../settings.js";
-import { capitalize, formatTime, dispatchEvent } from "./../main.js";
+import { formatTime, dispatchEvent } from "./../main.js";
 import { getCurrentTrack } from "./../playlist/playlist.js";
 import * as player from "./player.js";
 
@@ -34,6 +34,10 @@ const elapsedTime = (function() {
                 updateTrackSlider(track, startTime, elapsed);
             }
             else {
+                player.storedTrack.updateSavedTrack({
+                    elapsed: 0,
+                    currentTime: 0
+                });
                 dispatchEvent("track-end");
             }
         }, 1000 - diff);
@@ -49,23 +53,11 @@ const elapsedTime = (function() {
     return { stop, start };
 })();
 
-function togglePlayBtnClasses(nextAction, prevAction) {
+function togglePlayBtn(paused) {
     const playBtn = document.getElementById("js-play-btn");
 
-    playBtn.classList.remove(`icon-${prevAction}`);
-    playBtn.classList.add(`icon-${nextAction}`);
-    playBtn.setAttribute("title", capitalize(nextAction));
-}
-
-function togglePlayBtn(paused) {
-    let nextAction = "pause";
-    let prevAction = "play";
-
-    if (paused) {
-        nextAction = "play";
-        prevAction = "pause";
-    }
-    togglePlayBtnClasses(nextAction, prevAction);
+    playBtn.classList.toggle("icon-pause");
+    playBtn.setAttribute("title", paused ? "Play": "Pause");
 }
 
 function getElapsedValue(bar, pageX) {
