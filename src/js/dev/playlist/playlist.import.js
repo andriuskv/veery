@@ -188,6 +188,24 @@ function handleImportFormSubmit(event) {
     event.preventDefault();
 }
 
+document.getElementById("js-import-options").addEventListener("mouseover", function onMouveover({ target }) {
+    const item = getElementByAttr(target, "data-option-id");
+
+    if (!item) {
+        return;
+    }
+    const option = item.attrValue;
+
+    if (option === "dropbox") {
+        this.removeEventListener("mouseover", onMouveover);
+        scriptLoader.load({
+            src: "https://www.dropbox.com/static/api/2/dropins.js",
+            id: "dropboxjs",
+            "data-app-key": ""
+        });
+    }
+});
+
 document.getElementById("js-import-options").addEventListener("click", ({ target }) => {
     const item = getElementByAttr(target, "data-option-id");
 
@@ -207,12 +225,7 @@ document.getElementById("js-import-options").addEventListener("click", ({ target
         setOption();
     }
     else if (option === "dropbox") {
-        scriptLoader.load({
-            src: "https://www.dropbox.com/static/api/2/dropins.js",
-            id: "dropboxjs",
-            "data-app-key": ""
-        })
-        .then(showDropboxChooser);
+        showDropboxChooser();
     }
     else {
         selectOption(item.elementRef);
