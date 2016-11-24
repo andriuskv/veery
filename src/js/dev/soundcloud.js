@@ -34,17 +34,22 @@ function parseTracks(tracks) {
     });
 }
 
-function fetchPlaylist(url) {
-    initSoundCloud()
-    .then(() => SC.resolve(url))
-    .then(playlist => ({
+function parsePlaylist(playlist, url) {
+    return {
         url,
         id: playlist.id ? playlist.id.toString() : playlist[0].user_id.toString(),
         title: playlist.title || playlist[0].user.username,
         tracks: playlist.tracks ? parseTracks(playlist.tracks) : parseTracks(playlist),
         player: "soundcloud",
         type: "grid"
-    }))
+    };
+}
+
+
+function fetchPlaylist(url) {
+    initSoundCloud()
+    .then(() => SC.resolve(url))
+    .then(playlist => parsePlaylist(playlist, url))
     .then(addImportedPlaylist)
     .catch(error => {
         console.log(error);
