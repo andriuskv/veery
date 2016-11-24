@@ -56,7 +56,12 @@ const elapsedTime = (function() {
 function togglePlayBtn(paused) {
     const playBtn = document.getElementById("js-play-btn");
 
-    playBtn.classList.toggle("icon-pause");
+    if (paused) {
+        playBtn.classList.remove("icon-pause");
+    }
+    else {
+        playBtn.classList.add("icon-pause");
+    }
     playBtn.setAttribute("title", paused ? "Play": "Pause");
 }
 
