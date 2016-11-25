@@ -1,4 +1,5 @@
 import { removeElement, removeElementClass, getElementByAttr, isOutsideElement } from "./../main.js";
+import { getSelectedTrackElements } from "./playlist.manage.js";
 import { showMoveToBtn, hideMoveToBtn } from "./playlist.move-to.js";
 
 const startingPoint = {};
@@ -117,6 +118,7 @@ function selectTrackElement(element, selectMultiple) {
         if (!selectMultiple) {
             removeElementClass("track", "selected");
         }
+        keepTracksSelected = true;
         item.elementRef.classList.toggle("selected");
         prevendTrackDeselection(item.elementRef.classList.contains("selected"));
     }
@@ -259,8 +261,10 @@ function onMouseup({ target, ctrlKey }) {
     }
 
     if (selectionEnabled) {
-        resetSelection();
-        prevendTrackDeselection(document.querySelectorAll(".track.selected").length);
+        const selectedElements = getSelectedTrackElements();
+
+        resetSelection(ctrlKey);
+        prevendTrackDeselection(selectedElements.length);
     }
     else {
         selectTrackElement(target, ctrlKey);

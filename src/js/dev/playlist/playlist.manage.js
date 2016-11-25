@@ -137,15 +137,18 @@ function updateCurrentTrack(playlistId, selectedTrackIndexes) {
     }
 }
 
+function getSelectedTrackElements() {
+    return Array.from(document.querySelectorAll(".track.selected"));
+}
+
 function removeSelectedTracks(pl) {
-    const playlistContainer = document.getElementById(`js-${pl.id}`);
-    const selectedElements = Array.from(playlistContainer.querySelectorAll(".track.selected"));
+    const selectedElements = getSelectedTrackElements();
 
     if (selectedElements.length) {
         const selectedTrackIndexes = getSelectedTrackIndexes(selectedElements);
 
         removeSelectedTrackElements(selectedElements);
-        resetTrackElementIndexes(Array.from(playlistContainer.children));
+        resetTrackElementIndexes(Array.from(document.getElementById(`js-${pl.id}`).children));
         pl.tracks = removeSelectedPlaylistTracks(pl, selectedTrackIndexes);
         playlist.shufflePlaybackOrder(pl, getSetting("shuffle"));
         updateCurrentTrack(pl.id, selectedTrackIndexes);
@@ -202,6 +205,8 @@ export {
     removePlaylist,
     refreshPlaylist,
     updatePlaylist,
+    getSelectedTrackIndexes,
+    getSelectedTrackElements,
     onNewPlaylistFormSubmit,
     createNewPlaylistInputForm
 };

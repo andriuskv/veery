@@ -1,14 +1,8 @@
-const path = require("path");
-
 module.exports = {
     entry: "./src/js/index.js",
     output: {
-        path: __dirname + "/js",
+        path: "./src/js",
         filename: "main.js"
-    },
-    resolve: {
-        extensions: ["", ".js"],
-        modules: [path.resolve(__dirname, "js/dev"), "node_modules"]
     },
     module: {
         loaders: [
