@@ -2,8 +2,8 @@ import { removeElement, getElementByAttr } from "./../main.js";
 import { getVisiblePlaylistId } from "./../tab.js";
 import { removePresentPanels } from "./../panels.js";
 import { postMessageToWorker } from "./../worker.js";
-import { appendToPlaylist, onNewPlaylistFormSubmit, createNewPlaylistInputForm } from "./playlist.manage.js";
 import { getPlaylistById, getAllPlaylists, findTrack, resetTrackIndexes } from "./playlist.js";
+import * as playlistManage from "./playlist.manage.js";
 
 const panelContainerElement = document.getElementById("js-move-to-panel-container");
 
@@ -29,20 +29,20 @@ function hideMoveToBtn() {
 function handleSubmit(event) {
     const moveToList = document.getElementById("js-move-to-list");
 
-    onNewPlaylistFormSubmit(event);
+    playlistManage.onNewPlaylistFormSubmit(event);
     moveToList.classList.remove("hidden");
     moveToList.innerHTML = createPlaylistList(getVisiblePlaylistId());
 }
 
 function showInputContainer(event) {
-    createNewPlaylistInputForm("move-to", this, handleSubmit);
+    playlistManage.createNewPlaylistInputForm("move-to", this, handleSubmit);
     removeElement(this);
     event.stopPropagation();
 }
 
 function moveTracks(playlistId) {
-    const selectedTrackElements = Array.from(document.querySelectorAll(".track.selected"));
-    const trackIndexes = selectedTrackElements.map(element => Number.parseInt(element.getAttribute("data-index"), 10));
+    const selectedTrackElements = playlistManage.getSelectedTrackElements();
+    const trackIndexes = playlistManage.getSelectedTrackIndexes(selectedTrackElements);
     const pl = getPlaylistById(getVisiblePlaylistId());
     const destinationPlaylist = getPlaylistById(playlistId);
     const selectedTracks = [];
@@ -54,7 +54,7 @@ function moveTracks(playlistId) {
     });
     destinationPlaylist.tracks.push(...selectedTracks);
     destinationPlaylist.tracks = resetTrackIndexes(destinationPlaylist.tracks);
-    appendToPlaylist(destinationPlaylist, selectedTracks, true);
+    playlistManage.appendToPlaylist(destinationPlaylist, selectedTracks, true);
     postMessageToWorker({
         action: "put",
         playlist: destinationPlaylist
