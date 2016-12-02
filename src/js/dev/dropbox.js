@@ -9,29 +9,28 @@ function getTrackBlob(link) {
     return fetch(link).then(response => response.blob());
 }
 
-function parseTracks(tracks, parsedTracks, index) {
-    const track = {
-        index: index + parsedTracks.length,
-        title: tracks[0].name,
+async function parseTracks(tracks, parsedTracks) {
+    const track = tracks[parsedTracks.length];
+    const audioTrack = await getTrackBlob(track.audioTrack.link);
+    const durationInSeconds = await getTrackDuration(audioTrack);
+
+    parsedTracks.push({
+        audioTrack,
+        durationInSeconds,
+        index: parsedTracks.length,
+        title: track.name,
         artist: "",
         album: "",
-        name: tracks[0].name,
+        name: track.name,
+        duration: formatTime(durationInSeconds),
         thumbnail: "assets/images/album-art-placeholder.png",
         player: "native"
-    };
-
-    return getTrackBlob(tracks[0].audioTrack.link)
-    .then(blob => {
-        track.audioTrack = blob;
-        return getTrackDuration(blob);
-    })
-    .then(durationInSeconds => {
-        track.durationInSeconds = durationInSeconds;
-        track.duration = formatTime(durationInSeconds);
-        parsedTracks.push(track);
-        tracks = tracks.slice(1);
-        return tracks.length ? parseTracks(tracks, parsedTracks, index) : parsedTracks;
     });
+
+    if (parsedTracks.length !== tracks.length) {
+        return await parseTracks(tracks, parsedTracks);
+    }
+    return parsedTracks;
 }
 
 function showDropboxChooser() {

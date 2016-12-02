@@ -1,21 +1,8 @@
 import { scriptLoader, formatTime } from "./main.js";
 import { addImportedPlaylist, showNotice } from "./playlist/playlist.import.js";
 
-function parseItems(playlist) {
-    playlist.tracks = playlist.tracks.map((track, index) => ({
-        index,
-        id: track.snippet.resourceId.videoId,
-        durationInSeconds: track.durationInSeconds,
-        duration: formatTime(track.durationInSeconds),
-        name: track.snippet.title,
-        title: track.snippet.title,
-        artist: "",
-        album: "",
-        thumbnail: track.snippet.thumbnails.default.url,
-        player: "youtube"
-    }));
-    delete playlist.token;
-    return playlist;
+function showYoutubeNotice(notice) {
+    showNotice("youtube", notice);
 }
 
 function parseDuration(duration) {
@@ -38,86 +25,95 @@ function parseDuration(duration) {
         }, 0);
 }
 
-function getVideoDuration(playlist) {
-    playlist.id = playlist.items.map(item => item.snippet.resourceId.videoId).join();
+async function getVideoDuration(items) {
+    const ids = items.map(item => item.snippet.resourceId.videoId).join();
+    const data = await getYoutube("videos", "contentDetails", "id", ids);
 
-    return getYoutube("videos", "contentDetails", "id", playlist)
-        .then(data => {
-            playlist.items = playlist.items.map((item, index) => {
-                item.durationInSeconds = parseDuration(data.items[index].contentDetails.duration);
-                return item;
-            });
-            return playlist;
-        });
+    return items.map((item, index) => {
+        item.durationInSeconds = parseDuration(data.items[index].contentDetails.duration);
+        return item;
+    });
 }
 
-function getYoutube(path, part, filter, pl) {
+function getYoutube(path, part, filter, id, token) {
     const key = "";
-    let params = `part=${part}&${filter}=${pl.id}&maxResults=50&key=${key}`;
+    let params = `part=${part}&${filter}=${id}&maxResults=50&key=${key}`;
 
-    if (pl.token) {
-        params += `&pageToken=${pl.token}`;
+    if (token) {
+        params += `&pageToken=${token}`;
     }
     return fetch(`https://www.googleapis.com/youtube/v3/${path}?${params}`)
         .then(response => response.json());
 }
 
-function filterInvalidVideos(playlist) {
-    playlist.items = playlist.items.filter(item => {
+function filterInvalidItems(items) {
+    return items.filter(item => {
         const title = item.snippet.title;
 
         return title !== "Deleted video" && title !== "Private video";
     });
-    return playlist;
 }
 
-function getPlaylistItems(playlist) {
-    return getYoutube("playlistItems", "snippet", "playlistId", playlist)
-        .then(filterInvalidVideos)
-        .then(getVideoDuration)
-        .then(data => {
-            playlist.token = data.nextPageToken;
-            playlist.tracks.push(...data.items);
-
-            return playlist.token ? getPlaylistItems(playlist) : playlist;
-        });
+function parseItems(items) {
+    return items.map((track, index) => ({
+        index,
+        id: track.snippet.resourceId.videoId,
+        durationInSeconds: track.durationInSeconds,
+        duration: formatTime(track.durationInSeconds),
+        name: track.snippet.title,
+        title: track.snippet.title,
+        artist: "",
+        album: "",
+        thumbnail: track.snippet.thumbnails.default.url,
+        player: "youtube"
+    }));
 }
 
-function getPlaylistTitle(playlist) {
-    return getYoutube("playlists", "snippet", "id", playlist)
-        .then(data => {
-            if (!data.items.length) {
-                showNotice("youtube", "Playlist was not found");
-                return;
-            }
-            playlist.title = data.items[0].snippet.title;
-            return playlist;
-        });
+async function getPlaylistItems(id, token) {
+    const data = await getYoutube("playlistItems", "snippet", "playlistId", id, token);
+    const validItems = filterInvalidItems(data.items);
+    const items = await getVideoDuration(validItems);
+    const tracks = parseItems(items);
+
+    if (data.nextPageToken) {
+        const nextPageItems = await getPlaylistItems(id, data.nextPageToken);
+
+        return tracks.concat(nextPageItems);
+    }
+    return tracks;
 }
 
-function fetchPlaylist(url) {
-    if (!url.includes("list=")) {
-        showNotice("youtube", "Invalid url");
+async function getPlaylistTitle(id) {
+    const { items } = await getYoutube("playlists", "snippet", "id", id);
+
+    return items.length ? items[0].snippet.title: "";
+}
+
+async function fetchPlaylist(url) {
+    const id = url.split("list=")[1];
+
+    if (!id) {
+        showYoutubeNotice("Invalid url");
         return;
     }
+    const title = await getPlaylistTitle(id);
+
+    if (!title) {
+        showYoutubeNotice("Playlist was not found");
+        return;
+    }
+    const tracks = await getPlaylistItems(id);
     const playlist = {
+        id,
         url,
-        id: url.split("list=")[1],
-        tracks: [],
+        title,
+        tracks,
         player: "youtube",
         type: "grid"
     };
 
-    getPlaylistTitle(playlist)
-    .then(getPlaylistItems)
-    .then(parseItems)
-    .then(addImportedPlaylist)
-    .then(() => {
-        scriptLoader.load({ src: "https://www.youtube.com/iframe_api" });
-    })
-    .catch(error => {
-        console.log(error);
-    });
+    addImportedPlaylist(playlist);
+    scriptLoader.load({ src: "https://www.youtube.com/iframe_api" });
 }
 
 export {

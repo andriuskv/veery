@@ -263,7 +263,7 @@ function onMouseup({ target, ctrlKey }) {
     if (selectionEnabled) {
         const selectedElements = getSelectedTrackElements();
 
-        resetSelection(ctrlKey);
+        resetSelection();
         prevendTrackDeselection(selectedElements.length);
     }
     else {
