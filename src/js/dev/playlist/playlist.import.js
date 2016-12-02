@@ -99,15 +99,13 @@ function replaceInvalidImages(tracks) {
     });
 }
 
-function addImportedPlaylist(playlist) {
-    const tracks = playlist.tracks.splice(0);
+async function addImportedPlaylist(playlist) {
+    const playlistTracks = playlist.tracks.splice(0);
     const pl = getPlaylistById(playlist.id) || createPlaylist(playlist);
-    const newTracks = filterDuplicateTracks(tracks, pl.tracks);
+    const tracks = filterDuplicateTracks(playlistTracks, pl.tracks);
+    const newTracks = await replaceInvalidImages(tracks);
 
-    replaceInvalidImages(newTracks)
-    .then(tracks => {
-        updatePlaylist(pl, tracks, playlist.player);
-    });
+    updatePlaylist(pl, newTracks, playlist.player);
 }
 
 function createPlaylistImportForm(container) {

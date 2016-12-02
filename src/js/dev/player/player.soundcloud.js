@@ -6,33 +6,35 @@ import { onTrackStart } from "./player.js";
 
 let scPlayer = null;
 
-function playTrack(track, volume, startTime) {
+async function playTrack(track, volume, startTime) {
     setCurrentTrack(track);
-    initSoundCloud()
-    .then(() => SC.stream(`/tracks/${track.id}`))
-    .then(trackPlayer => {
+    await initSoundCloud();
+
+    try {
         if (scPlayer) {
             scPlayer.dispose();
         }
-        scPlayer = trackPlayer;
-        scPlayer.on("play-resume", () => {
-            onTrackStart(Math.floor(scPlayer.currentTime() / 1000));
-        });
-        if (typeof startTime === "number") {
-            scPlayer.once("state-change", state => {
-                if (state === "loading") {
-                    seekTo(startTime);
-                    scPlayer.pause();
-                }
-            });
-        }
-        setVolume(volume);
-        scPlayer.seek(0);
-        scPlayer.play();
-    })
-    .catch(error => {
-        console.log(error);
+        scPlayer = await SC.stream(`/tracks/${track.id}`);
+    }
+    catch (e) {
+        console.log(e);
+    }
+
+    scPlayer.on("play-resume", () => {
+        onTrackStart(Math.floor(scPlayer.currentTime() / 1000));
     });
+
+    if (typeof startTime === "number") {
+        scPlayer.once("state-change", state => {
+            if (state === "loading") {
+                seekTo(startTime);
+                scPlayer.pause();
+            }
+        });
+    }
+    setVolume(volume);
+    scPlayer.seek(0);
+    scPlayer.play();
 }
 
 function getPlayPauseCallbacks() {

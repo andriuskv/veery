@@ -40,11 +40,13 @@
     width: 100%;
 }
 .sidebar-form {
+    display: flex;
     padding-top: 4px;
     border-top: 1px solid $color1;
 
     input {
-        width: 93px;
+        width: 100%;
+        margin-right: 4px;
     }
 }
 .sidebar-entries {

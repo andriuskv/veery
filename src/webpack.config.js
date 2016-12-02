@@ -1,5 +1,8 @@
 module.exports = {
-    entry: "./src/js/index.js",
+    entry: [
+        "babel-regenerator-runtime",
+        "./src/js/index.js"
+    ],
     output: {
         path: "./src/js",
         filename: "main.js"

@@ -5,14 +5,14 @@ import { addImportedPlaylist, showNotice } from "./playlist/playlist.import.js";
 
 let initialized = false;
 
-function initSoundCloud() {
+async function initSoundCloud() {
     if (initialized) {
-        return Promise.resolve();
+        return;
     }
     initialized = true;
 
-    return scriptLoader.load({ src: "js/libs/sdk.min.js" })
-        .then(() => SC.initialize({ client_id: "" }));
+    await scriptLoader.load({ src: "js/libs/sdk.min.js" });
+    SC.initialize({ client_id: "" });
 }
 
 function parseTracks(tracks) {
@@ -45,18 +45,21 @@ function parsePlaylist(playlist, url) {
     };
 }
 
+async function fetchPlaylist(url) {
+    await initSoundCloud();
 
-function fetchPlaylist(url) {
-    initSoundCloud()
-    .then(() => SC.resolve(url))
-    .then(playlist => parsePlaylist(playlist, url))
-    .then(addImportedPlaylist)
-    .catch(error => {
-        console.log(error);
-        if (error.status === 404) {
+    try {
+        const data = await SC.resolve(url);
+        const playlist = parsePlaylist(data, url);
+
+        addImportedPlaylist(playlist);
+    }
+    catch (e) {
+        console.log(e);
+        if (e.status === 404) {
             showNotice("soundcloud", "Playlist was not found");
         }
-    });
+    }
 }
 
 export {

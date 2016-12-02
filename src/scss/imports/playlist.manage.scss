@@ -67,9 +67,16 @@
     font-size: 21px;
 }
 .import-form {
+    display: flex;
+    width: 100%;
+
     input,
     .btn {
         background-color: $color3;
+    }
+    input {
+        width: 100%;
+        margin-right: 4px;
     }
 }
 .file-picker {

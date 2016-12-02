@@ -53,54 +53,55 @@ function getTrackMetadata(track) {
     });
 }
 
-function parseTracks(tracks, parsedTracks, startIndex) {
-    return Promise.all([
-        getTrackMetadata(tracks[0].audioTrack),
-        getTrackDuration(tracks[0].audioTrack)
-    ])
-    .then(data => {
-        parsedTracks.push({
-            index: startIndex + parsedTracks.length,
-            title: data[0].artist ? data[0].title.trim(): tracks[0].name,
-            artist: data[0].artist ? data[0].artist.trim() : "",
-            album: data[0].album ? data[0].album.trim() : "",
-            name: tracks[0].name,
-            thumbnail: data[0].picture || "assets/images/album-art-placeholder.png",
-            audioTrack: tracks[0].audioTrack,
-            durationInSeconds: data[1],
-            duration: formatTime(data[1]),
-            player: "native"
-        });
-        tracks = tracks.slice(1);
-        return tracks.length ? parseTracks(tracks, parsedTracks, startIndex) : parsedTracks;
+async function parseTracks(tracks, parsedTracks) {
+    const track = tracks[parsedTracks.length];
+    const audioTrack = track.audioTrack;
+    const [data, durationInSeconds] = await Promise.all([
+        getTrackMetadata(audioTrack),
+        getTrackDuration(audioTrack)
+    ]);
+
+    parsedTracks.push({
+        audioTrack,
+        durationInSeconds,
+        index: parsedTracks.length,
+        title: data.artist ? data.title.trim(): track.name,
+        artist: data.artist ? data.artist.trim() : "",
+        album: data.album ? data.album.trim() : "",
+        name: track.name,
+        thumbnail: data.picture || "assets/images/album-art-placeholder.png",
+        duration: formatTime(durationInSeconds),
+        player: "native"
     });
+
+    if (parsedTracks.length !== tracks.length) {
+        return await parseTracks(tracks, parsedTracks);
+    }
+    return parsedTracks;
 }
 
-function processNewTracks(pl, newTracks, parseTracks, importOption) {
-    return scriptLoader.load({ src: "js/libs/metadata-audio-parser.min.js" })
-        .then(() => parseTracks(newTracks, [], pl.tracks.length))
-        .then(tracks => {
-            updatePlaylist(pl, tracks, importOption);
-        })
-        .catch(error => {
-            console.log(error);
-        });
+async function processNewTracks(newTracks, parseTracks) {
+    await scriptLoader.load({ src: "js/libs/metadata-audio-parser.min.js" });
+
+    return parseTracks(newTracks, []);
 }
 
-function addTracks(importOption, pl, newTracks, parseTracks) {
-    const tracks = filterDuplicateTracks(newTracks, pl.tracks);
-
+async function addTracks(importOption, pl, newTracks, parseTracks) {
     createImportOptionMask(importOption);
 
     if (!newTracks.length) {
         showNotice(importOption, "No valid audio files found");
         return;
     }
+    const tracks = filterDuplicateTracks(newTracks, pl.tracks);
+
     if (!tracks.length) {
         showNotice(importOption, "Tracks already exist");
         return;
     }
-    processNewTracks(pl, tracks, parseTracks, importOption);
+    const parsedTracks = await processNewTracks(tracks, parseTracks);
+
+    updatePlaylist(pl, parsedTracks, importOption);
 }
 
 function selectLocalFiles(files) {
