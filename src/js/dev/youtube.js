@@ -1,4 +1,4 @@
-import { scriptLoader, formatTime } from "./main.js";
+import { formatTime } from "./main.js";
 import { addImportedPlaylist, showNotice } from "./playlist/playlist.import.js";
 
 function showYoutubeNotice(notice) {
@@ -54,9 +54,9 @@ function filterInvalidItems(items) {
     });
 }
 
-function parseItems(items) {
+function parseItems(items, lastIndex) {
     return items.map((track, index) => ({
-        index,
+        index: index + lastIndex,
         id: track.snippet.resourceId.videoId,
         durationInSeconds: track.durationInSeconds,
         duration: formatTime(track.durationInSeconds),
@@ -69,14 +69,14 @@ function parseItems(items) {
     }));
 }
 
-async function getPlaylistItems(id, token) {
+async function getPlaylistItems(id, token, lastIndex = 0) {
     const data = await getYoutube("playlistItems", "snippet", "playlistId", id, token);
     const validItems = filterInvalidItems(data.items);
     const items = await getVideoDuration(validItems);
-    const tracks = parseItems(items);
+    const tracks = parseItems(items, lastIndex);
 
     if (data.nextPageToken) {
-        const nextPageItems = await getPlaylistItems(id, data.nextPageToken);
+        const nextPageItems = await getPlaylistItems(id, data.nextPageToken, tracks.length);
 
         return tracks.concat(nextPageItems);
     }
@@ -113,7 +113,6 @@ async function fetchPlaylist(url) {
     };
 
     addImportedPlaylist(playlist);
-    scriptLoader.load({ src: "https://www.youtube.com/iframe_api" });
 }
 
 export {

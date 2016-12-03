@@ -13,13 +13,6 @@ let paused = true;
 let scrollToTrack = false;
 
 const storedTrack = (function () {
-    const players = {
-        native: false,
-        youtube: false,
-        soundcloud: false
-    };
-    let initialized = false;
-
     function getTrack() {
         return JSON.parse(localStorage.getItem("track")) || {};
     }
@@ -38,14 +31,16 @@ const storedTrack = (function () {
         localStorage.removeItem("track");
     }
 
-    function initTrack(storedTrack) {
+    function initTrack() {
+        const storedTrack = getTrack();
+
         if (!storedTrack) {
             return;
         }
         const track = playlist.findTrack(storedTrack.playlistId, storedTrack.name);
 
         if (!track) {
-            removeTrack(track);
+            removeTrack();
             return;
         }
         playlist.setPlaylistAsActive(storedTrack.playlistId);
@@ -55,25 +50,12 @@ const storedTrack = (function () {
         playNewTrack(track, storedTrack.currentTime);
     }
 
-    function setPlayerAsReady(player) {
-        if (initialized) {
-            return;
-        }
-        const storedTrack = getTrack();
-        players[player] = true;
-
-        if (player === storedTrack.player || Object.keys(players).every(player => players[player])) {
-            initialized = true;
-            initTrack(storedTrack);
-        }
-    }
-
     return {
         get: getTrack,
         remove: removeTrack,
         saveTrack,
         updateSavedTrack,
-        setPlayerAsReady
+        initTrack
     };
 })();
 
