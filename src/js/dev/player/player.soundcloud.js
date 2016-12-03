@@ -37,11 +37,13 @@ async function playTrack(track, volume, startTime) {
     scPlayer.play();
 }
 
-function getPlayPauseCallbacks() {
-    return {
-        play: scPlayer.play.bind(scPlayer),
-        pause: scPlayer.pause.bind(scPlayer)
-    };
+function togglePlaying(paused) {
+    if (paused) {
+        scPlayer.play();
+    }
+    else {
+        scPlayer.pause();
+    }
 }
 
 function stopTrack() {
@@ -60,7 +62,7 @@ function seekTo(currentTime) {
 export {
     playTrack,
     stopTrack,
-    getPlayPauseCallbacks,
+    togglePlaying,
     seekTo,
     setVolume
 };

@@ -19,11 +19,13 @@ function playTrack(track, volume, startTime) {
     track.audio.play();
 }
 
-function getPlayPauseCallbacks({ audio }) {
-    return {
-        play: audio.play.bind(audio),
-        pause: audio.pause.bind(audio)
-    };
+function togglePlaying(paused, { audio }) {
+    if (paused) {
+        audio.play();
+    }
+    else {
+        audio.pause();
+    }
 }
 
 function stopTrack(track) {
@@ -45,7 +47,7 @@ function seekTo(currentTime, track) {
 export {
     playTrack,
     stopTrack,
-    getPlayPauseCallbacks,
+    togglePlaying,
     seekTo,
     setVolume
 };

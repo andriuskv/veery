@@ -44,11 +44,13 @@ function initPlayer() {
     });
 }
 
-function getPlayPauseCallbacks() {
-    return {
-        play: ytPlayer.playVideo.bind(ytPlayer),
-        pause: ytPlayer.pauseVideo.bind(ytPlayer)
-    };
+function togglePlaying(paused) {
+    if (paused) {
+        ytPlayer.playVideo();
+    }
+    else {
+        ytPlayer.pauseVideo();
+    }
 }
 
 function playTrack(track, volume, startTime) {
@@ -84,7 +86,7 @@ function seekTo(currentTime) {
 export {
     playTrack,
     stopTrack,
-    getPlayPauseCallbacks,
+    togglePlaying,
     seekTo,
     setVolume
 };
