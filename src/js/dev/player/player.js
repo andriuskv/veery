@@ -89,32 +89,22 @@ function onTrackStart(startTime) {
     controls.elapsedTime.start(time);
 }
 
-function toggleTrackPlaying({ play, pause }) {
-    if (paused) {
-        play();
+function togglePlaying(track) {
+    if (track.player === "native") {
+        nPlayer.togglePlaying(paused, track);
     }
-    else {
-        pause();
+    else if (track.player === "youtube") {
+        ytPlayer.togglePlaying(paused);
+    }
+    else if (track.player === "soundcloud") {
+        scPlayer.togglePlaying(paused);
+    }
+    if (!paused) {
         removeActiveIcon();
         controls.elapsedTime.stop();
         controls.togglePlayBtn(!paused);
     }
     paused = !paused;
-}
-
-function togglePlaying(track) {
-    let callbacks = null;
-
-    if (track.player === "native") {
-        callbacks = nPlayer.getPlayPauseCallbacks(track);
-    }
-    else if (track.player === "youtube") {
-        callbacks = ytPlayer.getPlayPauseCallbacks();
-    }
-    else if (track.player === "soundcloud") {
-        callbacks = scPlayer.getPlayPauseCallbacks();
-    }
-    toggleTrackPlaying(callbacks);
 }
 
 function playNewTrack(track, startTime) {
