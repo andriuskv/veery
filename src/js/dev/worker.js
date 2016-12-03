@@ -1,5 +1,4 @@
 import * as router from "./router.js";
-import { scriptLoader } from "./main.js";
 import { getPlaylistById, createPlaylist } from "./playlist/playlist.js";
 import { initPlaylist } from "./playlist/playlist.manage.js";
 import { storedTrack } from "./player/player.js";
@@ -14,15 +13,9 @@ let worker = null;
             const playlists = data.payload;
 
             Object.keys(playlists).forEach(id => {
-                const pl = playlists[id];
-
-                if (pl.player === "youtube") {
-                    scriptLoader.load({ src: "https://www.youtube.com/iframe_api" });
-                }
-                initPlaylist(createPlaylist(pl), false);
+                initPlaylist(createPlaylist(playlists[id]), false);
             });
-            storedTrack.setPlayerAsReady("native");
-            storedTrack.setPlayerAsReady("soundcloud");
+            storedTrack.initTrack();
             router.toggleCurrent();
         }
         else if (data.action === "update-playlist") {

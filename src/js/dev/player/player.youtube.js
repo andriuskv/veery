@@ -1,10 +1,13 @@
 /* global YT */
 
+import { scriptLoader } from "./../main.js";
 import { setCurrentTrack } from "./../playlist/playlist.js";
-import { storedTrack, onTrackStart } from "./player.js";
+import { onTrackStart } from "./player.js";
 
 let ytPlayer = null;
 let isStoredTrack = false;
+let initialized = false;
+let args = null;
 window.onYouTubeIframeAPIReady = initPlayer;
 
 function onPlayerStateChange({ data: state }) {
@@ -19,7 +22,9 @@ function onPlayerStateChange({ data: state }) {
 }
 
 function onPlayerReady() {
-    storedTrack.setPlayerAsReady("youtube");
+    initialized = true;
+    playTrack(...args);
+    args = null;
 }
 
 function onError(error) {
@@ -47,8 +52,14 @@ function getPlayPauseCallbacks() {
 }
 
 function playTrack(track, volume, startTime) {
+    if (!initialized) {
+        args = [track, volume, startTime];
+        scriptLoader.load({ src: "https://www.youtube.com/iframe_api" });
+        return;
+    }
     setVolume(volume);
     setCurrentTrack(track);
+
     if (typeof startTime === "number") {
         isStoredTrack = true;
         ytPlayer.loadVideoById(track.id, startTime);
