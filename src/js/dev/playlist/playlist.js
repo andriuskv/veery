@@ -17,7 +17,8 @@ function createPlaylist(pl) {
         shuffled: false,
         tracks: [],
         playbackIndex: 0,
-        playbackOrder: []
+        playbackOrder: [],
+        rendered: false
     }, pl);
     return playlists[pl.id];
 }

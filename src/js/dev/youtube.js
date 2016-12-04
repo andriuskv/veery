@@ -19,10 +19,7 @@ function parseDuration(duration) {
     return duration.replace(/[HM]/g, ":")
         .split(":")
         .reverse()
-        .reduce((total, value, index) => {
-            total += value * 60 ** index;
-            return total;
-        }, 0);
+        .reduce((a, b, index) => a + b * 60 ** index);
 }
 
 async function getVideoDuration(items) {

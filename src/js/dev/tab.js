@@ -2,6 +2,7 @@ import { removeElementClass, dispatchEvent } from "./main.js";
 import { getSidebarEntry } from "./sidebar.js";
 import { removePresentPanels, togglePanel } from "./panels.js";
 import { getPlaylistById } from "./playlist/playlist.js";
+import { renderPlaylist } from "./playlist/playlist.view.js";
 import { changePlaylistType, togglePlaylistTypeBtn, resetFilteredPlaylist } from "./playlist/playlist.view.js";
 import { enableTrackSelection, deselectTrackElements } from "./playlist/playlist.track-selection.js";
 import { setSortOptions, createSortPanel, changePlaylistOrder } from "./playlist/playlist.sorting.js";
@@ -34,6 +35,9 @@ function toggleTab(id, playlistTab, ignoreSidebar) {
     if (playlistTab) {
         const pl = getPlaylistById(id);
 
+        if (!pl.rendered) {
+            renderPlaylist(pl);
+        }
         setVisiblePlaylistId(id);
         togglePlaylistTypeBtn(pl.type);
         setSortOptions(pl);
