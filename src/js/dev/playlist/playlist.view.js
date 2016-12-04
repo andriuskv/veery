@@ -65,10 +65,11 @@ function createPlaylistTab(pl) {
     return `<div id="js-tab-${pl.id}" class="tab">${playlist}</div>`;
 }
 
-function addPlaylistTab(pl) {
+function renderPlaylist(pl) {
     const tab = createPlaylistTab(pl);
     const container = document.getElementById("js-tab-container");
 
+    pl.rendered = true;
     container.insertAdjacentHTML("beforeend", tab);
 }
 
@@ -243,10 +244,10 @@ window.addEventListener("track-length-change", ({ detail }) => {
 });
 
 export {
-    addPlaylistTab as add,
     removePlaylistTab as remove,
     updatePlaylist as update,
     appendToPlaylist as append,
+    renderPlaylist,
     showPlayingTrack,
     filterTracks,
     togglePlaylistTypeBtn,

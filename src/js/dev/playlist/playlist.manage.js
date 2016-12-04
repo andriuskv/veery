@@ -24,7 +24,6 @@ function initPlaylist(pl, toggle = router.isActive("manage")) {
     const route = `playlist/${pl.id}`;
 
     router.add(route);
-    playlistView.add(pl);
     createSidebarEntry(pl.title, pl.id);
     createPlaylistEntry(pl.title, pl.id, pl.url);
     resortTracks(pl);
@@ -87,7 +86,7 @@ function refreshPlaylist(pl) {
 function updatePlaylist(pl, tracks, importOption) {
     pl.tracks.push(...tracks);
 
-    if (document.getElementById(`js-${pl.id}`)) {
+    if (pl.rendered) {
         appendToPlaylist(pl, tracks);
     }
     else {
