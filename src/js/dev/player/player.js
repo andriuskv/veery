@@ -46,7 +46,7 @@ const storedTrack = (function () {
         playlist.setPlaylistAsActive(storedTrack.playlistId);
         controls.setTrackBarInnerWidth(storedTrack.elapsed);
         controls.displayCurrentTime(storedTrack.currentTime);
-        beforeTrackStart(track, storedTrack.playlistId);
+        beforeTrackStart(track);
         playNewTrack(track, storedTrack.currentTime);
     }
 
@@ -59,30 +59,31 @@ const storedTrack = (function () {
     };
 })();
 
-function beforeTrackStart(track, id, scrollToTrack) {
+function beforeTrackStart(track, scrollToTrack) {
+    const id = getVisiblePlaylistId();
+
     showTrackInfo(track);
     controls.showTrackDuration(track.duration);
 
-    if (track.index !== -1) {
-        showPlayingTrack(track.index, id, scrollToTrack);
+    if (id === track.playlistId && track.index !== -1) {
+        showPlayingTrack(track.index, track.playlistId, scrollToTrack);
     }
     scrollToTrack = false;
 }
 
 function onTrackStart(startTime) {
     const track = playlist.getCurrentTrack();
-    const id = playlist.getActivePlaylistId();
     const time = {
         currentTime: startTime,
         duration: track.durationInSeconds
     };
     paused = false;
 
-    beforeTrackStart(track, id, scrollToTrack);
-    showActiveIcon(id);
+    beforeTrackStart(track, scrollToTrack);
+    showActiveIcon(track.playlistId);
     controls.togglePlayBtn(paused);
     storedTrack.saveTrack({
-        playlistId: id,
+        playlistId: track.playlistId,
         name: track.name,
         player: track.player
     });

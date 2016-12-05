@@ -19,7 +19,10 @@ function parseDuration(duration) {
     return duration.replace(/[HM]/g, ":")
         .split(":")
         .reverse()
-        .reduce((a, b, index) => a + b * 60 ** index);
+        .reduce((total, value, index) => {
+            total += value * 60 ** index;
+            return total;
+        }, 0);
 }
 
 async function getVideoDuration(items) {
@@ -51,7 +54,7 @@ function filterInvalidItems(items) {
     });
 }
 
-function parseItems(items, lastIndex) {
+function parseItems(id, items, lastIndex) {
     return items.map((track, index) => ({
         index: index + lastIndex,
         id: track.snippet.resourceId.videoId,
@@ -62,7 +65,8 @@ function parseItems(items, lastIndex) {
         artist: "",
         album: "",
         thumbnail: track.snippet.thumbnails.default.url,
-        player: "youtube"
+        player: "youtube",
+        playlistId: id
     }));
 }
 
@@ -70,7 +74,7 @@ async function getPlaylistItems(id, token, lastIndex = 0) {
     const data = await getYoutube("playlistItems", "snippet", "playlistId", id, token);
     const validItems = filterInvalidItems(data.items);
     const items = await getVideoDuration(validItems);
-    const tracks = parseItems(items, lastIndex);
+    const tracks = parseItems(id, items, lastIndex);
 
     if (data.nextPageToken) {
         const nextPageItems = await getPlaylistItems(id, data.nextPageToken, tracks.length);

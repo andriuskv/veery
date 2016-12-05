@@ -53,7 +53,7 @@ function getTrackMetadata(track) {
     });
 }
 
-async function parseTracks(tracks, parsedTracks) {
+async function parseTracks(id, tracks, parsedTracks = []) {
     const track = tracks[parsedTracks.length];
     const audioTrack = track.audioTrack;
     const [data, durationInSeconds] = await Promise.all([
@@ -71,19 +71,14 @@ async function parseTracks(tracks, parsedTracks) {
         name: track.name,
         thumbnail: data.picture || "assets/images/album-art-placeholder.png",
         duration: formatTime(durationInSeconds),
-        player: "native"
+        player: "native",
+        playlistId: id
     });
 
     if (parsedTracks.length !== tracks.length) {
-        return await parseTracks(tracks, parsedTracks);
+        return await parseTracks(id, tracks, parsedTracks);
     }
     return parsedTracks;
-}
-
-async function processNewTracks(newTracks, parseTracks) {
-    await scriptLoader.load({ src: "js/libs/metadata-audio-parser.min.js" });
-
-    return parseTracks(newTracks, []);
 }
 
 async function addTracks(importOption, pl, newTracks, parseTracks) {
@@ -99,7 +94,8 @@ async function addTracks(importOption, pl, newTracks, parseTracks) {
         showNotice(importOption, "Tracks already exist");
         return;
     }
-    const parsedTracks = await processNewTracks(tracks, parseTracks);
+    await scriptLoader.load({ src: "js/libs/metadata-audio-parser.min.js" });
+    const parsedTracks = await parseTracks(pl.id, tracks);
 
     updatePlaylist(pl, parsedTracks, importOption);
 }
