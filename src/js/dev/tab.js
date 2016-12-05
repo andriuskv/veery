@@ -1,12 +1,12 @@
 import { removeElementClass, dispatchEvent } from "./main.js";
 import { getSidebarEntry } from "./sidebar.js";
 import { removePresentPanels, togglePanel } from "./panels.js";
-import { getPlaylistById } from "./playlist/playlist.js";
+import { getPlaylistById, getCurrentTrack } from "./playlist/playlist.js";
 import { renderPlaylist } from "./playlist/playlist.view.js";
-import { changePlaylistType, togglePlaylistTypeBtn, resetFilteredPlaylist } from "./playlist/playlist.view.js";
 import { enableTrackSelection, deselectTrackElements } from "./playlist/playlist.track-selection.js";
 import { setSortOptions, createSortPanel, changePlaylistOrder } from "./playlist/playlist.sorting.js";
 import { createMoveToPanel } from "./playlist/playlist.move-to.js";
+import * as playlistView from "./playlist/playlist.view.js";
 
 let activePlaylistTabId = "";
 
@@ -34,12 +34,16 @@ function toggleTab(id, playlistTab, ignoreSidebar) {
 
     if (playlistTab) {
         const pl = getPlaylistById(id);
+        const track = getCurrentTrack();
 
         if (!pl.rendered) {
             renderPlaylist(pl);
         }
+        if (track && track.playlistId === id) {
+            playlistView.showPlayingTrack(track.index, id);
+        }
         setVisiblePlaylistId(id);
-        togglePlaylistTypeBtn(pl.type);
+        playlistView.togglePlaylistTypeBtn(pl.type);
         setSortOptions(pl);
         enableTrackSelection(pl.id);
         toggleTabContent("add");
@@ -49,7 +53,7 @@ function toggleTab(id, playlistTab, ignoreSidebar) {
         setVisiblePlaylistId();
         toggleTabContent("remove");
     }
-    resetFilteredPlaylist();
+    playlistView.resetFilteredPlaylist();
     document.getElementById(`js-tab-${id}`).classList.add("active");
 
     if (!ignoreSidebar) {
@@ -69,7 +73,7 @@ window.addEventListener("click", event => {
         togglePanel(panelId, pl, createMoveToPanel);
     }
     else if ((item === "list" || item === "grid") && item !== pl.type) {
-        changePlaylistType(item, pl);
+        playlistView.changePlaylistType(item, pl);
     }
     else if (item === "sorting") {
         panelId = "js-sort-panel";

@@ -16,7 +16,10 @@ function resortTracks(pl) {
 
     if (pl.sortedBy) {
         sortTracks(pl.tracks, pl.sortedBy, pl.order);
-        refreshPlaylist(pl);
+
+        if (pl.rendered) {
+            refreshPlaylist(pl);
+        }
     }
 }
 
