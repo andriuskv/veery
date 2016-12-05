@@ -65,7 +65,8 @@ function toggleTab(id, playlistTab, ignoreSidebar) {
 
 window.addEventListener("click", event => {
     const item = event.target.getAttribute("data-header-item");
-    const pl = getPlaylistById(getVisiblePlaylistId());
+    const id = getVisiblePlaylistId();
+    const pl = getPlaylistById(id);
     let panelId = "";
 
     if (item === "move-to") {
@@ -82,7 +83,9 @@ window.addEventListener("click", event => {
     else if (item === "order" && pl.sortedBy) {
         changePlaylistOrder(pl);
     }
-    deselectTrackElements(event.target);
+    if (isOutsideElement(event.target, `js-${id}`)) {
+        deselectTrackElements(event.target);
+    }
     removePresentPanels(event, panelId);
 }, true);
 
