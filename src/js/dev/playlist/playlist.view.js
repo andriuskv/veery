@@ -22,7 +22,7 @@ function createListItem(track) {
 
 function createList(id, items) {
     return `
-        <ul class="list-view-header">
+        <ul id="js-list-view-header" class="list-view-header">
             <li class="list-view-header-item">TITLE</li>
             <li class="list-view-header-item">ARTIST</li>
             <li class="list-view-header-item">ALBUM</li>
@@ -167,6 +167,17 @@ function togglePlaylistTypeBtn(type) {
     }
 }
 
+function addMarginToPlaylistHeader(id, type) {
+    const isTypeOfList = type === "list";
+
+    if (isTypeOfList) {
+        const playlistElement = document.getElementById(`js-${id}`);
+        const scrollBarWidth = playlistElement.offsetWidth - playlistElement.clientWidth;
+
+        document.getElementById("js-list-view-header").style.marginRight = `${scrollBarWidth}px`;
+    }
+}
+
 function changePlaylistType(newType, pl) {
     pl.type = newType;
     resetPlaylistSort(pl);
@@ -174,6 +185,7 @@ function changePlaylistType(newType, pl) {
     enableTrackSelection(pl.id);
     togglePlaylistTypeBtn(newType);
     hideMoveToBtn();
+    addMarginToPlaylistHeader(pl.id, pl.type);
     postMessageToWorker({
         action: "update",
         playlist: {
@@ -220,6 +232,20 @@ function resetFilteredPlaylist() {
     }
 }
 
+function updatePlaylistDuration(tracks) {
+    const tabFooterElement = document.getElementById("js-tab-footer");
+    const duration = getTrackDuration(tracks);
+    const trackString = getValueString(tracks.length, "track");
+    let durationString = getValueString(Math.floor(duration / 60 % 60), "minute");
+
+    if (duration > 3600) {
+        const hourString = getValueString(Math.floor(duration / 3600), "hour");
+
+        durationString = `${hourString} and ${durationString}`;
+    }
+    tabFooterElement.textContent = `${trackString}, ${durationString} of playtime`;
+}
+
 document.getElementById("js-filter-input").addEventListener("keyup", ({ target }) => {
     if (timeout) {
         clearTimeout(timeout);
@@ -230,17 +256,11 @@ document.getElementById("js-filter-input").addEventListener("keyup", ({ target }
 });
 
 window.addEventListener("track-length-change", ({ detail }) => {
-    const tabFooterElement = document.getElementById("js-tab-footer");
-    const duration = getTrackDuration(detail);
-    const trackString = getValueString(detail.length, "track");
-    let durationString = getValueString(Math.floor(duration / 60 % 60), "minute");
+    updatePlaylistDuration(detail.tracks);
 
-    if (duration > 3600) {
-        const hourString = getValueString(Math.floor(duration / 3600), "hour");
-
-        durationString = `${hourString} and ${durationString}`;
+    if (detail.id && detail.type) {
+        addMarginToPlaylistHeader(detail.id, detail.type);
     }
-    tabFooterElement.textContent = `${trackString}, ${durationString} of playtime`;
 });
 
 export {
@@ -251,6 +271,7 @@ export {
     showPlayingTrack,
     filterTracks,
     togglePlaylistTypeBtn,
+    addMarginToPlaylistHeader,
     changePlaylistType,
     resetFilteredPlaylist
 };

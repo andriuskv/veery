@@ -1,7 +1,7 @@
 .playlist-items {
     backface-visibility: hidden;
     user-select: none;
-    overflow-y: scroll;
+    overflow-y: auto;
     position: relative;
 }
 .track {
