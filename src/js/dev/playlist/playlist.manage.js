@@ -47,7 +47,11 @@ function appendToPlaylist(pl, tracks, toggle = router.isActive("manage")) {
         router.toggle(route);
     }
     else {
-        dispatchEvent("track-length-change", pl.tracks);
+        dispatchEvent("track-length-change", {
+            id: pl.id,
+            tracks: pl.tracks,
+            type: pl.type
+        });
     }
 }
 
@@ -154,7 +158,11 @@ function removeSelectedTracks(pl) {
         pl.tracks = removeSelectedPlaylistTracks(pl, selectedTrackIndexes);
         playlist.shufflePlaybackOrder(pl, getSetting("shuffle"));
         updateCurrentTrack(pl.id, selectedTrackIndexes);
-        dispatchEvent("track-length-change", pl.tracks);
+        dispatchEvent("track-length-change", {
+            id: pl.id,
+            tracks: pl.tracks,
+            type: pl.type
+        });
         postMessageToWorker({
             action: "put",
             playlist: pl

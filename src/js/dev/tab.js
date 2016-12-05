@@ -1,4 +1,4 @@
-import { removeElementClass, dispatchEvent } from "./main.js";
+import { removeElementClass, isOutsideElement, dispatchEvent } from "./main.js";
 import { getSidebarEntry } from "./sidebar.js";
 import { removePresentPanels, togglePanel } from "./panels.js";
 import { getPlaylistById, getCurrentTrack } from "./playlist/playlist.js";
@@ -47,7 +47,7 @@ function toggleTab(id, playlistTab, ignoreSidebar) {
         setSortOptions(pl);
         enableTrackSelection(pl.id);
         toggleTabContent("add");
-        dispatchEvent("track-length-change", pl.tracks);
+        dispatchEvent("track-length-change", { tracks: pl.tracks });
     }
     else {
         setVisiblePlaylistId();
@@ -65,7 +65,8 @@ function toggleTab(id, playlistTab, ignoreSidebar) {
 
 window.addEventListener("click", event => {
     const item = event.target.getAttribute("data-header-item");
-    const pl = getPlaylistById(getVisiblePlaylistId());
+    const id = getVisiblePlaylistId();
+    const pl = getPlaylistById(id);
     let panelId = "";
 
     if (item === "move-to") {
@@ -82,12 +83,24 @@ window.addEventListener("click", event => {
     else if (item === "order" && pl.sortedBy) {
         changePlaylistOrder(pl);
     }
-    deselectTrackElements(event.target);
+    if (isOutsideElement(event.target, `js-${id}`)) {
+        deselectTrackElements(event.target);
+    }
     removePresentPanels(event, panelId);
+}, true);
+
+window.addEventListener("route-change", ({ detail }) => {
+    toggleTab(detail.tabName, detail.isPlaylistTab, detail.isInvalid);
+
+    if (detail.isPlaylistTab) {
+        const id = detail.tabName;
+        const { type } = getPlaylistById(id);
+
+        playlistView.addMarginToPlaylistHeader(id, type);
+    }
 });
 
 export {
-    toggleTab,
     setVisiblePlaylistId,
     getVisiblePlaylistId
 };

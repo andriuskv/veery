@@ -34,10 +34,9 @@ function handleSubmit(event) {
     moveToList.innerHTML = createPlaylistList(getVisiblePlaylistId());
 }
 
-function showInputContainer(event) {
+function showInputContainer() {
     playlistManage.createNewPlaylistInputForm("move-to", this, handleSubmit);
     removeElement(this);
-    event.stopPropagation();
 }
 
 function moveTracks(playlistId) {

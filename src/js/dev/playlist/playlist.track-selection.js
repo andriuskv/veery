@@ -215,8 +215,10 @@ function scrollUp(ctrlKey) {
 
 function onMousemove(event) {
     const mouseYRelatedToViewport = event.clientY - playlistElementRect.top;
-    mousePos.x = adjustMousePosition(event.clientX - playlistElementRect.left, playlistElementRect.width - 10);
-    mousePos.y = adjustMousePosition(playlistElement.scrollTop + mouseYRelatedToViewport, maxScrollHeight);
+    const x = event.clientX - playlistElementRect.left;
+    const y = playlistElement.scrollTop + mouseYRelatedToViewport;
+    mousePos.x = adjustMousePosition(x, playlistElement.clientWidth);
+    mousePos.y = adjustMousePosition(y, maxScrollHeight);
 
     event.preventDefault();
 
@@ -271,6 +273,10 @@ function onMouseup({ target, ctrlKey }) {
     }
     window.removeEventListener("mousemove", onMousemove);
     window.removeEventListener("mouseup", onMouseup);
+
+    if (!isOutsideElement(target, playlistElement.id)) {
+        deselectTrackElements(target);
+    }
 }
 
 function onMousedown(event) {
@@ -282,8 +288,11 @@ function onMousedown(event) {
     startingPoint.y = playlistElement.scrollTop + event.clientY - playlistElementRect.top;
     maxScrollHeight = playlistElement.scrollHeight;
 
-    window.addEventListener("mousemove", onMousemove);
-    window.addEventListener("mouseup", onMouseup);
+    // Don't add event listeners if clicked on scrollbar
+    if (startingPoint.x < playlistElement.clientWidth) {
+        window.addEventListener("mousemove", onMousemove);
+        window.addEventListener("mouseup", onMouseup);
+    }
 }
 
 export {

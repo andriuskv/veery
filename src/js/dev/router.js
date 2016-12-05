@@ -1,4 +1,4 @@
-import { toggleTab } from "./tab.js";
+import { dispatchEvent } from "./main.js";
 
 const routes = [
     "manage",
@@ -32,10 +32,14 @@ function toggleRouteTab(route) {
         toggleRoute("404");
         return;
     }
-    const playlistTab = route.startsWith("playlist/");
-    const tabName = playlistTab ? route.split("playlist/")[1] : route;
+    const isPlaylistTab = route.startsWith("playlist/");
+    const tabName = isPlaylistTab ? route.split("playlist/")[1] : route;
 
-    toggleTab(tabName, playlistTab, tabName === "404");
+    dispatchEvent("route-change", {
+        tabName,
+        isPlaylistTab,
+        isInvalid: tabName === "404"
+    });
 }
 
 function toggleCurrentRoute() {
