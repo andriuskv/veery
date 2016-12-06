@@ -59,6 +59,7 @@ input {
 
     &:hover {
         color: $brand-color;
+        cursor: pointer;
     }
     &.active {
         color: $brand-color;
