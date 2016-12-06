@@ -33,13 +33,15 @@ function createList(id, items) {
 }
 
 function createGridItem(item) {
+    const name = item.artist && item.title ? `${item.artist} - ${item.title}` : item.name;
+    const thumbnail = typeof item.thumbnail === "string" ? item.thumbnail : URL.createObjectURL(item.thumbnail);
     return `
         <li class="grid-item track" data-index="${item.index}">
             <div class="grid-item-thumb-container">
                 <div class="grid-item-duration">${item.duration}</div>
-                <img src="${item.thumbnail}" class="grid-item-thumb">
+                <img src="${thumbnail}" class="grid-item-thumb">
             </div>
-            <div>${item.name}</div>
+            <div>${name}</div>
         </li>
     `;
 }

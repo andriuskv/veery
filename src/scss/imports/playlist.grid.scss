@@ -13,6 +13,19 @@
     margin: 2px;
     cursor: default;
     user-select: none;
+
+    @media (min-width: 826px) {
+        max-width: calc(50% - 4px);
+    }
+    @media (min-width: 1140px) {
+        max-width: calc(33.3333% - 4px);
+    }
+    @media (min-width: 1456px) {
+        max-width: calc(25% - 4px);
+    }
+    @media (min-width: 1772px) {
+        max-width: calc(20% - 4px);
+    }
 }
 .grid-item-thumb-container {
     position: relative;
@@ -30,25 +43,4 @@
     display: block;
     height: 80px;
     object-fit: scale-down;
-}
-
-@media (min-width: 826px) {
-  .grid-item {
-    max-width: calc(50% - 4px);
-  }
-}
-@media (min-width: 1140px) {
-  .grid-item {
-    max-width: calc(33.3333% - 4px);
-  }
-}
-@media (min-width: 1456px) {
-  .grid-item {
-    max-width: calc(25% - 4px);
-  }
-}
-@media (min-width: 1772px) {
-  .grid-item {
-    max-width: calc(20% - 4px);
-  }
 }
