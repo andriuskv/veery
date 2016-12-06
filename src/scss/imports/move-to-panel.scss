@@ -45,7 +45,8 @@
     display: flex;
 
     input {
-        width: 124px;
+        flex-grow: 1;
+        width: 50%;
         margin-right: 4px;
     }
     input, .btn {
