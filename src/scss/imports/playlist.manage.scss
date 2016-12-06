@@ -19,6 +19,7 @@
 .import-option-container {
     flex-basis: 288px;
     padding: 8px;
+    margin-bottom: 8px;
     border: 1px solid $color1;
     border-radius: 2px;
     background-color: $color3;
@@ -63,19 +64,20 @@
     }
 }
 .import-option-icon {
-    margin-right: 4px;
+    margin-right: 8px;
     font-size: 21px;
 }
 .import-form {
-    display: flex;
-    width: 100%;
+    display: inline-flex;
+    flex-grow: 1;
 
     input,
     .btn {
         background-color: $color3;
     }
     input {
-        width: 100%;
+        flex-grow: 1;
+        width: 50%;
         margin-right: 4px;
     }
 }
@@ -124,10 +126,7 @@
     }
 }
 
-@media (max-width: 750px) {
-    .import-option-container {
-        margin-bottom: 8px;
-    }
+@media (max-width: 758px) {
     .import-option-container,
     .pl-entry-container {
         flex-basis: 100%;

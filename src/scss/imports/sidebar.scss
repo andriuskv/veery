@@ -36,7 +36,7 @@
     margin-top: 2px;
     background-color: $color2;
 }
-.new-pl-btn-container > .btn {
+.new-pl-btn {
     width: 100%;
 }
 .sidebar-form {
@@ -45,7 +45,8 @@
     border-top: 1px solid $color1;
 
     input {
-        width: 100%;
+        flex-grow: 1;
+        width: 50%;
         margin-right: 4px;
     }
 }
