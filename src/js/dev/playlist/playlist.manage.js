@@ -56,6 +56,7 @@ function appendToPlaylist(pl, tracks, toggle = router.isActive("manage")) {
 }
 
 function removePlaylist(id) {
+    const { rendered } = playlist.getPlaylistById(id);
     const track = storedTrack.get();
 
     if (track && track.playlistId === id) {
@@ -64,9 +65,11 @@ function removePlaylist(id) {
     if (playlist.isActive(id)) {
         stopPlayer();
     }
+    if (rendered) {
+        playlistView.remove(id);
+    }
     playlist.removePlaylist(id);
     removeSidebarEntry(id);
-    playlistView.remove(id);
     postMessageToWorker({
         action: "remove",
         playlistId: id
