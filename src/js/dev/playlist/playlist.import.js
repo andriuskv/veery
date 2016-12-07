@@ -3,17 +3,17 @@ import { getPlaylistById, createPlaylist } from "./playlist.js";
 import { updatePlaylist } from "./playlist.manage.js";
 import { showDropboxChooser } from "./../dropbox.js";
 import { selectLocalFiles } from "./../local.js";
-import * as yt from "./../youtube.js";
-import * as sc from "./../soundcloud.js";
+import { fetchYoutubePlaylist } from "./../youtube.js";
+import { fetchSoundcloudPlaylist } from "./../soundcloud.js";
 
-let option = "";
+let importOption = "";
 
-function setOption(newOption = "") {
-    option = newOption;
+function setImportOption(option = "") {
+    importOption = option;
 }
 
-function isNewOption(newOption) {
-    return option !== newOption;
+function isNewImportOption(option) {
+    return importOption !== option;
 }
 
 function createImportOptionMask(option) {
@@ -31,9 +31,7 @@ function createImportOptionMask(option) {
 function removeImportOptionMask(option) {
     const maskElements = Array.from(document.querySelectorAll(`[data-mask-id*=${option}]`));
 
-    maskElements.forEach(element => {
-        removeElement(element);
-    });
+    maskElements.forEach(removeElement);
 }
 
 function showNotice(option, message) {
@@ -53,10 +51,13 @@ function showNotice(option, message) {
 
 function importPlaylist(url) {
     if (url.includes("youtube")) {
-        yt.fetchPlaylist(url);
+        fetchYoutubePlaylist(url);
     }
     else if (url.includes("soundcloud")) {
-        sc.fetchPlaylist(url);
+        fetchSoundcloudPlaylist(url);
+    }
+    else {
+        showNotice(importOption, "Invalid url");
     }
 }
 
@@ -105,6 +106,8 @@ async function addImportedPlaylist(playlist) {
     const tracks = filterDuplicateTracks(playlistTracks, pl.tracks);
     const newTracks = await replaceInvalidImages(tracks);
 
+    setImportOption();
+    removePlaylistImportForm();
     updatePlaylist(pl, newTracks, playlist.player);
 }
 
@@ -179,7 +182,7 @@ function handleImportFormSubmit(event) {
     const url = event.target.elements["playlist-url"].value.trim();
 
     if (url) {
-        createImportOptionMask(option);
+        createImportOptionMask(importOption);
         importPlaylist(url);
         event.target.reset();
     }
@@ -212,18 +215,19 @@ document.getElementById("js-import-options").addEventListener("click", ({ target
     }
     const option = item.attrValue;
 
-    if (!isNewOption(option)) {
+    if (!isNewImportOption(option)) {
         return;
     }
-    setOption(option);
+    setImportOption(option);
     removePlaylistImportForm();
 
     if (option.includes("local")) {
         showFilePicker(option);
-        setOption();
+        setImportOption();
     }
     else if (option === "dropbox") {
         showDropboxChooser();
+        setImportOption();
     }
     else {
         selectOption(item.elementRef);
@@ -231,7 +235,6 @@ document.getElementById("js-import-options").addEventListener("click", ({ target
 });
 
 export {
-    setOption,
     importPlaylist,
     addImportedPlaylist,
     showNotice,

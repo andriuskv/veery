@@ -16,15 +16,19 @@
     font-size: 18px;
     font-weight: normal;
 }
-.import-option-container {
-    flex-basis: 288px;
+.import-option-container,
+.pl-entry-container {
     padding: 8px;
-    margin-bottom: 8px;
     border: 1px solid $color1;
     border-radius: 2px;
     background-color: $color3;
 }
-.import-options {
+.import-option-container {
+    flex-basis: 288px;
+    margin-bottom: 8px;
+}
+.import-options,
+.pl-entries {
     padding: 4px;
     border: 1px solid $color2;
     border-radius: 2px;
@@ -86,16 +90,6 @@
 }
 .pl-entry-container {
     flex-basis: calc(100% - 296px);
-    padding: 8px;
-    border: 1px solid $color1;
-    border-radius: 2px;
-    background-color: $color3;
-}
-.pl-entries {
-    padding: 4px;
-    border: 1px solid $color2;
-    border-radius: 2px;
-    background-color: $color1;
 }
 .pl-entry {
     display: flex;
