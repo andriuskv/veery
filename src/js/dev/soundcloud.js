@@ -5,7 +5,7 @@ import { addImportedPlaylist, showNotice } from "./playlist/playlist.import.js";
 
 let initialized = false;
 
-async function initSoundCloud() {
+async function initSoundcloud() {
     if (initialized) {
         return;
     }
@@ -48,8 +48,8 @@ function parsePlaylist(playlist, url) {
     };
 }
 
-async function fetchPlaylist(url) {
-    await initSoundCloud();
+async function fetchSoundcloudPlaylist(url) {
+    await initSoundcloud();
 
     try {
         const data = await SC.resolve(url);
@@ -66,6 +66,6 @@ async function fetchPlaylist(url) {
 }
 
 export {
-    initSoundCloud,
-    fetchPlaylist
+    initSoundcloud,
+    fetchSoundcloudPlaylist
 };

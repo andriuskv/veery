@@ -90,7 +90,7 @@ async function getPlaylistTitle(id) {
     return items.length ? items[0].snippet.title: "";
 }
 
-async function fetchPlaylist(url) {
+async function fetchYoutubePlaylist(url) {
     const id = url.split("list=")[1];
 
     if (!id) {
@@ -117,5 +117,5 @@ async function fetchPlaylist(url) {
 }
 
 export {
-    fetchPlaylist
+    fetchYoutubePlaylist
 };
