@@ -76,6 +76,9 @@ function renderPlaylist(pl) {
 }
 
 function appendToPlaylist(pl, tracks) {
+    if (!pl.rendered) {
+        renderPlaylist(pl);
+    }
     const playlist = document.getElementById(`js-${pl.id}`);
     const cb = pl.type === "list" ? createListItem: createGridItem;
 
