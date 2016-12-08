@@ -1,5 +1,5 @@
 import { setSetting, getSetting } from "./../settings.js";
-import { formatTime, dispatchEvent } from "./../main.js";
+import { formatTime, dispatchCustomEvent } from "./../main.js";
 import { getCurrentTrack } from "./../playlist/playlist.js";
 import * as player from "./player.js";
 
@@ -34,11 +34,7 @@ const elapsedTime = (function() {
                 updateTrackSlider(track, startTime, elapsed);
             }
             else {
-                player.storedTrack.updateSavedTrack({
-                    elapsed: 0,
-                    currentTime: 0
-                });
-                dispatchEvent("track-end");
+                dispatchCustomEvent("track-end");
             }
         }, 1000 - diff);
     }

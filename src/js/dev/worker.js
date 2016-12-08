@@ -13,7 +13,7 @@ let worker = null;
             const playlists = data.payload;
 
             Object.keys(playlists).forEach(id => {
-                initPlaylist(createPlaylist(playlists[id]), false);
+                initPlaylist(createPlaylist(playlists[id]));
             });
             storedTrack.initTrack();
             router.toggleCurrent();

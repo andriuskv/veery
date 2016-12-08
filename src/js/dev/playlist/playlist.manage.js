@@ -3,13 +3,12 @@ import * as playlist from "./playlist.js";
 import * as playlistView from "./playlist.view.js";
 import { getSetting } from "./../settings.js";
 import { getVisiblePlaylistId } from "./../tab.js";
-import { removeElement, removeElementClass, dispatchEvent } from "./../main.js";
+import { removeElements, removeElementClass, dispatchCustomEvent } from "./../main.js";
 import { postMessageToWorker } from "./../worker.js";
 import { createSidebarEntry, removeSidebarEntry } from "./../sidebar.js";
 import { storedTrack, stopPlayer } from "./../player/player.js";
 import { sortTracks } from "./playlist.sorting.js";
 import { createPlaylistEntry } from "./playlist.entries.js";
-import { removeImportOptionMask } from "./playlist.import.js";
 
 function resortTracks(pl) {
     playlist.shufflePlaybackOrder(pl, getSetting("shuffle"));
@@ -23,36 +22,17 @@ function resortTracks(pl) {
     }
 }
 
-function initPlaylist(pl, toggle = router.isActive("manage")) {
-    const route = `playlist/${pl.id}`;
-
-    router.add(route);
+function initPlaylist(pl) {
+    pl.initialized = true;
+    router.add( `playlist/${pl.id}`);
     createSidebarEntry(pl.title, pl.id);
     createPlaylistEntry(pl.title, pl.id, pl.url);
     resortTracks(pl);
-
-    if (toggle) {
-        router.toggle(route);
-    }
 }
 
-function appendToPlaylist(pl, tracks, toggle = router.isActive("manage")) {
-    const route = `playlist/${pl.id}`;
-
-    pl.tracks = playlist.resetTrackIndexes(pl.tracks);
+function appendToPlaylist(pl, tracks) {
     playlistView.append(pl, tracks);
     resortTracks(pl);
-
-    if (toggle) {
-        router.toggle(route);
-    }
-    else {
-        dispatchEvent("track-length-change", {
-            id: pl.id,
-            tracks: pl.tracks,
-            type: pl.type
-        });
-    }
 }
 
 function removePlaylist(id) {
@@ -93,16 +73,21 @@ function refreshPlaylist(pl) {
     }
 }
 
-function updatePlaylist(pl, tracks, importOption) {
-    pl.tracks.push(...tracks);
+function updatePlaylist(pl, tracks, showPlaylist = router.isActive("manage")) {
+    pl.tracks = pl.tracks.concat(tracks);
 
-    if (pl.rendered) {
-        appendToPlaylist(pl, tracks);
+    if (!pl.initialized) {
+        initPlaylist(pl, showPlaylist);
     }
     else {
-        initPlaylist(pl);
+        pl.tracks = playlist.resetTrackIndexes(pl.tracks);
+        appendToPlaylist(pl, tracks, showPlaylist);
     }
-    removeImportOptionMask(importOption);
+
+    if (showPlaylist) {
+        router.toggle(`playlist/${pl.id}`);
+    }
+
     postMessageToWorker({
         action: "put",
         playlist: pl
@@ -111,12 +96,6 @@ function updatePlaylist(pl, tracks, importOption) {
 
 function getSelectedTrackIndexes(selectedElements) {
     return selectedElements.map(element => Number.parseInt(element.getAttribute("data-index"), 10));
-}
-
-function removeSelectedTrackElements(selectedElements) {
-    selectedElements.forEach(element => {
-        removeElement(element);
-    });
 }
 
 function resetTrackElementIndexes(elements) {
@@ -156,12 +135,12 @@ function removeSelectedTracks(pl) {
     if (selectedElements.length) {
         const selectedTrackIndexes = getSelectedTrackIndexes(selectedElements);
 
-        removeSelectedTrackElements(selectedElements);
+        removeElements(selectedElements);
         resetTrackElementIndexes(Array.from(document.getElementById(`js-${pl.id}`).children));
         pl.tracks = removeSelectedPlaylistTracks(pl, selectedTrackIndexes);
         playlist.shufflePlaybackOrder(pl, getSetting("shuffle"));
         updateCurrentTrack(pl.id, selectedTrackIndexes);
-        dispatchEvent("track-length-change", {
+        dispatchCustomEvent("track-length-change", {
             id: pl.id,
             tracks: pl.tracks,
             type: pl.type
@@ -214,7 +193,6 @@ function createNewPlaylistInputForm(id, element, handleSubmit) {
 
 export {
     initPlaylist,
-    appendToPlaylist,
     removePlaylist,
     refreshPlaylist,
     updatePlaylist,

@@ -1,8 +1,7 @@
 import { removeElement, getElementByAttr } from "./../main.js";
 import { getVisiblePlaylistId } from "./../tab.js";
 import { removePresentPanels } from "./../panels.js";
-import { postMessageToWorker } from "./../worker.js";
-import { getPlaylistById, getAllPlaylists, findTrack, resetTrackIndexes } from "./playlist.js";
+import { getPlaylistById, getAllPlaylists, findTrack } from "./playlist.js";
 import * as playlistManage from "./playlist.manage.js";
 
 const panelContainerElement = document.getElementById("js-move-to-panel-container");
@@ -42,22 +41,16 @@ function showInputContainer() {
 function moveTracks(playlistId) {
     const selectedTrackElements = playlistManage.getSelectedTrackElements();
     const trackIndexes = playlistManage.getSelectedTrackIndexes(selectedTrackElements);
-    const pl = getPlaylistById(getVisiblePlaylistId());
-    const destinationPlaylist = getPlaylistById(playlistId);
-    const selectedTracks = [];
+    const { tracks } = getPlaylistById(getVisiblePlaylistId());
+    const pl = getPlaylistById(playlistId);
+    const selectedTracks = tracks
+        .filter(track => trackIndexes.includes(track.index) && !findTrack(playlistId, track.name))
+        .map(track => {
+            track.playlistId = playlistId;
+            return track;
+        });
 
-    pl.tracks.forEach(track => {
-        if (trackIndexes.includes(track.index) && !findTrack(playlistId, track.name)) {
-            selectedTracks.push(track);
-        }
-    });
-    destinationPlaylist.tracks.push(...selectedTracks);
-    destinationPlaylist.tracks = resetTrackIndexes(destinationPlaylist.tracks);
-    playlistManage.appendToPlaylist(destinationPlaylist, selectedTracks, true);
-    postMessageToWorker({
-        action: "put",
-        playlist: destinationPlaylist
-    });
+    playlistManage.updatePlaylist(pl, selectedTracks, true);
 }
 
 function onListClick(event) {

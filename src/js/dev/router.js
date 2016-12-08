@@ -1,4 +1,4 @@
-import { dispatchEvent } from "./main.js";
+import { dispatchCustomEvent } from "./main.js";
 
 const routes = [
     "manage",
@@ -35,10 +35,10 @@ function toggleRouteTab(route) {
     const isPlaylistTab = route.startsWith("playlist/");
     const tabName = isPlaylistTab ? route.split("playlist/")[1] : route;
 
-    dispatchEvent("route-change", {
+    dispatchCustomEvent("route-change", {
         tabName,
         isPlaylistTab,
-        isInvalid: tabName === "404"
+        isValid: tabName !== "404"
     });
 }
 

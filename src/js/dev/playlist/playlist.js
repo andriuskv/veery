@@ -11,14 +11,20 @@ function getPlaylistById(id) {
 }
 
 function createPlaylist(pl) {
-    playlists[pl.id] = Object.assign({
+    const defaultProperties = {
         sortedBy: "",
         order: 0,
         shuffled: false,
         tracks: [],
         playbackIndex: 0,
         playbackOrder: []
-    }, pl, { rendered: false });
+    };
+    const defaultState = {
+        rendered: false,
+        initialized: false
+    };
+
+    playlists[pl.id] = Object.assign(defaultProperties, pl, defaultState);
     return playlists[pl.id];
 }
 

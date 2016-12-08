@@ -1,4 +1,4 @@
-import { removeElementClass, isOutsideElement, dispatchEvent } from "./main.js";
+import { removeElementClass, isOutsideElement, dispatchCustomEvent } from "./main.js";
 import { getSidebarEntry } from "./sidebar.js";
 import { removePresentPanels, togglePanel } from "./panels.js";
 import { getPlaylistById, getCurrentTrack } from "./playlist/playlist.js";
@@ -28,7 +28,7 @@ function toggleTabContent(action) {
     tabFooterElement.classList[action]("visible");
 }
 
-function toggleTab(id, playlistTab, ignoreSidebar) {
+function toggleTab(id, playlistTab, isValid) {
     removeElementClass("sidebar-btn", "active");
     removeElementClass("tab", "active");
 
@@ -47,16 +47,21 @@ function toggleTab(id, playlistTab, ignoreSidebar) {
         setSortOptions(pl);
         enableTrackSelection(pl.id);
         toggleTabContent("add");
-        dispatchEvent("track-length-change", { tracks: pl.tracks });
+        document.getElementById(`js-tab-${id}`).classList.add("active");
+        dispatchCustomEvent("track-length-change", {
+            id: pl.id,
+            tracks: pl.tracks,
+            type: pl.type
+        });
     }
     else {
         setVisiblePlaylistId();
         toggleTabContent("remove");
+        document.getElementById(`js-tab-${id}`).classList.add("active");
     }
     playlistView.resetFilteredPlaylist();
-    document.getElementById(`js-tab-${id}`).classList.add("active");
 
-    if (!ignoreSidebar) {
+    if (isValid) {
         const entry = getSidebarEntry(id);
 
         entry.classList.add("active");
@@ -90,14 +95,7 @@ window.addEventListener("click", event => {
 }, true);
 
 window.addEventListener("route-change", ({ detail }) => {
-    toggleTab(detail.tabName, detail.isPlaylistTab, detail.isInvalid);
-
-    if (detail.isPlaylistTab) {
-        const id = detail.tabName;
-        const { type } = getPlaylistById(id);
-
-        playlistView.addMarginToPlaylistHeader(id, type);
-    }
+    toggleTab(detail.tabName, detail.isPlaylistTab, detail.isValid);
 });
 
 export {
