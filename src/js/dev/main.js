@@ -31,6 +31,10 @@ function removeElement(element) {
     element.parentElement.removeChild(element);
 }
 
+function removeElements(elements) {
+    elements.forEach(removeElement);
+}
+
 function removeElementClass(className, classToRemove) {
     const elements = Array.from(document.querySelectorAll(`.${className}.${classToRemove}`));
 
@@ -85,7 +89,7 @@ function formatTime(time) {
     return `${hours}${minutes}:${seconds}`;
 }
 
-function dispatchEvent(eventName, data) {
+function dispatchCustomEvent(eventName, data) {
     const event = new CustomEvent(eventName, { detail: data });
 
     window.dispatchEvent(event);
@@ -96,8 +100,9 @@ export {
     capitalize,
     getElementByAttr,
     removeElement,
+    removeElements,
     removeElementClass,
     formatTime,
     isOutsideElement,
-    dispatchEvent
+    dispatchCustomEvent
 };

@@ -269,6 +269,11 @@ document.getElementById("js-tab-container").addEventListener("dblclick", ({ targ
 });
 
 window.addEventListener("track-end", () => {
+    storedTrack.updateSavedTrack({
+        elapsed: 0,
+        currentTime: 0
+    });
+
     if (getSetting("once")) {
         stopPlayer(true);
         return;

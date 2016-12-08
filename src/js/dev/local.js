@@ -3,7 +3,7 @@
 import { scriptLoader, formatTime } from "./main.js";
 import { getPlaylistById, createPlaylist } from "./playlist/playlist.js";
 import { updatePlaylist } from "./playlist/playlist.manage.js";
-import { createImportOptionMask, showNotice } from "./playlist/playlist.import.js";
+import { createImportOptionMask, removeImportOptionMask, showNotice } from "./playlist/playlist.import.js";
 
 function getTrackDuration(track) {
     return new Promise(resolve => {
@@ -97,7 +97,9 @@ async function addTracks(importOption, pl, newTracks, parseTracks) {
     await scriptLoader.load({ src: "js/libs/metadata-audio-parser.min.js" });
     const parsedTracks = await parseTracks(pl.id, tracks);
 
-    updatePlaylist(pl, parsedTracks, importOption);
+    updatePlaylist(pl, parsedTracks);
+    removeImportOptionMask(importOption);
+
 }
 
 function selectLocalFiles(files) {

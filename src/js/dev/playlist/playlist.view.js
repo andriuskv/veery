@@ -9,20 +9,20 @@ import { hideMoveToBtn } from "./playlist.move-to.js";
 let timeout = 0;
 let filteredPlaylistId = "";
 
-function createListItem(track) {
+function createListItem(item) {
     return `
-        <li class="list-item track" data-index="${track.index}">
-            <span>${track.title}</span>
-            <span>${track.artist}</span>
-            <span>${track.album}</span>
-            <span>${track.duration}</span>
+        <li class="list-item track" data-index="${item.index}">
+            <span>${item.title}</span>
+            <span>${item.artist}</span>
+            <span>${item.album}</span>
+            <span>${item.duration}</span>
         </li>
     `;
 }
 
 function createList(id, items) {
     return `
-        <ul id="js-list-view-header" class="list-view-header">
+        <ul id="js-list-view-header-${id}" class="list-view-header">
             <li class="list-view-header-item">TITLE</li>
             <li class="list-view-header-item">ARTIST</li>
             <li class="list-view-header-item">ALBUM</li>
@@ -35,6 +35,7 @@ function createList(id, items) {
 function createGridItem(item) {
     const name = item.artist && item.title ? `${item.artist} - ${item.title}` : item.name;
     const thumbnail = typeof item.thumbnail === "string" ? item.thumbnail : URL.createObjectURL(item.thumbnail);
+
     return `
         <li class="grid-item track" data-index="${item.index}">
             <div class="grid-item-thumb-container">
@@ -54,11 +55,11 @@ function createItems(tracks, cb) {
     return tracks.map(cb).join("");
 }
 
-function createPlaylist(pl) {
-    if (pl.type === "list") {
-        return createList(pl.id, createItems(pl.tracks, createListItem));
+function createPlaylist({ id, type, tracks }) {
+    if (type === "list") {
+        return createList(id, createItems(tracks, createListItem));
     }
-    return createGrid(pl.id, createItems(pl.tracks, createGridItem));
+    return createGrid(id, createItems(tracks, createGridItem));
 }
 
 function createPlaylistTab(pl) {
@@ -78,6 +79,7 @@ function renderPlaylist(pl) {
 function appendToPlaylist(pl, tracks) {
     if (!pl.rendered) {
         renderPlaylist(pl);
+        return;
     }
     const playlist = document.getElementById(`js-${pl.id}`);
     const cb = pl.type === "list" ? createListItem: createGridItem;
@@ -85,22 +87,25 @@ function appendToPlaylist(pl, tracks) {
     playlist.insertAdjacentHTML("beforeend", createItems(tracks, cb));
 }
 
-function updateTrackListView(track, trackElement) {
-    trackElement[0].textContent = track.title;
-    trackElement[1].textContent = track.artist;
-    trackElement[2].textContent = track.album;
-    trackElement[3].textContent = track.duration;
+function updateListItem(item, itemElement) {
+    itemElement[0].textContent = item.title;
+    itemElement[1].textContent = item.artist;
+    itemElement[2].textContent = item.album;
+    itemElement[3].textContent = item.duration;
 }
 
-function updateTrackGridView(track, trackElement) {
-    trackElement[0].children[0].textContent = track.duration;
-    trackElement[0].children[1].setAttribute("src", track.thumbnail);
-    trackElement[1].textContent = track.name;
+function updateGridItem(item, itemElement) {
+    const name = item.artist && item.title ? `${item.artist} - ${item.title}` : item.name;
+    const thumbnail = typeof item.thumbnail === "string" ? item.thumbnail : URL.createObjectURL(item.thumbnail);
+
+    itemElement[0].children[0].textContent = item.duration;
+    itemElement[0].children[1].setAttribute("src", thumbnail);
+    itemElement[1].textContent = name;
 }
 
 function updatePlaylist(pl) {
     const trackElements = document.getElementById(`js-${pl.id}`).children;
-    const cb = pl.type === "list" ? updateTrackListView: updateTrackGridView;
+    const cb = pl.type === "list" ? updateListItem: updateGridItem;
 
     pl.tracks.forEach((track, index) => {
         const trackElement = trackElements[index].children;
@@ -173,13 +178,11 @@ function togglePlaylistTypeBtn(type) {
 }
 
 function addMarginToPlaylistHeader(id, type) {
-    const isTypeOfList = type === "list";
-
-    if (isTypeOfList) {
+    if (type === "list") {
         const playlistElement = document.getElementById(`js-${id}`);
         const scrollBarWidth = playlistElement.offsetWidth - playlistElement.clientWidth;
 
-        document.getElementById("js-list-view-header").style.marginRight = `${scrollBarWidth}px`;
+        document.getElementById(`js-list-view-header-${id}`).style.marginRight = `${scrollBarWidth}px`;
     }
 }
 
@@ -222,7 +225,7 @@ function getValueString(value, valueString) {
     return `${value} ${valueString}`;
 }
 
-function filterPlaylist(query = "", id) {
+function filterPlaylist(id, query = "") {
     const { tracks } = getPlaylistById(id);
     const trackElements = document.getElementById(`js-${id}`).children;
 
@@ -233,7 +236,7 @@ function filterPlaylist(query = "", id) {
 function resetFilteredPlaylist() {
     if (filteredPlaylistId) {
         document.getElementById("js-filter-input").value = "";
-        filterPlaylist("", filteredPlaylistId);
+        filterPlaylist(filteredPlaylistId);
     }
 }
 
@@ -256,7 +259,7 @@ document.getElementById("js-filter-input").addEventListener("keyup", ({ target }
         clearTimeout(timeout);
     }
     timeout = setTimeout(() => {
-        filterPlaylist(target.value.trim().toLowerCase(), getVisiblePlaylistId());
+        filterPlaylist(getVisiblePlaylistId(), target.value.trim().toLowerCase());
     }, 400);
 });
 

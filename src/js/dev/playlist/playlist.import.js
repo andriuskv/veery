@@ -1,4 +1,4 @@
-import { removeElement, removeElementClass, getElementByAttr, scriptLoader } from "./../main.js";
+import { removeElement, removeElements, removeElementClass, getElementByAttr, scriptLoader } from "./../main.js";
 import { getPlaylistById, createPlaylist } from "./playlist.js";
 import { updatePlaylist } from "./playlist.manage.js";
 import { showDropboxChooser } from "./../dropbox.js";
@@ -29,18 +29,18 @@ function createImportOptionMask(option) {
 }
 
 function removeImportOptionMask(option) {
-    const maskElements = Array.from(document.querySelectorAll(`[data-mask-id*=${option}]`));
+    if (option) {
+        const elements = Array.from(document.querySelectorAll(`[data-mask-id*=${option}]`));
 
-    maskElements.forEach(removeElement);
+        removeElements(elements);
+    }
 }
 
 function showNotice(option, message) {
     const maskElements = Array.from(document.querySelectorAll(`[data-mask-id*=${option}]`));
 
     maskElements.forEach(element => {
-        const spinner = element.children[0];
-
-        removeElement(spinner);
+        removeElement(element.firstElementChild);
         element.insertAdjacentHTML("beforeend", `<span>${message}</span>`);
     });
 
@@ -108,7 +108,8 @@ async function addImportedPlaylist(playlist) {
 
     setImportOption();
     removePlaylistImportForm();
-    updatePlaylist(pl, newTracks, playlist.player);
+    updatePlaylist(pl, newTracks);
+    removeImportOptionMask(playlist.player);
 }
 
 function createPlaylistImportForm(container) {
@@ -168,12 +169,12 @@ function showFilePicker(choice) {
     if (choice === "local-file") {
         filePicker.removeAttribute("webkitdirectory");
         filePicker.removeAttribute("directory");
-        filePicker.setAttribute("multiple", true);
+        filePicker.setAttribute("multiple", "");
     }
     else if (choice === "local-folder") {
         filePicker.removeAttribute("multiple");
-        filePicker.setAttribute("webkitdirectory", true);
-        filePicker.setAttribute("directory", true);
+        filePicker.setAttribute("webkitdirectory", "");
+        filePicker.setAttribute("directory", "");
     }
     filePicker.dispatchEvent(clickEvent);
 }
