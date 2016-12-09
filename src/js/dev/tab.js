@@ -28,44 +28,34 @@ function toggleTabContent(action) {
     tabFooterElement.classList[action]("visible");
 }
 
-function toggleTab(id, playlistTab, isValid) {
-    removeElementClass("sidebar-btn", "active");
-    removeElementClass("tab", "active");
+function toggleToPlaylistTab(id) {
+    const pl = getPlaylistById(id);
+    const track = getCurrentTrack();
 
-    if (playlistTab) {
-        const pl = getPlaylistById(id);
-        const track = getCurrentTrack();
-
-        if (!pl.rendered) {
-            renderPlaylist(pl);
-        }
-        if (track && track.playlistId === id) {
-            playlistView.showPlayingTrack(track.index, id);
-        }
-        setVisiblePlaylistId(id);
-        playlistView.togglePlaylistTypeBtn(pl.type);
-        setSortOptions(pl);
-        enableTrackSelection(pl.id);
-        toggleTabContent("add");
-        document.getElementById(`js-tab-${id}`).classList.add("active");
-        dispatchCustomEvent("track-length-change", {
-            id: pl.id,
-            tracks: pl.tracks,
-            type: pl.type
-        });
+    if (!pl.rendered) {
+        renderPlaylist(pl);
     }
-    else {
-        setVisiblePlaylistId();
-        toggleTabContent("remove");
-        document.getElementById(`js-tab-${id}`).classList.add("active");
+    if (track && track.playlistId === id) {
+        playlistView.showPlayingTrack(track.index, id);
     }
+    setVisiblePlaylistId(id);
+    setSortOptions(pl);
+    enableTrackSelection(pl.id);
+    playlistView.togglePlaylistTypeBtn(pl.type);
     playlistView.resetFilteredPlaylist();
+    toggleTabContent("add");
+    document.getElementById(`js-tab-${id}`).classList.add("active");
+    dispatchCustomEvent("track-length-change", {
+        id: pl.id,
+        tracks: pl.tracks,
+        type: pl.type
+    });
+}
 
-    if (isValid) {
-        const entry = getSidebarEntry(id);
-
-        entry.classList.add("active");
-    }
+function toggleToNonPlaylistTab(id) {
+    setVisiblePlaylistId();
+    toggleTabContent("remove");
+    document.getElementById(`js-tab-${id}`).classList.add("active");
 }
 
 window.addEventListener("click", event => {
@@ -94,8 +84,22 @@ window.addEventListener("click", event => {
     removePresentPanels(event, panelId);
 }, true);
 
-window.addEventListener("route-change", ({ detail }) => {
-    toggleTab(detail.tabName, detail.isPlaylistTab, detail.isValid);
+window.addEventListener("route-change", ({ detail: { isPlaylistTab, tabId, isValid } }) => {
+    removeElementClass("sidebar-btn", "active");
+    removeElementClass("tab", "active");
+
+    if (isPlaylistTab) {
+        toggleToPlaylistTab(tabId);
+    }
+    else {
+        toggleToNonPlaylistTab(tabId);
+    }
+
+    if (isValid) {
+        const entry = getSidebarEntry(tabId);
+
+        entry.classList.add("active");
+    }
 });
 
 export {

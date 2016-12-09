@@ -33,12 +33,12 @@ function toggleRouteTab(route) {
         return;
     }
     const isPlaylistTab = route.startsWith("playlist/");
-    const tabName = isPlaylistTab ? route.split("playlist/")[1] : route;
+    const tabId = isPlaylistTab ? route.split("playlist/")[1] : route;
 
     dispatchCustomEvent("route-change", {
-        tabName,
+        tabId,
         isPlaylistTab,
-        isValid: tabName !== "404"
+        isValid: tabId !== "404"
     });
 }
 
