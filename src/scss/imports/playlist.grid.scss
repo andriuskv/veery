@@ -29,7 +29,6 @@
 }
 .grid-item-thumb-container {
     position: relative;
-    min-width: 80px;
     height: 80px;
     margin-right: 4px;
 }
@@ -43,6 +42,7 @@
 }
 .grid-item-thumb {
     display: block;
+    min-width: 80px;
     height: 100%;
     object-fit: scale-down;
 }
