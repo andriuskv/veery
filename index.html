@@ -20,8 +20,8 @@
                     <a href="#/manage" id="js-sidebar-entry-manage" class="btn btn-transparent sidebar-btn"
                         title="New playlist">Manage playlists</a>
                 </div>
-                <div class="sidebar-btn-container new-pl-btn-container">
-                    <button id="js-sidebar-form-toggle-btn" class="btn btn-transparent">+ New playlist</button>
+                <div class="sidebar-btn-container">
+                    <button id="js-sidebar-form-toggle-btn" class="btn btn-transparent new-pl-btn">+ New playlist</button>
                 </div>
                 <ul id="js-sidebar-entries" class="sidebar-entries"></ul>
             </nav>
@@ -47,39 +47,34 @@
                             <h3 class="manage-tab-section-title">Import playlist</h3>
                             <ul id="js-import-options" class="import-options">
                                 <li class="import-option">
-                                    <button data-option-id="local-file"
-                                        class="btn btn-transparent import-option-btn">
+                                    <div data-option-id="local-file" class="btn import-option-btn">
                                         <span class="icon-doc-inv import-option-icon"></span>
                                         <span class="import-option-title">Add files</span>
-                                    </button>
+                                    </div>
                                 </li>
                                 <li class="import-option">
-                                    <button data-option-id="local-folder"
-                                        class="btn btn-transparent import-option-btn">
+                                    <div data-option-id="local-folder" class="btn import-option-btn">
                                         <span class="icon-folder import-option-icon"></span>
                                         <span class="import-option-title">Add folder</span>
-                                    </button>
+                                    </div>
                                 </li>
                                 <li class="import-option">
-                                    <button data-option-id="dropbox"
-                                        class="btn btn-transparent import-option-btn">
+                                    <div data-option-id="dropbox" class="btn import-option-btn">
                                         <span class="icon-dropbox import-option-icon"></span>
                                         <span class="import-option-title">Dropbox chooser</span>
-                                    </button>
+                                    </div>
                                 </li>
                                 <li class="import-option">
-                                    <button data-option-id="youtube"
-                                        class="btn btn-transparent import-option-btn">
+                                    <div data-option-id="youtube" class="btn import-option-btn">
                                         <span class="icon-youtube-play import-option-icon"></span>
                                         <span class="import-option-title">YouTube</span>
-                                    </button>
+                                    </div>
                                 </li>
                                 <li class="import-option">
-                                    <button data-option-id="soundcloud"
-                                        class="btn btn-transparent import-option-btn">
+                                    <div data-option-id="soundcloud" class="btn import-option-btn">
                                         <span class="icon-soundcloud import-option-icon"></span>
                                         <span class="import-option-title">SoundCloud</span>
-                                    </button>
+                                    </div>
                                 </li>
                             </ul>
                         </div>
