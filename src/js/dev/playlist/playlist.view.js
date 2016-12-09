@@ -23,10 +23,10 @@ function createListItem(item) {
 function createList(id, items) {
     return `
         <ul id="js-list-view-header-${id}" class="list-view-header">
-            <li class="list-view-header-item">TITLE</li>
-            <li class="list-view-header-item">ARTIST</li>
-            <li class="list-view-header-item">ALBUM</li>
-            <li class="list-view-header-item">LENGTH</li>
+            <li class="list-view-header-item">Title</li>
+            <li class="list-view-header-item">Artist</li>
+            <li class="list-view-header-item">Album</li>
+            <li class="list-view-header-item">Duration</li>
         </ul>
         <ul id="js-${id}" class="playlist-items list-view">${items}</ul>
     `;

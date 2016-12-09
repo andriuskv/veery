@@ -26,13 +26,14 @@ function enableTrackSelection(id) {
 function initSelectionArea(parent) {
     const selectionElement = document.createElement("li");
 
-    selectedArea.left = startingPoint.x;
     selectedArea.top = startingPoint.y;
+    selectedArea.left = startingPoint.x;
     selectionElement.setAttribute("id", "js-selected-area");
     selectionElement.setAttribute("class", "selected-area");
     selectionElement.style.top = `${startingPoint.y}px`;
     selectionElement.style.left = `${startingPoint.x}px`;
-    parent.appendChild(selectionElement);
+    parent.insertBefore(selectionElement, parent.firstElementChild);
+
     return selectionElement;
 }
 
