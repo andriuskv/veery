@@ -77,11 +77,11 @@ function updatePlaylist(pl, tracks, showPlaylist = router.isActive("manage")) {
     pl.tracks = pl.tracks.concat(tracks);
 
     if (!pl.initialized) {
-        initPlaylist(pl, showPlaylist);
+        initPlaylist(pl);
     }
     else {
         pl.tracks = playlist.resetTrackIndexes(pl.tracks);
-        appendToPlaylist(pl, tracks, showPlaylist);
+        appendToPlaylist(pl, tracks);
     }
 
     if (showPlaylist) {
