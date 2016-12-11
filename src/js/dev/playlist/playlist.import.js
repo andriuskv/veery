@@ -169,12 +169,14 @@ function showFilePicker(choice) {
     if (choice === "local-file") {
         filePicker.removeAttribute("webkitdirectory");
         filePicker.removeAttribute("directory");
+        filePicker.removeAttribute("allowdirs");
         filePicker.setAttribute("multiple", "");
     }
     else if (choice === "local-folder") {
         filePicker.removeAttribute("multiple");
         filePicker.setAttribute("webkitdirectory", "");
         filePicker.setAttribute("directory", "");
+        filePicker.setAttribute("allowdirs", "");
     }
     filePicker.dispatchEvent(clickEvent);
 }
