@@ -161,30 +161,17 @@ document.getElementById("js-controls").addEventListener("click", ({ target }) =>
     const item = target.getAttribute("data-control-item");
 
     if (item === "repeat" || item === "shuffle" || item === "once") {
+        const itemSetting = getSetting(item);
+
         target.classList.toggle("active");
-        setSetting(item, !getSetting(item));
+        setSetting(item, !itemSetting);
 
         if (item === "shuffle") {
-            player.toggleShuffle(!getSetting(item));
+            player.toggleShuffle(!itemSetting);
         }
         return;
     }
-
-    switch (item) {
-        case "previous":
-            player.playPreviousTrack();
-            break;
-        case "play":
-            player.playTrack();
-            break;
-        case "stop":
-            player.stopPlayer();
-            player.storedTrack.remove();
-            break;
-        case "next":
-            player.playNextTrack();
-            break;
-    }
+    player.onControlButtonClick(item);
 });
 
 function toggleSetting(settingName) {
