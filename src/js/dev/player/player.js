@@ -43,7 +43,6 @@ const storedTrack = (function () {
             removeTrack();
             return;
         }
-        playlist.setPlaylistAsActive(storedTrack.playlistId);
         controls.setTrackBarInnerWidth(storedTrack.elapsed);
         controls.displayCurrentTime(storedTrack.currentTime);
         beforeTrackStart(track);
@@ -111,6 +110,7 @@ function togglePlaying(track) {
 function playNewTrack(track, startTime) {
     const volume = getSetting("volume");
 
+    playlist.setPlaylistAsActive(track.playlistId);
     playlist.setPlaybackIndex(track.index);
 
     if (track.player === "native") {
@@ -124,27 +124,34 @@ function playNewTrack(track, startTime) {
     }
 }
 
-function playFirstTrack(source, sourceValue) {
-    const id = getVisiblePlaylistId();
-
-    if (id) {
-        playlist.setPlaylistAsActive(id);
-        play(source, sourceValue);
-    }
-}
-
 function playTrack() {
-    const currentTrack = playlist.getCurrentTrack();
+    const track = playlist.getCurrentTrack();
 
-    if (!currentTrack) {
-        playFirstTrack("direction");
+    if (!track) {
+        play("direction", 0, getVisiblePlaylistId());
         return;
     }
-    togglePlaying(currentTrack);
+    togglePlaying(track);
 }
 
-function playFromSource(pl, source, sourceValue) {
+function play(source, sourceValue, id = playlist.getActivePlaylistId()) {
+    const pl = playlist.getPlaylistById(id);
+    const shuffle = getSetting("shuffle");
+    const currentTrack = playlist.getCurrentTrack();
     let track = null;
+
+    if (!pl) {
+        return;
+    }
+
+    if (currentTrack) {
+        controls.elapsedTime.stop();
+        stopTrack(currentTrack);
+    }
+
+    if (pl.shuffled !== shuffle) {
+        playlist.shufflePlaybackOrder(pl, shuffle);
+    }
 
     if (source === "index") {
         track = playlist.getTrack(pl.tracks[sourceValue]);
@@ -153,6 +160,7 @@ function playFromSource(pl, source, sourceValue) {
         track = playlist.getNextTrack(pl, sourceValue);
         scrollToTrack = true;
     }
+
     if (!track) {
 
         // If playlist is empty reset player
@@ -160,25 +168,6 @@ function playFromSource(pl, source, sourceValue) {
         return;
     }
     playNewTrack(track);
-}
-
-function play(source, sourceValue) {
-    const currentTrack = playlist.getCurrentTrack();
-    const id = playlist.getActivePlaylistId();
-
-    if (!id) {
-        return;
-    }
-    const pl = playlist.getPlaylistById(id);
-    const shuffle = getSetting("shuffle");
-
-    if (currentTrack) {
-        stopTrack(currentTrack);
-    }
-    if (pl.shuffled !== shuffle) {
-        playlist.shufflePlaybackOrder(pl, shuffle);
-    }
-    playFromSource(pl, source, sourceValue);
 }
 
 function playNextTrack() {
@@ -202,10 +191,10 @@ function stopTrack(track, once) {
 }
 
 function stopPlayer(once) {
-    const currentTrack = playlist.getCurrentTrack();
+    const track = playlist.getCurrentTrack();
 
-    if (currentTrack) {
-        stopTrack(currentTrack, once);
+    if (track) {
+        stopTrack(track, once);
     }
     resetPlayer(once);
 }
@@ -222,6 +211,24 @@ function resetPlayer(once) {
     controls.togglePlayBtn(paused);
     removeActiveIcon();
     removeElementClass("track", "playing");
+}
+
+function onControlButtonClick(button) {
+    switch (button) {
+        case "previous":
+            playPreviousTrack();
+            break;
+        case "play":
+            playTrack();
+            break;
+        case "stop":
+            stopPlayer();
+            storedTrack.remove();
+            break;
+        case "next":
+            playNextTrack();
+            break;
+    }
 }
 
 function toggleShuffle(shuffle) {
@@ -264,7 +271,7 @@ document.getElementById("js-tab-container").addEventListener("dblclick", ({ targ
     const element = getElementByAttr(target, "data-index");
 
     if (element) {
-        playFirstTrack("index", element.attrValue);
+        play("index", element.attrValue, getVisiblePlaylistId());
     }
 });
 
@@ -286,9 +293,7 @@ window.addEventListener("track-end", () => {
 });
 
 export {
-    playTrack,
-    playNextTrack,
-    playPreviousTrack,
+    onControlButtonClick,
     stopPlayer,
     toggleShuffle,
     seekTo,
