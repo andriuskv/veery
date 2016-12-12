@@ -1,10 +1,13 @@
 .controls {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
     height: 36px;
     user-select: none;
-    cursor: default;
 }
 .control-bar {
     position: relative;
@@ -14,7 +17,6 @@
     margin-right: 8px;
     background: #666;
     cursor: pointer;
-    transition: all 0.1s;
 
     &:hover {
         height: 6px;
