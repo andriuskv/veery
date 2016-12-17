@@ -28,6 +28,7 @@
     margin-right: auto;
 }
 .selected-area {
+    z-index: 1;
     position: absolute;
     border: 1px solid $brand-color;
     background-color: transparentize($brand-color, 0.8);
