@@ -11,26 +11,29 @@
 </head>
 <body>
     <div class="player">
-        <div class="sidebar">
-            <header class="sidebar-header">
-                <img src="./assets/images/main-icon.png" class="main-icon" alt="icon">
-            </header>
-            <nav class="sidebar-nav">
-                <div class="sidebar-btn-container">
-                    <a href="#/manage" id="js-sidebar-entry-manage" class="btn btn-transparent sidebar-btn"
-                        title="New playlist">Manage playlists</a>
-                </div>
-                <div class="sidebar-btn-container">
-                    <button id="js-sidebar-form-toggle-btn" class="btn btn-transparent new-pl-btn">+ New playlist</button>
-                </div>
-                <ul id="js-sidebar-entries" class="sidebar-entries"></ul>
-            </nav>
+        <div id="js-sidebar-container" class="sidebar-container contracted">
+            <div id="js-sidebar" class="sidebar">
+                <header class="sidebar-header" data-target="header"></header>
+                <nav class="sidebar-nav">
+                    <div class="sidebar-btn-container">
+                        <a href="#/manage" id="js-sidebar-entry-manage" class="btn btn-transparent sidebar-btn"
+                            title="New playlist">Manage playlists</a>
+                    </div>
+                    <div class="sidebar-btn-container">
+                        <button id="js-sidebar-form-toggle-btn" class="btn btn-transparent new-pl-btn">+ New playlist</button>
+                    </div>
+                    <ul id="js-sidebar-entries" class="sidebar-entries"></ul>
+                </nav>
+            </div>
         </div>
         <div class="main">
             <div id="js-tab-header" class="tab-header">
-                <input type="text" id="js-filter-input" class="filter-input" placeholder="Filter">
-                <div id="js-move-to-panel-container" class="tab-header-item"></div>
-                <button id="js-list-toggle-btn" class="icon-th-list btn tab-header-item"
+                <div class="filter-input-container">
+                    <button class="icon-search btn filter-input-btn" data-header-item="filter"
+                        title="Toggle filter input"></button>
+                    <input type="text" id="js-filter-input" class="filter-input" placeholder="Filter">
+                </div>
+                <button id="js-list-toggle-btn" class="icon-th-list btn tab-header-item list-toggle-btn"
                     data-header-item="list" title="List"></button>
                 <button id="js-grid-toggle-btn" class="icon-th btn tab-header-item"
                     data-header-item="grid" title="Grid"></button>
@@ -99,23 +102,29 @@
             data-control-item="stop" title="Stop"></button>
         <button class="icon-to-end btn btn-transparent main-control-btn"
             data-control-item="next" title="Next"></button>
-        <div id="js-track-current" class="track-time track-current">0:00</div>
-        <div id="js-track-bar" class="control-bar track-bar">
-            <div id="js-track-bar-inner" class="track-bar-inner">
-                <div class="bar-thumb"></div>
+        <div class="track-bar-container">
+            <div id="js-track-current" class="track-time track-current">0:00</div>
+            <div id="js-track-bar" class="control-bar track-bar">
+                <div id="js-track-bar-inner" class="track-bar-inner">
+                    <div class="bar-thumb"></div>
+                </div>
             </div>
+            <div id="js-track-duration" class="track-time track-duration">0:00</div>
         </div>
-        <div id="js-track-duration" class="track-time track-duration">0:00</div>
-        <button class="icon-cw btn btn-transparent control-btn"
+        <button class="icon-cw btn btn-transparent control-btn repeat-btn"
             data-control-item="repeat" title="Repeat"></button>
         <button class="icon-shuffle btn btn-transparent control-btn"
             data-control-item="shuffle" title="Shuffle"></button>
         <button class="icon-right btn btn-transparent control-btn"
             data-control-item="once" title="Play once"></button>
+        <button class="icon-volume-up btn btn-transparent control-btn volume-btn"
+            data-control-item="volume" title="Toggle volume slider"></button>
         <span class="icon-volume-up volume-icon"></span>
-        <div id="js-volume-bar" class="control-bar volume-bar">
-            <div id="js-volume-bar-inner" class="track-bar-inner volume-bar-inner">
-                <div class="bar-thumb"></div>
+        <div id="js-volume-bar-container" class="volume-bar-container">
+            <div id="js-volume-bar" class="control-bar volume-bar">
+                <div id="js-volume-bar-inner" class="track-bar-inner volume-bar-inner">
+                    <div class="bar-thumb"></div>
+                </div>
             </div>
         </div>
     </div>
