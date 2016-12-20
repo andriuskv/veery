@@ -4,24 +4,31 @@ import { removePresentPanels } from "./../panels.js";
 import { getPlaylistById, getAllPlaylists, findTrack } from "./playlist.js";
 import * as playlistManage from "./playlist.manage.js";
 
-const panelContainerElement = document.getElementById("js-move-to-panel-container");
-
 function showMoveToBtn() {
-    if (document.getElementById("js-move-to-btn")) {
+    const panelContainerId = "js-move-to-panel-container";
+
+    if (document.getElementById(panelContainerId)) {
         return;
     }
-    const moveToButton = `
-        <button id="js-move-to-btn" class="btn" data-header-item="move-to" title="Move to">Move to</button>
-    `;
+    const div = document.createElement("div");
+    const button = document.createElement("button");
 
-    panelContainerElement.insertAdjacentHTML("beforeend", moveToButton);
+    div.id = panelContainerId;
+    div.classList.add("tab-header-item");
+    button.classList.add("btn");
+    button.setAttribute("data-header-item", "move-to");
+    button.title = "Move to";
+    button.textContent = "Move to";
+    div.appendChild(button);
+
+    document.getElementById("js-tab-header").insertBefore(div, document.getElementById("js-list-toggle-btn"));
 }
 
-function hideMoveToBtn() {
-    const moveToButton = document.getElementById("js-move-to-btn");
+function removeMoveToPanelContainer() {
+    const panelContainer = document.getElementById("js-move-to-panel-container");
 
-    if (moveToButton) {
-        removeElement(moveToButton);
+    if (panelContainer) {
+        removeElement(panelContainer);
     }
 }
 
@@ -71,11 +78,11 @@ function createPlaylistList(playlistId) {
     return Object.keys(playlists)
     .filter(id => id !== playlistId)
     .map(id => {
-        const pl = playlists[id];
+        const { title } = playlists[id];
 
         return `
-            <li class="move-to-list-item" data-item="${pl.id}">
-                <button class="btn">${pl.title}</button>
+            <li class="move-to-list-item" data-item="${id}">
+                <button class="btn">${title}</button>
             </li>
         `;
     }).join("");
@@ -92,13 +99,13 @@ function createMoveToPanel(panelId, { id }) {
         </div>
     `;
 
-    panelContainerElement.insertAdjacentHTML("beforeend", moveToPanelElement);
+    document.getElementById("js-move-to-panel-container").insertAdjacentHTML("beforeend", moveToPanelElement);
     document.getElementById("js-move-to-list").addEventListener("click", onListClick);
     document.getElementById("js-move-to-new-pl-btn").addEventListener("click", showInputContainer, { once: true });
 }
 
 export {
     showMoveToBtn,
-    hideMoveToBtn,
+    removeMoveToPanelContainer,
     createMoveToPanel
 };

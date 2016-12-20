@@ -178,6 +178,14 @@ function playPreviousTrack() {
     play("direction", -1);
 }
 
+function playTrackFromElement({ target }) {
+    const element = getElementByAttr(target, "data-index");
+
+    if (element) {
+        play("index", element.attrValue, getVisiblePlaylistId());
+    }
+}
+
 function stopTrack(track, once) {
     if (!once && track.player === "native") {
         nPlayer.stopTrack(track);
@@ -267,13 +275,33 @@ function seekTo(track, percent) {
     controls.displayCurrentTime(currentTime);
 }
 
-document.getElementById("js-tab-container").addEventListener("dblclick", ({ target }) => {
-    const element = getElementByAttr(target, "data-index");
+(function () {
+    const tabContainer = document.getElementById("js-tab-container");
 
-    if (element) {
-        play("index", element.attrValue, getVisiblePlaylistId());
+    function getTouchCoords(touch) {
+        return {
+            x: Math.floor(touch.clientX),
+            y: Math.floor(touch.clientY)
+        };
     }
-});
+
+    if (window.innerWidth < 600) {
+        let touchStartCoords = {};
+
+        tabContainer.addEventListener("touchstart", event => {
+            touchStartCoords = getTouchCoords(event.changedTouches[0]);
+        });
+
+        tabContainer.addEventListener("touchend", event => {
+            const { x, y } = getTouchCoords(event.changedTouches[0]);
+
+            if (touchStartCoords.x === x && touchStartCoords.y === y) {
+                playTrackFromElement(event);
+            }
+        });
+    }
+    tabContainer.addEventListener("dblclick", playTrackFromElement);
+})();
 
 window.addEventListener("track-end", () => {
     storedTrack.updateSavedTrack({

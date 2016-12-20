@@ -7,7 +7,14 @@
     align-items: center;
     justify-content: space-between;
     height: 36px;
+    padding: 4px;
     user-select: none;
+
+    @include for-phone-only {
+        align-items: flex-end;
+        justify-content: center;
+        height: 48px;
+    }
 }
 .control-bar {
     position: relative;
@@ -33,10 +40,6 @@
     margin-left: 2px;
     margin-right: 2px;
     font-size: 22px;
-
-    &:first-of-type {
-        margin-left: 4px;
-    }
 }
 .track-time {
     color: $base-text-color;
@@ -47,6 +50,19 @@
 }
 .track-duration {
     margin-right: 8px;
+}
+.track-bar-container {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+
+    @include for-phone-only {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        padding-top: 4px;
+    }
 }
 .track-bar {
     flex-grow: 1;
@@ -64,9 +80,41 @@
     padding: 4px 6px;
     margin-right: 4px;
 }
+.repeat-btn {
+    @include for-phone-only {
+        margin-left: 8px;
+    }
+}
+.volume-btn {
+    display: none;
+
+    @include for-phone-only {
+        display: initial;
+    }
+}
 .volume-icon {
     margin-left: 4px;
     color: $base-text-color;
+
+    @include for-phone-only {
+        display: none;
+    }
+}
+.volume-bar-container {
+    @include for-phone-only {
+        display: none;
+
+        &.visible {
+            position: absolute;
+            top: -10px;
+            right: 12%;
+            display: flex;
+            align-items: center;
+            height: 28px;
+            background-color: $color1;
+            border: 1px solid $color3;
+        }
+    }
 }
 .volume-bar {
     width: 100px;

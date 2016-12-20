@@ -25,10 +25,51 @@
 
     &.visible {
         display: flex;
+
+        @include for-phone-only {
+            position: relative;
+            justify-content: flex-end;
+        }
     }
 }
 .tab-header-item {
     margin-left: 4px;
+}
+.filter-input-container {
+    display: flex;
+    margin-left: 0;
+    margin-right: auto;
+
+    @include for-phone-only {
+        position: absolute;
+        left: 4px;
+        padding-right: 4px;
+        background-color: $color2;
+    }
+}
+.filter-input-btn {
+    display: none;
+
+    @include for-phone-only {
+        display: initial;
+    }
+}
+.filter-input {
+    width: 140px;
+
+    @include for-phone-only {
+        display: none;
+
+        &.visible {
+            display: initial;
+            margin-left: 4px;
+        }
+    }
+}
+.list-toggle-btn {
+    @include for-phone-only {
+        display: none;
+    }
 }
 .tab-title {
     padding-top: 20px;
