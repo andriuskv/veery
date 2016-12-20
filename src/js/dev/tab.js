@@ -2,7 +2,6 @@ import { removeElementClass, isOutsideElement, dispatchCustomEvent } from "./mai
 import { getSidebarEntry } from "./sidebar.js";
 import { removePresentPanels, togglePanel } from "./panels.js";
 import { getPlaylistById, getCurrentTrack } from "./playlist/playlist.js";
-import { renderPlaylist } from "./playlist/playlist.view.js";
 import { enableTrackSelection, deselectTrackElements } from "./playlist/playlist.track-selection.js";
 import { setSortOptions, createSortPanel, changePlaylistOrder } from "./playlist/playlist.sorting.js";
 import { createMoveToPanel } from "./playlist/playlist.move-to.js";
@@ -33,15 +32,22 @@ function toggleToPlaylistTab(id) {
     const track = getCurrentTrack();
 
     if (!pl.rendered) {
-        renderPlaylist(pl);
+        playlistView.renderPlaylist(pl);
     }
+
     if (track && track.playlistId === id) {
         playlistView.showPlayingTrack(track.index, id);
+    }
+
+    if (pl.type === "list" && window.innerWidth < 600) {
+        playlistView.changePlaylistType("grid", pl);
+    }
+    else {
+        playlistView.togglePlaylistTypeBtn(pl.type);
     }
     setVisiblePlaylistId(id);
     setSortOptions(pl);
     enableTrackSelection(pl.id);
-    playlistView.togglePlaylistTypeBtn(pl.type);
     playlistView.resetFilteredPlaylist();
     toggleTabContent("add");
     document.getElementById(`js-tab-${id}`).classList.add("active");
@@ -64,7 +70,10 @@ window.addEventListener("click", event => {
     const pl = getPlaylistById(id);
     let panelId = "";
 
-    if (item === "move-to") {
+    if (item === "filter") {
+        document.getElementById("js-filter-input").classList.toggle("visible");
+    }
+    else if (item === "move-to") {
         panelId = "js-move-to-panel";
         togglePanel(panelId, pl, createMoveToPanel);
     }
@@ -100,6 +109,7 @@ window.addEventListener("route-change", ({ detail: { isPlaylistTab, tabId, isVal
 
         entry.classList.add("active");
     }
+    document.getElementById("js-sidebar-container").classList.add("contracted");
 });
 
 export {

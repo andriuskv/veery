@@ -81,7 +81,7 @@ function handleMouseleave({ target }) {
 
 function createTrackInfo() {
     const trackInfoElement = `
-        <div id="js-track-info">
+        <div id="js-track-info" class="track-info">
             <div class="track-art-container">
                 <img src="" id="js-track-art" class="track-art" alt="track art">
             </div>
@@ -92,7 +92,7 @@ function createTrackInfo() {
         </div>
     `;
 
-    document.querySelector(".sidebar").insertAdjacentHTML("beforeend", trackInfoElement);
+    document.getElementById("js-sidebar").insertAdjacentHTML("beforeend", trackInfoElement);
     document.getElementById("js-track-title").addEventListener("mouseenter", handleMouseenter);
     document.getElementById("js-track-artist").addEventListener("mouseenter", handleMouseenter);
 }
@@ -148,6 +148,16 @@ function toggleSidebarForm() {
 }
 
 document.getElementById("js-sidebar-form-toggle-btn").addEventListener("click", toggleSidebarForm);
+document.getElementById("js-sidebar-container").addEventListener("click", function(event) {
+    const target = event.target.getAttribute("data-target");
+
+    if (target) {
+        this.classList.toggle("contracted");
+    }
+    else if (event.offsetX > document.getElementById("js-sidebar").offsetWidth) {
+        this.classList.add("contracted");
+    }
+});
 
 export {
     createSidebarEntry,

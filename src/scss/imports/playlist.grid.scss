@@ -26,11 +26,18 @@
     @media (min-width: 1772px) {
         max-width: calc(20% - 4px);
     }
+    @include for-phone-only {
+        flex-basis: 302px;
+    }
 }
 .grid-item-thumb-container {
     position: relative;
     height: 80px;
     margin-right: 4px;
+
+    @include for-phone-only {
+        height: 60px;
+    }
 }
 .grid-item-duration {
     position: absolute;
@@ -45,4 +52,8 @@
     min-width: 80px;
     height: 100%;
     object-fit: scale-down;
+
+    @include for-phone-only {
+        min-width: 60px;
+    }
 }

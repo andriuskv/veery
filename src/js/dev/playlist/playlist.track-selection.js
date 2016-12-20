@@ -1,6 +1,6 @@
 import { removeElement, removeElementClass, getElementByAttr, isOutsideElement } from "./../main.js";
 import { getSelectedTrackElements } from "./playlist.manage.js";
-import { showMoveToBtn, hideMoveToBtn } from "./playlist.move-to.js";
+import { showMoveToBtn, removeMoveToPanelContainer } from "./playlist.move-to.js";
 
 const startingPoint = {};
 const mousePos = {};
@@ -107,7 +107,7 @@ function prevendTrackDeselection(gotSelectedTracks) {
 function deselectTrackElements(startElement) {
     if (!keepTracksSelected && isOutsideElement(startElement, "js-tab-header")) {
         removeElementClass("track", "selected");
-        hideMoveToBtn();
+        removeMoveToPanelContainer();
     }
     keepTracksSelected = false;
 }

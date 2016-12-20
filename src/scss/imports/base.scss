@@ -47,7 +47,6 @@ input {
 %default-input-styles {
     padding: 4px 6px;
     border: none;
-    border-radius: 2px;
     background-color: $color1;
     font-size: 14px;
     color: $base-text-color;
@@ -73,9 +72,20 @@ input {
     }
 }
 .player {
+    position: relative;
     display: flex;
     height: calc(100% - 36px);
+
+    @include for-phone-only {
+        flex-direction: column;
+        height: calc(100% - 48px);
+    }
 }
 .main {
-    width: calc(100% - 164px);
+    width: calc(100% - 160px);
+
+    @include for-phone-only {
+        width: 100%;
+        height: calc(100% - 40px);
+    }
 }

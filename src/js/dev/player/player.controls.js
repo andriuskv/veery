@@ -169,9 +169,14 @@ document.getElementById("js-controls").addEventListener("click", ({ target }) =>
         if (item === "shuffle") {
             player.toggleShuffle(!itemSetting);
         }
-        return;
     }
-    player.onControlButtonClick(item);
+    else if (item === "volume") {
+        target.classList.toggle("active");
+        document.getElementById("js-volume-bar-container").classList.toggle("visible");
+    }
+    else {
+        player.onControlButtonClick(item);
+    }
 });
 
 function toggleSetting(settingName) {

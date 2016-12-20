@@ -157,7 +157,7 @@ function onNewPlaylistFormSubmit(event) {
     const pl = playlist.createPlaylist({
         id: Math.random().toString(36).slice(2),
         title: form.title.value,
-        type: "list"
+        type: "grid"
     });
 
     initPlaylist(pl);

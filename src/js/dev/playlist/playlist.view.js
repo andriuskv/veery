@@ -4,7 +4,7 @@ import { getPlaylistById, getActivePlaylistId, getCurrentTrack } from "./playlis
 import { removeElement, removeElementClass } from "./../main.js";
 import { resetPlaylistSort } from "./playlist.sorting.js";
 import { enableTrackSelection } from "./playlist.track-selection.js";
-import { hideMoveToBtn } from "./playlist.move-to.js";
+import { removeMoveToPanelContainer } from "./playlist.move-to.js";
 
 let timeout = 0;
 let filteredPlaylistId = "";
@@ -192,7 +192,7 @@ function changePlaylistType(newType, pl) {
     document.getElementById(`js-tab-${pl.id}`).innerHTML = createPlaylist(pl);
     enableTrackSelection(pl.id);
     togglePlaylistTypeBtn(newType);
-    hideMoveToBtn();
+    removeMoveToPanelContainer();
     addMarginToPlaylistHeader(pl.id, pl.type);
     postMessageToWorker({
         action: "update",
@@ -268,6 +268,18 @@ window.addEventListener("track-length-change", ({ detail }) => {
 
     if (detail.id && detail.type) {
         addMarginToPlaylistHeader(detail.id, detail.type);
+    }
+});
+
+window.addEventListener("resize", ({ target }) => {
+    const id = getVisiblePlaylistId();
+
+    if (id) {
+        const pl = getPlaylistById(id);
+
+        if (pl.type === "list" && target.innerWidth < 600) {
+            changePlaylistType("grid", pl);
+        }
     }
 });
 

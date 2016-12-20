@@ -1,3 +1,52 @@
+.sidebar-container {
+    cursor: default;
+
+    @include for-phone-only {
+        z-index: 1;
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        height: 100%;
+        backdrop-filter: blur(2px);
+        background-color: transparentize($color2, 0.6);
+
+        &.contracted {
+            z-index: 0;
+            height: 40px;
+            border-top: 1px solid $color1;
+
+            .sidebar {
+                flex-direction: row;
+                width: 100%;
+                padding: 2px 0;
+                background-color: $color2;
+            }
+            .sidebar-header {
+                width: 20px;
+                height: 50%;
+                margin: 8px;
+                background-image: url("../assets/images/main-icon-alt.png");
+            }
+            .sidebar-nav {
+                display: none;
+            }
+            .track-info {
+                display: flex;
+                width: calc(100% - 72px);
+            }
+            .track-art-container {
+                width: 36px;
+                height: 100%;
+                padding: 0 0 0 2px;
+                margin: 0;
+            }
+            .track-name {
+                height: 100%;
+            }
+        }
+    }
+}
 .sidebar {
     user-select: none;
     flex-grow: 0;
@@ -5,18 +54,20 @@
     display: flex;
     flex-direction: column;
     width: 160px;
-    margin-right: 4px;
-    cursor: default;
+    height: 100%;
+    padding-right: 2px;
+    background-color: $color1;
 }
 .sidebar-header {
-    display: flex;
-    align-items: center;
     height: 80px;
+    background-image: url("../assets/images/main-icon.png");
+    background-size: cover;
+    background-repeat: no-repeat;
     background-color: $color2;
-}
-.main-icon {
-    width: 100%;
-    height: 100%;
+
+    @include for-phone-only {
+        cursor: pointer;
+    }
 }
 .main-title {
     margin-top: 0;
