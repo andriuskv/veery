@@ -45,7 +45,6 @@ const storedTrack = (function () {
         }
         controls.setTrackBarInnerWidth(storedTrack.elapsed);
         controls.displayCurrentTime(storedTrack.currentTime);
-        beforeTrackStart(track);
         playNewTrack(track, storedTrack.currentTime);
     }
 
@@ -58,7 +57,7 @@ const storedTrack = (function () {
     };
 })();
 
-function beforeTrackStart(track, scrollToTrack) {
+function beforeTrackStart(track) {
     const id = getVisiblePlaylistId();
 
     showTrackInfo(track);
@@ -72,13 +71,8 @@ function beforeTrackStart(track, scrollToTrack) {
 
 function onTrackStart(startTime) {
     const track = playlist.getCurrentTrack();
-    const time = {
-        currentTime: startTime,
-        duration: track.durationInSeconds
-    };
-    paused = false;
 
-    beforeTrackStart(track, scrollToTrack);
+    paused = false;
     showActiveIcon(track.playlistId);
     controls.togglePlayBtn(paused);
     storedTrack.saveTrack({
@@ -86,12 +80,15 @@ function onTrackStart(startTime) {
         name: track.name,
         player: track.player
     });
-    controls.elapsedTime.start(time);
+    controls.elapsedTime.start({
+        currentTime: startTime,
+        duration: track.durationInSeconds
+    });
 }
 
 function togglePlaying(track) {
     if (track.player === "native") {
-        nPlayer.togglePlaying(paused, track);
+        nPlayer.togglePlaying(paused, track.audio);
     }
     else if (track.player === "youtube") {
         ytPlayer.togglePlaying(paused);
@@ -112,9 +109,11 @@ function playNewTrack(track, startTime) {
 
     playlist.setPlaylistAsActive(track.playlistId);
     playlist.setPlaybackIndex(track.index);
+    playlist.setCurrentTrack(track);
+    beforeTrackStart(track);
 
     if (track.player === "native") {
-        nPlayer.playTrack(track, volume, startTime);
+        nPlayer.playTrack(track.audioTrack, volume, startTime);
     }
     else if (track.player === "youtube") {
         ytPlayer.playTrack(track, volume, startTime);
@@ -145,7 +144,7 @@ function play(source, sourceValue, id = playlist.getActivePlaylistId()) {
     }
 
     if (currentTrack) {
-        controls.elapsedTime.stop();
+        controls.resetTrackBar();
         stopTrack(currentTrack);
     }
 
@@ -214,6 +213,7 @@ function resetPlayer(once) {
         showTrackInfo();
     }
     paused = true;
+    storedTrack.remove();
     controls.resetTrackBar();
     controls.showTrackDuration();
     controls.togglePlayBtn(paused);
@@ -231,7 +231,6 @@ function onControlButtonClick(button) {
             break;
         case "stop":
             stopPlayer();
-            storedTrack.remove();
             break;
         case "next":
             playNextTrack();
@@ -249,7 +248,7 @@ function toggleShuffle(shuffle) {
 
 function setVolume(track, volume) {
     if (track.player === "native") {
-        nPlayer.setVolume(volume, track);
+        nPlayer.setVolume(volume, track.audio);
     }
     else if (track.player === "youtube") {
         ytPlayer.setVolume(volume);
@@ -264,7 +263,7 @@ function seekTo(track, percent) {
 
     controls.elapsedTime.stop();
     if (track.player === "native") {
-        nPlayer.seekTo(currentTime, track);
+        nPlayer.seekTo(currentTime, track.audio);
     }
     else if (track.player === "youtube") {
         ytPlayer.seekTo(currentTime);
@@ -304,15 +303,12 @@ function seekTo(track, percent) {
 })();
 
 window.addEventListener("track-end", () => {
-    storedTrack.updateSavedTrack({
-        elapsed: 0,
-        currentTime: 0
-    });
-
     if (getSetting("once")) {
         stopPlayer(true);
         return;
     }
+    storedTrack.remove();
+
     if (!getSetting("repeat")) {
         playNextTrack();
         return;

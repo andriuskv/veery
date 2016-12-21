@@ -6,7 +6,7 @@ import { getVisiblePlaylistId } from "./../tab.js";
 import { removeElements, removeElementClass, dispatchCustomEvent } from "./../main.js";
 import { postMessageToWorker } from "./../worker.js";
 import { createSidebarEntry, removeSidebarEntry } from "./../sidebar.js";
-import { storedTrack, stopPlayer } from "./../player/player.js";
+import { stopPlayer } from "./../player/player.js";
 import { sortTracks } from "./playlist.sorting.js";
 import { createPlaylistEntry } from "./playlist.entries.js";
 
@@ -37,11 +37,7 @@ function appendToPlaylist(pl, tracks) {
 
 function removePlaylist(id) {
     const { rendered } = playlist.getPlaylistById(id);
-    const track = storedTrack.get();
 
-    if (track && track.playlistId === id) {
-        storedTrack.remove();
-    }
     if (playlist.isActive(id)) {
         stopPlayer();
     }

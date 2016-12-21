@@ -1,16 +1,14 @@
 /* global SC */
 
 import { initSoundcloud } from "./../soundcloud.js";
-import { setCurrentTrack } from "./../playlist/playlist.js";
 import { onTrackStart } from "./player.js";
 
 let scPlayer = null;
 
 async function playTrack(track, volume, startTime) {
-    setCurrentTrack(track);
-    await initSoundcloud();
-
     try {
+        await initSoundcloud();
+
         if (scPlayer) {
             scPlayer.dispose();
         }

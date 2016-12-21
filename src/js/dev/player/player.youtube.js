@@ -1,7 +1,6 @@
 /* global YT */
 
 import { scriptLoader } from "./../main.js";
-import { setCurrentTrack } from "./../playlist/playlist.js";
 import { onTrackStart } from "./player.js";
 
 let ytPlayer = null;
@@ -60,7 +59,6 @@ function playTrack(track, volume, startTime) {
         return;
     }
     setVolume(volume);
-    setCurrentTrack(track);
 
     if (typeof startTime === "number") {
         isStoredTrack = true;
