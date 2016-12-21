@@ -1,25 +1,28 @@
-import { setCurrentTrack } from "./../playlist/playlist.js";
+import { updateCurrentTrack } from "./../playlist/playlist.js";
 import { onTrackStart } from "./player.js";
 
-function playTrack(track, volume, startTime) {
-    track.audioBlobURL = URL.createObjectURL(track.audioTrack);
-    track.audio = new Audio(track.audioBlobURL);
+function playTrack(audioTrack, volume, startTime) {
+    const audioBlobURL = URL.createObjectURL(audioTrack);
+    const audio = new Audio(audioBlobURL);
 
-    setVolume(volume, track);
-    setCurrentTrack(track);
+    setVolume(volume, audio);
+    updateCurrentTrack({
+        audioBlobURL,
+        audio
+    });
 
-    track.audio.onplaying = function() {
-        onTrackStart(Math.floor(track.audio.currentTime));
+    audio.onplaying = function() {
+        onTrackStart(Math.floor(audio.currentTime));
     };
 
     if (typeof startTime === "number") {
-        seekTo(startTime, track);
+        seekTo(startTime, audio);
         return;
     }
-    track.audio.play();
+    audio.play();
 }
 
-function togglePlaying(paused, { audio }) {
+function togglePlaying(paused, audio) {
     if (paused) {
         audio.play();
     }
@@ -36,12 +39,12 @@ function stopTrack(track) {
     delete track.audio;
 }
 
-function setVolume(volume, track) {
-    track.audio.volume = volume;
+function setVolume(volume, audio) {
+    audio.volume = volume;
 }
 
-function seekTo(currentTime, track) {
-    track.audio.currentTime = currentTime;
+function seekTo(currentTime, audio) {
+    audio.currentTime = currentTime;
 }
 
 export {

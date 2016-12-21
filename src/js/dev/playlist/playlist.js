@@ -56,6 +56,10 @@ function setCurrentTrack(track) {
     currentTrack = getTrack(track);
 }
 
+function updateCurrentTrack(data) {
+    Object.assign(currentTrack, data);
+}
+
 function getCurrentTrack() {
     return currentTrack;
 }
@@ -145,6 +149,7 @@ export {
     getTrack,
     setCurrentTrack,
     getCurrentTrack,
+    updateCurrentTrack,
     updateCurrentTrackIndex,
     findTrack,
     getNextTrack,
