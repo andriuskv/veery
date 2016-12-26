@@ -1,8 +1,5 @@
 module.exports = {
-    entry: [
-        "babel-regenerator-runtime",
-        "./src/js/index.js"
-    ],
+    entry: ["./src/js/index.js"],
     output: {
         path: "./src/js",
         filename: "main.js"
@@ -14,7 +11,12 @@ module.exports = {
                 loader: "babel-loader",
                 exclude: /node_modules/,
                 query: {
-                    presets: ["latest"]
+                    presets: [["env", {
+                        useBuiltIns: true,
+                        targets: {
+                            browsers: ["last 2 versions", "ie 11"]
+                        }
+                    }]]
                 }
             }
         ]

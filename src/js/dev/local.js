@@ -47,9 +47,7 @@ function filterDuplicateTracks(tracks, existingTracks) {
 
 function getTrackMetadata(track) {
     return new Promise(resolve => {
-        parse_audio_metadata(track, data => {
-            resolve(data);
-        });
+        parse_audio_metadata(track, resolve);
     });
 }
 
@@ -99,7 +97,6 @@ async function addTracks(importOption, pl, newTracks, parseTracks) {
 
     updatePlaylist(pl, parsedTracks);
     removeImportOptionMask(importOption);
-
 }
 
 function selectLocalFiles(files) {

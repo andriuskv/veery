@@ -1,3 +1,5 @@
+import "babel-polyfill";
+
 import "./dev/settings.js";
 import "./dev/worker.js";
 import "./dev/router.js";

@@ -41,7 +41,7 @@ function updatePlaylist(playlist) {
     server.update("playlists", playlist)
     .then(results => {
         postMessage({
-            "action": "update-playlist",
+            action: "update-playlist",
             payload: {
                 id: results[0].id,
                 _id: results[0]._id
