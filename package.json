@@ -23,13 +23,13 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "autoprefixer": "^6.5.4",
+    "autoprefixer": "^6.6.0",
     "babel-cli": "^6.18.0",
     "babel-core": "^6.21.0",
     "babel-eslint": "^7.1.1",
     "babel-loader": "^6.2.10",
-    "babel-preset-latest": "^6.16.0",
-    "babel-regenerator-runtime": "^6.5.0",
+    "babel-polyfill": "^6.20.0",
+    "babel-preset-env": "^1.1.4",
     "csso": "^2.3.0",
     "eslint": "^3.12.2",
     "live-server": "^1.1.0",
@@ -37,5 +37,6 @@
     "onchange": "^3.2.0",
     "postcss-cli": "^2.6.0",
     "webpack": "^1.14.0"
-  }
+  },
+  "browserslist": ["last 2 versions", "ie 11"]
 }
