@@ -1,3 +1,9 @@
+@mixin text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 @mixin for-phone-only {
   @media (max-width: 599px) {@content; }
 }
