@@ -30,11 +30,31 @@ function onError(error) {
     console.log(error);
 }
 
+function createPlayerContainer() {
+    const content = `
+        <div id="js-yt-player-container" class="yt-player-container">
+            <button id="js-close-player-btn" class="btn">Hide</button>
+            <div id="yt-player"></div>
+        </div>
+    `;
+
+    document.querySelector(".main").insertAdjacentHTML("beforeend", content);
+    document.getElementById("js-close-player-btn").addEventListener("click", () => {
+        document.getElementById("js-yt-player-container").classList.remove("visible");
+    });
+}
+
 function initPlayer() {
+    createPlayerContainer();
     ytPlayer = new YT.Player("yt-player", {
-        height: "390",
-        width: "640",
-        videoId: "",
+        playerVars: {
+            autoplay: 0,
+            disablekb: 1,
+            controls: 0,
+            fs: 0,
+            showinfo: 0,
+            rel: 0
+        },
         events: {
             onReady: onPlayerReady,
             onStateChange: onPlayerStateChange,

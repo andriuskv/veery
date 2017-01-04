@@ -51,7 +51,7 @@
     display: none;
 
     @include for-phone-only {
-        display: initial;
+        display: inline-block;
     }
 }
 .filter-input {
@@ -61,7 +61,7 @@
         display: none;
 
         &.visible {
-            display: initial;
+            display: inline-block;
             margin-left: 4px;
         }
     }

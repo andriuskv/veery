@@ -31,19 +31,44 @@ input {
     background: $color1;
 }
 
-#yt-player {
+.yt-player-container {
     display: none;
+
+    &.visible {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: transparentize($color2, 0.2);
+
+        &:before {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            content: "";
+            display: block;
+        }
+
+        .btn {
+            z-index: 1;
+            position: absolute;
+            top: 8px;
+            right: 8px;
+        }
+    }
 }
 
 // SoundCloud player container
 #flashAudioObject-container {
     display: none;
 }
-@mixin text-truncate {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
+
 %default-input-styles {
     padding: 4px 6px;
     border: none;
@@ -82,6 +107,7 @@ input {
     }
 }
 .main {
+    position: relative;
     width: calc(100% - 160px);
 
     @include for-phone-only {

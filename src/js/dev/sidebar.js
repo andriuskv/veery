@@ -51,12 +51,11 @@ function removeActiveIcon() {
     }
 }
 
-function slideElementLeft(element, width, maxWidth) {
-    const left = Number.parseInt(element.style.left || 0, 10);
-
-    element.style.left = Math.abs(left) < width + 10 ? `${left - 1}px` : `${maxWidth}px`;
+function slideElementLeft(element, width, maxWidth, x = 0) {
+    x = Math.abs(x) < width + 10 ? x - 1 : maxWidth;
+    element.style.transform = `translateX(${x}px)`;
     animationId = requestAnimationFrame(() => {
-        slideElementLeft(element, width, maxWidth);
+        slideElementLeft(element, width, maxWidth, x);
     });
 }
 
@@ -76,18 +75,50 @@ function handleMouseleave({ target }) {
     this.removeEventListener("mouseleave", handleMouseleave);
     clearTimeout(timeoutId);
     cancelAnimationFrame(animationId);
-    target.style.left = 0;
+    target.style.transform = "translateX(0)";
 }
 
-function createTrackInfo() {
+function updatePlayerDimentions() {
+    const player = document.getElementById("yt-player");
+    const windowWidth = window.innerWidth;
+    const windowHeight = window.innerHeight;
+    const breakPoint = 600;
+    let playerWidth = windowWidth;
+
+    // -88 to account for controls and sidebar
+    let playerHeight = windowHeight - 88;
+
+    if (windowWidth > breakPoint) {
+        const sidebarWidth = 160;
+
+        playerWidth = windowWidth - sidebarWidth;
+
+        // -36 to account for controls
+        playerHeight = windowHeight - 36;
+    }
+    player.setAttribute("width", `${playerWidth}px`);
+    player.setAttribute("height", `${playerHeight}px`);
+}
+
+function handleClickOnPlayerBtn() {
+    updatePlayerDimentions();
+    document.getElementById("js-yt-player-container").classList.toggle("visible");
+}
+
+function createTrackInfo(track) {
+    const trackArtist = track.artist && track.title ? track.artist : track.name;
+    const trackTitle = trackArtist !== track.name ? track.title : "";
     const trackInfoElement = `
         <div id="js-track-info" class="track-info">
             <div class="track-art-container">
-                <img src="" id="js-track-art" class="track-art" alt="track art">
+                <div class="track-art-wrapper">
+                    ${track.player === "youtube" ? "<button id='js-player-btn' class='icon-resize-full btn'></button>" : ""}
+                    <img src=${getTrackArt(track.thumbnail)} id="js-track-art" class="track-art" alt="track art">
+                </div>
             </div>
             <div class="track-name">
-                <div id="js-track-title" class="track-title"></div>
-                <div id="js-track-artist" class="track-artist"></div>
+                <div id="js-track-title" class="track-title">${trackTitle}</div>
+                <div id="js-track-artist" class="track-artist">${trackArtist}</div>
             </div>
         </div>
     `;
@@ -95,46 +126,41 @@ function createTrackInfo() {
     document.getElementById("js-sidebar").insertAdjacentHTML("beforeend", trackInfoElement);
     document.getElementById("js-track-title").addEventListener("mouseenter", handleMouseenter);
     document.getElementById("js-track-artist").addEventListener("mouseenter", handleMouseenter);
+
+    if (track.player === "youtube") {
+        document.getElementById("js-player-btn").addEventListener("click", handleClickOnPlayerBtn);
+    }
 }
 
-function setTrackArt(track) {
-    const artElement = document.getElementById("js-track-art");
-    const art = track.thumbnail || "assets/images/album-art-placeholder.png";
-
-    artElement.src = typeof art === "object" ? URL.createObjectURL(art) : art;
+function getTrackArt(thumbnail = "assets/images/album-art-placeholder.png") {
+    return typeof thumbnail === "object" ? URL.createObjectURL(thumbnail) : thumbnail;
 }
 
-function displayTrackArtistAndTitle(artist = "", title = "") {
-    document.getElementById("js-track-title").textContent = title;
-    document.getElementById("js-track-artist").textContent = artist;
+function removeTrackInfoElement(element) {
+    const btn = document.getElementById("js-player-btn");
+
+    document.getElementById("js-track-title").removeEventListener("mouseenter", handleMouseenter);
+    document.getElementById("js-track-artist").removeEventListener("mouseenter", handleMouseenter);
+
+    if (btn) {
+        btn.removeEventListener("click", handleClickOnPlayerBtn);
+    }
+    removeElement(element);
 }
 
 function showTrackInfo(track) {
     const trackInfoElement = document.getElementById("js-track-info");
 
+    if (trackInfoElement) {
+        removeTrackInfoElement(trackInfoElement);
+    }
+
     if (!track) {
-        if (trackInfoElement) {
-            document.getElementById("js-track-title").removeEventListener("mouseenter", handleMouseenter);
-            document.getElementById("js-track-artist").removeEventListener("mouseenter", handleMouseenter);
-            removeElement(trackInfoElement);
-        }
         document.title = "Veery";
         return;
     }
-
-    if (!trackInfoElement) {
-        createTrackInfo();
-    }
-
-    if (track.artist && track.title) {
-        displayTrackArtistAndTitle(track.artist, track.title);
-        document.title = `${track.artist} - ${track.title}`;
-    }
-    else {
-        displayTrackArtistAndTitle(track.name);
-        document.title = track.name;
-    }
-    setTrackArt(track);
+    createTrackInfo(track);
+    document.title = track.artist && track.title ? `${track.artist} - ${track.title}` : track.name;
 }
 
 function toggleSidebarForm() {
