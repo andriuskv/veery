@@ -77,7 +77,8 @@ async function getPlaylistItems(id, token, lastIndex = 0) {
     const tracks = parseItems(id, items, lastIndex);
 
     if (data.nextPageToken) {
-        const nextPageItems = await getPlaylistItems(id, data.nextPageToken, tracks.length);
+        lastIndex = tracks[tracks.length - 1].index + 1;
+        const nextPageItems = await getPlaylistItems(id, data.nextPageToken, lastIndex);
 
         return tracks.concat(nextPageItems);
     }
