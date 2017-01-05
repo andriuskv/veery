@@ -48,8 +48,8 @@ function toggleCurrentRoute() {
     toggleRouteTab(route);
 }
 
-window.addEventListener("hashchange", event => {
-    const route = event.newURL.split("#/")[1];
+window.addEventListener("hashchange", () => {
+    const route = window.location.hash.slice(2);
 
     if (route) {
         toggleRouteTab(route);
