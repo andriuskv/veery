@@ -1,4 +1,4 @@
-import { removeElement } from "./main.js";
+import { removeElement, getElementByAttr } from "./main.js";
 import { createNewPlaylistInputForm, onNewPlaylistFormSubmit } from "./playlist/playlist.manage.js";
 
 let animationId = 0;
@@ -175,13 +175,14 @@ function toggleSidebarForm() {
 
 document.getElementById("js-sidebar-form-toggle-btn").addEventListener("click", toggleSidebarForm);
 document.getElementById("js-sidebar-container").addEventListener("click", function(event) {
-    const target = event.target.getAttribute("data-target");
+    const target = getElementByAttr(event.target, "data-target");
 
-    if (target) {
-        this.classList.toggle("contracted");
-    }
-    else if (event.offsetX > document.getElementById("js-sidebar").offsetWidth) {
+    if (!target) {
         this.classList.add("contracted");
+        return;
+    }
+    if (target.attrValue === "header") {
+        this.classList.toggle("contracted");
     }
 });
 
