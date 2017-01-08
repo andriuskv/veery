@@ -188,7 +188,7 @@ function addMarginToPlaylistHeader(id, type) {
 
 function changePlaylistType(newType, pl) {
     pl.type = newType;
-    resetPlaylistSort(pl);
+    resetPlaylistSort(pl.id);
     document.getElementById(`js-tab-${pl.id}`).innerHTML = createPlaylist(pl);
     enableTrackSelection(pl.id);
     togglePlaylistTypeBtn(newType);
@@ -197,7 +197,7 @@ function changePlaylistType(newType, pl) {
     postMessageToWorker({
         action: "update",
         playlist: {
-            id: pl.id,
+            _id: pl._id,
             type: pl.type,
             sortedBy: pl.sortedBy,
             order: pl.order

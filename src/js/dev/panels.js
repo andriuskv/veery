@@ -9,8 +9,10 @@ function markPanelAsVisible(panelId) {
 function removePanel(panelId) {
     const panelElement = document.getElementById(panelId);
 
-    removeElement(panelElement);
     visiblePanels[panelId] = false;
+    if (panelElement) {
+        removeElement(panelElement);
+    }
 }
 
 function isPanelVisible(panelId) {
@@ -36,6 +38,7 @@ function removePresentPanels(event = {}, panelToKeepId) {
 }
 
 export {
+    removePanel,
     removePresentPanels,
     togglePanel
 };

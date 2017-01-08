@@ -90,8 +90,15 @@ function formatTime(time) {
 }
 
 function dispatchCustomEvent(eventName, data) {
-    const event = new CustomEvent(eventName, { detail: data });
+    let event = null;
 
+    try {
+        event = new CustomEvent(eventName, { detail: data });
+    }
+    catch (error) {
+        event = document.createEvent("CustomEvent");
+        event.initCustomEvent(eventName, true, true, data);
+    }
     window.dispatchEvent(event);
 }
 

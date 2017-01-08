@@ -62,6 +62,6 @@ window.addEventListener("hashchange", () => {
 export {
     addRoute as add,
     toggleRoute as toggle,
-    toggleCurrentRoute as toggleCurrent,
+    toggleCurrentRoute,
     isActive
 };

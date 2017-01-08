@@ -96,7 +96,7 @@ function editPlaylistTitle(action, parentElement, playlistId) {
             postMessageToWorker({
                 action: "update",
                 playlist: {
-                    id: pl.id,
+                    _id: pl._id,
                     title: pl.title
                 }
             });
