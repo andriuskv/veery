@@ -1,6 +1,6 @@
 import { removeElement, getElementByAttr } from "./../main.js";
 import { getVisiblePlaylistId } from "./../tab.js";
-import { removePresentPanels } from "./../panels.js";
+import { removePresentPanels, removePanel } from "./../panels.js";
 import { getPlaylistById, getAllPlaylists, findTrack } from "./playlist.js";
 import * as playlistManage from "./playlist.manage.js";
 
@@ -25,9 +25,11 @@ function showMoveToBtn() {
 }
 
 function removeMoveToPanelContainer() {
-    const panelContainer = document.getElementById("js-move-to-panel-container");
+    const panelId = "js-move-to-panel";
+    const panelContainer = document.getElementById(`${panelId}-container`);
 
     if (panelContainer) {
+        removePanel(panelId);
         removeElement(panelContainer);
     }
 }

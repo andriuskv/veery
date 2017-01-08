@@ -28,6 +28,10 @@ function createPlaylist(pl) {
     return playlists[pl.id];
 }
 
+function updatePlaylist(id, data) {
+    Object.assign(playlists[id], data);
+}
+
 function removePlaylist(id) {
     delete playlists[id];
 }
@@ -64,10 +68,6 @@ function getCurrentTrack() {
     return currentTrack;
 }
 
-function updateCurrentTrackIndex(newIndex) {
-    currentTrack.index = newIndex;
-}
-
 function findTrack(id, trackId) {
     const pl = getPlaylistById(id);
     const track = pl ? pl.tracks.find(track => track.name === trackId) : null;
@@ -76,9 +76,11 @@ function findTrack(id, trackId) {
 }
 
 function setPlaybackIndex(index) {
-    const pl = getActivePlaylist();
+    const { id, playbackOrder } = getActivePlaylist();
 
-    pl.playbackIndex = pl.playbackOrder.indexOf(Number.parseInt(index, 10));
+    updatePlaylist(id, {
+        playbackIndex: playbackOrder.indexOf(Number.parseInt(index, 10))
+    });
 }
 
 function resetPlaybackIndex() {
@@ -107,21 +109,23 @@ function getPlaybackOrder(tracks, shuffle) {
     return shuffle ? shuffleArray(playbackOrder) : playbackOrder;
 }
 
-function shufflePlaybackOrder(pl, shuffle) {
-    pl.shuffled = shuffle;
-    pl.playbackOrder = getPlaybackOrder(pl.tracks, shuffle);
+function shufflePlaybackOrder({ id, tracks }, shuffle) {
+    updatePlaylist(id, {
+        shuffled: shuffle,
+        playbackOrder: getPlaybackOrder(tracks, shuffle)
+    });
     resetPlaybackIndex();
 }
 
-function getNextTrackIndex(pl, direction = 0) {
-    pl.playbackIndex += direction;
-    if (pl.playbackIndex >= pl.playbackOrder.length) {
-        pl.playbackIndex = 0;
+function getNextTrackIndex({ playbackIndex, playbackOrder }, direction = 0) {
+    playbackIndex += direction;
+    if (playbackIndex >= playbackOrder.length) {
+        playbackIndex = 0;
     }
-    else if (pl.playbackIndex === -1) {
-        pl.playbackIndex = pl.playbackOrder.length - 1;
+    else if (playbackIndex === -1) {
+        playbackIndex = playbackOrder.length - 1;
     }
-    return pl.playbackOrder[pl.playbackIndex];
+    return playbackOrder[playbackIndex];
 }
 
 function getNextTrack(pl, direction) {
@@ -143,6 +147,7 @@ export {
     removePlaylist,
     getAllPlaylists,
     createPlaylist,
+    updatePlaylist,
     isActive,
     getActivePlaylist,
     getActivePlaylistId,
@@ -150,7 +155,6 @@ export {
     setCurrentTrack,
     getCurrentTrack,
     updateCurrentTrack,
-    updateCurrentTrackIndex,
     findTrack,
     getNextTrack,
     setPlaybackIndex,

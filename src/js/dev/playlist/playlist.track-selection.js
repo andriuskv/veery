@@ -105,7 +105,7 @@ function prevendTrackDeselection(gotSelectedTracks) {
 }
 
 function deselectTrackElements(startElement) {
-    if (!keepTracksSelected && isOutsideElement(startElement, "js-tab-header")) {
+    if (!keepTracksSelected && isOutsideElement(startElement, "js-move-to-panel-container")) {
         removeElementClass("track", "selected");
         removeMoveToPanelContainer();
     }

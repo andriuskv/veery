@@ -2,7 +2,7 @@ import { capitalize } from "./../main.js";
 import { getVisiblePlaylistId } from "./../tab.js";
 import { removePresentPanels } from "./../panels.js";
 import { postMessageToWorker } from "./../worker.js";
-import { getPlaylistById } from "./playlist.js";
+import { getPlaylistById, updatePlaylist } from "./playlist.js";
 import { refreshPlaylist } from "./playlist.manage.js";
 import { filterTracks } from "./playlist.view.js";
 
@@ -37,9 +37,13 @@ function sortTracks(tracks, sortBy, order) {
 }
 
 function sortPlaylist(pl, sortBy) {
-    pl.order = pl.sortedBy === sortBy && pl.order === 1 ? -1 : 1;
-    pl.sortedBy = sortBy;
-    sortTracks(pl.tracks, sortBy, pl.order);
+    const order = pl.sortedBy === sortBy && pl.order === 1 ? -1 : 1;
+
+    updatePlaylist(pl.id, {
+        order,
+        sortedBy: sortBy
+    });
+    sortTracks(pl.tracks, sortBy, order);
 }
 
 function changePlaylistSorting(pl, sortBy) {
@@ -48,8 +52,12 @@ function changePlaylistSorting(pl, sortBy) {
     sortPlaylist(pl, sortBy);
     refreshPlaylist(pl);
     postMessageToWorker({
-        action: "put",
-        playlist: pl
+        action: "update",
+        playlist: {
+            _id: pl._id,
+            order: pl.order,
+            sortedBy: sortBy
+        }
     });
 
     if (query) {
@@ -76,9 +84,11 @@ function getSupportedSortOptions(playlistType) {
     return ["name", "duration"];
 }
 
-function resetPlaylistSort(pl) {
-    pl.sortedBy = "";
-    pl.order = 0;
+function resetPlaylistSort(id) {
+    updatePlaylist(id, {
+        order: 0,
+        sortedBy: ""
+    });
     setSortBtnText();
     toggleOrderBtn();
 }
