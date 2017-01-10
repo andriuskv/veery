@@ -32,7 +32,7 @@ function initPlaylist(pl) {
 }
 
 function appendToPlaylist(pl, tracks) {
-    playlistView.append(pl, tracks);
+    playlistView.appendToPlaylistView(pl, tracks);
     resortTracks(pl);
 }
 
@@ -43,7 +43,7 @@ function removePlaylist(id) {
         stopPlayer();
     }
     if (rendered) {
-        playlistView.remove(id);
+        playlistView.removePlaylistTab(id);
     }
     playlist.removePlaylist(id);
     removeSidebarEntry(id);
@@ -56,7 +56,7 @@ function removePlaylist(id) {
 function refreshPlaylist(pl) {
     const currentTrack = playlist.getCurrentTrack();
 
-    playlistView.update(pl);
+    playlistView.updatePlaylistView(pl);
 
     if (currentTrack && playlist.isActive(pl.id)) {
         const track = playlist.findTrack(pl.id, currentTrack.name);
@@ -69,7 +69,7 @@ function refreshPlaylist(pl) {
     }
 }
 
-function updatePlaylist(pl, tracks, showPlaylist = router.isActive("manage")) {
+function addTracksToPlaylist(pl, tracks, showPlaylist = router.isActive("manage")) {
     pl.tracks = pl.tracks.concat(tracks);
 
     if (!pl.initialized) {
@@ -89,12 +89,22 @@ function updatePlaylist(pl, tracks, showPlaylist = router.isActive("manage")) {
     });
 }
 
+function updatePlaylist(playlistId, data) {
+    const { _id } = playlist.getPlaylistById(playlistId);
+
+    playlist.updatePlaylist(playlistId, data);
+    postMessageToWorker({
+        action: "update",
+        playlist: Object.assign({ _id }, data)
+    });
+}
+
 function getSelectedTrackIndexes(selectedElements) {
     return selectedElements.map(element => Number.parseInt(element.getAttribute("data-index"), 10));
 }
 
 function resetTrackElementIndexes(elements) {
-    elements.forEach((element, index) => {
+    Array.from(elements).forEach((element, index) => {
         element.setAttribute("data-index", index);
     });
 }
@@ -131,24 +141,19 @@ function removeSelectedTracks(pl) {
         return;
     }
     const selectedTrackIndexes = getSelectedTrackIndexes(selectedElements);
+    const tracks = removeSelectedPlaylistTracks(pl, selectedTrackIndexes);
+    const elements = playlistView.getPlaylistTrackElements(pl.id);
 
     removeElements(selectedElements);
-    resetTrackElementIndexes(Array.from(document.getElementById(`js-${pl.id}`).children));
-    pl.tracks = removeSelectedPlaylistTracks(pl, selectedTrackIndexes);
+    resetTrackElementIndexes(elements);
     playlist.shufflePlaybackOrder(pl, getSetting("shuffle"));
     updateCurrentTrackIndex(pl.id, selectedTrackIndexes);
     dispatchCustomEvent("track-length-change", {
+        tracks,
         id: pl.id,
-        tracks: pl.tracks,
         type: pl.type
     });
-    postMessageToWorker({
-        action: "update",
-        playlist: {
-            _id: pl._id,
-            tracks: pl.tracks
-        }
-    });
+    updatePlaylist(pl.id, { tracks });
 }
 
 function onNewPlaylistFormSubmit(event) {
@@ -194,6 +199,7 @@ export {
     initPlaylist,
     removePlaylist,
     refreshPlaylist,
+    addTracksToPlaylist,
     updatePlaylist,
     getSelectedTrackIndexes,
     getSelectedTrackElements,

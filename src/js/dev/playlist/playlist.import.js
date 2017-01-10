@@ -1,6 +1,6 @@
 import { removeElement, removeElements, removeElementClass, getElementByAttr, scriptLoader } from "./../main.js";
 import { getPlaylistById, createPlaylist } from "./playlist.js";
-import { updatePlaylist } from "./playlist.manage.js";
+import { addTracksToPlaylist } from "./playlist.manage.js";
 import { showDropboxChooser } from "./../dropbox.js";
 import { selectLocalFiles } from "./../local.js";
 import { fetchYoutubePlaylist } from "./../youtube.js";
@@ -16,36 +16,40 @@ function isNewImportOption(option) {
     return importOption !== option;
 }
 
-function createImportOptionMask(option) {
+function createImportOptionMask(option, message = "") {
     const optionElements = Array.from(document.querySelectorAll(`[data-option-id*=${option}]`));
 
     optionElements.forEach(element => {
         element.parentElement.insertAdjacentHTML("beforeend", `
             <div class="option-mask" data-mask-id=${option}>
                 <span class="icon-spin4 animate-spin"></span>
+                <span class="mask-message">${message}</span>
             </div>
         `);
     });
 }
 
+function getMaskElements(option) {
+    return Array.from(document.querySelectorAll(`[data-mask-id*=${option}]`));
+}
+
 function removeImportOptionMask(option) {
     if (option) {
-        const elements = Array.from(document.querySelectorAll(`[data-mask-id*=${option}]`));
+        const elements = getMaskElements(option);
 
         removeElements(elements);
     }
 }
 
 function showNotice(option, message) {
-    const maskElements = Array.from(document.querySelectorAll(`[data-mask-id*=${option}]`));
+    const elements = getMaskElements(option);
 
-    maskElements.forEach(element => {
-        removeElement(element.firstElementChild);
-        element.insertAdjacentHTML("beforeend", `<span>${message}</span>`);
+    elements.forEach(element => {
+        element.textContent = message;
     });
 
     setTimeout(() => {
-        removeImportOptionMask(option);
+        removeElements(elements);
     }, 3200);
 }
 
@@ -108,7 +112,7 @@ async function addImportedPlaylist(playlist) {
 
     setImportOption();
     removePlaylistImportForm();
-    updatePlaylist(pl, newTracks);
+    addTracksToPlaylist(pl, newTracks);
     removeImportOptionMask(playlist.player);
 }
 
@@ -185,7 +189,7 @@ function handleImportFormSubmit(event) {
     const url = event.target.elements["playlist-url"].value.trim();
 
     if (url) {
-        createImportOptionMask(importOption);
+        createImportOptionMask(importOption, "Importing");
         importPlaylist(url);
         event.target.reset();
     }

@@ -59,7 +59,7 @@ function moveTracks(playlistId) {
             return track;
         });
 
-    playlistManage.updatePlaylist(pl, selectedTracks, true);
+    playlistManage.addTracksToPlaylist(pl, selectedTracks, true);
 }
 
 function onListClick(event) {

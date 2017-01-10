@@ -2,7 +2,7 @@
 
 import { scriptLoader, formatTime } from "./main.js";
 import { getPlaylistById, createPlaylist } from "./playlist/playlist.js";
-import { updatePlaylist } from "./playlist/playlist.manage.js";
+import { addTracksToPlaylist } from "./playlist/playlist.manage.js";
 import { createImportOptionMask, removeImportOptionMask, showNotice } from "./playlist/playlist.import.js";
 
 function getTrackDuration(track) {
@@ -80,7 +80,7 @@ async function parseTracks(id, tracks, parsedTracks = []) {
 }
 
 async function addTracks(importOption, pl, newTracks, parseTracks) {
-    createImportOptionMask(importOption);
+    createImportOptionMask(importOption, "Adding");
 
     if (!newTracks.length) {
         showNotice(importOption, "No valid audio files found");
@@ -95,7 +95,7 @@ async function addTracks(importOption, pl, newTracks, parseTracks) {
     await scriptLoader.load({ src: "js/libs/metadata-audio-parser.min.js" });
     const parsedTracks = await parseTracks(pl.id, tracks);
 
-    updatePlaylist(pl, parsedTracks);
+    addTracksToPlaylist(pl, parsedTracks);
     removeImportOptionMask(importOption);
 }
 

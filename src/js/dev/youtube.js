@@ -6,8 +6,6 @@ function showYoutubeNotice(notice) {
 }
 
 function parseDuration(duration) {
-    duration = duration.slice(2);
-
     if (!duration.includes("H")) {
         duration = `0H${duration}`;
     }
@@ -15,9 +13,10 @@ function parseDuration(duration) {
         const minIndex = duration.indexOf("H") + 1;
         duration = `${duration.slice(0, minIndex)}0M${duration.slice(minIndex)}`;
     }
-    duration = duration.includes("S") ? duration.slice(0, -1) : `${duration}0`;
-    return duration.replace(/[HM]/g, ":")
-        .split(":")
+    if (!duration.includes("S")) {
+        duration = `${duration}0`;
+    }
+    return duration.match(/\d{1,}/g)
         .reverse()
         .reduce((total, value, index) => {
             total += value * 60 ** index;
