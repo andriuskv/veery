@@ -35,7 +35,6 @@
     background-color: $color1;
 }
 .option-mask {
-    content: "";
     position: absolute;
     top: 0;
     bottom: 0;
@@ -46,6 +45,9 @@
     align-items: center;
     background-color: transparentize($color1, 0.2);
     font-size: 14px;
+}
+.mask-message {
+    margin-left: 6px;
 }
 .import-option {
     position: relative;

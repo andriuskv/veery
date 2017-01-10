@@ -1,6 +1,7 @@
 import { removeElement, removeElementClass, getElementByAttr, isOutsideElement } from "./../main.js";
 import { getSelectedTrackElements } from "./playlist.manage.js";
 import { showMoveToBtn, removeMoveToPanelContainer } from "./playlist.move-to.js";
+import { getPlaylistElement } from "./playlist.view.js";
 
 const startingPoint = {};
 const mousePos = {};
@@ -19,7 +20,7 @@ function enableTrackSelection(id) {
     if (playlistElement) {
         playlistElement.removeEventListener("mousedown", onMousedown);
     }
-    playlistElement = document.getElementById(`js-${id}`);
+    playlistElement = getPlaylistElement(id);
     playlistElement.addEventListener("mousedown", onMousedown);
 }
 
@@ -105,7 +106,9 @@ function prevendTrackDeselection(gotSelectedTracks) {
 }
 
 function deselectTrackElements(startElement) {
-    if (!keepTracksSelected && isOutsideElement(startElement, "js-move-to-panel-container")) {
+    const targetElement = document.getElementById("js-move-to-panel-container");
+
+    if (!keepTracksSelected && isOutsideElement(startElement, targetElement)) {
         removeElementClass("track", "selected");
         removeMoveToPanelContainer();
     }
@@ -275,7 +278,7 @@ function onMouseup({ target, ctrlKey }) {
     window.removeEventListener("mousemove", onMousemove);
     window.removeEventListener("mouseup", onMouseup);
 
-    if (!isOutsideElement(target, playlistElement.id)) {
+    if (!isOutsideElement(target, playlistElement)) {
         deselectTrackElements(target);
     }
 }

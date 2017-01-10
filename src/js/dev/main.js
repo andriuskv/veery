@@ -57,9 +57,7 @@ function getElementByAttr(element, attr) {
     }
 }
 
-function isOutsideElement(element, targetElementId) {
-    const targetElement = document.getElementById(targetElementId);
-
+function isOutsideElement(element, targetElement) {
     return targetElement ? !targetElement.contains(element) : false;
 }
 

@@ -68,6 +68,7 @@ window.addEventListener("click", event => {
     const item = event.target.getAttribute("data-header-item");
     const id = getVisiblePlaylistId();
     const pl = getPlaylistById(id);
+    const element = playlistView.getPlaylistElement(id);
     let panelId = "";
 
     if (item === "filter") {
@@ -87,7 +88,7 @@ window.addEventListener("click", event => {
     else if (item === "order" && pl.sortedBy) {
         changePlaylistOrder(pl);
     }
-    if (isOutsideElement(event.target, `js-${id}`)) {
+    if (isOutsideElement(event.target, element)) {
         deselectTrackElements(event.target);
     }
     removePresentPanels(event, panelId);

@@ -31,7 +31,9 @@ function togglePanel(panelId, pl, panelCreationCallback) {
 
 function removePresentPanels(event = {}, panelToKeepId) {
     Object.keys(visiblePanels).forEach(id => {
-        if (visiblePanels[id] && id !== panelToKeepId && isOutsideElement(event.target, id)) {
+        const element = document.getElementById(id);
+
+        if (visiblePanels[id] && id !== panelToKeepId && isOutsideElement(event.target, element)) {
             removePanel(id);
         }
     });

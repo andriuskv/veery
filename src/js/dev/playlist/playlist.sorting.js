@@ -1,10 +1,9 @@
 import { capitalize } from "./../main.js";
 import { getVisiblePlaylistId } from "./../tab.js";
 import { removePresentPanels } from "./../panels.js";
-import { postMessageToWorker } from "./../worker.js";
-import { getPlaylistById, updatePlaylist } from "./playlist.js";
-import { refreshPlaylist } from "./playlist.manage.js";
-import { filterTracks } from "./playlist.view.js";
+import { getPlaylistById } from "./playlist.js";
+import { refreshPlaylist, updatePlaylist } from "./playlist.manage.js";
+import { getPlaylistTrackElements, filterTracks } from "./playlist.view.js";
 
 function setSortBtnText(text = "Sorting") {
     document.getElementById("js-sort-toggle").textContent = text;
@@ -36,7 +35,8 @@ function sortTracks(tracks, sortBy, order) {
     });
 }
 
-function sortPlaylist(pl, sortBy) {
+function changePlaylistSorting(pl, sortBy) {
+    const query = document.getElementById("js-filter-input").value;
     const order = pl.sortedBy === sortBy && pl.order === 1 ? -1 : 1;
 
     updatePlaylist(pl.id, {
@@ -44,26 +44,12 @@ function sortPlaylist(pl, sortBy) {
         sortedBy: sortBy
     });
     sortTracks(pl.tracks, sortBy, order);
-}
-
-function changePlaylistSorting(pl, sortBy) {
-    const query = document.getElementById("js-filter-input").value;
-
-    sortPlaylist(pl, sortBy);
     refreshPlaylist(pl);
-    postMessageToWorker({
-        action: "update",
-        playlist: {
-            _id: pl._id,
-            order: pl.order,
-            sortedBy: sortBy
-        }
-    });
 
     if (query) {
-        const trackElements = document.getElementById(`js-${pl.id}`).children;
+        const elements = getPlaylistTrackElements(pl.id);
 
-        filterTracks(pl.tracks, trackElements, query);
+        filterTracks(pl.tracks, elements, query);
     }
 }
 
@@ -82,15 +68,6 @@ function getSupportedSortOptions(playlistType) {
         return ["title", "artist", "album", "duration"];
     }
     return ["name", "duration"];
-}
-
-function resetPlaylistSort(id) {
-    updatePlaylist(id, {
-        order: 0,
-        sortedBy: ""
-    });
-    setSortBtnText();
-    toggleOrderBtn();
 }
 
 function getSortOtions(supportedOptions, sortedBy) {
@@ -142,9 +119,10 @@ function selectSortOption({ target }) {
 }
 
 export {
+    setSortBtnText,
+    toggleOrderBtn,
     setSortOptions,
     createSortPanel,
     sortTracks,
-    changePlaylistOrder,
-    resetPlaylistSort
+    changePlaylistOrder
 };

@@ -1,8 +1,7 @@
-import { removeElement, getElementByAttr, capitalize } from "./../main.js";
-import { postMessageToWorker } from "./../worker.js";
+import { removeElement, getElementByAttr } from "./../main.js";
 import { editSidebarEntry } from "./../sidebar.js";
 import { getPlaylistById } from "./playlist.js";
-import { removePlaylist } from "./playlist.manage.js";
+import { removePlaylist, updatePlaylist } from "./playlist.manage.js";
 import { importPlaylist, createImportOptionMask } from "./playlist.import.js";
 
 function createEntryContainer(id) {
@@ -42,10 +41,10 @@ function createPlaylistEntry(title, id, url) {
             <form class="pl-entry-form">
                 <input type="text" class="input pl-entry-title" value="${title}" readonly>
                 <button type="submit" class="icon-pencil btn btn-transparent"
-                    data-action="edit" title="Edit"></button>
+                    data-action="edit" title="Edit playlist title"></button>
             </form>
             <button type="submit" class="icon-cw btn btn-transparent ${!url ? "hidden" : ""}"
-                data-action="refresh" title="Refresh"></button>
+                data-action="refresh" title="Refresh playlist"></button>
             <button class="icon-trash btn btn-transparent"
                 data-action="remove" title="Remove playlist"></button>
         </li>
@@ -67,39 +66,28 @@ function removePlaylistEntry(entryElement) {
 function updatePlaylistEntryBtn(btn, action) {
     const nextAction = action === "edit" ? "save": "edit";
 
-    btn.setAttribute("title", capitalize(nextAction));
     btn.setAttribute("data-action", nextAction);
     btn.classList.toggle("active");
 }
 
 function editPlaylistTitle(action, parentElement, playlistId) {
     const titleElement = parentElement.querySelector(".pl-entry-title");
+    const playlistTitle = titleElement.value;
 
     if (action === "edit") {
         titleElement.removeAttribute("readonly");
         titleElement.focus();
         titleElement.selectionStart = 0;
-        titleElement.selectionEnd = titleElement.value.length;
+        titleElement.selectionEnd = playlistTitle.length;
     }
     else if (action === "save") {
-        const pl = getPlaylistById(playlistId);
+        const { title } = getPlaylistById(playlistId);
+        const newTitle = playlistTitle ? playlistTitle : title;
 
-        if (!titleElement.value) {
-            titleElement.value = pl.title;
-        }
-        const newTitle = titleElement.value;
-
-        if (newTitle !== pl.title) {
-            pl.title = newTitle;
-            editSidebarEntry(playlistId, newTitle);
+        if (newTitle !== title) {
             titleElement.setAttribute("value", newTitle);
-            postMessageToWorker({
-                action: "update",
-                playlist: {
-                    _id: pl._id,
-                    title: pl.title
-                }
-            });
+            editSidebarEntry(playlistId, newTitle);
+            updatePlaylist(playlistId, { title: newTitle });
         }
         titleElement.setAttribute("readonly", "readonly");
     }
@@ -128,7 +116,7 @@ function handleClickOnEntryContainer(event) {
         else if (url.includes("soundcloud")) {
             option = "soundcloud";
         }
-        createImportOptionMask(option);
+        createImportOptionMask(option, "Refreshing");
         importPlaylist(url);
         event.target.classList.add("hidden");
         return;
