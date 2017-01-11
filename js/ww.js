@@ -1,66 +1,50 @@
 "use strict";
 
-/* global importScripts, db, onmessage, postMessage */
+/* global importScripts, Dexie, postMessage */
 
-var window = self;
+importScripts("./libs/dexie.min.js");
 
-importScripts("./libs/db.min.js");
+var db = new Dexie("playlists");
 
-var server = null;
+db.version(1).stores({
+    playlists: "++_id"
+});
 
-(function initDb() {
-    db.open({
-        server: "playlists",
-        version: 1,
-        noServerMethods: true,
-        schema: {
-            playlists: {
-                key: { keyPath: "_id", autoIncrement: true }
-            }
-        }
-    }).then(function (s) {
-        server = s;
-        s.query("playlists").all().execute().then(function (playlists) {
+db.playlists.toArray().then(function (playlists) {
+    postMessage({
+        action: "init",
+        payload: playlists
+    });
+}).catch(function (e) {
+    console.log(e);
+});
+
+self.onmessage = function (_ref) {
+    var _ref$data = _ref.data,
+        action = _ref$data.action,
+        playlist = _ref$data.playlist;
+
+    var playlistTable = db.playlists;
+
+    if (action === "put") {
+        playlistTable.put(playlist).then(function () {
             postMessage({
-                action: "init-playlist",
-                payload: playlists
+                action: "update",
+                payload: {
+                    _id: playlist._id,
+                    id: playlist.id
+                }
             });
+        }).catch(function (e) {
+            console.log(e);
         });
-    });
-})();
-
-function getPlaylist(playlistId) {
-    return server.query("playlists").filter("id", playlistId).execute();
-}
-
-function updatePlaylist(playlist) {
-    server.update("playlists", playlist).then(function (results) {
-        postMessage({
-            action: "update-playlist",
-            payload: {
-                id: results[0].id,
-                _id: results[0]._id
-            }
+    } else if (action === "update") {
+        playlistTable.update(playlist._id, playlist).catch(function (e) {
+            console.log(e);
         });
-    });
-}
-
-onmessage = function onmessage(_ref) {
-    var data = _ref.data;
-
-    if (data.action === "put") {
-        updatePlaylist(data.playlist);
-    } else if (data.action === "update") {
-        getPlaylist(data.playlist.id).then(function (results) {
-            updatePlaylist(Object.assign(results[0], data.playlist));
-        }).catch(function (error) {
-            console.log(error);
-        });
-    } else if (data.action === "remove") {
-        getPlaylist(data.playlistId).then(function (results) {
-            server.remove("playlists", results[0]._id);
-        }).catch(function (error) {
-            console.log(error);
+    } else if (action === "remove") {
+        playlistTable.delete(playlist._id).catch(function (e) {
+            console.log(e);
         });
     }
 };
