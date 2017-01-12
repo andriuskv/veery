@@ -7,8 +7,9 @@
     padding: 2px;
 }
 .grid-item {
-    flex: 1 0 320px;
     display: flex;
+    flex-grow: 1;
+    min-width: 300px;
     padding: 2px;
     margin: 2px;
     cursor: default;
@@ -25,9 +26,6 @@
     }
     @media (min-width: 1772px) {
         max-width: calc(20% - 4px);
-    }
-    @include for-phone-only {
-        flex-basis: 302px;
     }
 }
 .grid-item-thumb-container {

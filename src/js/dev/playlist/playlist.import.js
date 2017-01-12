@@ -166,20 +166,6 @@ function createFileInput() {
     return input;
 }
 
-function clickOnElement(element) {
-    let event = null;
-
-    try {
-        event = new MouseEvent("click");
-    }
-    catch (e) {
-        console.log(e);
-        event = document.createEvent("MouseEvent");
-        event.initMouseEvent("click");
-    }
-    element.dispatchEvent(event);
-}
-
 function showFilePicker(choice) {
     const filePicker = document.getElementById("js-file-picker") || createFileInput();
 
@@ -195,7 +181,7 @@ function showFilePicker(choice) {
         filePicker.setAttribute("directory", "");
         filePicker.setAttribute("allowdirs", "");
     }
-    clickOnElement(filePicker);
+    filePicker.click();
 }
 
 function handleImportFormSubmit(event) {

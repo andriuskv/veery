@@ -22,6 +22,10 @@ async function playTrack(track, volume, startTime) {
         onTrackStart(Math.floor(scPlayer.currentTime() / 1000));
     });
 
+    scPlayer.on("audio_error", error => {
+        console.log(error);
+    });
+
     if (typeof startTime === "number") {
         scPlayer.once("state-change", state => {
             if (state === "loading") {
