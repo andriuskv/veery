@@ -166,9 +166,22 @@ function createFileInput() {
     return input;
 }
 
+function clickOnElement(element) {
+    let event = null;
+
+    try {
+        event = new MouseEvent("click");
+    }
+    catch (e) {
+        console.log(e);
+        event = document.createEvent("MouseEvent");
+        event.initMouseEvent("click");
+    }
+    element.dispatchEvent(event);
+}
+
 function showFilePicker(choice) {
     const filePicker = document.getElementById("js-file-picker") || createFileInput();
-    const clickEvent = new MouseEvent("click");
 
     if (choice === "local-file") {
         filePicker.removeAttribute("webkitdirectory");
@@ -182,7 +195,7 @@ function showFilePicker(choice) {
         filePicker.setAttribute("directory", "");
         filePicker.setAttribute("allowdirs", "");
     }
-    filePicker.dispatchEvent(clickEvent);
+    clickOnElement(filePicker);
 }
 
 function handleImportFormSubmit(event) {

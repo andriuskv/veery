@@ -1,4 +1,5 @@
 /* global Dropbox */
+import "whatwg-fetch";
 
 import { formatTime } from "./main.js";
 import { getTrackDuration, addTracks } from "./local.js";

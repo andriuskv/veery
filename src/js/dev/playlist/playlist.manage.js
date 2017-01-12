@@ -100,7 +100,7 @@ function updatePlaylist(playlistId, data) {
 }
 
 function getSelectedTrackIndexes(selectedElements) {
-    return selectedElements.map(element => Number.parseInt(element.getAttribute("data-index"), 10));
+    return selectedElements.map(element => parseInt(element.getAttribute("data-index"), 10));
 }
 
 function resetTrackElementIndexes(elements) {

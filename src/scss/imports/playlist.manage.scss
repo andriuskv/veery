@@ -91,7 +91,8 @@
     display: none;
 }
 .pl-entry-container {
-    flex-basis: calc(100% - 296px);
+    flex-grow: 1;
+    margin-left: 8px;
 }
 .pl-entry {
     display: flex;
@@ -123,8 +124,10 @@
 }
 
 @media (max-width: 758px) {
-    .import-option-container,
+    .manage-tab {
+        display: block;
+    }
     .pl-entry-container {
-        flex-basis: 100%;
+        margin-left: 0;
     }
 }
