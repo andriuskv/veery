@@ -22,6 +22,9 @@
   },
   "author": "",
   "license": "ISC",
+  "dependencies": {
+    "whatwg-fetch": "^2.0.1"
+  },
   "devDependencies": {
     "autoprefixer": "^6.6.1",
     "babel-cli": "^6.18.0",
@@ -39,5 +42,8 @@
     "postcss-cli": "^2.6.0",
     "webpack": "^1.14.0"
   },
-  "browserslist": ["last 2 versions", "ie 11"]
+  "browserslist": [
+    "last 2 versions",
+    "ie 11"
+  ]
 }

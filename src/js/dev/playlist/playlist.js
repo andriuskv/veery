@@ -79,7 +79,7 @@ function setPlaybackIndex(index) {
     const { id, playbackOrder } = getActivePlaylist();
 
     updatePlaylist(id, {
-        playbackIndex: playbackOrder.indexOf(Number.parseInt(index, 10))
+        playbackIndex: playbackOrder.indexOf(parseInt(index, 10))
     });
 }
 
