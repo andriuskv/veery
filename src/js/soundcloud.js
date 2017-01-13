@@ -11,7 +11,7 @@ async function initSoundcloud() {
     }
     initialized = true;
 
-    await scriptLoader.load({ src: "js/libs/sdk.min.js" });
+    await scriptLoader.load({ src: "libs/sdk.min.js" });
     SC.initialize({ client_id: "" });
 }
 

@@ -92,7 +92,7 @@ async function addTracks(importOption, pl, newTracks, parseTracks) {
         showNotice(importOption, "Tracks already exist");
         return;
     }
-    await scriptLoader.load({ src: "js/libs/metadata-audio-parser.min.js" });
+    await scriptLoader.load({ src: "libs/metadata-audio-parser.min.js" });
     const parsedTracks = await parseTracks(pl.id, tracks);
 
     addTracksToPlaylist(pl, parsedTracks);

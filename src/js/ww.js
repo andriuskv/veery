@@ -1,6 +1,6 @@
 /* global importScripts, Dexie, postMessage */
 
-importScripts("./libs/dexie.min.js");
+importScripts("./../libs/dexie.min.js");
 
 const db = new Dexie("playlists");
 

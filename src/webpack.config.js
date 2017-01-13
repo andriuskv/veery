@@ -1,8 +1,11 @@
 module.exports = {
-    entry: ["./src/js/index.js"],
+    entry: {
+        main: "./src/js/index.js",
+        ww: "./src/js/ww.js"
+    },
     output: {
-        path: "./src/js",
-        filename: "main.js"
+        path: "./dist/js",
+        filename: "[name].js"
     },
     module: {
         loaders: [
@@ -14,7 +17,7 @@ module.exports = {
                     presets: [["env", {
                         useBuiltIns: true,
                         targets: {
-                            browsers: ["last 2 versions", "ie 11"]
+                            browsers: ["last 2 versions", "> 2%"]
                         }
                     }]]
                 }
