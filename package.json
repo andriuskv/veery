@@ -4,21 +4,18 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "postcss": "postcss -u autoprefixer -u css-mqpacker -r src/css/main.css",
-    "scss": "node-sass src/scss/main.scss --source-map-embed src/css/main.css && npm run postcss",
-    "watch:scss": "onchange 'src/scss/*.scss' 'src/scss/imports/*.scss' -- npm run scss",
-    "watch:js": "webpack --progress --colors --devtool inline-source-map --config ./src/webpack.config.js --watch",
-    "watch": "npm run watch:js & npm run watch:scss",
-    "start": "npm run scss && npm run watch & live-server --watch='src/index.html,src/css/main.css,src/js/main.js'",
-    "build:html": "cp ./src/index.html dist",
-    "build:css": "npm run scss && csso ./src/css/main.css ./dist/css/main.css",
-    "build:js": "webpack --progress --colors --config ./src/webpack.config.js -p && cp ./src/js/main.js ./dist/js",
-    "build:libs": "cp -R ./src/js/libs ./dist/js",
-    "build:assets": "cp -R ./src/assets ./dist",
-    "build:worker": "babel ./src/js/ww.js -o ./dist/js/ww.js",
-    "build:favicon": "cp ./src/favicon.ico ./dist",
-    "prebuild": "rm -rf ./dist && mkdir -p ./dist/{css,js/libs,assets}",
-    "build": "npm run build:html && npm run build:css && npm run build:js && npm run build:libs && npm run build:assets && npm run build:worker && npm run build:favicon"
+    "start": "npm run dist && npm run watch & live-server --watch='dist'",
+    "watch": "npm run watch:js & npm run watch:scss & npm run watch:html",
+    "build": "npm run dist && npm run build:css && npm run build:js",
+    "dist": "rm -rf dist && mkdir -p dist/{css,js} && cp -R src/{assets,libs,index.html} dist",
+    "postcss": "postcss -u autoprefixer -u css-mqpacker -r dist/css/main.css",
+    "scss": "node-sass --source-map-embed src/scss/main.scss dist/css/main.css && npm run postcss",
+    "js": "webpack --config src/webpack.config.js",
+    "watch:html": "onchange 'src/index.html' -- cp src/index.html dist",
+    "watch:scss": "onchange 'src/scss/*.scss' 'src/scss/imports/*.scss' -i -- npm run scss",
+    "watch:js": "npm run js -- --devtool inline-source-map --watch",
+    "build:css": "npm run scss && csso ./dist/css/main.css ./dist/css/main.css",
+    "build:js": "npm run js -- -p"
   },
   "author": "",
   "license": "ISC",
@@ -44,6 +41,6 @@
   },
   "browserslist": [
     "last 2 versions",
-    "ie 11"
+    "> 2%"
   ]
 }
