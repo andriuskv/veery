@@ -1,6 +1,6 @@
-import * as router from "./../router.js";
 import * as playlist from "./playlist.js";
 import * as playlistView from "./playlist.view.js";
+import { isRouteActive, addRoute, toggleRoute } from "./../router.js";
 import { getSetting } from "./../settings.js";
 import { getVisiblePlaylistId } from "./../tab.js";
 import { removeElements, dispatchCustomEvent } from "./../main.js";
@@ -25,7 +25,7 @@ function resortTracks(pl) {
 
 function initPlaylist(pl) {
     pl.initialized = true;
-    router.add(`playlist/${pl.id}`);
+    addRoute(`playlist/${pl.id}`);
     createSidebarEntry(pl.title, pl.id);
     createPlaylistEntry(pl.title, pl.id, pl.url);
     resortTracks(pl);
@@ -69,7 +69,7 @@ function refreshPlaylist(pl) {
     }
 }
 
-function addTracksToPlaylist(pl, tracks, showPlaylist = router.isActive("manage")) {
+function addTracksToPlaylist(pl, tracks, showPlaylist = isRouteActive("manage")) {
     pl.tracks = pl.tracks.concat(tracks);
 
     if (!pl.initialized) {
@@ -81,7 +81,7 @@ function addTracksToPlaylist(pl, tracks, showPlaylist = router.isActive("manage"
     }
 
     if (showPlaylist) {
-        router.toggle(`playlist/${pl.id}`);
+        toggleRoute(`playlist/${pl.id}`);
     }
     postMessageToWorker({
         action: "put",

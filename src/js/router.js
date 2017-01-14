@@ -9,7 +9,7 @@ function contains(hash) {
     return routes.some(route => route === hash);
 }
 
-function isActive(route) {
+function isRouteActive(route) {
     return window.location.hash.includes(route);
 }
 
@@ -60,8 +60,8 @@ window.addEventListener("hashchange", () => {
 });
 
 export {
-    addRoute as add,
-    toggleRoute as toggle,
+    addRoute,
+    toggleRoute,
     toggleCurrentRoute,
-    isActive
+    isRouteActive
 };

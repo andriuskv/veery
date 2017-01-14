@@ -1,5 +1,5 @@
 import { getVisiblePlaylistId } from "./../tab.js";
-import { removeElement, removeElementClass } from "./../main.js";
+import { replaceElement, removeElement, removeElementClass, getTrackArt } from "./../main.js";
 import { getPlaylistById, getActivePlaylistId, getCurrentTrack } from "./playlist.js";
 import { updatePlaylist } from "./playlist.manage.js";
 import { setSortBtnText, toggleOrderBtn } from "./playlist.sorting.js";
@@ -44,7 +44,7 @@ function createList(id, items) {
 
 function createGridItem(item) {
     const name = item.artist && item.title ? `${item.artist} - ${item.title}` : item.name;
-    const thumbnail = typeof item.thumbnail === "string" ? item.thumbnail : URL.createObjectURL(item.thumbnail);
+    const thumbnail = getTrackArt(item.thumbnail);
 
     return `
         <li class="grid-item track" data-index="${item.index}">
@@ -97,31 +97,16 @@ function appendToPlaylistView(pl, tracks) {
     element.insertAdjacentHTML("beforeend", createItems(tracks, cb));
 }
 
-function updateListItem(item, itemElement) {
-    itemElement[0].textContent = item.title;
-    itemElement[1].textContent = item.artist;
-    itemElement[2].textContent = item.album;
-    itemElement[3].textContent = item.duration;
-}
-
-function updateGridItem(item, itemElement) {
-    const name = item.artist && item.title ? `${item.artist} - ${item.title}` : item.name;
-    const thumbnail = typeof item.thumbnail === "string" ? item.thumbnail : URL.createObjectURL(item.thumbnail);
-
-    itemElement[0].children[0].textContent = item.duration;
-    itemElement[0].children[1].setAttribute("src", thumbnail);
-    itemElement[1].textContent = name;
-}
-
 function updatePlaylistView({ id, type, tracks }) {
     const elements = getPlaylistTrackElements(id);
-    const cb = type === "list" ? updateListItem: updateGridItem;
+    const cb = type === "list" ? createListItem: createGridItem;
 
     tracks.forEach((track, index) => {
-        const trackElement = elements[index].children;
+        const div = document.createElement("div");
 
         track.index = index;
-        cb(track, trackElement);
+        div.innerHTML = cb(track);
+        replaceElement(div.firstElementChild, elements[index]);
     });
 }
 
@@ -157,18 +142,19 @@ function showPlayingTrack(index, id, scrollToTrack) {
 
 function filterTracks(tracks, trackElements, query) {
     tracks.forEach(track => {
-        const trackElement = trackElements[track.index];
+        const element = trackElements[track.index];
+        const regex = new RegExp(query, "gi");
         const filterString = `
-            ${track.title.toLowerCase()}
-            ${track.artist.toLowerCase()}
-            ${track.album.toLowerCase()}
+            ${track.title}
+            ${track.artist}
+            ${track.album}
         `;
 
-        if (!filterString.includes(query)) {
-            trackElement.classList.add("hidden");
+        if (regex.test(filterString)) {
+            element.classList.remove("hidden");
         }
         else {
-            trackElement.classList.remove("hidden");
+            element.classList.add("hidden");
         }
     });
 }
@@ -261,12 +247,11 @@ function updatePlaylistDuration(tracks) {
 }
 
 document.getElementById("js-filter-input").addEventListener("keyup", ({ target }) => {
-    if (timeout) {
-        clearTimeout(timeout);
-    }
-    timeout = setTimeout(() => {
-        filterPlaylist(getVisiblePlaylistId(), target.value.trim().toLowerCase());
-    }, 400);
+    const id = getVisiblePlaylistId();
+    const filter = target.value.trim().toLowerCase();
+
+    clearTimeout(timeout);
+    timeout = setTimeout(filterPlaylist, 400, id, filter);
 });
 
 window.addEventListener("track-length-change", ({ detail }) => {
