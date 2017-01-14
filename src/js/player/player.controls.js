@@ -1,16 +1,14 @@
 import { setSetting, getSetting } from "./../settings.js";
 import { formatTime, dispatchCustomEvent } from "./../main.js";
 import { getCurrentTrack } from "./../playlist/playlist.js";
-import * as player from "./player.js";
+import { storedTrack, setVolume, seekTo, toggleShuffle, onControlButtonClick } from "./player.js";
 
 let seeking = false;
 const elapsedTime = (function() {
     let timeout = 0;
 
     function stop() {
-        if (timeout) {
-            clearTimeout(timeout);
-        }
+        clearTimeout(timeout);
     }
 
     function updateTrackSlider(track, startTime, elapsed) {
@@ -18,25 +16,25 @@ const elapsedTime = (function() {
         const diff = ideal - elapsed;
 
         displayCurrentTime(track.currentTime);
+
         if (!seeking) {
             const elapsedInPercentage = track.currentTime / track.duration * 100;
 
             setTrackBarInnerWidth(elapsedInPercentage);
-            player.storedTrack.updateSavedTrack({
+            storedTrack.updateSavedTrack({
                 elapsed: elapsedInPercentage,
                 currentTime: track.currentTime
             });
         }
-        timeout = setTimeout(() => {
-            if (track.currentTime < track.duration) {
-                track.currentTime += 1;
-                elapsed += 1000;
-                updateTrackSlider(track, startTime, elapsed);
-            }
-            else {
-                dispatchCustomEvent("track-end");
-            }
-        }, 1000 - diff);
+
+        if (track.currentTime <= track.duration) {
+            track.currentTime += 1;
+            elapsed += 1000;
+            timeout = setTimeout(updateTrackSlider, 1000 - diff, track, startTime, elapsed);
+        }
+        else {
+            dispatchCustomEvent("track-end");
+        }
     }
 
     function start(track) {
@@ -94,7 +92,7 @@ function onVolumeTrackMousemove(event) {
     setSetting("volume", volume);
 
     if (track) {
-        player.setVolume(track, volume);
+        setVolume(track, volume);
     }
 }
 
@@ -131,7 +129,7 @@ function onPlayerTrackMouseup({ pageX }) {
     const track = getCurrentTrack();
 
     if (track) {
-        player.seekTo(track, getTrackElapsedValue(pageX));
+        seekTo(track, getTrackElapsedValue(pageX));
     }
     seeking = false;
     document.removeEventListener("mousemove", onPlayerTrackMousemove);
@@ -167,7 +165,7 @@ document.getElementById("js-controls").addEventListener("click", ({ target }) =>
         setSetting(item, !itemSetting);
 
         if (item === "shuffle") {
-            player.toggleShuffle(!itemSetting);
+            toggleShuffle(!itemSetting);
         }
     }
     else if (item === "volume") {
@@ -175,7 +173,7 @@ document.getElementById("js-controls").addEventListener("click", ({ target }) =>
         document.getElementById("js-volume-bar-container").classList.toggle("visible");
     }
     else {
-        player.onControlButtonClick(item);
+        onControlButtonClick(item);
     }
 });
 

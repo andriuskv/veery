@@ -27,6 +27,10 @@ function capitalize(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
+function replaceElement(newElement, oldElement) {
+    oldElement.parentElement.replaceChild(newElement, oldElement);
+}
+
 function removeElement(element) {
     element.parentElement.removeChild(element);
 }
@@ -100,14 +104,20 @@ function dispatchCustomEvent(eventName, data) {
     window.dispatchEvent(event);
 }
 
+function getTrackArt(thumbnail = "assets/images/album-art-placeholder.png") {
+    return typeof thumbnail === "object" ? URL.createObjectURL(thumbnail) : thumbnail;
+}
+
 export {
     scriptLoader,
     capitalize,
     getElementByAttr,
+    replaceElement,
     removeElement,
     removeElements,
     removeElementClass,
     formatTime,
     isOutsideElement,
-    dispatchCustomEvent
+    dispatchCustomEvent,
+    getTrackArt
 };

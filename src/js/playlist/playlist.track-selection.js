@@ -10,11 +10,12 @@ let playlistElement = null;
 let playlistElementRect = null;
 let trackElements = [];
 let maxScrollHeight = 0;
+let maxWidth = 0;
 let selectionElement = null;
 let selectionEnabled = false;
 let intervalId = 0;
-let updating = false;
 let keepTracksSelected = false;
+let animationId = 0;
 
 function enableTrackSelection(id) {
     if (playlistElement) {
@@ -25,17 +26,17 @@ function enableTrackSelection(id) {
 }
 
 function initSelectionArea(parent) {
-    const selectionElement = document.createElement("li");
+    const element = document.createElement("li");
 
     selectedArea.top = startingPoint.y;
     selectedArea.left = startingPoint.x;
-    selectionElement.setAttribute("id", "js-selected-area");
-    selectionElement.setAttribute("class", "selected-area");
-    selectionElement.style.top = `${startingPoint.y}px`;
-    selectionElement.style.left = `${startingPoint.x}px`;
-    parent.insertBefore(selectionElement, parent.firstElementChild);
+    element.setAttribute("id", "js-selected-area");
+    element.setAttribute("class", "selected-area");
+    element.style.top = `${startingPoint.y}px`;
+    element.style.left = `${startingPoint.x}px`;
+    parent.insertBefore(element, parent.firstElementChild);
 
-    return selectionElement;
+    return element;
 }
 
 function removeSelectionArea() {
@@ -176,18 +177,19 @@ function stopScrolling() {
 }
 
 function resetSelection() {
-    requestAnimationFrame(removeSelectionArea);
+    removeSelectionArea();
     selectionEnabled = false;
     selectedArea = {};
     trackElements.length = 0;
 }
 
 function update(ctrlKey) {
-    updating = true;
-    requestAnimationFrame(() => {
-        updateSelectedArea(mousePos, startingPoint, selectionElement.style);
+    cancelAnimationFrame(animationId);
+    animationId = requestAnimationFrame(() => {
+        if (selectionElement) {
+            updateSelectedArea(mousePos, startingPoint, selectionElement.style);
+        }
         selectTrackElements(trackElements, selectedArea, ctrlKey);
-        updating = false;
     });
 }
 
@@ -199,9 +201,7 @@ function scrollDown(ctrlKey) {
         mousePos.y = maxScrollHeight;
         stopScrolling();
     }
-    if (!updating) {
-        update(ctrlKey);
-    }
+    update(ctrlKey);
 }
 
 function scrollUp(ctrlKey) {
@@ -212,16 +212,14 @@ function scrollUp(ctrlKey) {
         mousePos.y = 0;
         stopScrolling();
     }
-    if (!updating) {
-        update(ctrlKey);
-    }
+    update(ctrlKey);
 }
 
 function onMousemove(event) {
     const mouseYRelatedToViewport = event.clientY - playlistElementRect.top;
     const x = event.clientX - playlistElementRect.left;
     const y = playlistElement.scrollTop + mouseYRelatedToViewport;
-    mousePos.x = adjustMousePosition(x, playlistElement.clientWidth);
+    mousePos.x = adjustMousePosition(x, maxWidth);
     mousePos.y = adjustMousePosition(y, maxScrollHeight);
 
     event.preventDefault();
@@ -241,20 +239,14 @@ function onMousemove(event) {
     }
 
     if (!intervalId && mouseYRelatedToViewport > playlistElementRect.height && mousePos.y < maxScrollHeight) {
-        intervalId = setInterval(() => {
-            scrollDown(event.ctrlKey);
-        }, 40);
+        intervalId = setInterval(scrollDown, 40, event.ctrlKey);
         return;
     }
     else if (!intervalId && mouseYRelatedToViewport < 0 && mousePos.y > 0) {
-        intervalId = setInterval(() => {
-            scrollUp(event.ctrlKey);
-        }, 40);
+        intervalId = setInterval(scrollUp, 40, event.ctrlKey);
         return;
     }
-    else if (!updating) {
-        update(event.ctrlKey);
-    }
+    update(event.ctrlKey);
 
     if (intervalId && mouseYRelatedToViewport > 0 && mouseYRelatedToViewport < playlistElementRect.height) {
         stopScrolling();
@@ -288,12 +280,13 @@ function onMousedown(event) {
         return;
     }
     playlistElementRect = playlistElement.getBoundingClientRect();
+    maxScrollHeight = playlistElement.scrollHeight;
+    maxWidth = playlistElement.clientWidth;
     startingPoint.x = event.clientX - playlistElementRect.left;
     startingPoint.y = playlistElement.scrollTop + event.clientY - playlistElementRect.top;
-    maxScrollHeight = playlistElement.scrollHeight;
 
     // Don't add event listeners if clicked on scrollbar
-    if (startingPoint.x < playlistElement.clientWidth) {
+    if (startingPoint.x < maxWidth) {
         window.addEventListener("mousemove", onMousemove);
         window.addEventListener("mouseup", onMouseup);
     }

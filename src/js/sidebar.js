@@ -1,4 +1,4 @@
-import { removeElement, getElementByAttr } from "./main.js";
+import { removeElement, getElementByAttr, getTrackArt } from "./main.js";
 import { createNewPlaylistInputForm, onNewPlaylistFormSubmit } from "./playlist/playlist.manage.js";
 
 let animationId = 0;
@@ -108,12 +108,13 @@ function handleClickOnPlayerBtn() {
 function createTrackInfo(track) {
     const trackArtist = track.artist && track.title ? track.artist : track.name;
     const trackTitle = trackArtist !== track.name ? track.title : "";
+    const thumbnail = getTrackArt(track.thumbnail);
     const trackInfoElement = `
         <div id="js-track-info" class="track-info">
             <div class="track-art-container">
                 <div class="track-art-wrapper">
                     ${track.player === "youtube" ? "<button id='js-player-btn' class='icon-resize-full btn'></button>" : ""}
-                    <img src=${getTrackArt(track.thumbnail)} id="js-track-art" class="track-art" alt="track art">
+                    <img src=${thumbnail} id="js-track-art" class="track-art" alt="track art">
                 </div>
             </div>
             <div class="track-name">
@@ -130,10 +131,6 @@ function createTrackInfo(track) {
     if (track.player === "youtube") {
         document.getElementById("js-player-btn").addEventListener("click", handleClickOnPlayerBtn);
     }
-}
-
-function getTrackArt(thumbnail = "assets/images/album-art-placeholder.png") {
-    return typeof thumbnail === "object" ? URL.createObjectURL(thumbnail) : thumbnail;
 }
 
 function removeTrackInfoElement(element) {
