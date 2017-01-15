@@ -1,6 +1,6 @@
 import { removeElement, getElementByAttr } from "./../main.js";
 import { getVisiblePlaylistId } from "./../tab.js";
-import { removePresentPanels, removePanel } from "./../panels.js";
+import { removePanel } from "./../panels.js";
 import { getPlaylistById, getAllPlaylists, findTrack } from "./playlist.js";
 import * as playlistManage from "./playlist.manage.js";
 
@@ -70,7 +70,7 @@ function onListClick(event) {
 
         moveTracks(playlistId);
         document.getElementById("js-move-to-list").removeEventListener("click", onListClick);
-        removePresentPanels();
+        removeMoveToPanelContainer();
     }
 }
 

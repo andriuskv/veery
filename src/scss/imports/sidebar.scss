@@ -34,6 +34,7 @@
             .track-info {
                 display: flex;
                 width: calc(100% - 40px);
+                margin-top: 0;
             }
             .track-art-container {
                 flex-shrink: 0;
@@ -51,6 +52,8 @@
             }
             .track-name {
                 height: 100%;
+                padding: 2px 0;
+                border-right: 0;
             }
         }
     }
@@ -184,6 +187,9 @@
     object-fit: scale-down;
 }
 .track-name {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     height: 40px;
     padding: 4px 0;
     border-left: 4px solid $color2;
@@ -197,7 +203,7 @@
     will-change: transform;
 }
 .track-title {
-    font-size: 16px;
+    font-size: 14px;
 }
 .track-artist {
     font-size: 12px;

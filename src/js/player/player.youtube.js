@@ -53,7 +53,10 @@ function initPlayer() {
             controls: 0,
             fs: 0,
             showinfo: 0,
-            rel: 0
+            rel: 0,
+
+            // Hide annotations
+            iv_load_policy: 3
         },
         events: {
             onReady: onPlayerReady,

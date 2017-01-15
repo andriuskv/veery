@@ -2,9 +2,7 @@ import { getVisiblePlaylistId } from "./../tab.js";
 import { replaceElement, removeElement, removeElementClass, getTrackArt } from "./../main.js";
 import { getPlaylistById, getActivePlaylistId, getCurrentTrack } from "./playlist.js";
 import { updatePlaylist } from "./playlist.manage.js";
-import { setSortBtnText, toggleOrderBtn } from "./playlist.sorting.js";
 import { enableTrackSelection } from "./playlist.track-selection.js";
-import { removeMoveToPanelContainer } from "./playlist.move-to.js";
 
 let timeout = 0;
 let filteredPlaylistId = "";
@@ -43,8 +41,14 @@ function createList(id, items) {
 }
 
 function createGridItem(item) {
-    const name = item.artist && item.title ? `${item.artist} - ${item.title}` : item.name;
     const thumbnail = getTrackArt(item.thumbnail);
+    let trackNameTemp = `<div class="grid-item-title">${item.title}</div>`;
+
+    if (item.artist && item.title) {
+        trackNameTemp += `
+            <div class="grid-item-artist">${item.artist} ${item.album ? `- ${item.album}` : ""}</div>
+        `;
+    }
 
     return `
         <li class="grid-item track" data-index="${item.index}">
@@ -52,7 +56,7 @@ function createGridItem(item) {
                 <div class="grid-item-duration">${item.duration}</div>
                 <img src="${thumbnail}" class="grid-item-thumb">
             </div>
-            <div>${name}</div>
+            <div>${trackNameTemp}</div>
         </li>
     `;
 }
@@ -184,23 +188,18 @@ function addMarginToPlaylistHeader(id, type) {
 
 function changePlaylistType(newType, pl) {
     updatePlaylist(pl.id, {
-        type: newType,
-        order: 0,
-        sortedBy: ""
+        type: newType
     });
     document.getElementById(`js-tab-${pl.id}`).innerHTML = createPlaylist(pl);
     enableTrackSelection(pl.id);
     togglePlaylistTypeBtn(newType);
-    removeMoveToPanelContainer();
     addMarginToPlaylistHeader(pl.id, newType);
-    setSortBtnText();
-    toggleOrderBtn();
 
     if (pl.id === getActivePlaylistId()) {
         const track = getCurrentTrack();
 
         if (track) {
-            showPlayingTrack(track.index, pl.id, true);
+            showPlayingTrack(track.index, pl.id);
         }
     }
 }
@@ -287,5 +286,4 @@ export {
     addMarginToPlaylistHeader,
     changePlaylistType,
     resetFilteredPlaylist
-
 };

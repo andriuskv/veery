@@ -8,23 +8,22 @@
 }
 .grid-item {
     display: flex;
-    flex-grow: 1;
-    min-width: 300px;
+    flex: 1 0 300px;
     padding: 2px;
     margin: 2px;
     cursor: default;
     user-select: none;
 
-    @media (min-width: 826px) {
+    @media (min-width: 782px) {
         max-width: calc(50% - 4px);
     }
-    @media (min-width: 1140px) {
+    @media (min-width: 1086px) {
         max-width: calc(33.3333% - 4px);
     }
-    @media (min-width: 1456px) {
+    @media (min-width: 1390px) {
         max-width: calc(25% - 4px);
     }
-    @media (min-width: 1772px) {
+    @media (min-width: 1694px) {
         max-width: calc(20% - 4px);
     }
 }
@@ -54,4 +53,13 @@
     @include for-phone-only {
         min-width: 60px;
     }
+}
+
+.grid-item-title {
+    font-weight: 500;
+}
+
+.grid-item-artist {
+    margin-top: 4px;
+    font-size: 12px;
 }
