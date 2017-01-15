@@ -52,11 +52,14 @@ function moveTracks(playlistId) {
     const trackIndexes = playlistManage.getSelectedTrackIndexes(selectedTrackElements);
     const { tracks } = getPlaylistById(getVisiblePlaylistId());
     const pl = getPlaylistById(playlistId);
+    const timeStamp = new Date().getTime();
     const selectedTracks = tracks
         .filter(track => trackIndexes.includes(track.index) && !findTrack(playlistId, track.name))
         .map(track => {
-            track.playlistId = playlistId;
-            return track;
+            return Object.assign({}, track, {
+                playlistId,
+                createdAt: timeStamp
+            });
         });
 
     playlistManage.addTracksToPlaylist(pl, selectedTracks, true);

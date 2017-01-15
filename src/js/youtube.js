@@ -55,7 +55,7 @@ function filterInvalidItems(items) {
     });
 }
 
-function parseItems(id, items, lastIndex) {
+function parseItems(items, id, timeStamp, lastIndex) {
     return items.map((track, index) => ({
         index: index + lastIndex,
         id: track.snippet.resourceId.videoId,
@@ -67,19 +67,20 @@ function parseItems(id, items, lastIndex) {
         album: "",
         thumbnail: track.snippet.thumbnails.default.url,
         player: "youtube",
-        playlistId: id
+        playlistId: id,
+        createdAt: timeStamp
     }));
 }
 
-async function getPlaylistItems(id, token, lastIndex = 0) {
+async function getPlaylistItems(id, timeStamp, token, lastIndex = 0) {
     const data = await getYoutube("playlistItems", "snippet", "playlistId", id, token);
     const validItems = filterInvalidItems(data.items);
     const items = await getVideoDuration(validItems);
-    const tracks = parseItems(id, items, lastIndex);
+    const tracks = parseItems(items, id, timeStamp, lastIndex);
 
     if (data.nextPageToken) {
         lastIndex = tracks[tracks.length - 1].index + 1;
-        const nextPageItems = await getPlaylistItems(id, data.nextPageToken, lastIndex);
+        const nextPageItems = await getPlaylistItems(id, timeStamp, data.nextPageToken, lastIndex);
 
         return tracks.concat(nextPageItems);
     }
@@ -105,7 +106,8 @@ async function fetchYoutubePlaylist(url) {
         showYoutubeNotice("Playlist was not found");
         return;
     }
-    const tracks = await getPlaylistItems(id);
+    const timeStamp = new Date().getTime();
+    const tracks = await getPlaylistItems(id, timeStamp);
     const playlist = {
         id,
         url,

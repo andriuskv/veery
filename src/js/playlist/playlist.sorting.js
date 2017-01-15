@@ -20,10 +20,20 @@ function toggleOrderBtn(order = 1) {
     }
 }
 
+function getSortingValue(sortBy, track) {
+    if (sortBy === "duration") {
+        return track.durationInSeconds;
+    }
+    if (sortBy === "age") {
+        return track.createdAt;
+    }
+    return track[sortBy].toLowerCase();
+}
+
 function sortTracks(tracks, sortBy, order) {
     tracks.sort((a, b) => {
-        const aValue = sortBy === "duration" ? a.durationInSeconds : a[sortBy].toLowerCase();
-        const bValue = sortBy === "duration" ? b.durationInSeconds : b[sortBy].toLowerCase();
+        const aValue = getSortingValue(sortBy, a);
+        const bValue = getSortingValue(sortBy, b);
 
         if (aValue < bValue) {
             return -1 * order;
@@ -64,7 +74,7 @@ function setSortOptions({ sortedBy, order }) {
 }
 
 function getSortOtions(sortedBy) {
-    return ["name", "title", "artist", "album", "duration"].map(option => {
+    return ["name", "title", "artist", "album", "duration", "age"].map(option => {
         const activeClass = option === sortedBy ? "active" : "";
 
         return `
@@ -111,8 +121,6 @@ function selectSortOption({ target }) {
 }
 
 export {
-    setSortBtnText,
-    toggleOrderBtn,
     setSortOptions,
     createSortPanel,
     sortTracks,

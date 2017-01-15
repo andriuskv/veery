@@ -48,9 +48,7 @@ function showNotice(option, message) {
         element.textContent = message;
     });
 
-    setTimeout(() => {
-        removeElements(elements);
-    }, 3200);
+    setTimeout(removeElements, 3200, elements);
 }
 
 function importPlaylist(url) {
@@ -65,9 +63,9 @@ function importPlaylist(url) {
     }
 }
 
-function filterDuplicateTracks(tracks, existingTracks) {
+function filterDuplicateTracks(tracks, oldTracks) {
     return tracks.reduce((tracks, track) => {
-        const duplicate = existingTracks.some(localTrack => localTrack.name === track.name);
+        const duplicate = oldTracks.some(oldTrack => oldTrack.name === track.name);
 
         if (!duplicate) {
             tracks.push(track);
@@ -105,9 +103,8 @@ function replaceInvalidImages(tracks) {
 }
 
 async function addImportedPlaylist(playlist) {
-    const playlistTracks = playlist.tracks.splice(0);
     const pl = getPlaylistById(playlist.id) || createPlaylist(playlist);
-    const tracks = filterDuplicateTracks(playlistTracks, pl.tracks);
+    const tracks = filterDuplicateTracks(playlist.tracks, pl.tracks);
     const newTracks = await replaceInvalidImages(tracks);
 
     setImportOption();
