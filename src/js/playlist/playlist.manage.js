@@ -64,7 +64,7 @@ function refreshPlaylist(pl) {
         if (track) {
             playlist.updateCurrentTrack({ index: track.index });
             playlist.setPlaybackIndex(track.index);
-            playlistView.showPlayingTrack(track.index, pl.id, true);
+            playlistView.showPlayingTrack(track.index, pl.id);
         }
     }
 }

@@ -63,15 +63,8 @@ function setSortOptions({ sortedBy, order }) {
     toggleOrderBtn(order);
 }
 
-function getSupportedSortOptions(playlistType) {
-    if (playlistType === "list") {
-        return ["title", "artist", "album", "duration"];
-    }
-    return ["name", "duration"];
-}
-
-function getSortOtions(supportedOptions, sortedBy) {
-    return supportedOptions.map(option => {
+function getSortOtions(sortedBy) {
+    return ["name", "title", "artist", "album", "duration"].map(option => {
         const activeClass = option === sortedBy ? "active" : "";
 
         return `
@@ -84,9 +77,8 @@ function getSortOtions(supportedOptions, sortedBy) {
     }).join("");
 }
 
-function createSortPanel(panelId, { type, sortedBy }) {
-    const supportedOptions = getSupportedSortOptions(type);
-    const sortOptions = getSortOtions(supportedOptions, sortedBy);
+function createSortPanel(panelId, { sortedBy }) {
+    const sortOptions = getSortOtions(sortedBy);
     const sortPanelElement = `
         <ul id="${panelId}" class="sort-panel">${sortOptions}</ul>
     `;

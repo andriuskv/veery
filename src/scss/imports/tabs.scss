@@ -71,6 +71,11 @@
         display: none;
     }
 }
+.grid-toggle-btn {
+    @include for-phone-only {
+        display: none;
+    }
+}
 .tab-title {
     padding-top: 20px;
     margin-top: 0;
