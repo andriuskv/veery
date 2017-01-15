@@ -51,7 +51,7 @@ function getTrackMetadata(track) {
     });
 }
 
-async function parseTracks(id, tracks, parsedTracks = []) {
+async function parseTracks(tracks, id, timeStamp, parsedTracks = []) {
     const track = tracks[parsedTracks.length];
     const audioTrack = track.audioTrack;
     const [data, durationInSeconds] = await Promise.all([
@@ -70,11 +70,12 @@ async function parseTracks(id, tracks, parsedTracks = []) {
         thumbnail: data.picture || "assets/images/album-art-placeholder.png",
         duration: formatTime(durationInSeconds),
         player: "native",
-        playlistId: id
+        playlistId: id,
+        createdAt: timeStamp
     });
 
     if (parsedTracks.length !== tracks.length) {
-        return await parseTracks(id, tracks, parsedTracks);
+        return await parseTracks(tracks, id, timeStamp, parsedTracks);
     }
     return parsedTracks;
 }
@@ -93,7 +94,8 @@ async function addTracks(importOption, pl, newTracks, parseTracks) {
         return;
     }
     await scriptLoader.load({ src: "libs/metadata-audio-parser.min.js" });
-    const parsedTracks = await parseTracks(pl.id, tracks);
+    const timeStamp = new Date().getTime();
+    const parsedTracks = await parseTracks(tracks, pl.id, timeStamp);
 
     addTracksToPlaylist(pl, parsedTracks);
     removeImportOptionMask(importOption);

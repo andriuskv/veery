@@ -15,7 +15,7 @@ async function initSoundcloud() {
     SC.initialize({ client_id: "" });
 }
 
-function parseTracks(id, tracks) {
+function parseTracks(tracks, id, timeStamp) {
     return tracks.map((track, index) => {
         const duration = Math.floor(track.duration / 1000);
 
@@ -30,19 +30,22 @@ function parseTracks(id, tracks) {
             album: "",
             thumbnail: track.artwork_url || "assets/images/album-art-placeholder.png",
             player: "soundcloud",
-            playlistId: id
+            playlistId: id,
+            createdAt: timeStamp
         };
     });
 }
 
 function parsePlaylist(playlist, url) {
     const id = playlist.id ? playlist.id.toString() : playlist[0].user_id.toString();
+    const timeStamp = new Date().getTime();
+    const tracks = playlist.tracks ? playlist.tracks : playlist;
 
     return {
         url,
         id,
         title: playlist.title || playlist[0].user.username,
-        tracks: playlist.tracks ? parseTracks(id, playlist.tracks) : parseTracks(id, playlist),
+        tracks: parseTracks(tracks, id, timeStamp),
         player: "soundcloud",
         type: "grid"
     };

@@ -65,9 +65,7 @@ function handleMouseenter({ target }) {
 
     if (width > maxWidth) {
         this.addEventListener("mouseleave", handleMouseleave);
-        timeoutId = setTimeout(() => {
-            slideElementLeft(target, width, maxWidth);
-        }, 400);
+        timeoutId = setTimeout(slideElementLeft, 400, target, width, maxWidth);
     }
 }
 
