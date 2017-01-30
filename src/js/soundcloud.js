@@ -12,7 +12,7 @@ async function initSoundcloud() {
     initialized = true;
 
     await scriptLoader.load({ src: "libs/sdk.min.js" });
-    SC.initialize({ client_id: "" });
+    SC.initialize({ client_id: process.env.SOUNDCLOUD_API_KEY });
 }
 
 function parseTracks(tracks, id, timeStamp) {

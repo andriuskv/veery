@@ -205,7 +205,7 @@ document.getElementById("js-import-options").addEventListener("mouseover", funct
         scriptLoader.load({
             src: "https://www.dropbox.com/static/api/2/dropins.js",
             id: "dropboxjs",
-            "data-app-key": ""
+            "data-app-key": process.env.DROPBOX_API_KEY
         });
     }
 });

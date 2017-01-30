@@ -1,3 +1,5 @@
+const webpack = require("webpack");
+
 module.exports = {
     entry: {
         main: "./src/js/index.js",
@@ -23,5 +25,14 @@ module.exports = {
                 }
             }
         ]
-    }
+    },
+    plugins: [
+        new webpack.DefinePlugin({
+            'process.env': {
+                YOUTUBE_API_KEY: JSON.stringify(process.env.YOUTUBE_API_KEY),
+                SOUNDCLOUD_API_KEY: JSON.stringify(process.env.SOUNDCLOUD_API_KEY),
+                DROPBOX_API_KEY: JSON.stringify(process.env.DROPBOX_API_KEY)
+            }
+        })
+    ]
 };
