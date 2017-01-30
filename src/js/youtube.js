@@ -37,8 +37,7 @@ async function getVideoDuration(items) {
 }
 
 function getYoutube(path, part, filter, id, token) {
-    const key = "";
-    let params = `part=${part}&${filter}=${id}&maxResults=50&key=${key}`;
+    let params = `part=${part}&${filter}=${id}&maxResults=50&key=${process.env.YOUTUBE_API_KEY}`;
 
     if (token) {
         params += `&pageToken=${token}`;
