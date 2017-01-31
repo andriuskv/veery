@@ -16,7 +16,7 @@ git config user.name "Travis CI"
 git config user.email "ikandrius@gmail.com"
 
 # If there are no changes then just bail.
-if [ -z `git diff --exit-code` ]; then
+if [[ -z $(git diff --exit-code) ]]; then
     echo "Nothing to commit"
     echo "Exiting"
     exit 0
