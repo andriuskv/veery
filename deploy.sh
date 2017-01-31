@@ -12,8 +12,8 @@ rm -rf ./gh-pages/**/*
 cp -r ./dist/. ./gh-pages
 
 cd ./gh-pages
-git config user.name "Travis CI"
-git config user.email "ikandrius@gmail.com"
+git config --global user.name "Travis CI"
+git config --global user.email "ikandrius@gmail.com"
 
 # If there are no changes then just bail.
 if [[ -z $(git diff --exit-code) ]]; then
