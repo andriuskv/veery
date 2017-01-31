@@ -14,7 +14,6 @@
     "watch:html": "onchange 'src/index.html' -- cp src/index.html dist",
     "watch:scss": "onchange 'src/scss/*.scss' 'src/scss/imports/*.scss' -i -- npm run scss",
     "watch:js": "npm run webpack",
-    "watch:js-old": "npm run webpack -- --devtool inline-source-map --watch",
     "build:css": "npm run scss && csso ./dist/css/main.css ./dist/css/main.css",
     "build:js": "export ENV=prod && npm run webpack"
   },
