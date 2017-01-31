@@ -54,7 +54,7 @@ function createGridItem(item) {
         <li class="grid-item track" data-index="${item.index}">
             <div class="grid-item-thumb-container">
                 <div class="grid-item-duration">${item.duration}</div>
-                <img src="${thumbnail}" class="grid-item-thumb">
+                <img src="${thumbnail}" class="grid-item-thumb" alt="">
             </div>
             <div>${trackNameTemp}</div>
         </li>

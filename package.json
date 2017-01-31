@@ -10,12 +10,13 @@
     "dist": "rm -rf dist && mkdir -p dist/css dist/js && cp -R src/assets src/libs src/index.html dist",
     "postcss": "postcss -u autoprefixer -u css-mqpacker -r dist/css/main.css",
     "scss": "node-sass --source-map-embed src/scss/main.scss dist/css/main.css && npm run postcss",
-    "webpack": "if which config/env; then source config/env; fi; webpack --config src/webpack.config.js",
+    "webpack": "if which config/env; then source config/env; fi; webpack --progress --colors --config src/webpack.config.js",
     "watch:html": "onchange 'src/index.html' -- cp src/index.html dist",
     "watch:scss": "onchange 'src/scss/*.scss' 'src/scss/imports/*.scss' -i -- npm run scss",
-    "watch:js": "npm run webpack -- --devtool inline-source-map --watch",
+    "watch:js": "npm run webpack",
+    "watch:js-old": "npm run webpack -- --devtool inline-source-map --watch",
     "build:css": "npm run scss && csso ./dist/css/main.css ./dist/css/main.css",
-    "build:js": "npm run webpack -- -p"
+    "build:js": "export ENV=prod && npm run webpack"
   },
   "author": "",
   "license": "ISC",
@@ -37,7 +38,7 @@
     "node-sass": "^4.4.0",
     "onchange": "^3.2.1",
     "postcss-cli": "^2.6.0",
-    "webpack": "^1.14.0"
+    "webpack": "^2.2.1"
   },
   "browserslist": [
     "last 2 versions",

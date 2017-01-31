@@ -112,7 +112,7 @@ function createTrackInfo(track) {
             <div class="track-art-container">
                 <div class="track-art-wrapper">
                     ${track.player === "youtube" ? "<button id='js-player-btn' class='icon-resize-full btn'></button>" : ""}
-                    <img src=${thumbnail} id="js-track-art" class="track-art" alt="track art">
+                    <img src=${thumbnail} id="js-track-art" class="track-art" alt="">
                 </div>
             </div>
             <div class="track-name">
