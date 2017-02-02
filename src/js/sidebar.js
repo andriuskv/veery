@@ -13,7 +13,7 @@ function createSidebarEntry(title, id) {
     const newEntry = `
         <li>
             <a href="#/playlist/${id}" id="js-sidebar-entry-${id}"
-                class="btn btn-transparent sidebar-btn">${title}</a>
+                class="btn btn-dark sidebar-btn">${title}</a>
         </li>
     `;
 
@@ -33,7 +33,13 @@ function removeSidebarEntry(id) {
 }
 
 function createActiveIcon() {
-    return `<span id="js-active-playlist-icon" class="icon-volume-up active-playlist-icon"></span>`;
+    return `
+        <span id="js-active-playlist-icon" class="active-playlist-icon">
+            <svg viewBox="0 0 24 24">
+                <use href="#volume-icon"></use>
+            </svg>
+        </span>
+    `;
 }
 
 function showActiveIcon(id) {
@@ -103,15 +109,29 @@ function handleClickOnPlayerBtn() {
     document.getElementById("js-yt-player-container").classList.toggle("visible");
 }
 
+function getExpandBtn(player) {
+    if (player !== "youtube") {
+        return "";
+    }
+    return `
+        <button id='js-player-btn' class='btn'>
+            <svg viewBox="0 0 24 24">
+                <use href="#expand-icon"></use>
+            </svg>
+        </button>
+    `;
+}
+
 function createTrackInfo(track) {
     const trackArtist = track.artist && track.title ? track.artist : track.name;
     const trackTitle = trackArtist !== track.name ? track.title : "";
     const thumbnail = getTrackArt(track.thumbnail);
+    const btn = getExpandBtn(track.player);
     const trackInfoElement = `
         <div id="js-track-info" class="track-info">
             <div class="track-art-container">
                 <div class="track-art-wrapper">
-                    ${track.player === "youtube" ? "<button id='js-player-btn' class='icon-resize-full btn'></button>" : ""}
+                    ${btn}
                     <img src=${thumbnail} id="js-track-art" class="track-art" alt="">
                 </div>
             </div>

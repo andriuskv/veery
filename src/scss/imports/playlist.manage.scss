@@ -30,7 +30,7 @@
 .import-options,
 .pl-entries {
     padding: 4px;
-    border: 1px solid $color2;
+    border: 1px solid $color3;
     border-radius: 2px;
     background-color: $color1;
 }
@@ -45,6 +45,10 @@
     align-items: center;
     background-color: transparentize($color1, 0.2);
     font-size: 14px;
+
+    img {
+        width: 24px;
+    }
 }
 .mask-message {
     margin-left: 6px;
@@ -55,36 +59,31 @@
     border-bottom: 1px solid $color3;
 }
 .import-option-btn {
-    display: flex;
-    align-items: center;
+    @include svg-container {
+        width: 20px;
+        height: 20px;
+    }
+
+    justify-content: flex-start;
     width: 100%;
-    padding: 2px;
-    text-align: left;
 
-    &.active {
-        background-color: $color1;
-
-        .import-option-title {
-            display: none;
-        }
+    &.active .import-option-title {
+        display: none;
     }
 }
 .import-option-icon {
+    padding: 1px 0;
     margin-right: 8px;
-    font-size: 21px;
 }
 .import-form {
     display: inline-flex;
     flex-grow: 1;
 
-    input,
-    .btn {
-        background-color: $color3;
-    }
     input {
         flex-grow: 1;
         width: 50%;
         margin-right: 4px;
+        background-color: $color2;
     }
 }
 .file-picker {
@@ -99,8 +98,11 @@
     padding: 4px;
     border-bottom: 1px solid $color3;
 
-    .btn.hidden {
-        display: none;
+    .btn {
+        @include svg-container {
+            width: 20px;
+            height: 20px;
+        }
     }
 }
 .pl-entry-form {
@@ -109,9 +111,8 @@
     justify-content: space-between;
     align-items: center;
 
-    input,
-    .btn.active {
-        background-color: $color3;
+    input {
+        background-color: $color2;
     }
 }
 .pl-entry-title {

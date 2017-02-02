@@ -133,26 +133,25 @@
     text-align: center;
 
     &.active {
-        background-color: $color1;
         color: $base-text-color;
 
         &:hover {
             color: $brand-color;
-        }
-        .active-playlist-icon {
-            background-color: $color1;
-            box-shadow: -2px 0px 6px $color1;
         }
     }
 }
 .active-playlist-icon {
     position: absolute;
     top: 50%;
-    right: 4px;
-    padding: 2px 4px;
+    right: 0;
     transform: translateY(-50%);
-    background-color: $color2;
-    box-shadow: -2px 0px 6px $color2;
+    background-color: inherit;
+    color: $base-text-color;
+
+    @include svg-container {
+        width: 20px;
+        height: 20px;
+    }
 }
 .track-info {
     margin-top: 2px;
@@ -167,7 +166,7 @@
     text-align: center;
 
     &:hover .btn {
-        display: block;
+        display: flex;
     }
 }
 .track-art-wrapper {
@@ -176,10 +175,16 @@
     height: 100%;
 
     .btn {
+        @include svg-container {
+            width: 20px;
+            height: 20px;
+        }
+
         position: absolute;
         top: 4px;
         right: 4px;
         display: none;
+
     }
 }
 .track-art {

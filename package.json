@@ -7,7 +7,7 @@
     "start": "npm run dist && npm run watch & live-server --watch='dist'",
     "watch": "npm run watch:js & npm run watch:scss & npm run watch:html",
     "build": "npm run dist && npm run build:css && npm run build:js",
-    "dist": "rm -rf dist && mkdir -p dist/css dist/js && cp -R src/assets src/libs src/index.html dist",
+    "dist": "rm -rf dist && mkdir -p dist/css dist/js && cp -R src/assets src/libs src/index.html src/favicon.ico dist",
     "postcss": "postcss -u autoprefixer -u css-mqpacker -r dist/css/main.css",
     "scss": "node-sass --source-map-embed src/scss/main.scss dist/css/main.css && npm run postcss",
     "webpack": "if which config/env; then source config/env; fi; webpack --progress --colors --config src/webpack.config.js",
@@ -23,7 +23,7 @@
     "whatwg-fetch": "^2.0.2"
   },
   "devDependencies": {
-    "autoprefixer": "^6.7.1",
+    "autoprefixer": "^6.7.2",
     "babel-cli": "^6.22.2",
     "babel-core": "^6.22.1",
     "babel-eslint": "^7.1.1",
@@ -34,7 +34,7 @@
     "csso": "^2.3.1",
     "eslint": "^3.14.1",
     "live-server": "^1.2.0",
-    "node-sass": "^4.4.0",
+    "node-sass": "^4.5.0",
     "onchange": "^3.2.1",
     "postcss-cli": "^2.6.0",
     "webpack": "^2.2.1"

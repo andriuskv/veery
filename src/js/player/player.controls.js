@@ -1,5 +1,5 @@
 import { setSetting, getSetting } from "./../settings.js";
-import { formatTime, dispatchCustomEvent } from "./../main.js";
+import { getElementByAttr, formatTime, dispatchCustomEvent } from "./../main.js";
 import { getCurrentTrack } from "./../playlist/playlist.js";
 import { storedTrack, setVolume, seekTo, toggleShuffle, onControlButtonClick } from "./player.js";
 
@@ -48,15 +48,12 @@ const elapsedTime = (function() {
 })();
 
 function togglePlayBtn(paused) {
-    const playBtn = document.getElementById("js-play-btn");
+    const btn = document.getElementById("js-play-btn");
+    const icon = btn.querySelector(".btn-icon");
 
-    if (paused) {
-        playBtn.classList.remove("icon-pause");
-    }
-    else {
-        playBtn.classList.add("icon-pause");
-    }
-    playBtn.setAttribute("title", paused ? "Play": "Pause");
+    icon.removeAttribute("href");
+    icon.setAttribute("href", paused ? "#play-icon" : "#pause-icon");
+    btn.setAttribute("title", paused ? "Play": "Pause");
 }
 
 function getElapsedValue(bar, pageX) {
@@ -156,12 +153,17 @@ document.getElementById("js-volume-bar").addEventListener("mousedown", event => 
 });
 
 document.getElementById("js-controls").addEventListener("click", ({ target }) => {
-    const item = target.getAttribute("data-control-item");
+    const element = getElementByAttr(target, "data-control-item");
+
+    if (!element) {
+        return;
+    }
+    const item = element.attrValue;
 
     if (item === "repeat" || item === "shuffle" || item === "once") {
         const itemSetting = getSetting(item);
 
-        target.classList.toggle("active");
+        element.elementRef.classList.toggle("active");
         setSetting(item, !itemSetting);
 
         if (item === "shuffle") {
@@ -169,7 +171,7 @@ document.getElementById("js-controls").addEventListener("click", ({ target }) =>
         }
     }
     else if (item === "volume") {
-        target.classList.toggle("active");
+        element.elementRef.classList.toggle("active");
         document.getElementById("js-volume-bar-container").classList.toggle("visible");
     }
     else {

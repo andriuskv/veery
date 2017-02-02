@@ -51,7 +51,10 @@
     display: none;
 
     @include for-phone-only {
-        display: inline-block;
+        @include svg-container {
+            width: 20px;
+            height: 20px;
+        }
     }
 }
 .filter-input {
@@ -64,6 +67,12 @@
             display: inline-block;
             margin-left: 4px;
         }
+    }
+}
+.list-toggle-btn, .grid-toggle-btn, .order-toggle-btn {
+    @include svg-container {
+        width: 20px;
+        height: 20px;
     }
 }
 .list-toggle-btn {

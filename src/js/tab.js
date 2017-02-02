@@ -1,4 +1,4 @@
-import { removeElementClass, isOutsideElement, dispatchCustomEvent } from "./main.js";
+import { removeElementClass, getElementByAttr, isOutsideElement, dispatchCustomEvent } from "./main.js";
 import { getSidebarEntry } from "./sidebar.js";
 import { removePresentPanels, togglePanel } from "./panels.js";
 import { getPlaylistById, getCurrentTrack } from "./playlist/playlist.js";
@@ -65,10 +65,11 @@ function toggleToNonPlaylistTab(id) {
 }
 
 window.addEventListener("click", event => {
-    const item = event.target.getAttribute("data-header-item");
+    const headerElement = getElementByAttr(event.target, "data-header-item");
     const id = getVisiblePlaylistId();
     const pl = getPlaylistById(id);
     const element = playlistView.getPlaylistElement(id);
+    const item = headerElement && headerElement.attrValue;
     let panelId = "";
 
     if (item === "filter") {
@@ -88,8 +89,8 @@ window.addEventListener("click", event => {
     else if (item === "order" && pl.sortedBy) {
         changePlaylistOrder(pl);
     }
-    if (isOutsideElement(event.target, element)) {
-        deselectTrackElements(event.target);
+    if (headerElement && isOutsideElement(headerElement.elementRef, element)) {
+        deselectTrackElements(headerElement.elementRef);
     }
     removePresentPanels(event, panelId);
 }, true);
