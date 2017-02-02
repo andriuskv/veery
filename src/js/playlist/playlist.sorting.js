@@ -11,13 +11,10 @@ function setSortBtnText(text = "Sorting") {
 
 function toggleOrderBtn(order = 1) {
     const btn = document.getElementById("js-order-toggle");
+    const icon = btn.querySelector(".btn-icon");
 
-    if (order === 1) {
-        btn.classList.remove("icon-up-big");
-    }
-    else {
-        btn.classList.add("icon-up-big");
-    }
+    icon.removeAttribute("href");
+    icon.setAttribute("href", order === 1 ? "#down-arrow-icon" : "#up-arrow-icon");
 }
 
 function getSortingValue(sortBy, track) {

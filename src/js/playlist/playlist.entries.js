@@ -34,19 +34,40 @@ function getEntryContainer() {
     return document.getElementById(containerId) || createEntryContainer(containerId);
 }
 
+function getRefrectBtn(url) {
+    if (!url) {
+        return "";
+    }
+    return `
+        <button type="submit" class="btn btn-light"
+            data-action="refresh" title="Refresh playlist">
+            <svg viewBox="0 0 24 24">
+                <use class="btn-icon" href="#refresh-icon">
+            </svg>
+        </button>
+    `;
+}
+
 function createPlaylistEntry(title, id, url) {
     const playlistEntryContainer = getEntryContainer();
+    const refreshBtn = getRefrectBtn(url);
     const entry = `
         <li class="pl-entry" data-id=${id}>
             <form class="pl-entry-form">
                 <input type="text" class="input pl-entry-title" value="${title}" readonly>
-                <button type="submit" class="icon-pencil btn btn-transparent"
-                    data-action="edit" title="Edit playlist title"></button>
+                <button type="submit" class="btn btn-light"
+                    data-action="edit" title="Edit playlist title">
+                    <svg viewBox="0 0 24 24">
+                        <use class="btn-icon" href="#edit-icon">
+                    </svg>
+                </button>
             </form>
-            <button type="submit" class="icon-cw btn btn-transparent ${!url ? "hidden" : ""}"
-                data-action="refresh" title="Refresh playlist"></button>
-            <button class="icon-trash btn btn-transparent"
-                data-action="remove" title="Remove playlist"></button>
+            ${refreshBtn}
+            <button class="btn btn-light" data-action="remove" title="Remove playlist">
+                <svg viewBox="0 0 24 24">
+                    <use class="btn-icon" href="#trash-icon">
+                </svg>
+            </button>
         </li>
     `;
 
@@ -95,19 +116,23 @@ function editPlaylistTitle(action, parentElement, playlistId) {
 
 function handleClickOnEntryContainer(event) {
     const entry = getElementByAttr(event.target, "data-id");
-    const action = event.target.getAttribute("data-action");
+    const btn = getElementByAttr(event.target, "data-action");
 
     event.preventDefault();
-    if (!entry || !action) {
+
+    if (!entry || !btn) {
         return;
     }
+    const playlistId = entry.attrValue;
+    const action = btn.attrValue;
+
     if (action === "remove") {
-        removePlaylist(entry.attrValue);
+        removePlaylist(playlistId);
         removePlaylistEntry(entry.elementRef);
         return;
     }
     if (action === "refresh") {
-        const { url } = getPlaylistById(entry.attrValue);
+        const { url } = getPlaylistById(playlistId);
         let option = "";
 
         if (url.includes("youtube")) {
@@ -118,11 +143,11 @@ function handleClickOnEntryContainer(event) {
         }
         createImportOptionMask(option, "Refreshing");
         importPlaylist(url);
-        event.target.classList.add("hidden");
+        removeElement(btn.elementRef);
         return;
     }
-    editPlaylistTitle(action, entry.elementRef, entry.attrValue);
-    updatePlaylistEntryBtn(event.target, action);
+    editPlaylistTitle(action, entry.elementRef,playlistId);
+    updatePlaylistEntryBtn(btn.elementRef, action);
 }
 
 export {

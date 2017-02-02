@@ -4,6 +4,18 @@
   white-space: nowrap;
 }
 
+@mixin svg-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2px;
+    fill: currentColor;
+
+    svg {
+        @content;
+    }
+}
+
 @mixin for-phone-only {
-  @media (max-width: 599px) {@content; }
+  @media (max-width: 599px) { @content; }
 }

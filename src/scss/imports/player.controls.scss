@@ -14,6 +14,7 @@
         align-items: flex-end;
         justify-content: center;
         height: 48px;
+        padding: 2px 4px;
     }
 }
 .control-bar {
@@ -35,11 +36,13 @@
     }
 }
 .main-control-btn {
-    width: 26px;
+    @include svg-container {
+        width: 28px;
+        height: 28px;
+    }
     padding: 0;
     margin-left: 2px;
     margin-right: 2px;
-    font-size: 22px;
 }
 .track-time {
     color: $base-text-color;
@@ -77,8 +80,16 @@
     background: $brand-color;
 }
 .control-btn {
-    padding: 4px 6px;
     margin-right: 4px;
+
+    @include svg-container {
+        width: 20px;
+        height: 20px;
+    }
+
+    @include for-phone-only {
+        margin-bottom: 2px;
+    }
 }
 .repeat-btn {
     @include for-phone-only {
@@ -89,12 +100,16 @@
     display: none;
 
     @include for-phone-only {
-        display: inline-block;
+        display: flex;
     }
 }
 .volume-icon {
-    margin-left: 4px;
     color: $base-text-color;
+
+    @include svg-container {
+        width: 20px;
+        height: 20px;
+    }
 
     @include for-phone-only {
         display: none;

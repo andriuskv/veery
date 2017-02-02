@@ -6,6 +6,7 @@ import { selectLocalFiles } from "./../local.js";
 import { fetchYoutubePlaylist } from "./../youtube.js";
 import { fetchSoundcloudPlaylist } from "./../soundcloud.js";
 
+const importOptions = document.getElementById("js-import-options");
 let importOption = "";
 
 function setImportOption(option = "") {
@@ -22,7 +23,7 @@ function createImportOptionMask(option, message = "") {
     optionElements.forEach(element => {
         element.parentElement.insertAdjacentHTML("beforeend", `
             <div class="option-mask" data-mask-id=${option}>
-                <span class="icon-spin4 animate-spin"></span>
+                <img src="./assets/images/ring-alt.svg">
                 <span class="mask-message">${message}</span>
             </div>
         `);
@@ -117,8 +118,8 @@ function createPlaylistImportForm(container) {
     const formId = "js-import-form";
     const form = `
         <form id=${formId} class="import-form">
-            <input type="text" name="playlist-url" class="input" placeholder="Playlist url">
-            <button class="btn">Import</button>
+            <input type="text" name="playlist-url" class="input" placeholder="Playlist url" required>
+            <button class="btn btn-dark">Import</button>
         </form>
     `;
 
@@ -192,7 +193,7 @@ function handleImportFormSubmit(event) {
     event.preventDefault();
 }
 
-document.getElementById("js-import-options").addEventListener("mouseover", function onMouveover({ target }) {
+importOptions.addEventListener("mouseover", function onMouveover({ target }) {
     const item = getElementByAttr(target, "data-option-id");
 
     if (!item) {
@@ -210,7 +211,7 @@ document.getElementById("js-import-options").addEventListener("mouseover", funct
     }
 });
 
-document.getElementById("js-import-options").addEventListener("click", ({ target }) => {
+importOptions.addEventListener("click", ({ target }) => {
     const item = getElementByAttr(target, "data-option-id");
 
     if (!item) {

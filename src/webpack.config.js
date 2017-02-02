@@ -21,7 +21,8 @@ if (process.env.ENV === "prod") {
                 conditionals: true,
                 comparisons: true,
                 sequences: true,
-                evaluate: true
+                evaluate: true,
+                drop_console: true
             },
             output: {
                 comments: false

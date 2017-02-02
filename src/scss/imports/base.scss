@@ -76,6 +76,7 @@ input {
     font-size: 14px;
     color: $base-text-color;
 }
+
 .btn {
     @extend %default-input-styles;
 
@@ -85,17 +86,21 @@ input {
         color: $brand-color;
         cursor: pointer;
     }
+    &.btn-dark {
+        background-color: $color2;
+    }
     &.active {
         color: $brand-color;
-    }
-}
-.btn-transparent {
-    background-color: transparent;
 
-    &.active {
-        background-color: $color3;
+        &.btn-light {
+            background-color: $color2;
+        }
+        &.btn-dark {
+            background-color: $color1;
+        }
     }
 }
+
 .player {
     position: relative;
     display: flex;
@@ -106,6 +111,7 @@ input {
         height: calc(100% - 48px);
     }
 }
+
 .main {
     position: relative;
     width: calc(100% - 160px);
