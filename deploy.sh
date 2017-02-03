@@ -23,7 +23,7 @@ if [[ -z $(git diff --exit-code) ]]; then
 fi
 
 echo "Commit to gh-pages"
-git add .
+git add -A .
 git commit -m "Deploy to GitHub Pages"
 
 # Force push from the current repo's master branch to the remote repo's gh-pages branch.

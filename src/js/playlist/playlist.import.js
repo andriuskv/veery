@@ -52,15 +52,12 @@ function showNotice(option, message) {
     setTimeout(removeElements, 3200, elements);
 }
 
-function importPlaylist(url) {
-    if (url.includes("youtube")) {
+function importPlaylist(option, url) {
+    if (option === "youtube") {
         fetchYoutubePlaylist(url);
     }
-    else if (url.includes("soundcloud")) {
+    else if (option === "soundcloud") {
         fetchSoundcloudPlaylist(url);
-    }
-    else {
-        showNotice(importOption, "Invalid url");
     }
 }
 
@@ -186,8 +183,10 @@ function handleImportFormSubmit(event) {
     const url = event.target.elements["playlist-url"].value.trim();
 
     if (url) {
-        createImportOptionMask(importOption, "Importing");
-        importPlaylist(url);
+        const { attrValue: option } = getElementByAttr(event.target, "data-option-id");
+
+        createImportOptionMask(option, "Importing");
+        importPlaylist(option, url);
         event.target.reset();
     }
     event.preventDefault();
