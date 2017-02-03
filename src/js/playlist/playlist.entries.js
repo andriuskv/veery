@@ -98,18 +98,17 @@ function editPlaylistTitle(action, parentElement, playlistId) {
     if (action === "edit") {
         titleElement.removeAttribute("readonly");
         titleElement.focus();
-        titleElement.selectionStart = 0;
-        titleElement.selectionEnd = playlistTitle.length;
+        titleElement.selectionStart = playlistTitle.length;
     }
     else if (action === "save") {
         const { title } = getPlaylistById(playlistId);
         const newTitle = playlistTitle ? playlistTitle : title;
 
         if (newTitle !== title) {
-            titleElement.setAttribute("value", newTitle);
             editSidebarEntry(playlistId, newTitle);
             updatePlaylist(playlistId, { title: newTitle });
         }
+        titleElement.value = newTitle;
         titleElement.setAttribute("readonly", "readonly");
     }
 }
@@ -132,17 +131,10 @@ function handleClickOnEntryContainer(event) {
         return;
     }
     if (action === "refresh") {
-        const { url } = getPlaylistById(playlistId);
-        let option = "";
+        const { url, player } = getPlaylistById(playlistId);
 
-        if (url.includes("youtube")) {
-            option = "youtube";
-        }
-        else if (url.includes("soundcloud")) {
-            option = "soundcloud";
-        }
-        createImportOptionMask(option, "Refreshing");
-        importPlaylist(url);
+        createImportOptionMask(player, "Refreshing");
+        importPlaylist(player, url);
         removeElement(btn.elementRef);
         return;
     }

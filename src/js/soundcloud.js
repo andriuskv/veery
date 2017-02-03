@@ -52,9 +52,12 @@ function parsePlaylist(playlist, url) {
 }
 
 async function fetchSoundcloudPlaylist(url) {
-    await initSoundcloud();
-
+    if (!url.includes("soundcloud")) {
+        showNotice("soundcloud", "Invalid url");
+        return;
+    }
     try {
+        await initSoundcloud();
         const data = await SC.resolve(url);
         const playlist = parsePlaylist(data, url);
 
