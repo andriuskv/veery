@@ -32,7 +32,7 @@
     "babel-preset-env": "^1.1.8",
     "css-mqpacker": "^5.0.1",
     "csso": "^2.3.1",
-    "eslint": "^3.14.1",
+    "eslint": "^3.15.0",
     "live-server": "^1.2.0",
     "node-sass": "^4.5.0",
     "onchange": "^3.2.1",

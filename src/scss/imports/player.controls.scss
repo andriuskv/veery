@@ -35,6 +35,21 @@
         }
     }
 }
+.bar-thumb {
+    display: none;
+    flex-grow: 0;
+    flex-shrink: 0;
+    width: 12px;
+    height: 12px;
+    margin-right: -6px;
+    border: 3px solid #ddd;
+    border-radius: 50%;
+    background: #ddd;
+
+    &:active {
+        background-color: #aaa;
+    }
+}
 .main-control-btn {
     @include svg-container {
         width: 28px;
@@ -91,18 +106,6 @@
         margin-bottom: 2px;
     }
 }
-.repeat-btn {
-    @include for-phone-only {
-        margin-left: 8px;
-    }
-}
-.volume-btn {
-    display: none;
-
-    @include for-phone-only {
-        display: flex;
-    }
-}
 .volume-icon {
     color: $base-text-color;
 
@@ -116,39 +119,11 @@
     }
 }
 .volume-bar-container {
-    @include for-phone-only {
-        display: none;
-
-        &.visible {
-            position: absolute;
-            top: -10px;
-            right: 12%;
-            display: flex;
-            align-items: center;
-            height: 28px;
-            background-color: $color1;
-            border: 1px solid $color3;
-        }
-    }
+    display: flex;
+    align-items: center;
+    height: 28px;
 }
 .volume-bar {
     width: 100px;
-}
-.volume-bar-inner {
-    width: 20%;
-}
-.bar-thumb {
-    display: none;
-    flex-grow: 0;
-    flex-shrink: 0;
-    width: 12px;
-    height: 12px;
-    margin-right: -6px;
-    border: 3px solid #ddd;
-    border-radius: 50%;
-    background: #ddd;
-
-    &:active {
-        background-color: #aaa;
-    }
+    margin-left: 4px;
 }
