@@ -1,7 +1,7 @@
-import { setSetting, getSetting } from "./../settings.js";
+import { setSetting, getSetting, removeSetting, getSettings } from "./../settings.js";
 import { getElementByAttr, formatTime, dispatchCustomEvent } from "./../main.js";
 import { getCurrentTrack } from "./../playlist/playlist.js";
-import { storedTrack, setVolume, seekTo, toggleShuffle, onControlButtonClick } from "./player.js";
+import { storedTrack, toggleShuffle, setVolume, seekTo, mutePlayer, onControlButtonClick } from "./player.js";
 
 let seeking = false;
 const elapsedTime = (function() {
@@ -47,13 +47,42 @@ const elapsedTime = (function() {
     return { stop, start };
 })();
 
-function togglePlayBtn(paused) {
-    const btn = document.getElementById("js-play-btn");
-    const icon = btn.querySelector(".btn-icon");
+function setElementIconAndTitle(element, { id, title }) {
+    const icon = element.querySelector(".btn-icon");
 
-    icon.removeAttribute("href");
-    icon.setAttribute("href", paused ? "#play-icon" : "#pause-icon");
-    btn.setAttribute("title", paused ? "Play": "Pause");
+    icon.setAttribute("href", `#${id}`);
+    element.setAttribute("title", title);
+}
+
+function togglePlayBtn(state) {
+    const element = document.getElementById("js-play-btn");
+    const data = {
+        on: {
+            id: "play-icon",
+            title: "Play"
+        },
+        off: {
+            id:"pause-icon",
+            title: "Pause"
+        }
+    };
+
+    setElementIconAndTitle(element, state ? data.on : data.off);
+}
+
+function toggleVolumeBtn(element, state) {
+    const data = {
+        on: {
+            id: "volume-off-icon",
+            title: "Unmute"
+        },
+        off: {
+            id:"volume-icon",
+            title: "Mute"
+        }
+    };
+
+    setElementIconAndTitle(element, state ? data.on : data.off);
 }
 
 function getElapsedValue(bar, pageX) {
@@ -81,8 +110,8 @@ function resetTrackBar() {
 }
 
 function onVolumeTrackMousemove(event) {
-    const volumeInPercentage = getElapsedValue("volume", event.pageX);
-    const volume = volumeInPercentage / 100;
+    const volumeInPercentage = getElapsedValue("volume", event.pageX) / 100;
+    const volume = volumeInPercentage;
     const track = getCurrentTrack();
 
     setVolumeBarInnerWidth(volumeInPercentage);
@@ -106,8 +135,8 @@ function setTrackBarInnerWidth(percent) {
     setBarInnerWidth("track", percent);
 }
 
-function setVolumeBarInnerWidth(percent) {
-    setBarInnerWidth("volume", percent);
+function setVolumeBarInnerWidth(fraction) {
+    setBarInnerWidth("volume", fraction * 100);
 }
 
 function displayCurrentTime(time = 0) {
@@ -147,53 +176,69 @@ document.getElementById("js-volume-bar").addEventListener("mousedown", event => 
     if (event.which !== 1) {
         return;
     }
+    const muted = getSetting("mute");
+
+    if (muted) {
+        const element = document.getElementById("js-volume-btn");
+
+        removeSetting("volumeBeforeMute");
+        setSetting("mute", !muted);
+        toggleVolumeBtn(element, !muted);
+        element.classList.remove("active");
+    }
     onVolumeTrackMousemove(event);
     document.addEventListener("mousemove", onVolumeTrackMousemove);
     document.addEventListener("mouseup", onVolumeTrackMouseup);
 });
 
 document.getElementById("js-controls").addEventListener("click", ({ target }) => {
-    const element = getElementByAttr(target, "data-control-item");
+    const mainControlElement = getElementByAttr(target, "data-main-ctrl-item");
 
-    if (!element) {
+    if (mainControlElement) {
+        onControlButtonClick(mainControlElement.attrValue);
         return;
     }
-    const item = element.attrValue;
+    const controlElement = getElementByAttr(target, "data-ctrl-item");
 
-    if (item === "repeat" || item === "shuffle" || item === "once") {
-        const itemSetting = getSetting(item);
+    if (controlElement) {
+        const action = controlElement.attrValue;
+        const elementRef = controlElement.elementRef;
+        const setting = getSetting(action);
+        const newSetting = !setting;
 
-        element.elementRef.classList.toggle("active");
-        setSetting(item, !itemSetting);
+        elementRef.classList.toggle("active");
+        setSetting(action, newSetting);
 
-        if (item === "shuffle") {
-            toggleShuffle(!itemSetting);
+        if (action === "shuffle") {
+            toggleShuffle(newSetting);
         }
-    }
-    else if (item === "volume") {
-        element.elementRef.classList.toggle("active");
-        document.getElementById("js-volume-bar-container").classList.toggle("visible");
-    }
-    else {
-        onControlButtonClick(item);
+        else if (action === "mute") {
+            mutePlayer(newSetting);
+            toggleVolumeBtn(elementRef, newSetting);
+        }
     }
 });
 
-function toggleSetting(settingName) {
-    const setting = getSetting(settingName);
+function loadSetting(name) {
+    const setting = getSetting(name);
+    const element = document.querySelector(`[data-ctrl-item="${name}"]`);
 
-    if (setting) {
-        document.querySelector(`[data-control-item="${settingName}"]`).classList.add("active");
+    if (setting && element) {
+        element.classList.add("active");
+
+        if (name === "mute") {
+            toggleVolumeBtn(element, setting);
+        }
     }
 }
 
 window.addEventListener("DOMContentLoaded", function onLoad() {
     const volume = getSetting("volume");
+    const settings = getSettings();
 
-    toggleSetting("repeat");
-    toggleSetting("shuffle");
-    toggleSetting("once");
-    setVolumeBarInnerWidth(volume * 100);
+    Object.keys(settings).forEach(loadSetting);
+    setVolumeBarInnerWidth(volume);
+
     window.removeEventListener("DOMContentLoaded", onLoad);
 });
 
@@ -201,6 +246,7 @@ export {
     elapsedTime,
     togglePlayBtn,
     setTrackBarInnerWidth,
+    setVolumeBarInnerWidth,
     displayCurrentTime,
     showTrackDuration,
     resetTrackBar

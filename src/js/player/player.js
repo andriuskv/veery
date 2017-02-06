@@ -1,6 +1,6 @@
 import { removeElementClass, getElementByAttr } from "./../main.js";
 import { getVisiblePlaylistId } from "./../tab.js";
-import { getSetting } from "./../settings.js";
+import { setSetting, getSetting, removeSetting } from "./../settings.js";
 import { showTrackInfo, showActiveIcon, removeActiveIcon } from "./../sidebar.js";
 import { showPlayingTrack } from "./../playlist/playlist.view.js";
 import * as playlist from "./../playlist/playlist.js";
@@ -274,6 +274,27 @@ function seekTo(track, percent) {
     controls.displayCurrentTime(currentTime);
 }
 
+function mutePlayer(muted) {
+    const track = playlist.getCurrentTrack();
+    const newVolume = muted ? 0 : getSetting("volumeBeforeMute");
+
+    if (muted) {
+        const volume = getSetting("volume");
+
+        setSetting("volumeBeforeMute", volume);
+    }
+    else {
+        removeSetting("volumeBeforeMute");
+    }
+    setSetting("mute", muted);
+    setSetting("volume", newVolume);
+    controls.setVolumeBarInnerWidth(newVolume);
+
+    if (track) {
+        setVolume(track, newVolume);
+    }
+}
+
 (function () {
     const tabContainer = document.getElementById("js-tab-container");
 
@@ -320,8 +341,9 @@ export {
     onControlButtonClick,
     stopPlayer,
     toggleShuffle,
-    seekTo,
     setVolume,
+    seekTo,
+    mutePlayer,
     onTrackStart,
     storedTrack
 };

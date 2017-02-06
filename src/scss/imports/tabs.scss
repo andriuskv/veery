@@ -75,12 +75,7 @@
         height: 20px;
     }
 }
-.list-toggle-btn {
-    @include for-phone-only {
-        display: none;
-    }
-}
-.grid-toggle-btn {
+.list-toggle-btn, .grid-toggle-btn {
     @include for-phone-only {
         display: none;
     }
