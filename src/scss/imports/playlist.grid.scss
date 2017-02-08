@@ -8,23 +8,23 @@
 }
 .grid-item {
     display: flex;
-    flex: 1 0 300px;
+    flex-basis: 300px;
     padding: 2px;
     margin: 2px;
     cursor: default;
     user-select: none;
 
     @media (min-width: 782px) {
-        max-width: calc(50% - 4px);
+        flex-basis: calc(100% / 2 - 4px);
     }
     @media (min-width: 1086px) {
-        max-width: calc(33.3333% - 4px);
+        flex-basis: calc(100% / 3 - 4px);
     }
     @media (min-width: 1390px) {
-        max-width: calc(25% - 4px);
+        flex-basis: calc(100% / 4 - 4px);
     }
     @media (min-width: 1694px) {
-        max-width: calc(20% - 4px);
+        flex-basis: calc(100% / 5 - 4px);
     }
 }
 .grid-item-thumb-container {

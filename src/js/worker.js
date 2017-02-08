@@ -6,7 +6,7 @@ import { storedTrack } from "./player/player.js";
 let worker = null;
 
 (function () {
-    worker = new Worker("js/ww.js");
+    worker = new Worker("./ww.js");
 
     worker.onmessage = function({ data: { action, payload } }) {
         if (action === "init") {

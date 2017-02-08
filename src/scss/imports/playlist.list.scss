@@ -23,23 +23,24 @@
 .list-item {
     display: flex;
     padding: 4px;
-    border-bottom: 1px solid $color1;
     color: $base-text-color;
     cursor: default;
 
-    &:last-of-type {
-        border-bottom: none;
+    &:not(:last-of-type) {
+        border-bottom: 1px solid $color1;
+
+        &.selected {
+            border-bottom: 1px solid $color2;
+        }
     }
-    &.selected {
-        border-bottom: 1px solid $color2;
-    }
+
     span {
         @include text-truncate;
 
         flex-basis: 30%;
 
         &:last-of-type {
-            flex-basis: 10%
+            flex-basis: 10%;
         }
     }
 }

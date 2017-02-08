@@ -110,11 +110,10 @@ function resetTrackBar() {
 }
 
 function onVolumeTrackMousemove(event) {
-    const volumeInPercentage = getElapsedValue("volume", event.pageX) / 100;
-    const volume = volumeInPercentage;
+    const volume = getElapsedValue("volume", event.pageX) / 100;
     const track = getCurrentTrack();
 
-    setVolumeBarInnerWidth(volumeInPercentage);
+    setVolumeBarInnerWidth(volume);
     setSetting("volume", volume);
 
     if (track) {
