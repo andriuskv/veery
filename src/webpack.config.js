@@ -53,7 +53,7 @@ module.exports = function(env = {}) {
                             modules: false,
                             useBuiltIns: true,
                             targets: {
-                                browsers: ["last 2 versions", "> 2%"]
+                                browsers: ["last 2 versions", "IE >= 11"]
                             }
                         }]]
                     }
