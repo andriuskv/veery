@@ -1,4 +1,4 @@
-import { removeElement, removeElementClass, getElementByAttr, isOutsideElement } from "./../main.js";
+import { removeElement, removeElementClass, getElementByAttr } from "./../main.js";
 import { getSelectedTrackElements } from "./playlist.manage.js";
 import { showMoveToBtn, removeMoveToPanelContainer } from "./playlist.move-to.js";
 import { getPlaylistElement } from "./playlist.view.js";
@@ -14,7 +14,6 @@ let maxWidth = 0;
 let selectionElement = null;
 let selectionEnabled = false;
 let intervalId = 0;
-let keepTracksSelected = false;
 let animationId = 0;
 
 function enableTrackSelection(id) {
@@ -99,21 +98,9 @@ function updateSelectedArea(mousePos, startingPoint, areaStyle) {
     areaStyle.height = `${height}px`;
 }
 
-function prevendTrackDeselection(gotSelectedTracks) {
-    if (gotSelectedTracks) {
-        keepTracksSelected = true;
-        showMoveToBtn();
-    }
-}
-
-function deselectTrackElements(startElement) {
-    const targetElement = document.getElementById("js-move-to-panel-container");
-
-    if (!keepTracksSelected && isOutsideElement(startElement, targetElement)) {
-        removeElementClass("track", "selected");
-        removeMoveToPanelContainer();
-    }
-    keepTracksSelected = false;
+function deselectTrackElements() {
+    removeElementClass("track", "selected");
+    removeMoveToPanelContainer();
 }
 
 function selectTrackElement(element, selectMultiple) {
@@ -123,9 +110,13 @@ function selectTrackElement(element, selectMultiple) {
         if (!selectMultiple) {
             removeElementClass("track", "selected");
         }
-        keepTracksSelected = true;
-        item.elementRef.classList.toggle("selected");
-        prevendTrackDeselection(item.elementRef.classList.contains("selected"));
+        const element = item.elementRef;
+
+        element.classList.toggle("selected");
+
+        if (element.classList.contains("selected")) {
+            showMoveToBtn();
+        }
     }
 }
 
@@ -262,17 +253,20 @@ function onMouseup({ target, ctrlKey }) {
         const selectedElements = getSelectedTrackElements();
 
         resetSelection();
-        prevendTrackDeselection(selectedElements.length);
+
+        if (selectedElements.length) {
+            showMoveToBtn();
+        }
     }
     else {
         selectTrackElement(target, ctrlKey);
+
+        if (target === playlistElement) {
+            deselectTrackElements();
+        }
     }
     window.removeEventListener("mousemove", onMousemove);
     window.removeEventListener("mouseup", onMouseup);
-
-    if (!isOutsideElement(target, playlistElement)) {
-        deselectTrackElements(target);
-    }
 }
 
 function onMousedown(event) {

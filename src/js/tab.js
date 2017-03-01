@@ -89,8 +89,10 @@ window.addEventListener("click", event => {
     else if (item === "order" && pl.sortedBy) {
         changePlaylistOrder(pl);
     }
-    if (headerElement && isOutsideElement(headerElement.elementRef, element)) {
-        deselectTrackElements(headerElement.elementRef);
+    const targetElement = document.getElementById("js-move-to-panel-container");
+
+    if (isOutsideElement(event.target, targetElement) && isOutsideElement(event.target, element)) {
+        deselectTrackElements();
     }
     removePresentPanels(event, panelId);
 }, true);
