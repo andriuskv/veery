@@ -1,4 +1,4 @@
-import { removeElementClass, getElementByAttr } from "./../main.js";
+import { removeElementClass, getElementById, getElementByAttr } from "./../utils.js";
 import { getVisiblePlaylistId } from "./../tab.js";
 import { setSetting, getSetting, removeSetting } from "./../settings.js";
 import { showTrackInfo, showActiveIcon, removeActiveIcon } from "./../sidebar.js";
@@ -296,7 +296,7 @@ function mutePlayer(muted) {
 }
 
 (function () {
-    const tabContainer = document.getElementById("js-tab-container");
+    const tabContainer = getElementById("js-tab-container");
 
     function getTouchCoords(touch) {
         return {

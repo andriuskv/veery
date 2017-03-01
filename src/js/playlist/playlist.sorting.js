@@ -1,4 +1,4 @@
-import { capitalize } from "./../main.js";
+import { capitalize, getElementById } from "./../utils.js";
 import { getVisiblePlaylistId } from "./../tab.js";
 import { removePresentPanels } from "./../panels.js";
 import { getPlaylistById } from "./playlist.js";
@@ -6,11 +6,11 @@ import { refreshPlaylist, updatePlaylist } from "./playlist.manage.js";
 import { getPlaylistTrackElements, filterTracks } from "./playlist.view.js";
 
 function setSortBtnText(text = "Sorting") {
-    document.getElementById("js-sort-toggle").textContent = text;
+    getElementById("js-sort-toggle").textContent = text;
 }
 
 function toggleOrderBtn(order = 1) {
-    const btn = document.getElementById("js-order-toggle");
+    const btn = getElementById("js-order-toggle");
     const icon = btn.querySelector(".btn-icon");
 
     icon.removeAttribute("href");
@@ -43,7 +43,7 @@ function sortTracks(tracks, sortBy, order) {
 }
 
 function changePlaylistSorting(pl, sortBy) {
-    const query = document.getElementById("js-filter-input").value;
+    const query = getElementById("js-filter-input").value;
     const order = pl.sortedBy === sortBy && pl.order === 1 ? -1 : 1;
 
     updatePlaylist(pl.id, {
@@ -90,8 +90,8 @@ function createSortPanel(panelId, { sortedBy }) {
         <ul id="${panelId}" class="sort-panel">${sortOptions}</ul>
     `;
 
-    document.getElementById("js-sort-panel-container").insertAdjacentHTML("beforeend", sortPanelElement);
-    document.getElementById(panelId).addEventListener("click", selectSortOption);
+    getElementById("js-sort-panel-container").insertAdjacentHTML("beforeend", sortPanelElement);
+    getElementById(panelId).addEventListener("click", selectSortOption);
 }
 
 function changePlaylistOrder(pl) {

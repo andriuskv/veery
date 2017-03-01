@@ -1,9 +1,9 @@
 import * as playlist from "./playlist.js";
 import * as playlistView from "./playlist.view.js";
+import { removeElements, getElementById, dispatchCustomEvent } from "./../utils.js";
 import { isRouteActive, addRoute, toggleRoute } from "./../router.js";
 import { getSetting } from "./../settings.js";
 import { getVisiblePlaylistId } from "./../tab.js";
-import { removeElements, dispatchCustomEvent } from "./../main.js";
 import { postMessageToWorker } from "./../worker.js";
 import { createSidebarEntry, removeSidebarEntry } from "./../sidebar.js";
 import { stopPlayer } from "./../player/player.js";
@@ -192,7 +192,7 @@ function createNewPlaylistInputForm(id, element, handleSubmit) {
     `;
 
     element.insertAdjacentHTML("afterend", formElement);
-    document.getElementById(`js-${id}-form`).addEventListener("submit", handleSubmit);
+    getElementById(`js-${id}-form`).addEventListener("submit", handleSubmit);
 }
 
 export {

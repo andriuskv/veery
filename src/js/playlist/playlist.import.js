@@ -1,4 +1,4 @@
-import { removeElement, removeElements, removeElementClass, getElementByAttr, scriptLoader } from "./../main.js";
+import { removeElement, removeElements, removeElementClass, getElementById, getElementByAttr, scriptLoader } from "./../utils.js";
 import { getPlaylistById, createPlaylist } from "./playlist.js";
 import { addTracksToPlaylist } from "./playlist.manage.js";
 import { showDropboxChooser } from "./../dropbox.js";
@@ -6,7 +6,7 @@ import { selectLocalFiles } from "./../local.js";
 import { fetchYoutubePlaylist } from "./../youtube.js";
 import { fetchSoundcloudPlaylist } from "./../soundcloud.js";
 
-const importOptions = document.getElementById("js-import-options");
+const importOptions = getElementById("js-import-options");
 let importOption = "";
 
 function setImportOption(option = "") {
@@ -123,14 +123,14 @@ function createPlaylistImportForm(container) {
 
     container.insertAdjacentHTML("beforeend", form);
 
-    const formElement = document.getElementById(formId);
+    const formElement = getElementById(formId);
 
     formElement.elements["playlist-url"].focus();
     formElement.addEventListener("submit", handleImportFormSubmit);
 }
 
 function removePlaylistImportForm() {
-    const form = document.getElementById("js-import-form");
+    const form = getElementById("js-import-form");
 
     if (form) {
         form.removeEventListener("submit", handleImportFormSubmit);
@@ -163,7 +163,7 @@ function createFileInput() {
 }
 
 function showFilePicker(choice) {
-    const filePicker = document.getElementById("js-file-picker") || createFileInput();
+    const filePicker = getElementById("js-file-picker") || createFileInput();
 
     if (choice === "local-file") {
         filePicker.removeAttribute("webkitdirectory");

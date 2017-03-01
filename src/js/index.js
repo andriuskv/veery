@@ -1,9 +1,10 @@
 import "babel-polyfill";
+import "whatwg-fetch";
 
+import "./utils.js";
 import "./settings.js";
 import "./worker.js";
 import "./router.js";
-import "./main.js";
 import "./tab.js";
 import "./panels.js";
 import "./sidebar.js";

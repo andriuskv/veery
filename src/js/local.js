@@ -1,6 +1,6 @@
 /* global parse_audio_metadata */
 
-import { scriptLoader, formatTime } from "./main.js";
+import { scriptLoader, formatTime } from "./utils.js";
 import { getPlaylistById, createPlaylist } from "./playlist/playlist.js";
 import { addTracksToPlaylist } from "./playlist/playlist.manage.js";
 import { createImportOptionMask, removeImportOptionMask, showNotice } from "./playlist/playlist.import.js";

@@ -1,4 +1,4 @@
-import { removeElement, isOutsideElement } from "./main.js";
+import { getElementById, removeElement, isOutsideElement } from "./utils.js";
 
 const visiblePanels = {};
 
@@ -7,7 +7,7 @@ function markPanelAsVisible(panelId) {
 }
 
 function removePanel(panelId) {
-    const panelElement = document.getElementById(panelId);
+    const panelElement = getElementById(panelId);
 
     visiblePanels[panelId] = false;
     if (panelElement) {
@@ -31,7 +31,7 @@ function togglePanel(panelId, pl, panelCreationCallback) {
 
 function removePresentPanels(event = {}, panelToKeepId) {
     Object.keys(visiblePanels).forEach(id => {
-        const element = document.getElementById(id);
+        const element = getElementById(id);
 
         if (visiblePanels[id] && id !== panelToKeepId && isOutsideElement(event.target, element)) {
             removePanel(id);

@@ -1,4 +1,4 @@
-import { dispatchCustomEvent } from "./main.js";
+import { dispatchCustomEvent } from "./utils.js";
 
 const routes = [
     "manage",

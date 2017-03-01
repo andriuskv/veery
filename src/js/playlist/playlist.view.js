@@ -1,5 +1,5 @@
+import { getElementById, replaceElement, removeElement, removeElementClass, getTrackArt } from "./../utils.js";
 import { getVisiblePlaylistId } from "./../tab.js";
-import { replaceElement, removeElement, removeElementClass, getTrackArt } from "./../main.js";
 import { getPlaylistById, getActivePlaylistId, getCurrentTrack } from "./playlist.js";
 import { updatePlaylist } from "./playlist.manage.js";
 import { enableTrackSelection } from "./playlist.track-selection.js";
@@ -8,7 +8,7 @@ let timeout = 0;
 let filteredPlaylistId = "";
 
 function getPlaylistElement(id) {
-    return document.getElementById(`js-${id}`);
+    return getElementById(`js-${id}`);
 }
 
 function getPlaylistTrackElements(id) {
@@ -84,7 +84,7 @@ function createPlaylistTab(pl) {
 
 function renderPlaylist(pl) {
     const tab = createPlaylistTab(pl);
-    const container = document.getElementById("js-tab-container");
+    const container = getElementById("js-tab-container");
 
     pl.rendered = true;
     container.insertAdjacentHTML("beforeend", tab);
@@ -115,7 +115,7 @@ function updatePlaylistView({ id, type, tracks }) {
 }
 
 function removePlaylistTab(id) {
-    const playlistTab = document.getElementById(`js-tab-${id}`);
+    const playlistTab = getElementById(`js-tab-${id}`);
 
     removeElement(playlistTab);
 }
@@ -164,8 +164,8 @@ function filterTracks(tracks, trackElements, query) {
 }
 
 function togglePlaylistTypeBtn(type) {
-    const listToggleBtn = document.getElementById("js-list-toggle-btn");
-    const gridToggleBtn = document.getElementById("js-grid-toggle-btn");
+    const listToggleBtn = getElementById("js-list-toggle-btn");
+    const gridToggleBtn = getElementById("js-grid-toggle-btn");
 
     if (type === "list") {
         listToggleBtn.classList.add("active");
@@ -182,7 +182,7 @@ function addMarginToPlaylistHeader(id, type) {
         const element = getPlaylistElement(id);
         const scrollBarWidth = element.offsetWidth - element.clientWidth;
 
-        document.getElementById(`js-list-view-header-${id}`).style.marginRight = `${scrollBarWidth}px`;
+        getElementById(`js-list-view-header-${id}`).style.marginRight = `${scrollBarWidth}px`;
     }
 }
 
@@ -190,7 +190,7 @@ function changePlaylistType(newType, pl) {
     updatePlaylist(pl.id, {
         type: newType
     });
-    document.getElementById(`js-tab-${pl.id}`).innerHTML = createPlaylist(pl);
+    getElementById(`js-tab-${pl.id}`).innerHTML = createPlaylist(pl);
     enableTrackSelection(pl.id);
     togglePlaylistTypeBtn(newType);
     addMarginToPlaylistHeader(pl.id, newType);
@@ -226,13 +226,13 @@ function filterPlaylist(id, query = "") {
 
 function resetFilteredPlaylist() {
     if (filteredPlaylistId) {
-        document.getElementById("js-filter-input").value = "";
+        getElementById("js-filter-input").value = "";
         filterPlaylist(filteredPlaylistId);
     }
 }
 
 function updatePlaylistDuration(tracks) {
-    const tabFooterElement = document.getElementById("js-tab-footer");
+    const tabFooterElement = getElementById("js-tab-footer");
     const duration = getTrackDuration(tracks);
     const trackString = getValueString(tracks.length, "track");
     let durationString = getValueString(Math.floor(duration / 60 % 60), "minute");
@@ -245,7 +245,7 @@ function updatePlaylistDuration(tracks) {
     tabFooterElement.textContent = `${trackString}, ${durationString} of playtime`;
 }
 
-document.getElementById("js-filter-input").addEventListener("keyup", ({ target }) => {
+getElementById("js-filter-input").addEventListener("keyup", ({ target }) => {
     const id = getVisiblePlaylistId();
     const filter = target.value.trim().toLowerCase();
 
