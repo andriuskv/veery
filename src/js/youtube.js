@@ -1,6 +1,4 @@
-import "whatwg-fetch";
-
-import { formatTime } from "./main.js";
+import { formatTime } from "./utils.js";
 import { addImportedPlaylist, showNotice } from "./playlist/playlist.import.js";
 
 function showYoutubeNotice(notice) {

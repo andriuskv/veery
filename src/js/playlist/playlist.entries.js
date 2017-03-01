@@ -1,4 +1,4 @@
-import { removeElement, getElementByAttr } from "./../main.js";
+import { removeElement, getElementById, getElementByAttr } from "./../utils.js";
 import { editSidebarEntry } from "./../sidebar.js";
 import { getPlaylistById } from "./playlist.js";
 import { removePlaylist, updatePlaylist } from "./playlist.manage.js";
@@ -19,7 +19,7 @@ function createEntryContainer(id) {
 
     div.appendChild(h3);
     div.appendChild(ul);
-    document.getElementById("js-manage-tab-content").appendChild(div);
+    getElementById("js-manage-tab-content").appendChild(div);
     return ul;
 }
 
@@ -31,7 +31,7 @@ function removeEntryContainer(container) {
 function getEntryContainer() {
     const containerId = "js-pl-entries";
 
-    return document.getElementById(containerId) || createEntryContainer(containerId);
+    return getElementById(containerId) || createEntryContainer(containerId);
 }
 
 function getRefrectBtn(url) {

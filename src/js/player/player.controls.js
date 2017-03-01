@@ -1,5 +1,5 @@
+import { getElementById, getElementByAttr, formatTime, dispatchCustomEvent } from "./../utils.js";
 import { setSetting, getSetting, removeSetting, getSettings } from "./../settings.js";
-import { getElementByAttr, formatTime, dispatchCustomEvent } from "./../main.js";
 import { getCurrentTrack } from "./../playlist/playlist.js";
 import { storedTrack, toggleShuffle, setVolume, seekTo, mutePlayer, onControlButtonClick } from "./player.js";
 
@@ -55,7 +55,7 @@ function setElementIconAndTitle(element, { id, title }) {
 }
 
 function togglePlayBtn(state) {
-    const element = document.getElementById("js-play-btn");
+    const element = getElementById("js-play-btn");
     const data = {
         on: {
             id: "play-icon",
@@ -86,7 +86,7 @@ function toggleVolumeBtn(element, state) {
 }
 
 function getElapsedValue(bar, pageX) {
-    const element = document.getElementById(`js-${bar}-bar`);
+    const element = getElementById(`js-${bar}-bar`);
     const { left, width } = element.getBoundingClientRect();
     let value = (pageX - left) / width;
 
@@ -127,7 +127,7 @@ function onVolumeTrackMouseup() {
 }
 
 function setBarInnerWidth(bar, percent = 0) {
-    document.getElementById(`js-${bar}-bar-inner`).style.width = `${percent}%`;
+    getElementById(`js-${bar}-bar-inner`).style.width = `${percent}%`;
 }
 
 function setTrackBarInnerWidth(percent) {
@@ -139,11 +139,11 @@ function setVolumeBarInnerWidth(fraction) {
 }
 
 function displayCurrentTime(time = 0) {
-    document.getElementById("js-track-current").textContent = formatTime(time);
+    getElementById("js-track-current").textContent = formatTime(time);
 }
 
 function showTrackDuration(duration = "0:00") {
-    document.getElementById("js-track-duration").textContent = duration;
+    getElementById("js-track-duration").textContent = duration;
 }
 
 function onPlayerTrackMousemove({ pageX }) {
@@ -161,7 +161,7 @@ function onPlayerTrackMouseup({ pageX }) {
     document.removeEventListener("mouseup", onPlayerTrackMouseup);
 }
 
-document.getElementById("js-track-bar").addEventListener("mousedown", event => {
+getElementById("js-track-bar").addEventListener("mousedown", event => {
     if (event.which !== 1 || !getCurrentTrack()) {
         return;
     }
@@ -171,14 +171,14 @@ document.getElementById("js-track-bar").addEventListener("mousedown", event => {
     document.addEventListener("mouseup", onPlayerTrackMouseup);
 });
 
-document.getElementById("js-volume-bar").addEventListener("mousedown", event => {
+getElementById("js-volume-bar").addEventListener("mousedown", event => {
     if (event.which !== 1) {
         return;
     }
     const muted = getSetting("mute");
 
     if (muted) {
-        const element = document.getElementById("js-volume-btn");
+        const element = getElementById("js-volume-btn");
 
         removeSetting("volumeBeforeMute");
         setSetting("mute", !muted);
@@ -190,7 +190,7 @@ document.getElementById("js-volume-bar").addEventListener("mousedown", event => 
     document.addEventListener("mouseup", onVolumeTrackMouseup);
 });
 
-document.getElementById("js-controls").addEventListener("click", ({ target }) => {
+getElementById("js-controls").addEventListener("click", ({ target }) => {
     const mainControlElement = getElementByAttr(target, "data-main-ctrl-item");
 
     if (mainControlElement) {

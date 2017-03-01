@@ -47,6 +47,10 @@ function removeElementClass(className, classToRemove) {
     });
 }
 
+function getElementById(id) {
+    return document.getElementById(id);
+}
+
 function getElementByAttr(element, attr) {
     while (element) {
         const attrValue = element.getAttribute(attr);
@@ -111,6 +115,7 @@ function getTrackArt(thumbnail = "assets/images/album-art-placeholder.png") {
 export {
     scriptLoader,
     capitalize,
+    getElementById,
     getElementByAttr,
     replaceElement,
     removeElement,

@@ -1,4 +1,4 @@
-import { removeElement, removeElementClass, getElementByAttr } from "./../main.js";
+import { removeElement, removeElementClass, getElementByAttr } from "./../utils.js";
 import { getSelectedTrackElements } from "./playlist.manage.js";
 import { showMoveToBtn, removeMoveToPanelContainer } from "./playlist.move-to.js";
 import { getPlaylistElement } from "./playlist.view.js";

@@ -1,6 +1,6 @@
 /* global YT */
 
-import { scriptLoader } from "./../main.js";
+import { scriptLoader, getElementById } from "./../utils.js";
 import { onTrackStart } from "./player.js";
 
 let ytPlayer = null;
@@ -39,8 +39,8 @@ function createPlayerContainer() {
     `;
 
     document.querySelector(".main").insertAdjacentHTML("beforeend", content);
-    document.getElementById("js-close-player-btn").addEventListener("click", () => {
-        document.getElementById("js-yt-player-container").classList.remove("visible");
+    getElementById("js-close-player-btn").addEventListener("click", () => {
+        getElementById("js-yt-player-container").classList.remove("visible");
     });
     window.addEventListener("orientationchange", updatePlayerDimentions);
 }
@@ -106,12 +106,12 @@ function seekTo(currentTime) {
 }
 
 function updatePlayerDimentions() {
-    const playerContainer = document.getElementById("js-yt-player-container");
+    const playerContainer = getElementById("js-yt-player-container");
 
     if (!playerContainer.classList.contains("visible")) {
         return;
     }
-    const player = document.getElementById("yt-player");
+    const player = getElementById("yt-player");
     const windowWidth = window.innerWidth;
     const windowHeight = window.innerHeight;
     const breakPoint = 600;

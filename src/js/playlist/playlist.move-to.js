@@ -1,4 +1,4 @@
-import { removeElement, getElementByAttr } from "./../main.js";
+import { removeElement, getElementById, getElementByAttr } from "./../utils.js";
 import { getVisiblePlaylistId } from "./../tab.js";
 import { removePanel } from "./../panels.js";
 import { getPlaylistById, getAllPlaylists, findTrack } from "./playlist.js";
@@ -7,7 +7,7 @@ import * as playlistManage from "./playlist.manage.js";
 function showMoveToBtn() {
     const panelContainerId = "js-move-to-panel-container";
 
-    if (document.getElementById(panelContainerId)) {
+    if (getElementById(panelContainerId)) {
         return;
     }
     const div = document.createElement("div");
@@ -21,12 +21,12 @@ function showMoveToBtn() {
     button.textContent = "Move to";
     div.appendChild(button);
 
-    document.getElementById("js-tab-header").insertBefore(div, document.getElementById("js-list-toggle-btn"));
+    getElementById("js-tab-header").insertBefore(div, getElementById("js-list-toggle-btn"));
 }
 
 function removeMoveToPanelContainer() {
     const panelId = "js-move-to-panel";
-    const panelContainer = document.getElementById(`${panelId}-container`);
+    const panelContainer = getElementById(`${panelId}-container`);
 
     if (panelContainer) {
         removePanel(panelId);
@@ -35,7 +35,7 @@ function removeMoveToPanelContainer() {
 }
 
 function handleSubmit(event) {
-    const moveToList = document.getElementById("js-move-to-list");
+    const moveToList = getElementById("js-move-to-list");
 
     playlistManage.onNewPlaylistFormSubmit(event);
     moveToList.classList.remove("hidden");
@@ -72,7 +72,7 @@ function onListClick(event) {
         const playlistId = item.attrValue;
 
         moveTracks(playlistId);
-        document.getElementById("js-move-to-list").removeEventListener("click", onListClick);
+        getElementById("js-move-to-list").removeEventListener("click", onListClick);
         removeMoveToPanelContainer();
     }
 }
@@ -104,9 +104,9 @@ function createMoveToPanel(panelId, { id }) {
         </div>
     `;
 
-    document.getElementById("js-move-to-panel-container").insertAdjacentHTML("beforeend", moveToPanelElement);
-    document.getElementById("js-move-to-list").addEventListener("click", onListClick);
-    document.getElementById("js-move-to-new-pl-btn").addEventListener("click", showInputContainer, { once: true });
+    getElementById("js-move-to-panel-container").insertAdjacentHTML("beforeend", moveToPanelElement);
+    getElementById("js-move-to-list").addEventListener("click", onListClick);
+    getElementById("js-move-to-new-pl-btn").addEventListener("click", showInputContainer, { once: true });
 }
 
 export {

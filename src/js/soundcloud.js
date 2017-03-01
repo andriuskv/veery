@@ -1,6 +1,6 @@
 /* global SC */
 
-import { scriptLoader, formatTime } from "./main.js";
+import { scriptLoader, formatTime } from "./utils.js";
 import { addImportedPlaylist, showNotice } from "./playlist/playlist.import.js";
 
 let initialized = false;

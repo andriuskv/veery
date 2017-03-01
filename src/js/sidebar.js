@@ -1,4 +1,4 @@
-import { removeElement, getElementByAttr, getTrackArt } from "./main.js";
+import { removeElement, getElementById, getElementByAttr, getTrackArt } from "./utils.js";
 import { createNewPlaylistInputForm, onNewPlaylistFormSubmit } from "./playlist/playlist.manage.js";
 import { updatePlayerDimentions } from "./player/player.youtube.js";
 
@@ -6,11 +6,11 @@ let animationId = 0;
 let timeoutId = 0;
 
 function getSidebarEntry(id) {
-    return document.getElementById(`js-sidebar-entry-${id}`);
+    return getElementById(`js-sidebar-entry-${id}`);
 }
 
 function createSidebarEntry(title, id) {
-    const sidebarEntries = document.getElementById("js-sidebar-entries");
+    const sidebarEntries = getElementById("js-sidebar-entries");
     const newEntry = `
         <li>
             <a href="#/playlist/${id}" id="js-sidebar-entry-${id}"
@@ -51,7 +51,7 @@ function showActiveIcon(id) {
 }
 
 function removeActiveIcon() {
-    const activeIcon = document.getElementById("js-active-playlist-icon");
+    const activeIcon = getElementById("js-active-playlist-icon");
 
     if (activeIcon) {
         removeElement(activeIcon);
@@ -84,7 +84,7 @@ function handleMouseleave({ target }) {
 }
 
 function handleClickOnPlayerBtn() {
-    document.getElementById("js-yt-player-container").classList.toggle("visible");
+    getElementById("js-yt-player-container").classList.toggle("visible");
     updatePlayerDimentions();
 }
 
@@ -121,20 +121,20 @@ function createTrackInfo(track) {
         </div>
     `;
 
-    document.getElementById("js-sidebar").insertAdjacentHTML("beforeend", trackInfoElement);
-    document.getElementById("js-track-title").addEventListener("mouseenter", handleMouseenter);
-    document.getElementById("js-track-artist").addEventListener("mouseenter", handleMouseenter);
+    getElementById("js-sidebar").insertAdjacentHTML("beforeend", trackInfoElement);
+    getElementById("js-track-title").addEventListener("mouseenter", handleMouseenter);
+    getElementById("js-track-artist").addEventListener("mouseenter", handleMouseenter);
 
     if (track.player === "youtube") {
-        document.getElementById("js-player-btn").addEventListener("click", handleClickOnPlayerBtn);
+        getElementById("js-player-btn").addEventListener("click", handleClickOnPlayerBtn);
     }
 }
 
 function removeTrackInfoElement(element) {
-    const btn = document.getElementById("js-player-btn");
+    const btn = getElementById("js-player-btn");
 
-    document.getElementById("js-track-title").removeEventListener("mouseenter", handleMouseenter);
-    document.getElementById("js-track-artist").removeEventListener("mouseenter", handleMouseenter);
+    getElementById("js-track-title").removeEventListener("mouseenter", handleMouseenter);
+    getElementById("js-track-artist").removeEventListener("mouseenter", handleMouseenter);
 
     if (btn) {
         btn.removeEventListener("click", handleClickOnPlayerBtn);
@@ -143,7 +143,7 @@ function removeTrackInfoElement(element) {
 }
 
 function showTrackInfo(track) {
-    const trackInfoElement = document.getElementById("js-track-info");
+    const trackInfoElement = getElementById("js-track-info");
 
     if (trackInfoElement) {
         removeTrackInfoElement(trackInfoElement);
@@ -158,7 +158,7 @@ function showTrackInfo(track) {
 }
 
 function toggleSidebarForm() {
-    const sidebarForm = document.getElementById("js-sidebar-form");
+    const sidebarForm = getElementById("js-sidebar-form");
 
     if (sidebarForm) {
         removeElement(sidebarForm);
@@ -167,8 +167,8 @@ function toggleSidebarForm() {
     createNewPlaylistInputForm("sidebar", this, onNewPlaylistFormSubmit);
 }
 
-document.getElementById("js-sidebar-form-toggle-btn").addEventListener("click", toggleSidebarForm);
-document.getElementById("js-sidebar-container").addEventListener("click", function(event) {
+getElementById("js-sidebar-form-toggle-btn").addEventListener("click", toggleSidebarForm);
+getElementById("js-sidebar-container").addEventListener("click", function(event) {
     const target = getElementByAttr(event.target, "data-target");
 
     if (!target) {
