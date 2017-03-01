@@ -1,5 +1,6 @@
 import { removeElement, getElementByAttr, getTrackArt } from "./main.js";
 import { createNewPlaylistInputForm, onNewPlaylistFormSubmit } from "./playlist/playlist.manage.js";
+import { updatePlayerDimentions } from "./player/player.youtube.js";
 
 let animationId = 0;
 let timeoutId = 0;
@@ -82,31 +83,9 @@ function handleMouseleave({ target }) {
     target.style.transform = "translateX(0)";
 }
 
-function updatePlayerDimentions() {
-    const player = document.getElementById("yt-player");
-    const windowWidth = window.innerWidth;
-    const windowHeight = window.innerHeight;
-    const breakPoint = 600;
-    let playerWidth = windowWidth;
-
-    // -88 to account for controls and sidebar
-    let playerHeight = windowHeight - 88;
-
-    if (windowWidth > breakPoint) {
-        const sidebarWidth = 160;
-
-        playerWidth = windowWidth - sidebarWidth;
-
-        // -36 to account for controls
-        playerHeight = windowHeight - 36;
-    }
-    player.setAttribute("width", `${playerWidth}px`);
-    player.setAttribute("height", `${playerHeight}px`);
-}
-
 function handleClickOnPlayerBtn() {
-    updatePlayerDimentions();
     document.getElementById("js-yt-player-container").classList.toggle("visible");
+    updatePlayerDimentions();
 }
 
 function getExpandBtn(player) {
