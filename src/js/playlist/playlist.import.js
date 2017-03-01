@@ -101,13 +101,14 @@ function replaceInvalidImages(tracks) {
 }
 
 async function addImportedPlaylist(playlist) {
+    const plTracks = playlist.tracks.splice(0);
     const pl = getPlaylistById(playlist.id) || createPlaylist(playlist);
-    const tracks = filterDuplicateTracks(playlist.tracks, pl.tracks);
-    const newTracks = await replaceInvalidImages(tracks);
+    const fileredTracks = filterDuplicateTracks(plTracks, pl.tracks);
+    const tracks = await replaceInvalidImages(fileredTracks);
 
     setImportOption();
     removePlaylistImportForm();
-    addTracksToPlaylist(pl, newTracks);
+    addTracksToPlaylist(pl, tracks);
     removeImportOptionMask(playlist.player);
 }
 
