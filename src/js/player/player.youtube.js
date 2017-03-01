@@ -42,6 +42,7 @@ function createPlayerContainer() {
     document.getElementById("js-close-player-btn").addEventListener("click", () => {
         document.getElementById("js-yt-player-container").classList.remove("visible");
     });
+    window.addEventListener("orientationchange", updatePlayerDimentions);
 }
 
 function initPlayer() {
@@ -104,10 +105,38 @@ function seekTo(currentTime) {
     ytPlayer.seekTo(currentTime, true);
 }
 
+function updatePlayerDimentions() {
+    const playerContainer = document.getElementById("js-yt-player-container");
+
+    if (!playerContainer.classList.contains("visible")) {
+        return;
+    }
+    const player = document.getElementById("yt-player");
+    const windowWidth = window.innerWidth;
+    const windowHeight = window.innerHeight;
+    const breakPoint = 600;
+    let playerWidth = windowWidth;
+
+    // -88 to account for controls and sidebar
+    let playerHeight = windowHeight - 88;
+
+    if (windowWidth > breakPoint) {
+        const sidebarWidth = 160;
+
+        playerWidth = windowWidth - sidebarWidth;
+
+        // -36 to account for controls
+        playerHeight = windowHeight - 36;
+    }
+    player.setAttribute("width", `${playerWidth}px`);
+    player.setAttribute("height", `${playerHeight}px`);
+}
+
 export {
     playTrack,
     stopTrack,
     togglePlaying,
     seekTo,
-    setVolume
+    setVolume,
+    updatePlayerDimentions
 };
