@@ -84,7 +84,7 @@ function getMinutes(time) {
 function getHours(time) {
     const hours = Math.floor(time / 3600);
 
-    return time >= 3600 ? `${hours}:` : "";
+    return hours ? `${hours}:` : "";
 }
 
 function formatTime(time) {
