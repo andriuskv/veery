@@ -4,9 +4,15 @@
     top: 30px;
     width: 200px;
     padding: 8px;
-    border-radius: 2px;
-    border: 1px solid $color3;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
     background-color: $color1;
+
+    @include for-phone-only {
+        left: 4px;
+        right: 14px;
+        width: auto;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+    }
 }
 .move-to-panel-title {
     margin-top: 0;

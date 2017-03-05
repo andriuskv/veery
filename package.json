@@ -20,7 +20,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "whatwg-fetch": "^2.0.2"
+    "whatwg-fetch": "^2.0.3"
   },
   "devDependencies": {
     "autoprefixer": "^6.7.6",
@@ -29,10 +29,10 @@
     "babel-eslint": "^7.1.1",
     "babel-loader": "^6.3.2",
     "babel-polyfill": "^6.23.0",
-    "babel-preset-env": "^1.1.10",
+    "babel-preset-env": "^1.2.0",
     "css-mqpacker": "^5.0.1",
     "csso": "^2.3.1",
-    "eslint": "^3.16.1",
+    "eslint": "^3.17.0",
     "live-server": "^1.2.0",
     "node-sass": "^4.5.0",
     "onchange": "^3.2.1",
