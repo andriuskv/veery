@@ -20,24 +20,24 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "babel-polyfill": "^6.23.0",
     "whatwg-fetch": "^2.0.3"
   },
   "devDependencies": {
-    "autoprefixer": "^6.7.6",
-    "babel-cli": "^6.23.0",
-    "babel-core": "^6.23.1",
-    "babel-eslint": "^7.1.1",
-    "babel-loader": "^6.3.2",
-    "babel-polyfill": "^6.23.0",
-    "babel-preset-env": "^1.2.0",
+    "autoprefixer": "^6.7.7",
+    "babel-cli": "^6.24.0",
+    "babel-core": "^6.24.0",
+    "babel-eslint": "^7.2.1",
+    "babel-loader": "^6.4.1",
+    "babel-preset-env": "^1.2.2",
     "css-mqpacker": "^5.0.1",
-    "csso": "^2.3.1",
-    "eslint": "^3.17.0",
+    "csso-cli": "^1.0.0",
+    "eslint": "^3.18.0",
     "live-server": "^1.2.0",
-    "node-sass": "^4.5.0",
+    "node-sass": "^4.5.1",
     "onchange": "^3.2.1",
-    "postcss-cli": "^3.0.0-beta",
-    "webpack": "^2.2.1"
+    "postcss-cli": "^3.0.0",
+    "webpack": "^2.3.1"
   },
   "browserslist": [
     "last 2 versions",
