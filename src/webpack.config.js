@@ -1,4 +1,5 @@
 const webpack = require("webpack");
+const path = require("path");
 
 module.exports = function(env = {}) {
     const plugins = [
@@ -39,7 +40,7 @@ module.exports = function(env = {}) {
             ww: "./src/js/ww.js"
         },
         output: {
-            path: "./dist",
+            path: path.resolve(__dirname, "../dist"),
             filename: "[name].js"
         },
         module: {
