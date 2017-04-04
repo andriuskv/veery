@@ -99,8 +99,8 @@ function updatePlaylist(playlistId, data) {
     });
 }
 
-function getSelectedTrackIndexes(selectedElements) {
-    return selectedElements.map(element => parseInt(element.getAttribute("data-index"), 10));
+function getSelectedTrackIndexes(elements) {
+    return elements.map(element => parseInt(element.getAttribute("data-index"), 10));
 }
 
 function resetTrackElementIndexes(elements) {
@@ -119,14 +119,18 @@ function updateCurrentTrackIndex(playlistId, selectedTrackIndexes) {
     const currentTrack = playlist.getCurrentTrack();
 
     if (currentTrack && playlist.isActive(playlistId)) {
-        if (selectedTrackIndexes.includes(currentTrack.index)) {
+        let index = currentTrack.index;
+
+        if (selectedTrackIndexes.includes(index)) {
             playlist.updateCurrentTrack({ index: -1 });
         }
         else {
-            const { index } = playlist.findTrack(playlistId, currentTrack.name);
+            const track = playlist.findTrack(playlistId, currentTrack.name);
+            index = track.index;
 
             playlist.updateCurrentTrack({ index });
         }
+        playlist.setPlaybackIndex(index);
     }
 }
 
@@ -143,17 +147,17 @@ function removeSelectedTracks(pl) {
     const selectedTrackIndexes = getSelectedTrackIndexes(selectedElements);
     const tracks = removeSelectedPlaylistTracks(pl, selectedTrackIndexes);
     const elements = playlistView.getPlaylistTrackElements(pl.id);
+    const playbackOrder = playlist.getPlaybackOrder(tracks, getSetting("shuffle"));
 
     removeElements(selectedElements);
     resetTrackElementIndexes(elements);
-    playlist.shufflePlaybackOrder(pl, getSetting("shuffle"));
+    updatePlaylist(pl.id, { tracks, playbackOrder });
     updateCurrentTrackIndex(pl.id, selectedTrackIndexes);
     dispatchCustomEvent("track-length-change", {
         tracks,
         id: pl.id,
         type: pl.type
     });
-    updatePlaylist(pl.id, { tracks });
 }
 
 function onNewPlaylistFormSubmit(event) {
