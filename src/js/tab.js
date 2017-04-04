@@ -35,7 +35,7 @@ function toggleToPlaylistTab(id) {
         playlistView.renderPlaylist(pl);
     }
 
-    if (track && track.playlistId === id) {
+    if (track && track.playlistId === id && track.index !== -1) {
         playlistView.showPlayingTrack(track.index, id);
     }
 

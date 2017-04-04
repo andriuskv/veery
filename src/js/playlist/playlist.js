@@ -119,6 +119,7 @@ function shufflePlaybackOrder({ id, tracks }, shuffle) {
 
 function getNextTrackIndex({ playbackIndex, playbackOrder }, direction = 0) {
     playbackIndex += direction;
+
     if (playbackIndex >= playbackOrder.length) {
         playbackIndex = 0;
     }
@@ -158,6 +159,7 @@ export {
     findTrack,
     getNextTrack,
     setPlaybackIndex,
+    getPlaybackOrder,
     shufflePlaybackOrder,
     resetTrackIndexes
 };
