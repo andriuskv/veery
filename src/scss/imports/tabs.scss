@@ -1,7 +1,14 @@
 .tab-container {
+    display: none;
+    flex-grow: 1;
     height: 100%;
 
-    &.is-playlist-tab-visible {
+    &.active {
+        display: flex;
+        flex-direction: column;
+    }
+
+    @include for-phone-only {
         height: calc(100% - 64px);
     }
 }
@@ -18,19 +25,20 @@
     }
 }
 .tab-header {
-    display: none;
+    flex-shrink: 0;
+    display: flex;
     padding: 4px;
     margin-bottom: 2px;
     background-color: $color2;
 
-    &.visible {
-        display: flex;
-
-        @include for-phone-only {
-            position: relative;
-            justify-content: flex-end;
-        }
+    @include for-phone-only {
+        position: relative;
+        justify-content: flex-end;
     }
+}
+.playlist-tabs {
+    flex-grow: 1;
+    height: calc(100% - 64px);
 }
 .tab-header-item {
     margin-left: 4px;
@@ -102,7 +110,8 @@
     }
 }
 .tab-footer {
-    display: none;
+    flex-shrink: 0;
+    display: flex;
     align-items: center;
     height: 28px;
     padding: 0 4px;
@@ -111,8 +120,4 @@
     color: $base-text-color;
     font-size: 14px;
     user-select: none;
-
-    &.visible {
-        display: flex;
-    }
 }

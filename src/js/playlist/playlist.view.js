@@ -84,7 +84,7 @@ function createPlaylistTab(pl) {
 
 function renderPlaylist(pl) {
     const tab = createPlaylistTab(pl);
-    const container = getElementById("js-tab-container");
+    const container = getElementById("js-playlist-tabs");
 
     pl.rendered = true;
     container.insertAdjacentHTML("beforeend", tab);

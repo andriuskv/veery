@@ -19,7 +19,7 @@ function createEntryContainer(id) {
 
     div.appendChild(h3);
     div.appendChild(ul);
-    getElementById("js-manage-tab-content").appendChild(div);
+    getElementById("js-tab-manage").appendChild(div);
     return ul;
 }
 
@@ -34,7 +34,7 @@ function getEntryContainer() {
     return getElementById(containerId) || createEntryContainer(containerId);
 }
 
-function getRefrectBtn(url) {
+function getRefreshBtn(url) {
     if (!url) {
         return "";
     }
@@ -50,7 +50,7 @@ function getRefrectBtn(url) {
 
 function createPlaylistEntry(title, id, url) {
     const playlistEntryContainer = getEntryContainer();
-    const refreshBtn = getRefrectBtn(url);
+    const btn = getRefreshBtn(url);
     const entry = `
         <li class="pl-entry" data-id=${id}>
             <form class="pl-entry-form">
@@ -62,7 +62,7 @@ function createPlaylistEntry(title, id, url) {
                     </svg>
                 </button>
             </form>
-            ${refreshBtn}
+            ${btn}
             <button class="btn btn-light" data-action="remove" title="Remove playlist">
                 <svg viewBox="0 0 24 24">
                     <use class="btn-icon" href="#trash-icon">
