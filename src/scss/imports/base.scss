@@ -113,6 +113,8 @@ input {
 }
 
 .main {
+    display: flex;
+    flex-direction: column;
     position: relative;
     width: calc(100% - 160px);
 

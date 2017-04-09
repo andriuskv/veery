@@ -296,7 +296,7 @@ function mutePlayer(muted) {
 }
 
 (function () {
-    const tabContainer = getElementById("js-tab-container");
+    const tabContainer = getElementById("js-playlist-tabs");
 
     function getTouchCoords(touch) {
         return {

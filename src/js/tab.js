@@ -17,17 +17,7 @@ function getVisiblePlaylistId() {
     return activePlaylistTabId;
 }
 
-function toggleTabContent(action) {
-    const tabContainer = getElementById("js-tab-container");
-    const tabHeaderElement = getElementById("js-tab-header");
-    const tabFooterElement = getElementById("js-tab-footer");
-
-    tabContainer.classList[action]("is-playlist-tab-visible");
-    tabHeaderElement.classList[action]("visible");
-    tabFooterElement.classList[action]("visible");
-}
-
-function toggleToPlaylistTab(id) {
+function toggleToPlaylistTab(id, isForPhoneOnly) {
     const pl = getPlaylistById(id);
     const track = getCurrentTrack();
 
@@ -39,29 +29,20 @@ function toggleToPlaylistTab(id) {
         playlistView.showPlayingTrack(track.index, id);
     }
 
-    if (pl.type === "list" && window.innerWidth < 600) {
+    if (pl.type === "list" && isForPhoneOnly) {
         playlistView.changePlaylistType("grid", pl);
     }
     else {
         playlistView.togglePlaylistTypeBtn(pl.type);
     }
-    setVisiblePlaylistId(id);
     setSortOptions(pl);
     enableTrackSelection(pl.id);
     playlistView.resetFilteredPlaylist();
-    toggleTabContent("add");
-    getElementById(`js-tab-${id}`).classList.add("active");
     dispatchCustomEvent("track-length-change", {
         id: pl.id,
         tracks: pl.tracks,
         type: pl.type
     });
-}
-
-function toggleToNonPlaylistTab(id) {
-    setVisiblePlaylistId();
-    toggleTabContent("remove");
-    getElementById(`js-tab-${id}`).classList.add("active");
 }
 
 window.addEventListener("click", event => {
@@ -97,23 +78,34 @@ window.addEventListener("click", event => {
     removePresentPanels(event, panelId);
 }, true);
 
-window.addEventListener("route-change", ({ detail: { isPlaylistTab, tabId, isValid } }) => {
+window.addEventListener("route-change", ({ detail: { isPlaylistTab, tabId } }) => {
+    const entry = getSidebarEntry(tabId);
+    const isForPhoneOnly = window.innerWidth < 600;
+    let playlistId = tabId;
+
     removeElementClass("sidebar-btn", "active");
     removeElementClass("tab", "active");
 
     if (isPlaylistTab) {
-        toggleToPlaylistTab(tabId);
+        toggleToPlaylistTab(playlistId, isForPhoneOnly);
+        getElementById("js-tab-playlist-container").classList.add("active");
+        getElementById("js-tab-container").classList.remove("active");
     }
     else {
-        toggleToNonPlaylistTab(tabId);
+        playlistId = "";
+        getElementById("js-tab-container").classList.add("active");
+        getElementById("js-tab-playlist-container").classList.remove("active");
     }
+    setVisiblePlaylistId(playlistId);
+    getElementById(`js-tab-${tabId}`).classList.add("active");
 
-    if (isValid) {
-        const entry = getSidebarEntry(tabId);
-
+    if (entry) {
         entry.classList.add("active");
     }
-    getElementById("js-sidebar-container").classList.add("contracted");
+
+    if (isForPhoneOnly) {
+        getElementById("js-sidebar-container").classList.add("contracted");
+    }
 });
 
 export {

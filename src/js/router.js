@@ -37,8 +37,7 @@ function toggleRouteTab(route) {
 
     dispatchCustomEvent("route-change", {
         tabId,
-        isPlaylistTab,
-        isValid: tabId !== "404"
+        isPlaylistTab
     });
 }
 
