@@ -1,46 +1,43 @@
 import { getElementById, removeElement, isOutsideElement } from "./utils.js";
 
-const visiblePanels = {};
+let visiblePanel = null;
 
-function markPanelAsVisible(panelId) {
-    visiblePanels[panelId] = true;
+function removePanel() {
+    window.removeEventListener("click", handleClick, true);
+    removeElement(visiblePanel);
+    visiblePanel = null;
 }
 
-function removePanel(panelId) {
-    const panelElement = getElementById(panelId);
-
-    visiblePanels[panelId] = false;
-    if (panelElement) {
-        removeElement(panelElement);
-    }
+function createPanel(id, pl, panelCreationCallback) {
+    panelCreationCallback(id, pl);
+    visiblePanel = getElementById(id);
+    window.addEventListener("click", handleClick, true);
 }
 
-function isPanelVisible(panelId) {
-    return visiblePanels[panelId];
-}
+function togglePanel(id, pl, panelCreationCallback) {
+    if (visiblePanel) {
+        window.removeEventListener("click", handleClick, true);
+        removeElement(visiblePanel);
 
-function togglePanel(panelId, pl, panelCreationCallback) {
-    if (!isPanelVisible(panelId)) {
-        markPanelAsVisible(panelId);
-        panelCreationCallback(panelId, pl);
+        if (visiblePanel.id !== id) {
+            createPanel(id, pl, panelCreationCallback);
+        }
+        else {
+            visiblePanel = null;
+        }
     }
     else {
-        removePanel(panelId);
+        createPanel(id, pl, panelCreationCallback);
     }
 }
 
-function removePresentPanels(event = {}, panelToKeepId) {
-    Object.keys(visiblePanels).forEach(id => {
-        const element = getElementById(id);
-
-        if (visiblePanels[id] && id !== panelToKeepId && isOutsideElement(event.target, element)) {
-            removePanel(id);
-        }
-    });
+function handleClick({ target }) {
+    if (isOutsideElement(target, visiblePanel.parentElement)) {
+        removePanel();
+    }
 }
 
 export {
     removePanel,
-    removePresentPanels,
     togglePanel
 };

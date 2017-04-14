@@ -46,6 +46,10 @@
 .move-to-new-pl-btn {
     width: 100%;
     text-align: left;
+
+    &.hidden {
+        display: none;
+    }
 }
 .move-to-form {
     display: flex;

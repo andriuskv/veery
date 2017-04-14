@@ -1,6 +1,6 @@
 import * as playlist from "./playlist.js";
 import * as playlistView from "./playlist.view.js";
-import { removeElements, getElementById, dispatchCustomEvent } from "./../utils.js";
+import { removeElement, removeElements, getElementById, dispatchCustomEvent } from "./../utils.js";
 import { isRouteActive, addRoute, toggleRoute } from "./../router.js";
 import { getSetting } from "./../settings.js";
 import { getVisiblePlaylistId } from "./../tab.js";
@@ -109,8 +109,8 @@ function resetTrackElementIndexes(elements) {
     });
 }
 
-function removeSelectedPlaylistTracks(pl, selectedTrackIndexes) {
-    const filteredTracks = pl.tracks.filter(track => !selectedTrackIndexes.includes(track.index));
+function removeSelectedPlaylistTracks(tracks, selectedTrackIndexes) {
+    const filteredTracks = tracks.filter(track => !selectedTrackIndexes.includes(track.index));
 
     return playlist.resetTrackIndexes(filteredTracks);
 }
@@ -138,24 +138,26 @@ function getSelectedTrackElements() {
     return Array.from(document.querySelectorAll(".track.selected"));
 }
 
-function removeSelectedTracks(pl) {
+function removeSelectedTracks(id) {
     const selectedElements = getSelectedTrackElements();
 
     if (!selectedElements.length) {
         return;
     }
+    const pl = playlist.getPlaylistById(id);
     const selectedTrackIndexes = getSelectedTrackIndexes(selectedElements);
-    const tracks = removeSelectedPlaylistTracks(pl, selectedTrackIndexes);
-    const elements = playlistView.getPlaylistTrackElements(pl.id);
+    const tracks = removeSelectedPlaylistTracks(pl.tracks, selectedTrackIndexes);
+    const elements = playlistView.getPlaylistTrackElements(id);
     const playbackOrder = playlist.getPlaybackOrder(tracks, getSetting("shuffle"));
 
     removeElements(selectedElements);
     resetTrackElementIndexes(elements);
-    updatePlaylist(pl.id, { tracks, playbackOrder });
-    updateCurrentTrackIndex(pl.id, selectedTrackIndexes);
+    updatePlaylist(id, { tracks, playbackOrder });
+    updateCurrentTrackIndex(id, selectedTrackIndexes);
+    removeElement(getElementById("js-move-to-panel-container"));
     dispatchCustomEvent("track-length-change", {
         tracks,
-        id: pl.id,
+        id,
         type: pl.type
     });
 }
@@ -179,12 +181,12 @@ function onNewPlaylistFormSubmit(event) {
 
 window.addEventListener("keypress", event => {
     const key = event.key === "Delete" || event.keyCode === 127;
-    const pl = playlist.getPlaylistById(getVisiblePlaylistId());
+    const id = getVisiblePlaylistId();
 
-    if (!key || !pl) {
+    if (!key || !id) {
         return;
     }
-    removeSelectedTracks(pl);
+    removeSelectedTracks(id);
 });
 
 function createNewPlaylistInputForm(id, element, handleSubmit) {

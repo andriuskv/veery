@@ -1,6 +1,5 @@
-import { removeElement, getElementById, getElementByAttr } from "./../utils.js";
+import { getElementById, getElementByAttr, removeElement } from "./../utils.js";
 import { getVisiblePlaylistId } from "./../tab.js";
-import { removePanel } from "./../panels.js";
 import { getPlaylistById, getAllPlaylists, findTrack } from "./playlist.js";
 import * as playlistManage from "./playlist.manage.js";
 
@@ -10,57 +9,37 @@ function showMoveToBtn() {
     if (getElementById(panelContainerId)) {
         return;
     }
-    const div = document.createElement("div");
-    const button = document.createElement("button");
+    const element = `
+        <div id="${panelContainerId}" class="tab-header-item">
+            <button class="btn" data-header-item="move-to">Move to</button>
+        </div>
+    `;
 
-    div.id = panelContainerId;
-    div.classList.add("tab-header-item");
-    button.classList.add("btn");
-    button.setAttribute("data-header-item", "move-to");
-    button.title = "Move to";
-    button.textContent = "Move to";
-    div.appendChild(button);
-
-    getElementById("js-tab-header").insertBefore(div, getElementById("js-list-toggle-btn"));
-}
-
-function removeMoveToPanelContainer() {
-    const panelId = "js-move-to-panel";
-    const panelContainer = getElementById(`${panelId}-container`);
-
-    if (panelContainer) {
-        removePanel(panelId);
-        removeElement(panelContainer);
-    }
+    getElementById("js-list-toggle-btn").insertAdjacentHTML("beforebegin", element);
 }
 
 function handleSubmit(event) {
-    const moveToList = getElementById("js-move-to-list");
+    const element = getElementById("js-move-to-list");
 
     playlistManage.onNewPlaylistFormSubmit(event);
-    moveToList.classList.remove("hidden");
-    moveToList.innerHTML = createPlaylistList(getVisiblePlaylistId());
+    element.classList.remove("hidden");
+    element.innerHTML = createPlaylistList(getVisiblePlaylistId());
 }
 
 function showInputContainer() {
     playlistManage.createNewPlaylistInputForm("move-to", this, handleSubmit);
-    removeElement(this);
+    this.classList.add("hidden");
 }
 
 function moveTracks(playlistId) {
-    const selectedTrackElements = playlistManage.getSelectedTrackElements();
-    const trackIndexes = playlistManage.getSelectedTrackIndexes(selectedTrackElements);
+    const elements = playlistManage.getSelectedTrackElements();
+    const trackIndexes = playlistManage.getSelectedTrackIndexes(elements);
     const { tracks } = getPlaylistById(getVisiblePlaylistId());
     const pl = getPlaylistById(playlistId);
-    const timeStamp = new Date().getTime();
+    const createdAt = new Date().getTime();
     const selectedTracks = tracks
         .filter(track => trackIndexes.includes(track.index) && !findTrack(playlistId, track.name))
-        .map(track => {
-            return Object.assign({}, track, {
-                playlistId,
-                createdAt: timeStamp
-            });
-        });
+        .map(track => Object.assign({}, track, { playlistId, createdAt }));
 
     playlistManage.addTracksToPlaylist(pl, selectedTracks, true);
 }
@@ -73,7 +52,7 @@ function onListClick(event) {
 
         moveTracks(playlistId);
         getElementById("js-move-to-list").removeEventListener("click", onListClick);
-        removeMoveToPanelContainer();
+        removeElement(getElementById("js-move-to-panel-container"));
     }
 }
 
@@ -111,6 +90,5 @@ function createMoveToPanel(panelId, { id }) {
 
 export {
     showMoveToBtn,
-    removeMoveToPanelContainer,
     createMoveToPanel
 };
