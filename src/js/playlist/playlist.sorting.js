@@ -1,6 +1,6 @@
 import { capitalize, getElementById } from "./../utils.js";
 import { getVisiblePlaylistId } from "./../tab.js";
-import { removePresentPanels } from "./../panels.js";
+import { removePanel } from "./../panels.js";
 import { getPlaylistById } from "./playlist.js";
 import { refreshPlaylist, updatePlaylist } from "./playlist.manage.js";
 import { getPlaylistTrackElements, filterTracks } from "./playlist.view.js";
@@ -86,9 +86,7 @@ function getSortOtions(sortedBy) {
 
 function createSortPanel(panelId, { sortedBy }) {
     const sortOptions = getSortOtions(sortedBy);
-    const sortPanelElement = `
-        <ul id="${panelId}" class="sort-panel">${sortOptions}</ul>
-    `;
+    const sortPanelElement = `<ul id="${panelId}" class="sort-panel">${sortOptions}</ul>`;
 
     getElementById("js-sort-panel-container").insertAdjacentHTML("beforeend", sortPanelElement);
     getElementById(panelId).addEventListener("click", selectSortOption);
@@ -106,7 +104,7 @@ function selectSortOption({ target }) {
         const pl = getPlaylistById(getVisiblePlaylistId());
 
         this.removeEventListener("click", selectSortOption);
-        removePresentPanels();
+        removePanel();
 
         if (sortBy === pl.sortedBy) {
             return;

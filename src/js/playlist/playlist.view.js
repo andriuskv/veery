@@ -1,6 +1,6 @@
 import { getElementById, replaceElement, removeElement, removeElementClass, getTrackArt } from "./../utils.js";
 import { getVisiblePlaylistId } from "./../tab.js";
-import { getPlaylistById, getActivePlaylistId, getCurrentTrack } from "./playlist.js";
+import { getPlaylistById, isActive, getCurrentTrack } from "./playlist.js";
 import { updatePlaylist } from "./playlist.manage.js";
 import { enableTrackSelection } from "./playlist.track-selection.js";
 
@@ -115,9 +115,9 @@ function updatePlaylistView({ id, type, tracks }) {
 }
 
 function removePlaylistTab(id) {
-    const playlistTab = getElementById(`js-tab-${id}`);
+    const { parentElement } = getPlaylistElement(id);
 
-    removeElement(playlistTab);
+    removeElement(parentElement);
 }
 
 function scrollToTrackElement(trackElement, playlistElement) {
@@ -133,14 +133,14 @@ function scrollToTrackElement(trackElement, playlistElement) {
 }
 
 function showPlayingTrack(index, id, scrollToTrack) {
-    const element = getPlaylistElement(id);
-    const trackElement = element.children[index];
+    const elements = getPlaylistTrackElements(id);
+    const element = elements[index];
 
     removeElementClass("track", "playing");
-    trackElement.classList.add("playing");
+    element.classList.add("playing");
 
     if (scrollToTrack) {
-        scrollToTrackElement(trackElement, element);
+        scrollToTrackElement(element, element);
     }
 }
 
@@ -186,16 +186,14 @@ function addMarginToPlaylistHeader(id, type) {
     }
 }
 
-function changePlaylistType(newType, pl) {
-    updatePlaylist(pl.id, {
-        type: newType
-    });
+function changePlaylistType(type, pl) {
+    updatePlaylist(pl.id, { type });
     getElementById(`js-tab-${pl.id}`).innerHTML = createPlaylist(pl);
     enableTrackSelection(pl.id);
-    togglePlaylistTypeBtn(newType);
-    addMarginToPlaylistHeader(pl.id, newType);
+    togglePlaylistTypeBtn(type);
+    addMarginToPlaylistHeader(pl.id, type);
 
-    if (pl.id === getActivePlaylistId()) {
+    if (isActive(pl.id)) {
         const track = getCurrentTrack();
 
         if (track) {

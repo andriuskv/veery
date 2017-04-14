@@ -1,6 +1,6 @@
-import { removeElement, removeElementClass, getElementByAttr } from "./../utils.js";
+import { getElementById, removeElement, removeElementClass, getElementByAttr, isOutsideElement } from "./../utils.js";
 import { getSelectedTrackElements } from "./playlist.manage.js";
-import { showMoveToBtn, removeMoveToPanelContainer } from "./playlist.move-to.js";
+import { showMoveToBtn } from "./playlist.move-to.js";
 import { getPlaylistElement } from "./playlist.view.js";
 
 const startingPoint = {};
@@ -15,6 +15,7 @@ let selectionElement = null;
 let selectionEnabled = false;
 let intervalId = 0;
 let animationId = 0;
+let allowClick = false;
 
 function enableTrackSelection(id) {
     if (playlistElement) {
@@ -99,24 +100,23 @@ function updateSelectedArea(mousePos, startingPoint, areaStyle) {
 }
 
 function deselectTrackElements() {
+    const element = getElementById("js-move-to-panel-container");
+
     removeElementClass("track", "selected");
-    removeMoveToPanelContainer();
+
+    if (element) {
+        removeElement(element);
+    }
 }
 
 function selectTrackElement(element, selectMultiple) {
-    const item = getElementByAttr(element, "data-index");
+    if (!selectMultiple) {
+        removeElementClass("track", "selected");
+    }
+    element.classList.toggle("selected");
 
-    if (item) {
-        if (!selectMultiple) {
-            removeElementClass("track", "selected");
-        }
-        const element = item.elementRef;
-
-        element.classList.toggle("selected");
-
-        if (element.classList.contains("selected")) {
-            showMoveToBtn();
-        }
+    if (element.classList.contains("selected")) {
+        showMoveToBtn();
     }
 }
 
@@ -245,28 +245,50 @@ function onMousemove(event) {
 }
 
 function onMouseup({ target, ctrlKey }) {
+    allowClick = false;
+
     if (intervalId) {
         stopScrolling();
     }
-
     if (selectionEnabled) {
-        const selectedElements = getSelectedTrackElements();
+        const elements = getSelectedTrackElements();
 
         resetSelection();
 
-        if (selectedElements.length) {
+        if (elements.length) {
             showMoveToBtn();
+            window.addEventListener("click", onClick);
         }
     }
     else {
-        selectTrackElement(target, ctrlKey);
+        const item = getElementByAttr(target, "data-index");
 
-        if (target === playlistElement) {
+        if (item) {
+            selectTrackElement(item.elementRef, ctrlKey);
+            window.addEventListener("click", onClick);
+        }
+        else {
             deselectTrackElements();
+            window.removeEventListener("click", onClick);
         }
     }
+    setTimeout(() => {
+        allowClick = true;
+    }, 0);
     window.removeEventListener("mousemove", onMousemove);
     window.removeEventListener("mouseup", onMouseup);
+}
+
+function onClick({ target }) {
+    if (!allowClick) {
+        return;
+    }
+    const element = getElementById("js-move-to-panel-container");
+
+    if (!element || isOutsideElement(target, playlistElement) && isOutsideElement(target, element)) {
+        deselectTrackElements();
+        window.removeEventListener("click", onClick);
+    }
 }
 
 function onMousedown(event) {
@@ -287,6 +309,5 @@ function onMousedown(event) {
 }
 
 export {
-    enableTrackSelection,
-    deselectTrackElements
+    enableTrackSelection
 };

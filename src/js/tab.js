@@ -1,20 +1,20 @@
-import { removeElementClass, getElementById, getElementByAttr, isOutsideElement, dispatchCustomEvent } from "./utils.js";
+import { removeElementClass, getElementById, getElementByAttr, dispatchCustomEvent } from "./utils.js";
 import { getSidebarEntry } from "./sidebar.js";
-import { removePresentPanels, togglePanel } from "./panels.js";
+import { togglePanel } from "./panels.js";
 import { getPlaylistById, getCurrentTrack } from "./playlist/playlist.js";
-import { enableTrackSelection, deselectTrackElements } from "./playlist/playlist.track-selection.js";
+import { enableTrackSelection } from "./playlist/playlist.track-selection.js";
 import { setSortOptions, createSortPanel, changePlaylistOrder } from "./playlist/playlist.sorting.js";
 import { createMoveToPanel } from "./playlist/playlist.move-to.js";
 import * as playlistView from "./playlist/playlist.view.js";
 
-let activePlaylistTabId = "";
+let visiblePlaylistId = "";
 
 function setVisiblePlaylistId(id = "") {
-    activePlaylistTabId = id;
+    visiblePlaylistId = id;
 }
 
 function getVisiblePlaylistId() {
-    return activePlaylistTabId;
+    return visiblePlaylistId;
 }
 
 function toggleToPlaylistTab(id, isForPhoneOnly) {
@@ -45,38 +45,31 @@ function toggleToPlaylistTab(id, isForPhoneOnly) {
     });
 }
 
-window.addEventListener("click", event => {
-    const headerElement = getElementByAttr(event.target, "data-header-item");
-    const id = getVisiblePlaylistId();
-    const pl = getPlaylistById(id);
-    const element = playlistView.getPlaylistElement(id);
-    const item = headerElement && headerElement.attrValue;
-    let panelId = "";
+getElementById("js-tab-header").addEventListener("click", ({ target }) => {
+    const element = getElementByAttr(target, "data-header-item");
+
+    if (!element) {
+        return;
+    }
+    const pl = getPlaylistById(getVisiblePlaylistId());
+    const item = element.attrValue;
 
     if (item === "filter") {
         getElementById("js-filter-input").classList.toggle("visible");
     }
     else if (item === "move-to") {
-        panelId = "js-move-to-panel";
-        togglePanel(panelId, pl, createMoveToPanel);
+        togglePanel("js-move-to-panel", pl, createMoveToPanel);
     }
     else if ((item === "list" || item === "grid") && item !== pl.type) {
         playlistView.changePlaylistType(item, pl);
     }
     else if (item === "sorting") {
-        panelId = "js-sort-panel";
-        togglePanel(panelId, pl, createSortPanel);
+        togglePanel("js-sort-panel", pl, createSortPanel);
     }
     else if (item === "order" && pl.sortedBy) {
         changePlaylistOrder(pl);
     }
-    const targetElement = getElementById("js-move-to-panel-container");
-
-    if (isOutsideElement(event.target, targetElement) && isOutsideElement(event.target, element)) {
-        deselectTrackElements();
-    }
-    removePresentPanels(event, panelId);
-}, true);
+});
 
 window.addEventListener("route-change", ({ detail: { isPlaylistTab, tabId } }) => {
     const entry = getSidebarEntry(tabId);
