@@ -1,7 +1,27 @@
-import { getElementById, removeElement, removeElementClass, getElementByAttr, isOutsideElement } from "./../utils.js";
-import { getSelectedTrackElements } from "./playlist.manage.js";
+import {
+    getElementById,
+    removeElement,
+    removeElements,
+    removeElementClass,
+    getElementByAttr,
+    isOutsideElement,
+    dispatchCustomEvent
+} from "./../utils.js";
+import {
+    getPlaylistById,
+    isActive,
+    getCurrentTrack,
+    updateCurrentTrack,
+    resetTrackIndexes,
+    findTrack,
+    getPlaybackOrder,
+    setPlaybackIndex
+} from "./playlist.js";
+import { getSetting } from "./../settings.js";
+import { getVisiblePlaylistId } from "./../tab.js";
+import { updatePlaylist } from "./playlist.manage.js";
 import { showMoveToBtn } from "./playlist.move-to.js";
-import { getPlaylistElement } from "./playlist.view.js";
+import { getPlaylistElement, getPlaylistTrackElements } from "./playlist.view.js";
 
 const startingPoint = {};
 const mousePos = {};
@@ -12,7 +32,6 @@ let trackElements = [];
 let maxScrollHeight = 0;
 let maxWidth = 0;
 let selectionElement = null;
-let selectionEnabled = false;
 let intervalId = 0;
 let animationId = 0;
 let allowClick = false;
@@ -37,11 +56,6 @@ function initSelectionArea(parent) {
     parent.insertBefore(element, parent.firstElementChild);
 
     return element;
-}
-
-function removeSelectionArea() {
-    removeElement(selectionElement);
-    selectionElement = null;
 }
 
 function getTrackElements(elements) {
@@ -103,6 +117,7 @@ function deselectTrackElements() {
     const element = getElementById("js-move-to-panel-container");
 
     removeElementClass("track", "selected");
+    window.removeEventListener("keypress", onKeypress);
 
     if (element) {
         removeElement(element);
@@ -168,8 +183,8 @@ function stopScrolling() {
 }
 
 function resetSelection() {
-    removeSelectionArea();
-    selectionEnabled = false;
+    removeElement(selectionElement);
+    selectionElement = null;
     selectedArea = {};
     trackElements.length = 0;
 }
@@ -215,16 +230,12 @@ function onMousemove(event) {
 
     event.preventDefault();
 
-    if (!selectionEnabled) {
-        selectionEnabled = isAboveThreshold(mousePos, startingPoint);
+    if (!selectionElement && isAboveThreshold(mousePos, startingPoint)) {
+        trackElements = getTrackElements(playlistElement.children);
+        selectionElement = initSelectionArea(playlistElement);
 
-        if (selectionEnabled && !selectionElement) {
-            trackElements = getTrackElements(playlistElement.children);
-            selectionElement = initSelectionArea(playlistElement);
-
-            if (!event.ctrlKey) {
-                trackElements.forEach(element => element.ref.classList.remove("selected"));
-            }
+        if (!event.ctrlKey) {
+            trackElements.forEach(element => element.ref.classList.remove("selected"));
         }
         return;
     }
@@ -250,13 +261,14 @@ function onMouseup({ target, ctrlKey }) {
     if (intervalId) {
         stopScrolling();
     }
-    if (selectionEnabled) {
+    if (selectionElement) {
         const elements = getSelectedTrackElements();
 
         resetSelection();
 
         if (elements.length) {
             showMoveToBtn();
+            window.addEventListener("keypress", onKeypress);
             window.addEventListener("click", onClick);
         }
     }
@@ -265,6 +277,7 @@ function onMouseup({ target, ctrlKey }) {
 
         if (item) {
             selectTrackElement(item.elementRef, ctrlKey);
+            window.addEventListener("keypress", onKeypress);
             window.addEventListener("click", onClick);
         }
         else {
@@ -308,6 +321,78 @@ function onMousedown(event) {
     }
 }
 
+function onKeypress(event) {
+    const key = event.key === "Delete" || event.keyCode === 127;
+
+    if (!key) {
+        return;
+    }
+    removeSelectedTracks();
+    window.removeEventListener("keypress", onKeypress);
+}
+
+function getSelectedTrackElements() {
+    return Array.from(document.querySelectorAll(".track.selected"));
+}
+
+function getSelectedTrackIndexes(elements) {
+    return elements.map(element => parseInt(element.getAttribute("data-index"), 10));
+}
+
+function removeSelectedPlaylistTracks(tracks, selectedTrackIndexes) {
+    const filteredTracks = tracks.filter(track => !selectedTrackIndexes.includes(track.index));
+
+    return resetTrackIndexes(filteredTracks);
+}
+
+function resetTrackElementIndexes(elements) {
+    Array.from(elements).forEach((element, index) => {
+        element.setAttribute("data-index", index);
+    });
+}
+
+function updateCurrentTrackIndex(playlistId, selectedTrackIndexes) {
+    const currentTrack = getCurrentTrack();
+
+    if (currentTrack && isActive(playlistId)) {
+        let index = currentTrack.index;
+
+        if (selectedTrackIndexes.includes(index)) {
+            updateCurrentTrack({ index: -1 });
+        }
+        else {
+            const track = findTrack(playlistId, currentTrack.name);
+            index = track.index;
+
+            updateCurrentTrack({ index });
+        }
+        setPlaybackIndex(index);
+    }
+}
+
+function removeSelectedTracks() {
+    const id = getVisiblePlaylistId();
+    const selectedElements = getSelectedTrackElements();
+    const pl = getPlaylistById(id);
+    const selectedTrackIndexes = getSelectedTrackIndexes(selectedElements);
+    const tracks = removeSelectedPlaylistTracks(pl.tracks, selectedTrackIndexes);
+    const elements = getPlaylistTrackElements(id);
+    const playbackOrder = getPlaybackOrder(tracks, getSetting("shuffle"));
+
+    removeElements(selectedElements);
+    resetTrackElementIndexes(elements);
+    updatePlaylist(id, { tracks, playbackOrder });
+    updateCurrentTrackIndex(id, selectedTrackIndexes);
+    removeElement(getElementById("js-move-to-panel-container"));
+    dispatchCustomEvent("track-length-change", {
+        tracks,
+        id,
+        type: pl.type
+    });
+}
+
 export {
-    enableTrackSelection
+    enableTrackSelection,
+    getSelectedTrackElements,
+    getSelectedTrackIndexes
 };

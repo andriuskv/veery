@@ -1,9 +1,8 @@
 import * as playlist from "./playlist.js";
-import * as playlistView from "./playlist.view.js";
-import { removeElement, removeElements, getElementById, dispatchCustomEvent } from "./../utils.js";
+import { appendToPlaylistView, removePlaylistTab, updatePlaylistView, showPlayingTrack } from "./playlist.view.js";
+import { getElementById } from "./../utils.js";
 import { isRouteActive, addRoute, toggleRoute } from "./../router.js";
 import { getSetting } from "./../settings.js";
-import { getVisiblePlaylistId } from "./../tab.js";
 import { postMessageToWorker } from "./../worker.js";
 import { createSidebarEntry, removeSidebarEntry } from "./../sidebar.js";
 import { stopPlayer } from "./../player/player.js";
@@ -32,7 +31,7 @@ function initPlaylist(pl) {
 }
 
 function appendToPlaylist(pl, tracks) {
-    playlistView.appendToPlaylistView(pl, tracks);
+    appendToPlaylistView(pl, tracks);
     resortTracks(pl);
 }
 
@@ -43,7 +42,7 @@ function removePlaylist(id) {
         stopPlayer();
     }
     if (rendered) {
-        playlistView.removePlaylistTab(id);
+        removePlaylistTab(id);
     }
     playlist.removePlaylist(id);
     removeSidebarEntry(id);
@@ -56,7 +55,7 @@ function removePlaylist(id) {
 function refreshPlaylist(pl) {
     const currentTrack = playlist.getCurrentTrack();
 
-    playlistView.updatePlaylistView(pl);
+    updatePlaylistView(pl);
 
     if (currentTrack && playlist.isActive(pl.id)) {
         const track = playlist.findTrack(pl.id, currentTrack.name);
@@ -64,7 +63,7 @@ function refreshPlaylist(pl) {
         if (track) {
             playlist.updateCurrentTrack({ index: track.index });
             playlist.setPlaybackIndex(track.index);
-            playlistView.showPlayingTrack(track.index, pl.id);
+            showPlayingTrack(track.index, pl.id);
         }
     }
 }
@@ -99,69 +98,6 @@ function updatePlaylist(playlistId, data) {
     });
 }
 
-function getSelectedTrackIndexes(elements) {
-    return elements.map(element => parseInt(element.getAttribute("data-index"), 10));
-}
-
-function resetTrackElementIndexes(elements) {
-    Array.from(elements).forEach((element, index) => {
-        element.setAttribute("data-index", index);
-    });
-}
-
-function removeSelectedPlaylistTracks(tracks, selectedTrackIndexes) {
-    const filteredTracks = tracks.filter(track => !selectedTrackIndexes.includes(track.index));
-
-    return playlist.resetTrackIndexes(filteredTracks);
-}
-
-function updateCurrentTrackIndex(playlistId, selectedTrackIndexes) {
-    const currentTrack = playlist.getCurrentTrack();
-
-    if (currentTrack && playlist.isActive(playlistId)) {
-        let index = currentTrack.index;
-
-        if (selectedTrackIndexes.includes(index)) {
-            playlist.updateCurrentTrack({ index: -1 });
-        }
-        else {
-            const track = playlist.findTrack(playlistId, currentTrack.name);
-            index = track.index;
-
-            playlist.updateCurrentTrack({ index });
-        }
-        playlist.setPlaybackIndex(index);
-    }
-}
-
-function getSelectedTrackElements() {
-    return Array.from(document.querySelectorAll(".track.selected"));
-}
-
-function removeSelectedTracks(id) {
-    const selectedElements = getSelectedTrackElements();
-
-    if (!selectedElements.length) {
-        return;
-    }
-    const pl = playlist.getPlaylistById(id);
-    const selectedTrackIndexes = getSelectedTrackIndexes(selectedElements);
-    const tracks = removeSelectedPlaylistTracks(pl.tracks, selectedTrackIndexes);
-    const elements = playlistView.getPlaylistTrackElements(id);
-    const playbackOrder = playlist.getPlaybackOrder(tracks, getSetting("shuffle"));
-
-    removeElements(selectedElements);
-    resetTrackElementIndexes(elements);
-    updatePlaylist(id, { tracks, playbackOrder });
-    updateCurrentTrackIndex(id, selectedTrackIndexes);
-    removeElement(getElementById("js-move-to-panel-container"));
-    dispatchCustomEvent("track-length-change", {
-        tracks,
-        id,
-        type: pl.type
-    });
-}
-
 function onNewPlaylistFormSubmit(event) {
     const form = event.target;
     const pl = playlist.createPlaylist({
@@ -178,16 +114,6 @@ function onNewPlaylistFormSubmit(event) {
     event.preventDefault();
     form.reset();
 }
-
-window.addEventListener("keypress", event => {
-    const key = event.key === "Delete" || event.keyCode === 127;
-    const id = getVisiblePlaylistId();
-
-    if (!key || !id) {
-        return;
-    }
-    removeSelectedTracks(id);
-});
 
 function createNewPlaylistInputForm(id, element, handleSubmit) {
     const formElement = `
@@ -207,8 +133,6 @@ export {
     refreshPlaylist,
     addTracksToPlaylist,
     updatePlaylist,
-    getSelectedTrackIndexes,
-    getSelectedTrackElements,
     onNewPlaylistFormSubmit,
     createNewPlaylistInputForm
 };

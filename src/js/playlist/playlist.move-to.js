@@ -1,7 +1,8 @@
 import { getElementById, getElementByAttr, removeElement } from "./../utils.js";
 import { getVisiblePlaylistId } from "./../tab.js";
 import { getPlaylistById, getAllPlaylists, findTrack } from "./playlist.js";
-import * as playlistManage from "./playlist.manage.js";
+import { getSelectedTrackElements, getSelectedTrackIndexes } from "./playlist.track-selection.js";
+import { onNewPlaylistFormSubmit, createNewPlaylistInputForm, addTracksToPlaylist } from "./playlist.manage.js";
 
 function showMoveToBtn() {
     const panelContainerId = "js-move-to-panel-container";
@@ -21,19 +22,19 @@ function showMoveToBtn() {
 function handleSubmit(event) {
     const element = getElementById("js-move-to-list");
 
-    playlistManage.onNewPlaylistFormSubmit(event);
+    onNewPlaylistFormSubmit(event);
     element.classList.remove("hidden");
     element.innerHTML = createPlaylistList(getVisiblePlaylistId());
 }
 
 function showInputContainer() {
-    playlistManage.createNewPlaylistInputForm("move-to", this, handleSubmit);
+    createNewPlaylistInputForm("move-to", this, handleSubmit);
     this.classList.add("hidden");
 }
 
 function moveTracks(playlistId) {
-    const elements = playlistManage.getSelectedTrackElements();
-    const trackIndexes = playlistManage.getSelectedTrackIndexes(elements);
+    const elements = getSelectedTrackElements();
+    const trackIndexes = getSelectedTrackIndexes(elements);
     const { tracks } = getPlaylistById(getVisiblePlaylistId());
     const pl = getPlaylistById(playlistId);
     const createdAt = new Date().getTime();
@@ -41,7 +42,7 @@ function moveTracks(playlistId) {
         .filter(track => trackIndexes.includes(track.index) && !findTrack(playlistId, track.name))
         .map(track => Object.assign({}, track, { playlistId, createdAt }));
 
-    playlistManage.addTracksToPlaylist(pl, selectedTracks, true);
+    addTracksToPlaylist(pl, selectedTracks, true);
 }
 
 function onListClick(event) {
