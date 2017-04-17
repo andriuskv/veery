@@ -1,5 +1,3 @@
-import "babel-polyfill";
-
 function getBlockLength(bytes) {
     return bytes[1] << 16 | bytes[2] << 8 | bytes[3];
 }
