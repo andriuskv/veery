@@ -1,5 +1,6 @@
 /* global parse_audio_metadata */
 
+import parseFlacMetadata from "./../libs/parseFlacMetadata.js";
 import { scriptLoader, formatTime } from "./utils.js";
 import { getPlaylistById, createPlaylist } from "./playlist/playlist.js";
 import { addTracksToPlaylist } from "./playlist/playlist.manage.js";
@@ -46,14 +47,16 @@ function filterDuplicateTracks(tracks, existingTracks) {
 }
 
 function getTrackMetadata(track) {
+    if (track.type === "audio/flac") {
+        return parseFlacMetadata(track);
+    }
     return new Promise(resolve => {
         parse_audio_metadata(track, resolve);
     });
 }
 
 async function parseTracks(tracks, id, timeStamp, parsedTracks = []) {
-    const track = tracks[parsedTracks.length];
-    const audioTrack = track.audioTrack;
+    const { audioTrack, name } = tracks[parsedTracks.length];
     const [data, durationInSeconds] = await Promise.all([
         getTrackMetadata(audioTrack),
         getTrackDuration(audioTrack)
@@ -62,11 +65,11 @@ async function parseTracks(tracks, id, timeStamp, parsedTracks = []) {
     parsedTracks.push({
         audioTrack,
         durationInSeconds,
+        name,
         index: parsedTracks.length,
-        title: data.artist ? data.title.trim(): track.name,
+        title: data.artist ? data.title.trim(): name,
         artist: data.artist ? data.artist.trim() : "",
         album: data.album ? data.album.trim() : "",
-        name: track.name,
         thumbnail: data.picture || "assets/images/album-art-placeholder.png",
         duration: formatTime(durationInSeconds),
         player: "native",
