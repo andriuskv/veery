@@ -3,7 +3,7 @@ import { getPlaylistById, createPlaylist } from "./playlist.js";
 import { addTracksToPlaylist } from "./playlist.manage.js";
 import { showDropboxChooser } from "./../dropbox.js";
 import { selectLocalFiles } from "./../local.js";
-import { fetchYoutubePlaylist } from "./../youtube.js";
+import { fetchYoutubeItem } from "./../youtube.js";
 import { fetchSoundcloudPlaylist } from "./../soundcloud.js";
 
 const importOptions = getElementById("js-import-options");
@@ -54,7 +54,7 @@ function showNotice(option, message) {
 
 function importPlaylist(option, url) {
     if (option === "youtube") {
-        fetchYoutubePlaylist(url);
+        fetchYoutubeItem(url);
     }
     else if (option === "soundcloud") {
         fetchSoundcloudPlaylist(url);

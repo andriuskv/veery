@@ -1,5 +1,6 @@
 import { formatTime } from "./utils.js";
 import { addImportedPlaylist, showNotice } from "./playlist/playlist.import.js";
+import { getPlaylistById } from "./playlist/playlist.js";
 
 function showYoutubeNotice(notice) {
     showNotice("youtube", notice);
@@ -26,7 +27,7 @@ function parseDuration(duration) {
 
 async function getVideoDuration(items) {
     const ids = items.map(item => item.snippet.resourceId.videoId).join();
-    const data = await getYoutube("videos", "contentDetails", "id", ids);
+    const data = await fetchYoutube("videos", "contentDetails", "id", ids);
 
     return items.map((item, index) => {
         item.durationInSeconds = parseDuration(data.items[index].contentDetails.duration);
@@ -34,7 +35,7 @@ async function getVideoDuration(items) {
     });
 }
 
-function getYoutube(path, part, filter, id, token) {
+function fetchYoutube(path, part, filter, id, token) {
     let params = `part=${part}&${filter}=${id}&maxResults=50&key=${process.env.YOUTUBE_API_KEY}`;
 
     if (token) {
@@ -69,28 +70,58 @@ function parseItems(items, id, timeStamp, lastIndex) {
     }));
 }
 
-async function getPlaylistItems(id, timeStamp, token, lastIndex = 0) {
-    const data = await getYoutube("playlistItems", "snippet", "playlistId", id, token);
+async function fetchPlaylistItems(id, timeStamp, token, lastIndex = 0) {
+    const data = await fetchYoutube("playlistItems", "snippet", "playlistId", id, token);
     const validItems = filterInvalidItems(data.items);
     const items = await getVideoDuration(validItems);
     const tracks = parseItems(items, id, timeStamp, lastIndex);
 
     if (data.nextPageToken) {
         lastIndex = tracks[tracks.length - 1].index + 1;
-        const nextPageItems = await getPlaylistItems(id, timeStamp, data.nextPageToken, lastIndex);
+        const nextPageItems = await fetchPlaylistItems(id, timeStamp, data.nextPageToken, lastIndex);
 
         return tracks.concat(nextPageItems);
     }
     return tracks;
 }
 
+async function parseVideos(videos, latestIndex) {
+    const validItems = filterInvalidItems(videos).map(item => {
+        item.snippet.resourceId = { videoId: item.id };
+        return item;
+    });
+    const timeStamp = new Date().getTime();
+    const items = await getVideoDuration(validItems);
+
+    return parseItems(items, "youtube", timeStamp, latestIndex);
+}
+
 async function getPlaylistTitle(id) {
-    const { items } = await getYoutube("playlists", "snippet", "id", id);
+    const { items } = await fetchYoutube("playlists", "snippet", "id", id);
 
     return items.length ? items[0].snippet.title: "";
 }
 
-async function fetchYoutubePlaylist(url) {
+async function addVideo(id) {
+    const { items } = await fetchYoutube("videos", "snippet", "id", id);
+
+    if (!items.length) {
+        showYoutubeNotice("Video was not found");
+        return;
+    }
+    const pl = getPlaylistById("youtube");
+    const latestIndex = pl && pl.tracks.length || 0;
+    const playlist = {
+        title: "YouTube",
+        id: "youtube",
+        tracks: await parseVideos(items, latestIndex),
+        player: "youtube",
+        type: "grid"
+    };
+    addImportedPlaylist(playlist);
+}
+
+async function addPlaylist(url) {
     const id = url.split("list=")[1];
 
     if (!id) {
@@ -104,12 +135,11 @@ async function fetchYoutubePlaylist(url) {
         return;
     }
     const timeStamp = new Date().getTime();
-    const tracks = await getPlaylistItems(id, timeStamp);
     const playlist = {
-        id,
         url,
         title,
-        tracks,
+        id,
+        tracks: await fetchPlaylistItems(id, timeStamp),
         player: "youtube",
         type: "grid"
     };
@@ -117,6 +147,16 @@ async function fetchYoutubePlaylist(url) {
     addImportedPlaylist(playlist);
 }
 
+async function fetchYoutubeItem(url) {
+    const match = url.match(/v=[a-zA-Z0-9\-]+/);
+
+    if (match) {
+        addVideo(match[0].slice(2));
+        return;
+    }
+    addPlaylist(url);
+}
+
 export {
-    fetchYoutubePlaylist
+    fetchYoutubeItem
 };
