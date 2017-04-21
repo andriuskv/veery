@@ -37,9 +37,9 @@ async function parseTracks(tracks, id, timeStamp, parsedTracks = []) {
 function showDropboxChooser() {
     Dropbox.choose({
         success(files) {
-            const pl = getPlaylistById("dropbox-tracks") || createPlaylist({
-                id: "dropbox-tracks",
-                title: "Dropbox tracks",
+            const pl = getPlaylistById("dropbox") || createPlaylist({
+                id: "dropbox",
+                title: "Dropbox",
                 type: "grid",
                 player: "native"
             });
