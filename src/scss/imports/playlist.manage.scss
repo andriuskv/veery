@@ -14,13 +14,6 @@
     font-size: 18px;
     font-weight: normal;
 }
-.import-option-container,
-.pl-entry-container {
-    padding: 8px;
-    border: 1px solid $color1;
-    border-radius: 2px;
-    background-color: $color3;
-}
 .import-option-container {
     flex-basis: 288px;
     margin-bottom: 8px;
@@ -29,7 +22,6 @@
 .pl-entries {
     padding: 4px;
     border: 1px solid $color3;
-    border-radius: 2px;
     background-color: $color1;
 }
 .option-mask {
@@ -51,9 +43,20 @@
 .mask-message {
     margin-left: 6px;
 }
+.import-option,
+.pl-entry {
+    &:first-of-type {
+        padding-top: 0;
+    }
+
+    &:last-of-type {
+        padding-bottom: 0;
+        border-bottom: none;
+    }
+}
 .import-option {
     position: relative;
-    padding: 2px;
+    padding: 2px 0;
     border-bottom: 1px solid $color3;
 }
 .import-option-btn {
@@ -64,6 +67,7 @@
 
     justify-content: flex-start;
     width: 100%;
+    padding: 1px 0;
 
     &.active .import-option-title {
         display: none;
@@ -71,7 +75,7 @@
 }
 .import-option-icon {
     padding: 1px 0;
-    margin-right: 8px;
+    margin-right: 6px;
 }
 .import-form {
     display: inline-flex;
@@ -93,7 +97,7 @@
 }
 .pl-entry {
     display: flex;
-    padding: 4px;
+    padding: 4px 0;
     border-bottom: 1px solid $color3;
 
     .btn {

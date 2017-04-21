@@ -13,8 +13,9 @@ function createSidebarEntry(title, id) {
     const sidebarEntries = getElementById("js-sidebar-entries");
     const newEntry = `
         <li>
-            <a href="#/playlist/${id}" id="js-sidebar-entry-${id}"
-                class="btn btn-dark sidebar-btn">${title}</a>
+            <a href="#/playlist/${id}" id="js-sidebar-entry-${id}" class="btn btn-dark sidebar-btn">
+                <span>${title}</span>
+            </a>
         </li>
     `;
 
@@ -24,7 +25,7 @@ function createSidebarEntry(title, id) {
 function editSidebarEntry(id, title) {
     const entry = getSidebarEntry(id);
 
-    entry.textContent = title;
+    entry.firstElementChild.textContent = title;
 }
 
 function removeSidebarEntry(id) {
