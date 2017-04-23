@@ -2,7 +2,7 @@ import { removeElementClass, getElementById, getElementByAttr } from "./../utils
 import { getVisiblePlaylistId } from "./../tab.js";
 import { setSetting, getSetting, removeSetting } from "./../settings.js";
 import { showTrackInfo, showActiveIcon, removeActiveIcon } from "./../sidebar.js";
-import { showPlayingTrack } from "./../playlist/playlist.view.js";
+import { showTrack } from "./../playlist/playlist.view.js";
 import * as playlist from "./../playlist/playlist.js";
 import * as controls from "./player.controls.js";
 import * as nPlayer from "./player.native.js";
@@ -64,7 +64,7 @@ function beforeTrackStart(track) {
     controls.showTrackDuration(track.duration);
 
     if (id === track.playlistId && track.index !== -1) {
-        showPlayingTrack(track.index, track.playlistId, scrollToTrack);
+        showTrack(track.playlistId, track.index, scrollToTrack);
     }
     scrollToTrack = false;
 }
@@ -149,7 +149,7 @@ function play(source, sourceValue, id = playlist.getActivePlaylistId()) {
     }
 
     if (pl.shuffled !== shuffle) {
-        playlist.shufflePlaybackOrder(pl, shuffle);
+        playlist.setPlaybackOrder(pl, shuffle);
     }
 
     if (source === "index") {
@@ -242,7 +242,7 @@ function toggleShuffle(shuffle) {
     const pl = playlist.getActivePlaylist();
 
     if (pl) {
-        playlist.shufflePlaybackOrder(pl, shuffle);
+        playlist.setPlaybackOrder(pl, shuffle);
     }
 }
 

@@ -53,9 +53,8 @@ function filterInvalidItems(items) {
     });
 }
 
-function parseItems(items, id, timeStamp, lastIndex) {
-    return items.map((track, index) => ({
-        index: index + lastIndex,
+function parseItems(items, id, timeStamp) {
+    return items.map(track => ({
         id: track.snippet.resourceId.videoId,
         durationInSeconds: track.durationInSeconds,
         duration: formatTime(track.durationInSeconds),
@@ -70,15 +69,14 @@ function parseItems(items, id, timeStamp, lastIndex) {
     }));
 }
 
-async function fetchPlaylistItems(id, timeStamp, token, lastIndex = 0) {
+async function fetchPlaylistItems(id, timeStamp, token) {
     const data = await fetchYoutube("playlistItems", "snippet", "playlistId", id, token);
     const validItems = filterInvalidItems(data.items);
     const items = await getVideoDuration(validItems);
-    const tracks = parseItems(items, id, timeStamp, lastIndex);
+    const tracks = parseItems(items, id, timeStamp);
 
     if (data.nextPageToken) {
-        lastIndex = tracks[tracks.length - 1].index + 1;
-        const nextPageItems = await fetchPlaylistItems(id, timeStamp, data.nextPageToken, lastIndex);
+        const nextPageItems = await fetchPlaylistItems(id, timeStamp, data.nextPageToken);
 
         return tracks.concat(nextPageItems);
     }

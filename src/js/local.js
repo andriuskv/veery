@@ -57,7 +57,7 @@ function getTrackMetadata(track) {
 
 async function parseTracks(tracks, id, timeStamp, parsedTracks = []) {
     const { audioTrack, name } = tracks[parsedTracks.length];
-    const [data, durationInSeconds] = await Promise.all([
+    const [{ artist, title, album, picture }, durationInSeconds] = await Promise.all([
         getTrackMetadata(audioTrack),
         getTrackDuration(audioTrack)
     ]);
@@ -66,11 +66,10 @@ async function parseTracks(tracks, id, timeStamp, parsedTracks = []) {
         audioTrack,
         durationInSeconds,
         name,
-        index: parsedTracks.length,
-        title: data.artist ? data.title.trim(): name,
-        artist: data.artist ? data.artist.trim() : "",
-        album: data.album ? data.album.trim() : "",
-        thumbnail: data.picture || "assets/images/album-art-placeholder.png",
+        title: artist ? title.trim(): name,
+        artist: artist ? artist.trim() : "",
+        album: album ? album.trim() : "",
+        thumbnail: picture || "assets/images/album-art-placeholder.png",
         duration: formatTime(durationInSeconds),
         player: "native",
         playlistId: id,
@@ -96,12 +95,17 @@ async function addTracks(importOption, pl, newTracks, parseTracks) {
         showNotice(importOption, "Tracks already exist");
         return;
     }
-    await scriptLoader.load({ src: "libs/metadata-audio-parser.min.js" });
-    const timeStamp = new Date().getTime();
-    const parsedTracks = await parseTracks(tracks, pl.id, timeStamp);
+    try {
+        await scriptLoader.load({ src: "libs/metadata-audio-parser.min.js" });
+        const timeStamp = new Date().getTime();
+        const parsedTracks = await parseTracks(tracks, pl.id, timeStamp);
 
-    addTracksToPlaylist(pl, parsedTracks);
-    removeImportOptionMask(importOption);
+        addTracksToPlaylist(pl, parsedTracks);
+        removeImportOptionMask(importOption);
+    }
+    catch (error) {
+        console.log(error);
+    }
 }
 
 function selectLocalFiles(files) {

@@ -104,12 +104,12 @@ function shuffleArray(array) {
 }
 
 function getPlaybackOrder(tracks, shuffle) {
-    const playbackOrder = tracks.map(track => track.index);
+    const playbackOrder = tracks.map((track, index) => index);
 
     return shuffle ? shuffleArray(playbackOrder) : playbackOrder;
 }
 
-function shufflePlaybackOrder({ id, tracks }, shuffle) {
+function setPlaybackOrder({ id, tracks }, shuffle) {
     updatePlaylist(id, {
         shuffled: shuffle,
         playbackOrder: getPlaybackOrder(tracks, shuffle)
@@ -160,6 +160,6 @@ export {
     getNextTrack,
     setPlaybackIndex,
     getPlaybackOrder,
-    shufflePlaybackOrder,
+    setPlaybackOrder,
     resetTrackIndexes
 };

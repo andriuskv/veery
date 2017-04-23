@@ -1,9 +1,9 @@
 import { capitalize, getElementById } from "./../utils.js";
 import { getVisiblePlaylistId } from "./../tab.js";
 import { removePanel } from "./../panels.js";
-import { getPlaylistById } from "./playlist.js";
-import { refreshPlaylist, updatePlaylist } from "./playlist.manage.js";
-import { getPlaylistTrackElements, filterTracks } from "./playlist.view.js";
+import { getPlaylistById, resetTrackIndexes } from "./playlist.js";
+import { updateCurrentTrack, updatePlaylist } from "./playlist.manage.js";
+import { getPlaylistTrackElements, filterTracks, updatePlaylistView } from "./playlist.view.js";
 
 function setSortBtnText(text = "Sorting") {
     getElementById("js-sort-toggle").textContent = text;
@@ -44,12 +44,14 @@ function changePlaylistSorting(pl, sortBy) {
     const query = getElementById("js-filter-input").value;
     const order = pl.sortedBy === sortBy && pl.order === 1 ? -1 : 1;
 
+    sortTracks(pl.tracks, sortBy, order);
     updatePlaylist(pl.id, {
         order,
-        sortedBy: sortBy
+        sortedBy: sortBy,
+        tracks: resetTrackIndexes(pl.tracks)
     });
-    sortTracks(pl.tracks, sortBy, order);
-    refreshPlaylist(pl);
+    updatePlaylistView(pl);
+    updateCurrentTrack(pl);
 
     if (query) {
         const elements = getPlaylistTrackElements(pl.id);

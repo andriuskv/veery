@@ -26,7 +26,7 @@ function toggleToPlaylistTab(id, isForPhoneOnly) {
     }
 
     if (track && track.playlistId === id && track.index !== -1) {
-        playlistView.showPlayingTrack(track.index, id);
+        playlistView.showTrack(id, track.index);
     }
 
     if (pl.type === "list" && isForPhoneOnly) {
