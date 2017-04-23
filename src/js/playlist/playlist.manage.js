@@ -1,5 +1,5 @@
 import * as playlist from "./playlist.js";
-import { appendToPlaylistView, removePlaylistTab, updatePlaylistView, showPlayingTrack } from "./playlist.view.js";
+import { removePlaylistTab, showTrack, updatePlaylistView } from "./playlist.view.js";
 import { getElementById } from "./../utils.js";
 import { isRouteActive, addRoute, toggleRoute } from "./../router.js";
 import { getSetting } from "./../settings.js";
@@ -9,17 +9,13 @@ import { stopPlayer } from "./../player/player.js";
 import { sortTracks } from "./playlist.sorting.js";
 import { createPlaylistEntry } from "./playlist.entries.js";
 
-function resortTracks(pl) {
-    playlist.shufflePlaybackOrder(pl, getSetting("shuffle"));
+function updateTracks(pl) {
+    playlist.setPlaybackOrder(pl, getSetting("shuffle"));
 
     if (pl.sortedBy) {
         sortTracks(pl.tracks, pl.sortedBy, pl.order);
-        pl.tracks = playlist.resetTrackIndexes(pl.tracks);
-
-        if (pl.rendered) {
-            refreshPlaylist(pl);
-        }
     }
+    pl.tracks = playlist.resetTrackIndexes(pl.tracks);
 }
 
 function initPlaylist(pl) {
@@ -27,12 +23,7 @@ function initPlaylist(pl) {
     addRoute(`playlist/${pl.id}`);
     createSidebarEntry(pl.title, pl.id);
     createPlaylistEntry(pl.title, pl.id, pl.url);
-    resortTracks(pl);
-}
-
-function appendToPlaylist(pl, tracks) {
-    appendToPlaylistView(pl, tracks);
-    resortTracks(pl);
+    updateTracks(pl);
 }
 
 function removePlaylist(id) {
@@ -52,10 +43,8 @@ function removePlaylist(id) {
     });
 }
 
-function refreshPlaylist(pl) {
+function updateCurrentTrack(pl) {
     const currentTrack = playlist.getCurrentTrack();
-
-    updatePlaylistView(pl);
 
     if (currentTrack && playlist.isActive(pl.id)) {
         const track = playlist.findTrack(pl.id, currentTrack.name);
@@ -63,7 +52,7 @@ function refreshPlaylist(pl) {
         if (track) {
             playlist.updateCurrentTrack({ index: track.index });
             playlist.setPlaybackIndex(track.index);
-            showPlayingTrack(track.index, pl.id);
+            showTrack(pl.id, track.index);
         }
     }
 }
@@ -75,8 +64,12 @@ function addTracksToPlaylist(pl, tracks, showPlaylist = isRouteActive("manage"))
         initPlaylist(pl);
     }
     else {
-        pl.tracks = playlist.resetTrackIndexes(pl.tracks);
-        appendToPlaylist(pl, tracks);
+        updateTracks(pl);
+
+        if (pl.rendered) {
+            updatePlaylistView(pl);
+            updateCurrentTrack(pl);
+        }
     }
 
     if (showPlaylist) {
@@ -88,10 +81,10 @@ function addTracksToPlaylist(pl, tracks, showPlaylist = isRouteActive("manage"))
     });
 }
 
-function updatePlaylist(playlistId, data) {
-    const { _id } = playlist.getPlaylistById(playlistId);
+function updatePlaylist(id, data) {
+    const { _id } = playlist.getPlaylistById(id);
 
-    playlist.updatePlaylist(playlistId, data);
+    playlist.updatePlaylist(id, data);
     postMessageToWorker({
         action: "update",
         playlist: Object.assign({ _id }, data)
@@ -130,7 +123,7 @@ function createNewPlaylistInputForm(id, element, handleSubmit) {
 export {
     initPlaylist,
     removePlaylist,
-    refreshPlaylist,
+    updateCurrentTrack,
     addTracksToPlaylist,
     updatePlaylist,
     onNewPlaylistFormSubmit,

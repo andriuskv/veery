@@ -90,27 +90,21 @@ function renderPlaylist(pl) {
     container.insertAdjacentHTML("beforeend", tab);
 }
 
-function appendToPlaylistView(pl, tracks) {
-    if (!pl.rendered) {
-        renderPlaylist(pl);
-        return;
-    }
-    const element = getPlaylistElement(pl.id);
-    const cb = pl.type === "list" ? createListItem: createGridItem;
-
-    element.insertAdjacentHTML("beforeend", createItems(tracks, cb));
-}
-
 function updatePlaylistView({ id, type, tracks }) {
-    const elements = getPlaylistTrackElements(id);
+    const playlistElement = getPlaylistElement(id);
+    const elements = playlistElement.children;
     const cb = type === "list" ? createListItem: createGridItem;
 
     tracks.forEach((track, index) => {
-        const div = document.createElement("div");
+        if (elements[index]) {
+            const div = document.createElement("div");
 
-        track.index = index;
-        div.innerHTML = cb(track);
-        replaceElement(div.firstElementChild, elements[index]);
+            div.innerHTML = cb(track);
+            replaceElement(div.firstElementChild, elements[index]);
+        }
+        else {
+            playlistElement.insertAdjacentHTML("beforeend", cb(track));
+        }
     });
 }
 
@@ -132,15 +126,15 @@ function scrollToTrackElement(trackElement, playlistElement) {
     }
 }
 
-function showPlayingTrack(index, id, scrollToTrack) {
-    const elements = getPlaylistTrackElements(id);
-    const element = elements[index];
+function showTrack(id, index, scrollToTrack) {
+    const element = getPlaylistElement(id);
+    const trackElement = element.children[index];
 
     removeElementClass("track", "playing");
-    element.classList.add("playing");
+    trackElement.classList.add("playing");
 
     if (scrollToTrack) {
-        scrollToTrackElement(element, element);
+        scrollToTrackElement(trackElement, element);
     }
 }
 
@@ -197,7 +191,7 @@ function changePlaylistType(type, pl) {
         const track = getCurrentTrack();
 
         if (track) {
-            showPlayingTrack(track.index, pl.id);
+            showTrack(pl.id, track.index);
         }
     }
 }
@@ -276,9 +270,8 @@ export {
     getPlaylistTrackElements,
     removePlaylistTab,
     updatePlaylistView,
-    appendToPlaylistView,
     renderPlaylist,
-    showPlayingTrack,
+    showTrack,
     filterTracks,
     togglePlaylistTypeBtn,
     addMarginToPlaylistHeader,

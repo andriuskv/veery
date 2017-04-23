@@ -16,11 +16,10 @@ async function initSoundcloud() {
 }
 
 function parseTracks(tracks, id, timeStamp) {
-    return tracks.map((track, index) => {
+    return tracks.map(track => {
         const duration = Math.floor(track.duration / 1000);
 
         return {
-            index,
             durationInSeconds: duration,
             duration: formatTime(duration),
             id: track.id,
