@@ -1,6 +1,6 @@
 import { getElementById, replaceElement, removeElement, removeElementClass, getTrackArt } from "./../utils.js";
 import { getVisiblePlaylistId } from "./../tab.js";
-import { getPlaylistById, isActive, getCurrentTrack } from "./playlist.js";
+import { getPlaylistById, isPlaylistActive, getCurrentTrack } from "./playlist.js";
 import { updatePlaylist } from "./playlist.manage.js";
 import { enableTrackSelection } from "./playlist.track-selection.js";
 
@@ -187,7 +187,7 @@ function changePlaylistType(type, pl) {
     togglePlaylistTypeBtn(type);
     addMarginToPlaylistHeader(pl.id, type);
 
-    if (isActive(pl.id)) {
+    if (isPlaylistActive(pl.id)) {
         const track = getCurrentTrack();
 
         if (track) {

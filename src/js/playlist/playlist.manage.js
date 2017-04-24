@@ -29,7 +29,7 @@ function initPlaylist(pl) {
 function removePlaylist(id) {
     const { rendered, _id } = playlist.getPlaylistById(id);
 
-    if (playlist.isActive(id)) {
+    if (playlist.isPlaylistActive(id)) {
         stopPlayer();
     }
     if (rendered) {
@@ -46,7 +46,7 @@ function removePlaylist(id) {
 function updateCurrentTrack(pl) {
     const currentTrack = playlist.getCurrentTrack();
 
-    if (currentTrack && playlist.isActive(pl.id)) {
+    if (currentTrack && playlist.isPlaylistActive(pl.id)) {
         const track = playlist.findTrack(pl.id, currentTrack.name);
 
         if (track) {

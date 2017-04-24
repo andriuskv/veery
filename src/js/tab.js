@@ -1,3 +1,10 @@
+import {
+    renderPlaylist,
+    showTrack,
+    changePlaylistType,
+    togglePlaylistTypeBtn,
+    resetFilteredPlaylist
+} from "./playlist/playlist.view.js";
 import { removeElementClass, getElementById, getElementByAttr, dispatchCustomEvent } from "./utils.js";
 import { getSidebarEntry } from "./sidebar.js";
 import { togglePanel } from "./panels.js";
@@ -5,7 +12,6 @@ import { getPlaylistById, getCurrentTrack } from "./playlist/playlist.js";
 import { enableTrackSelection } from "./playlist/playlist.track-selection.js";
 import { setSortOptions, createSortPanel, changePlaylistOrder } from "./playlist/playlist.sorting.js";
 import { createMoveToPanel } from "./playlist/playlist.move-to.js";
-import * as playlistView from "./playlist/playlist.view.js";
 
 let visiblePlaylistId = "";
 
@@ -22,22 +28,22 @@ function toggleToPlaylistTab(id, isForPhoneOnly) {
     const track = getCurrentTrack();
 
     if (!pl.rendered) {
-        playlistView.renderPlaylist(pl);
+        renderPlaylist(pl);
     }
 
     if (track && track.playlistId === id && track.index !== -1) {
-        playlistView.showTrack(id, track.index);
+        showTrack(id, track.index);
     }
 
     if (pl.type === "list" && isForPhoneOnly) {
-        playlistView.changePlaylistType("grid", pl);
+        changePlaylistType("grid", pl);
     }
     else {
-        playlistView.togglePlaylistTypeBtn(pl.type);
+        togglePlaylistTypeBtn(pl.type);
     }
     setSortOptions(pl);
     enableTrackSelection(pl.id);
-    playlistView.resetFilteredPlaylist();
+    resetFilteredPlaylist();
     dispatchCustomEvent("track-length-change", {
         id: pl.id,
         tracks: pl.tracks,
@@ -61,7 +67,7 @@ getElementById("js-tab-header").addEventListener("click", ({ target }) => {
         togglePanel("js-move-to-panel", pl, createMoveToPanel);
     }
     else if ((item === "list" || item === "grid") && item !== pl.type) {
-        playlistView.changePlaylistType(item, pl);
+        changePlaylistType(item, pl);
     }
     else if (item === "sorting") {
         togglePanel("js-sort-panel", pl, createSortPanel);
