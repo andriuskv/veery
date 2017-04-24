@@ -1,10 +1,30 @@
+import {
+    setTrackBarInnerWidth,
+    setVolumeBarInnerWidth,
+    displayCurrentTime,
+    showTrackDuration,
+    togglePlayBtn,
+    elapsedTime,
+    resetTrackBar
+} from "./player.controls.js";
+import {
+    getPlaylistById,
+    getActivePlaylistId,
+    setPlaylistAsActive,
+    getActivePlaylist,
+    setPlaybackOrder,
+    findTrack,
+    setCurrentTrack,
+    getCurrentTrack,
+    setPlaybackIndex,
+    getTrack,
+    getNextTrack
+} from "./../playlist/playlist.js";
 import { removeElementClass, getElementById, getElementByAttr } from "./../utils.js";
 import { getVisiblePlaylistId } from "./../tab.js";
 import { setSetting, getSetting, removeSetting } from "./../settings.js";
 import { showTrackInfo, showActiveIcon, removeActiveIcon } from "./../sidebar.js";
 import { showTrack } from "./../playlist/playlist.view.js";
-import * as playlist from "./../playlist/playlist.js";
-import * as controls from "./player.controls.js";
 import * as nPlayer from "./player.native.js";
 import * as ytPlayer from "./player.youtube.js";
 import * as scPlayer from "./player.soundcloud.js";
@@ -37,14 +57,14 @@ const storedTrack = (function () {
         if (!storedTrack) {
             return;
         }
-        const track = playlist.findTrack(storedTrack.playlistId, storedTrack.name);
+        const track = findTrack(storedTrack.playlistId, storedTrack.name);
 
         if (!track) {
             removeTrack();
             return;
         }
-        controls.setTrackBarInnerWidth(storedTrack.elapsed);
-        controls.displayCurrentTime(storedTrack.currentTime);
+        setTrackBarInnerWidth(storedTrack.elapsed);
+        displayCurrentTime(storedTrack.currentTime);
         playNewTrack(track, storedTrack.currentTime);
     }
 
@@ -61,7 +81,7 @@ function beforeTrackStart(track) {
     const id = getVisiblePlaylistId();
 
     showTrackInfo(track);
-    controls.showTrackDuration(track.duration);
+    showTrackDuration(track.duration);
 
     if (id === track.playlistId && track.index !== -1) {
         showTrack(track.playlistId, track.index, scrollToTrack);
@@ -70,17 +90,17 @@ function beforeTrackStart(track) {
 }
 
 function onTrackStart(startTime) {
-    const track = playlist.getCurrentTrack();
+    const track = getCurrentTrack();
 
     paused = false;
     showActiveIcon(track.playlistId);
-    controls.togglePlayBtn(paused);
+    togglePlayBtn(paused);
     storedTrack.saveTrack({
         playlistId: track.playlistId,
         name: track.name,
         player: track.player
     });
-    controls.elapsedTime.start({
+    elapsedTime.start({
         currentTime: startTime,
         duration: track.durationInSeconds
     });
@@ -98,8 +118,8 @@ function togglePlaying(track) {
     }
     if (!paused) {
         removeActiveIcon();
-        controls.elapsedTime.stop();
-        controls.togglePlayBtn(!paused);
+        elapsedTime.stop();
+        togglePlayBtn(!paused);
     }
     paused = !paused;
 }
@@ -107,9 +127,9 @@ function togglePlaying(track) {
 function playNewTrack(track, startTime) {
     const volume = getSetting("volume");
 
-    playlist.setPlaylistAsActive(track.playlistId);
-    playlist.setPlaybackIndex(track.index);
-    playlist.setCurrentTrack(track);
+    setPlaylistAsActive(track.playlistId);
+    setPlaybackIndex(track.index);
+    setCurrentTrack(track);
     beforeTrackStart(track);
 
     if (track.player === "native") {
@@ -124,7 +144,7 @@ function playNewTrack(track, startTime) {
 }
 
 function playTrack() {
-    const track = playlist.getCurrentTrack();
+    const track = getCurrentTrack();
 
     if (!track) {
         play("direction", 0, getVisiblePlaylistId());
@@ -133,10 +153,10 @@ function playTrack() {
     togglePlaying(track);
 }
 
-function play(source, sourceValue, id = playlist.getActivePlaylistId()) {
-    const pl = playlist.getPlaylistById(id);
+function play(source, sourceValue, id = getActivePlaylistId()) {
+    const pl = getPlaylistById(id);
     const shuffle = getSetting("shuffle");
-    const currentTrack = playlist.getCurrentTrack();
+    const currentTrack = getCurrentTrack();
     let track = null;
 
     if (!pl) {
@@ -144,19 +164,19 @@ function play(source, sourceValue, id = playlist.getActivePlaylistId()) {
     }
 
     if (currentTrack) {
-        controls.resetTrackBar();
+        resetTrackBar();
         stopTrack(currentTrack);
     }
 
     if (pl.shuffled !== shuffle) {
-        playlist.setPlaybackOrder(pl, shuffle);
+        setPlaybackOrder(pl, shuffle);
     }
 
     if (source === "index") {
-        track = playlist.getTrack(pl.tracks[sourceValue]);
+        track = getTrack(pl.tracks[sourceValue]);
     }
     else if (source === "direction") {
-        track = playlist.getNextTrack(pl, sourceValue);
+        track = getNextTrack(pl, sourceValue);
         scrollToTrack = true;
     }
 
@@ -198,7 +218,7 @@ function stopTrack(track, once) {
 }
 
 function stopPlayer(once) {
-    const track = playlist.getCurrentTrack();
+    const track = getCurrentTrack();
 
     if (track) {
         stopTrack(track, once);
@@ -208,15 +228,15 @@ function stopPlayer(once) {
 
 function resetPlayer(once) {
     if (!once) {
-        playlist.setCurrentTrack();
-        playlist.setPlaylistAsActive();
+        setCurrentTrack();
+        setPlaylistAsActive();
         showTrackInfo();
     }
     paused = true;
     storedTrack.remove();
-    controls.resetTrackBar();
-    controls.showTrackDuration();
-    controls.togglePlayBtn(paused);
+    resetTrackBar();
+    showTrackDuration();
+    togglePlayBtn(paused);
     removeActiveIcon();
     removeElementClass("track", "playing");
 }
@@ -239,10 +259,10 @@ function onControlButtonClick(button) {
 }
 
 function toggleShuffle(shuffle) {
-    const pl = playlist.getActivePlaylist();
+    const pl = getActivePlaylist();
 
     if (pl) {
-        playlist.setPlaybackOrder(pl, shuffle);
+        setPlaybackOrder(pl, shuffle);
     }
 }
 
@@ -261,7 +281,8 @@ function setVolume(track, volume) {
 function seekTo(track, percent) {
     const currentTime = Math.floor(track.durationInSeconds / 100 * percent);
 
-    controls.elapsedTime.stop();
+    elapsedTime.stop();
+
     if (track.player === "native") {
         nPlayer.seekTo(currentTime, track.audio);
     }
@@ -271,11 +292,11 @@ function seekTo(track, percent) {
     else if (track.player === "soundcloud") {
         scPlayer.seekTo(currentTime);
     }
-    controls.displayCurrentTime(currentTime);
+    displayCurrentTime(currentTime);
 }
 
 function mutePlayer(muted) {
-    const track = playlist.getCurrentTrack();
+    const track = getCurrentTrack();
     const newVolume = muted ? 0 : getSetting("volumeBeforeMute");
 
     if (muted) {
@@ -288,7 +309,7 @@ function mutePlayer(muted) {
     }
     setSetting("mute", muted);
     setSetting("volume", newVolume);
-    controls.setVolumeBarInnerWidth(newVolume);
+    setVolumeBarInnerWidth(newVolume);
 
     if (track) {
         setVolume(track, newVolume);
@@ -334,7 +355,7 @@ window.addEventListener("track-end", () => {
         playNextTrack();
         return;
     }
-    playNewTrack(playlist.getCurrentTrack());
+    playNewTrack(getCurrentTrack());
 });
 
 export {

@@ -44,7 +44,7 @@ function getActivePlaylistId() {
     return activePlaylistId;
 }
 
-function isActive(id) {
+function isPlaylistActive(id) {
     return id === activePlaylistId;
 }
 
@@ -149,7 +149,7 @@ export {
     getAllPlaylists,
     createPlaylist,
     updatePlaylist,
-    isActive,
+    isPlaylistActive,
     getActivePlaylist,
     getActivePlaylistId,
     getTrack,

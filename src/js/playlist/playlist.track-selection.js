@@ -9,7 +9,7 @@ import {
 } from "./../utils.js";
 import {
     getPlaylistById,
-    isActive,
+    isPlaylistActive,
     getCurrentTrack,
     updateCurrentTrack,
     resetTrackIndexes,
@@ -174,7 +174,7 @@ function adjustMousePosition(pos, max) {
 
 function isAboveThreshold(mousePos, startingPoint) {
     return mousePos.x > startingPoint.x + 2 || mousePos.x < startingPoint.x - 2
-        && mousePos.y > startingPoint.y + 2 || mousePos.y < startingPoint.y - 2;
+        || mousePos.y > startingPoint.y + 2 || mousePos.y < startingPoint.y - 2;
 }
 
 function stopScrolling() {
@@ -354,7 +354,7 @@ function resetTrackElementIndexes(elements) {
 function updateCurrentTrackIndex(playlistId, selectedTrackIndexes) {
     const currentTrack = getCurrentTrack();
 
-    if (currentTrack && isActive(playlistId)) {
+    if (currentTrack && isPlaylistActive(playlistId)) {
         let index = currentTrack.index;
 
         if (selectedTrackIndexes.includes(index)) {
