@@ -30,7 +30,7 @@ function createListItem(item) {
 
 function createList(id, items) {
     return `
-        <ul id="js-list-view-header-${id}" class="list-view-header">
+        <ul class="list-view-header">
             <li class="list-view-header-item">Title</li>
             <li class="list-view-header-item">Artist</li>
             <li class="list-view-header-item">Album</li>
@@ -171,21 +171,11 @@ function togglePlaylistTypeBtn(type) {
     }
 }
 
-function addMarginToPlaylistHeader(id, type) {
-    if (type === "list") {
-        const element = getPlaylistElement(id);
-        const scrollBarWidth = element.offsetWidth - element.clientWidth;
-
-        getElementById(`js-list-view-header-${id}`).style.marginRight = `${scrollBarWidth}px`;
-    }
-}
-
 function changePlaylistType(type, pl) {
     updatePlaylist(pl.id, { type });
     getElementById(`js-tab-${pl.id}`).innerHTML = createPlaylist(pl);
     enableTrackSelection(pl.id);
     togglePlaylistTypeBtn(type);
-    addMarginToPlaylistHeader(pl.id, type);
 
     if (isPlaylistActive(pl.id)) {
         const track = getCurrentTrack();
@@ -223,7 +213,15 @@ function resetFilteredPlaylist() {
     }
 }
 
-function updatePlaylistDuration(tracks) {
+getElementById("js-filter-input").addEventListener("keyup", ({ target }) => {
+    const id = getVisiblePlaylistId();
+    const filter = target.value.trim().toLowerCase();
+
+    clearTimeout(timeout);
+    timeout = setTimeout(filterPlaylist, 400, id, filter);
+});
+
+window.addEventListener("track-length-change", ({ detail: tracks }) => {
     const tabFooterElement = getElementById("js-tab-footer");
     const duration = getTrackDuration(tracks);
     const trackString = getValueString(tracks.length, "track");
@@ -235,22 +233,6 @@ function updatePlaylistDuration(tracks) {
         durationString = `${hourString} and ${durationString}`;
     }
     tabFooterElement.textContent = `${trackString}, ${durationString} of playtime`;
-}
-
-getElementById("js-filter-input").addEventListener("keyup", ({ target }) => {
-    const id = getVisiblePlaylistId();
-    const filter = target.value.trim().toLowerCase();
-
-    clearTimeout(timeout);
-    timeout = setTimeout(filterPlaylist, 400, id, filter);
-});
-
-window.addEventListener("track-length-change", ({ detail }) => {
-    updatePlaylistDuration(detail.tracks);
-
-    if (detail.id && detail.type) {
-        addMarginToPlaylistHeader(detail.id, detail.type);
-    }
 });
 
 window.addEventListener("resize", ({ target }) => {
@@ -274,7 +256,6 @@ export {
     showTrack,
     filterTracks,
     togglePlaylistTypeBtn,
-    addMarginToPlaylistHeader,
     changePlaylistType,
     resetFilteredPlaylist
 };

@@ -16,7 +16,7 @@ function showMoveToBtn() {
         </div>
     `;
 
-    getElementById("js-list-toggle-btn").insertAdjacentHTML("beforebegin", element);
+    getElementById("js-playlist-type-btns").insertAdjacentHTML("beforebegin", element);
 }
 
 function handleSubmit(event) {

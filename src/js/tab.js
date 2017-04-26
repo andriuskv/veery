@@ -44,11 +44,7 @@ function toggleToPlaylistTab(id, isForPhoneOnly) {
     setSortOptions(pl);
     enableTrackSelection(pl.id);
     resetFilteredPlaylist();
-    dispatchCustomEvent("track-length-change", {
-        id: pl.id,
-        tracks: pl.tracks,
-        type: pl.type
-    });
+    dispatchCustomEvent("track-length-change", pl.tracks);
 }
 
 getElementById("js-tab-header").addEventListener("click", ({ target }) => {

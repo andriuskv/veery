@@ -182,22 +182,24 @@
                         </button>
                         <input type="text" id="js-filter-input" class="filter-input" placeholder="Filter">
                     </div>
-                    <button id="js-list-toggle-btn" class="btn tab-header-item list-toggle-btn"
+                    <div id="js-playlist-type-btns" class="playlist-type-btns">
+                        <button id="js-list-toggle-btn" class="btn btn-icon tab-header-item"
                         data-header-item="list" title="List">
                         <svg viewBox="0 0 24 24">
                             <path d="M9,5V9H21V5M9,19H21V15H9M9,14H21V10H9M4,9H8V5H4M4,19H8V15H4M4,14H8V10H4V14Z">
-                        </svg>
-                    </button>
-                    <button id="js-grid-toggle-btn" class="btn tab-header-item grid-toggle-btn"
+                            </svg>
+                        </button>
+                        <button id="js-grid-toggle-btn" class="btn btn-icon tab-header-item"
                         data-header-item="grid" title="Grid">
                         <svg viewBox="0 0 24 24">
                             <path d="M3,11H11V3H3M3,21H11V13H3M13,21H21V13H13M13,3V11H21V3">
-                        </svg>
-                    </button>
+                            </svg>
+                        </button>
+                    </div>
                     <div id="js-sort-panel-container" class="tab-header-item sort-panel-container">
                         <button id="js-sort-toggle" class="btn" data-header-item="sorting">Sorting</button>
                     </div>
-                    <button id="js-order-toggle" class="btn tab-header-item order-toggle-btn"
+                    <button id="js-order-toggle" class="btn btn-icon tab-header-item"
                         title="Ascending/Descending" data-header-item="order">
                         <svg viewBox="0 0 24 24">
                             <use class="btn-icon" href="#down-arrow-icon"></use>
