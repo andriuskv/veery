@@ -384,11 +384,7 @@ function removeSelectedTracks() {
     updatePlaylist(id, { tracks, playbackOrder });
     updateCurrentTrackIndex(id, selectedTrackIndexes);
     removeElement(getElementById("js-move-to-panel-container"));
-    dispatchCustomEvent("track-length-change", {
-        tracks,
-        id,
-        type: pl.type
-    });
+    dispatchCustomEvent("track-length-change", tracks);
 }
 
 export {

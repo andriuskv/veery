@@ -6,8 +6,8 @@ html, body {
 }
 body {
     background-color: $color1;
-    scrollbar-face-color: $color1;
-    scrollbar-track-color: $color3;
+    scrollbar-face-color: transparent;
+    scrollbar-track-color: $color1;
 }
 a {
     text-decoration: none;
@@ -25,10 +25,10 @@ input {
     width: 10px;
 }
 ::-webkit-scrollbar-thumb {
-    background: $color3;
+    background: $color1;
 }
 ::-webkit-scrollbar-track {
-    background: $color1;
+    background: transparent;
 }
 
 .yt-player-container {
@@ -98,6 +98,13 @@ input {
         &.btn-dark {
             background-color: $color1;
         }
+    }
+}
+
+.btn-icon {
+    @include svg-container {
+        width: 20px;
+        height: 20px;
     }
 }
 
