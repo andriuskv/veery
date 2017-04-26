@@ -9,6 +9,7 @@ import {
 } from "./../utils.js";
 import {
     getPlaylistById,
+    updatePlaylistDuration,
     isPlaylistActive,
     getCurrentTrack,
     updateCurrentTrack,
@@ -384,7 +385,8 @@ function removeSelectedTracks() {
     updatePlaylist(id, { tracks, playbackOrder });
     updateCurrentTrackIndex(id, selectedTrackIndexes);
     removeElement(getElementById("js-move-to-panel-container"));
-    dispatchCustomEvent("track-length-change", tracks);
+    updatePlaylistDuration(pl);
+    dispatchCustomEvent("track-length-change");
 }
 
 export {

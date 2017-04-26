@@ -44,7 +44,7 @@ function toggleToPlaylistTab(id, isForPhoneOnly) {
     setSortOptions(pl);
     enableTrackSelection(pl.id);
     resetFilteredPlaylist();
-    dispatchCustomEvent("track-length-change", pl.tracks);
+    dispatchCustomEvent("track-length-change");
 }
 
 getElementById("js-tab-header").addEventListener("click", ({ target }) => {
@@ -76,22 +76,20 @@ getElementById("js-tab-header").addEventListener("click", ({ target }) => {
 window.addEventListener("route-change", ({ detail: { isPlaylistTab, tabId } }) => {
     const entry = getSidebarEntry(tabId);
     const isForPhoneOnly = window.innerWidth < 600;
-    let playlistId = tabId;
 
     removeElementClass("sidebar-btn", "active");
     removeElementClass("tab", "active");
+    setVisiblePlaylistId(isPlaylistTab ? tabId: "");
 
     if (isPlaylistTab) {
-        toggleToPlaylistTab(playlistId, isForPhoneOnly);
+        toggleToPlaylistTab(tabId, isForPhoneOnly);
         getElementById("js-tab-playlist-container").classList.add("active");
         getElementById("js-tab-container").classList.remove("active");
     }
     else {
-        playlistId = "";
         getElementById("js-tab-container").classList.add("active");
         getElementById("js-tab-playlist-container").classList.remove("active");
     }
-    setVisiblePlaylistId(playlistId);
     getElementById(`js-tab-${tabId}`).classList.add("active");
 
     if (entry) {
