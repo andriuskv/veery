@@ -16,6 +16,7 @@ function updateTracks(pl) {
         sortTracks(pl.tracks, pl.sortedBy, pl.order);
     }
     pl.tracks = playlist.resetTrackIndexes(pl.tracks);
+    playlist.updatePlaylistDuration(pl);
 }
 
 function initPlaylist(pl) {

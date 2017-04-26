@@ -186,18 +186,6 @@ function changePlaylistType(type, pl) {
     }
 }
 
-function getTrackDuration(tracks) {
-    return tracks.reduce((total, track) => {
-        total += track.durationInSeconds;
-        return total;
-    }, 0);
-}
-
-function getValueString(value, valueString) {
-    valueString = value > 1 || !value ? `${valueString}s` : valueString;
-    return `${value} ${valueString}`;
-}
-
 function filterPlaylist(id, query = "") {
     const { tracks } = getPlaylistById(id);
     const elements = getPlaylistTrackElements(id);
@@ -221,18 +209,12 @@ getElementById("js-filter-input").addEventListener("keyup", ({ target }) => {
     timeout = setTimeout(filterPlaylist, 400, id, filter);
 });
 
-window.addEventListener("track-length-change", ({ detail: tracks }) => {
-    const tabFooterElement = getElementById("js-tab-footer");
-    const duration = getTrackDuration(tracks);
-    const trackString = getValueString(tracks.length, "track");
-    let durationString = getValueString(Math.floor(duration / 60 % 60), "minute");
+window.addEventListener("track-length-change", () => {
+    const { duration, tracks } = getPlaylistById(getVisiblePlaylistId());
+    const hours = Math.floor(duration / 3600);
+    const minutes = Math.ceil(duration / 60 % 60);
 
-    if (duration > 3600) {
-        const hourString = getValueString(Math.floor(duration / 3600), "hour");
-
-        durationString = `${hourString} and ${durationString}`;
-    }
-    tabFooterElement.textContent = `${trackString}, ${durationString} of playtime`;
+    getElementById("js-tab-footer").textContent = `${tracks.length} tracks, ${hours} hr ${minutes} min`;
 });
 
 window.addEventListener("resize", ({ target }) => {

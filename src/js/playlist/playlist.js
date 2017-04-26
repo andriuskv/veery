@@ -36,6 +36,13 @@ function removePlaylist(id) {
     delete playlists[id];
 }
 
+function updatePlaylistDuration(pl) {
+    pl.duration = pl.tracks.reduce((total, track) => {
+        total += track.durationInSeconds;
+        return total;
+    }, 0);
+}
+
 function setPlaylistAsActive(id = "") {
     activePlaylistId = id;
 }
@@ -149,6 +156,7 @@ export {
     getAllPlaylists,
     createPlaylist,
     updatePlaylist,
+    updatePlaylistDuration,
     isPlaylistActive,
     getActivePlaylist,
     getActivePlaylistId,
