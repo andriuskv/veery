@@ -4,9 +4,6 @@ import { getPlaylistById, isPlaylistActive, getCurrentTrack } from "./playlist.j
 import { updatePlaylist } from "./playlist.manage.js";
 import { enableTrackSelection } from "./playlist.track-selection.js";
 
-let timeout = 0;
-let filteredPlaylistId = "";
-
 function getPlaylistElement(id) {
     return getElementById(`js-${id}`);
 }
@@ -138,25 +135,6 @@ function showTrack(id, index, scrollToTrack) {
     }
 }
 
-function filterTracks(tracks, trackElements, query) {
-    tracks.forEach(track => {
-        const element = trackElements[track.index];
-        const regex = new RegExp(query, "gi");
-        const filterString = `
-            ${track.title}
-            ${track.artist}
-            ${track.album}
-        `;
-
-        if (regex.test(filterString)) {
-            element.classList.remove("hidden");
-        }
-        else {
-            element.classList.add("hidden");
-        }
-    });
-}
-
 function togglePlaylistTypeBtn(type) {
     const listToggleBtn = getElementById("js-list-toggle-btn");
     const gridToggleBtn = getElementById("js-grid-toggle-btn");
@@ -186,29 +164,6 @@ function changePlaylistType(type, pl) {
     }
 }
 
-function filterPlaylist(id, query = "") {
-    const { tracks } = getPlaylistById(id);
-    const elements = getPlaylistTrackElements(id);
-
-    filteredPlaylistId = query ? id : "";
-    filterTracks(tracks, elements, query);
-}
-
-function resetFilteredPlaylist() {
-    if (filteredPlaylistId) {
-        getElementById("js-filter-input").value = "";
-        filterPlaylist(filteredPlaylistId);
-    }
-}
-
-getElementById("js-filter-input").addEventListener("keyup", ({ target }) => {
-    const id = getVisiblePlaylistId();
-    const filter = target.value.trim().toLowerCase();
-
-    clearTimeout(timeout);
-    timeout = setTimeout(filterPlaylist, 400, id, filter);
-});
-
 window.addEventListener("track-length-change", () => {
     const { duration, tracks } = getPlaylistById(getVisiblePlaylistId());
     const hours = Math.floor(duration / 3600);
@@ -236,8 +191,6 @@ export {
     updatePlaylistView,
     renderPlaylist,
     showTrack,
-    filterTracks,
     togglePlaylistTypeBtn,
-    changePlaylistType,
-    resetFilteredPlaylist
+    changePlaylistType
 };

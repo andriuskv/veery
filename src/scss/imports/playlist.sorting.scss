@@ -1,12 +1,15 @@
 .sort-panel-container {
     user-select: none;
     position: relative;
-    width: 100px;
-
-    .btn {
-        width: 100%;
-    }
+    display: flex;
+    width: 124px;
 }
+
+.sort-panel-toggle-btn {
+    flex-grow: 1;
+    margin-right: 2px;
+}
+
 .sort-panel {
     z-index: 1;
     position: absolute;
@@ -16,6 +19,11 @@
     box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
     background-color: $color1;
 }
+
 .sort-option {
     margin: 2px;
+
+    .btn {
+        width: 100%;
+    }
 }

@@ -3,7 +3,8 @@ import { getVisiblePlaylistId } from "./../tab.js";
 import { removePanel } from "./../panels.js";
 import { getPlaylistById, resetTrackIndexes } from "./playlist.js";
 import { updateCurrentTrack, updatePlaylist } from "./playlist.manage.js";
-import { getPlaylistTrackElements, filterTracks, updatePlaylistView } from "./playlist.view.js";
+import { getPlaylistTrackElements, updatePlaylistView } from "./playlist.view.js";
+import { filterTracks } from "./playlist.filter.js";
 
 function setSortBtnText(text = "Sorting") {
     getElementById("js-sort-toggle").textContent = text;
@@ -95,6 +96,10 @@ function createSortPanel(panelId, { sortedBy }) {
 function changePlaylistOrder(pl) {
     changePlaylistSorting(pl, pl.sortedBy);
     toggleOrderBtn(pl.order);
+
+    if (getElementById("js-sort-panel")) {
+        removePanel();
+    }
 }
 
 function selectSortOption({ target }) {

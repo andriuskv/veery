@@ -49,39 +49,49 @@
 }
 
 .filter-input-container {
+    position: relative;
     display: flex;
-    margin-left: 0;
     margin-right: auto;
 
     @include for-phone-only {
         position: absolute;
         left: 4px;
-        padding-right: 4px;
-        background-color: $color2;
     }
 }
 
-.filter-input-btn {
+.filter-input-icon {
+    position: absolute;
+    left: 2px;
+    top: 2px;
+    width: 20px;
+    height: 20px;
+    fill: $base-text-color;
+}
+
+.filter-input {
+    width: 100px;
+    padding-left: 24px;
+    padding-right: 24px;
+    transition: 0.2s width;
+
+    &.active {
+        width: 184px;
+    }
+}
+
+.clear-input-btn {
     display: none;
 
-    @include for-phone-only {
+    &.visible {
         @include svg-container {
             width: 20px;
             height: 20px;
         }
-    }
-}
 
-.filter-input {
-    width: 140px;
-
-    @include for-phone-only {
-        display: none;
-
-        &.visible {
-            display: inline-block;
-            margin-left: 4px;
-        }
+        position: absolute;
+        top: 2px;
+        right: 2px;
+        padding: 0;
     }
 }
 
@@ -91,6 +101,10 @@
     @include for-phone-only {
         display: none;
     }
+}
+
+.list-type-btn {
+    margin-right: 2px;
 }
 
 .tab-title {
