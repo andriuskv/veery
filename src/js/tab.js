@@ -1,10 +1,4 @@
-import {
-    renderPlaylist,
-    showTrack,
-    changePlaylistType,
-    togglePlaylistTypeBtn,
-    resetFilteredPlaylist
-} from "./playlist/playlist.view.js";
+import { renderPlaylist, showTrack, changePlaylistType, togglePlaylistTypeBtn } from "./playlist/playlist.view.js";
 import { removeElementClass, getElementById, getElementByAttr, dispatchCustomEvent } from "./utils.js";
 import { getSidebarEntry } from "./sidebar.js";
 import { togglePanel } from "./panels.js";
@@ -12,6 +6,7 @@ import { getPlaylistById, getCurrentTrack } from "./playlist/playlist.js";
 import { enableTrackSelection } from "./playlist/playlist.track-selection.js";
 import { setSortOptions, createSortPanel, changePlaylistOrder } from "./playlist/playlist.sorting.js";
 import { createMoveToPanel } from "./playlist/playlist.move-to.js";
+import { resetFilteredPlaylist } from "./playlist/playlist.filter.js";
 
 let visiblePlaylistId = "";
 
@@ -56,10 +51,7 @@ getElementById("js-tab-header").addEventListener("click", ({ target }) => {
     const pl = getPlaylistById(getVisiblePlaylistId());
     const item = element.attrValue;
 
-    if (item === "filter") {
-        getElementById("js-filter-input").classList.toggle("visible");
-    }
-    else if (item === "move-to") {
+    if (item === "move-to") {
         togglePanel("js-move-to-panel", pl, createMoveToPanel);
     }
     else if ((item === "list" || item === "grid") && item !== pl.type) {

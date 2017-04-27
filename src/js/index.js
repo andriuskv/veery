@@ -16,6 +16,7 @@ import "./playlist/playlist.import.js";
 import "./playlist/playlist.entries.js";
 import "./playlist/playlist.manage.js";
 import "./playlist/playlist.view.js";
+import "./playlist/playlist.filter.js";
 import "./playlist/playlist.sorting.js";
 import "./playlist/playlist.track-selection.js";
 import "./playlist/playlist.move-to.js";
