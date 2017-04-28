@@ -14,12 +14,14 @@
 }
 
 .tab {
+    backface-visibility: hidden;
     will-change: display;
     position: relative;
     display: none;
     height: 100%;
     background-color: $color2;
     color: $base-text-color;
+    overflow-y: auto;
 
     &.active {
         display: block;

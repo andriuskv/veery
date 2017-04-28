@@ -5,7 +5,9 @@
     flex-wrap: wrap;
     height: 100%;
     padding: 2px;
+    overflow-y: auto;
 }
+
 .grid-item {
     display: flex;
     flex-basis: 100%;
@@ -27,6 +29,7 @@
         flex-basis: calc(100% / 5 - 4px);
     }
 }
+
 .grid-item-thumb-container {
     position: relative;
     height: 80px;
@@ -36,6 +39,7 @@
         height: 60px;
     }
 }
+
 .grid-item-duration {
     position: absolute;
     bottom: 0;
@@ -44,6 +48,7 @@
     background-color: $color2;
     font-size: 12px;
 }
+
 .grid-item-thumb {
     display: block;
     min-width: 80px;

@@ -1,9 +1,9 @@
 .playlist-items {
     backface-visibility: hidden;
     user-select: none;
-    overflow-y: auto;
     position: relative;
 }
+
 .track {
     font-size: 14px;
 
@@ -24,6 +24,7 @@
         }
      }
  }
+
 .selected-area {
     z-index: 1;
     position: absolute;

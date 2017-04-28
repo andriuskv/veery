@@ -39,7 +39,7 @@ function getRefreshBtn(url) {
         return "";
     }
     return `
-        <button type="submit" class="btn btn-light"
+        <button type="submit" class="btn btn-light pl-entry-btn"
             data-action="refresh" title="Refresh playlist">
             <svg viewBox="0 0 24 24">
                 <use class="btn-icon" href="#refresh-icon">
@@ -55,7 +55,7 @@ function createPlaylistEntry(title, id, url) {
         <li class="pl-entry" data-id=${id}>
             <form class="pl-entry-form">
                 <input type="text" class="input pl-entry-title" value="${title}" readonly>
-                <button type="submit" class="btn btn-light"
+                <button type="submit" class="btn btn-light pl-entry-btn"
                     data-action="edit" title="Edit playlist title">
                     <svg viewBox="0 0 24 24">
                         <use class="btn-icon" href="#edit-icon">
@@ -63,7 +63,7 @@ function createPlaylistEntry(title, id, url) {
                 </button>
             </form>
             ${btn}
-            <button class="btn btn-light" data-action="remove" title="Remove playlist">
+            <button class="btn btn-light pl-entry-btn" data-action="remove" title="Remove playlist">
                 <svg viewBox="0 0 24 24">
                     <use class="btn-icon" href="#trash-icon">
                 </svg>

@@ -1,32 +1,40 @@
 *, *:after, *:before {
     box-sizing: border-box;
 }
+
 html, body {
     height: 100%;
 }
+
 body {
     background-color: $color1;
     scrollbar-face-color: transparent;
     scrollbar-track-color: $color1;
 }
+
 a {
     text-decoration: none;
 }
+
 ul {
     margin-top: 0;
     margin-bottom: 0;
     padding-left: 0;
     list-style: none;
 }
+
 input {
     @extend %default-input-styles;
 }
+
 ::-webkit-scrollbar {
     width: 10px;
 }
+
 ::-webkit-scrollbar-thumb {
     background: $color1;
 }
+
 ::-webkit-scrollbar-track {
     background: transparent;
 }
@@ -75,6 +83,11 @@ input {
     background-color: $color1;
     font-size: 14px;
     color: $base-text-color;
+
+    &:focus {
+        outline: 1px solid darken($brand-color, 32%);
+        outline-offset: 0;
+    }
 }
 
 .btn {
