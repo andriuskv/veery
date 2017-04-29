@@ -214,62 +214,66 @@
             </div>
         </div>
     </div>
-    <div id="js-controls" class="controls">
-        <button class="btn btn-light main-control-btn" data-main-ctrl-item="previous" title="Previous">
-            <svg viewBox="0 0 24 24">
-                <path d="M6,18V6H8V18H6M9.5,12L18,6V18L9.5,12Z">
-            </svg>
-        </button>
-        <button id="js-play-btn" class="btn btn-light main-control-btn" data-main-ctrl-item="play" title="Play">
-            <svg viewBox="0 0 24 24">
-                <use class="btn-icon" href="#play-icon"></use>
-            </svg>
-        </button>
-        <button class="btn btn-light main-control-btn" data-main-ctrl-item="stop" title="Stop">
-            <svg viewBox="0 0 24 24">
-                <path d="M18,18H6V6H18V18Z">
-            </svg>
-        </button>
-        <button class="btn btn-light main-control-btn" data-main-ctrl-item="next" title="Next">
-            <svg viewBox="0 0 24 24">
-                <path d="M16,18H18V6H16M6,18L14.5,12L6,6V18Z">
-            </svg>
-        </button>
+    <div class="player-controls">
+        <div id="js-main-controls" class="main-controls">
+            <button class="btn btn-light main-control-btn" data-item="previous" title="Previous">
+                <svg viewBox="0 0 24 24">
+                    <path d="M6,18V6H8V18H6M9.5,12L18,6V18L9.5,12Z">
+                </svg>
+            </button>
+            <button id="js-play-btn" class="btn btn-light main-control-btn" data-item="play" title="Play">
+                <svg viewBox="0 0 24 24">
+                    <use class="btn-icon" href="#play-icon"></use>
+                </svg>
+            </button>
+            <button class="btn btn-light main-control-btn" data-item="stop" title="Stop">
+                <svg viewBox="0 0 24 24">
+                    <path d="M18,18H6V6H18V18Z">
+                </svg>
+            </button>
+            <button class="btn btn-light main-control-btn" data-item="next" title="Next">
+                <svg viewBox="0 0 24 24">
+                    <path d="M16,18H18V6H16M6,18L14.5,12L6,6V18Z">
+                </svg>
+            </button>
+        </div>
         <div class="track-bar-container">
-            <div id="js-track-current" class="track-time track-current">0:00</div>
+            <div id="js-track-current" class="track-time">0:00</div>
             <div id="js-track-bar" class="control-bar track-bar">
-                <div id="js-track-bar-inner" class="track-bar-inner">
+                <div id="js-track-bar-inner" class="control-bar-inner">
                     <div class="bar-thumb"></div>
                 </div>
             </div>
-            <div id="js-track-duration" class="track-time track-duration">0:00</div>
+            <div id="js-track-duration" class="track-time">0:00</div>
         </div>
-        <button class="btn btn-light control-btn" data-ctrl-item="repeat" title="Repeat">
-            <svg viewBox="0 0 24 24">
-                <path d="M17,17H7V14L3,18L7,22V19H19V13H17M7,7H17V10L21,6L17,2V5H5V11H7V7Z">
-            </svg>
-        </button>
-        <button class="btn btn-light control-btn" data-ctrl-item="shuffle" title="Shuffle">
-            <svg viewBox="0 0 24 24">
-                <path d="M14.83,13.41L13.42,14.82L16.55,17.95L14.5,20H20V14.5L17.96,
-                    16.54L14.83,13.41M14.5,4L16.54,6.04L4,18.59L5.41,20L17.96,7.46L20,
-                    9.5V4M10.59,9.17L5.41,4L4,5.41L9.17,10.58L10.59,9.17Z">
-            </svg>
-        </button>
-        <button class="btn btn-light control-btn" data-ctrl-item="once" title="Play once">
-            <svg viewBox="0 0 24 24">
-                <path d="M13,15V9H12L10,10V11H11.5V15M17,17H7V14L3,18L7,22V19H19V13H17M7,
-                    7H17V10L21,6L17,2V5H5V11H7V7Z">
-            </svg>
-        </button>
-        <button id="js-volume-btn" class="btn btn-light control-btn" data-ctrl-item="mute" title="Mute">
-            <svg viewBox="0 0 24 24">
-                <use class="btn-icon" href="#volume-icon"></use>
-            </svg>
-        </button>
+        <div id="js-controls" class="controls">
+            <button class="btn btn-light control-btn" data-item="repeat" title="Repeat">
+                <svg viewBox="0 0 24 24">
+                    <path d="M17,17H7V14L3,18L7,22V19H19V13H17M7,7H17V10L21,6L17,2V5H5V11H7V7Z">
+                </svg>
+            </button>
+            <button class="btn btn-light control-btn" data-item="shuffle" title="Shuffle">
+                <svg viewBox="0 0 24 24">
+                    <path d="M14.83,13.41L13.42,14.82L16.55,17.95L14.5,20H20V14.5L17.96,
+                        16.54L14.83,13.41M14.5,4L16.54,6.04L4,18.59L5.41,20L17.96,7.46L20,
+                        9.5V4M10.59,9.17L5.41,4L4,5.41L9.17,10.58L10.59,9.17Z">
+                </svg>
+            </button>
+            <button class="btn btn-light control-btn" data-item="once" title="Play once">
+                <svg viewBox="0 0 24 24">
+                    <path d="M13,15V9H12L10,10V11H11.5V15M17,17H7V14L3,18L7,22V19H19V13H17M7,
+                        7H17V10L21,6L17,2V5H5V11H7V7Z">
+                </svg>
+            </button>
+            <button id="js-volume-btn" class="btn btn-light control-btn" data-item="mute" title="Mute">
+                <svg viewBox="0 0 24 24">
+                    <use class="btn-icon" href="#volume-icon"></use>
+                </svg>
+            </button>
+        </div>
         <div class="volume-bar-container">
             <div id="js-volume-bar" class="control-bar volume-bar">
-                <div id="js-volume-bar-inner" class="track-bar-inner">
+                <div id="js-volume-bar-inner" class="control-bar-inner">
                     <div class="bar-thumb"></div>
                 </div>
             </div>
