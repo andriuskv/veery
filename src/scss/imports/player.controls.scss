@@ -1,11 +1,11 @@
+.player-controls,
+.main-controls,
 .controls {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+}
+
+.player-controls {
+    position: relative;
     height: 36px;
     padding: 4px;
     user-select: none;
@@ -17,12 +17,14 @@
         padding: 2px 4px;
     }
 }
+
+.controls {
+    align-items: center;
+}
+
 .control-bar {
-    position: relative;
     height: 4px;
     border-radius: 2px;
-    margin-left: 8px;
-    margin-right: 8px;
     background: #666;
     cursor: pointer;
 
@@ -35,6 +37,17 @@
         }
     }
 }
+
+.control-bar-inner {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: 0;
+    height: 100%;
+    border-radius: inherit;
+    background-color: $brand-color;
+}
+
 .bar-thumb {
     display: none;
     flex-grow: 0;
@@ -50,25 +63,25 @@
         background-color: #aaa;
     }
 }
+
 .main-control-btn {
     @include svg-container {
         width: 28px;
         height: 28px;
     }
+
     padding: 0;
     margin-left: 2px;
     margin-right: 2px;
 }
+
 .track-time {
+    margin-left: 8px;
+    margin-right: 8px;
     color: $base-text-color;
     font-size: 12px;
 }
-.track-current {
-    margin-left: 6px;
-}
-.track-duration {
-    margin-right: 8px;
-}
+
 .track-bar-container {
     display: flex;
     align-items: center;
@@ -82,18 +95,11 @@
         padding-top: 4px;
     }
 }
+
 .track-bar {
     flex-grow: 1;
 }
-.track-bar-inner {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    width: 0;
-    height: 100%;
-    border-radius: inherit;
-    background: $brand-color;
-}
+
 .control-btn {
     margin-right: 4px;
 
@@ -106,24 +112,15 @@
         margin-bottom: 2px;
     }
 }
-.volume-icon {
-    color: $base-text-color;
 
-    @include svg-container {
-        width: 20px;
-        height: 20px;
-    }
-
-    @include for-phone-only {
-        display: none;
-    }
-}
 .volume-bar-container {
     display: flex;
     align-items: center;
     height: 28px;
 }
+
 .volume-bar {
     width: 100px;
     margin-left: 4px;
+    margin-right: 8px;
 }

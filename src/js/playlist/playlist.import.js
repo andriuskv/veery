@@ -23,7 +23,7 @@ function createImportOptionMask(option, message = "") {
     optionElements.forEach(element => {
         element.parentElement.insertAdjacentHTML("beforeend", `
             <div class="option-mask" data-mask-id=${option}>
-                <img src="./assets/images/ring-alt.svg">
+                <img src="./assets/images/ring-alt.svg" alt="">
                 <span class="mask-message">${message}</span>
             </div>
         `);

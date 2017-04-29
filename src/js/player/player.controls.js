@@ -190,20 +190,21 @@ getElementById("js-volume-bar").addEventListener("mousedown", event => {
     document.addEventListener("mouseup", onVolumeTrackMouseup);
 });
 
-getElementById("js-controls").addEventListener("click", ({ target }) => {
-    const mainControlElement = getElementByAttr(target, "data-main-ctrl-item");
+getElementById("js-main-controls").addEventListener("click", ({ target }) => {
+    const element = getElementByAttr(target, "data-item");
 
-    if (mainControlElement) {
-        onControlButtonClick(mainControlElement.attrValue);
-        return;
+    if (element) {
+        onControlButtonClick(element.attrValue);
     }
-    const controlElement = getElementByAttr(target, "data-ctrl-item");
+});
 
-    if (controlElement) {
-        const action = controlElement.attrValue;
-        const elementRef = controlElement.elementRef;
-        const setting = getSetting(action);
-        const newSetting = !setting;
+getElementById("js-controls").addEventListener("click", ({ target }) => {
+    const element = getElementByAttr(target, "data-item");
+
+    if (element) {
+        const action = element.attrValue;
+        const elementRef = element.elementRef;
+        const newSetting = !getSetting(action);
 
         elementRef.classList.toggle("active");
         setSetting(action, newSetting);
