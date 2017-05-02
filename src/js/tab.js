@@ -1,8 +1,8 @@
-import { renderPlaylist, showTrack, changePlaylistType, togglePlaylistTypeBtn } from "./playlist/playlist.view.js";
+import { renderPlaylist, changePlaylistType, togglePlaylistTypeBtn } from "./playlist/playlist.view.js";
 import { removeElementClass, getElementById, getElementByAttr, dispatchCustomEvent } from "./utils.js";
 import { getSidebarEntry } from "./sidebar.js";
 import { togglePanel } from "./panels.js";
-import { getPlaylistById, getCurrentTrack } from "./playlist/playlist.js";
+import { getPlaylistById } from "./playlist/playlist.js";
 import { enableTrackSelection } from "./playlist/playlist.track-selection.js";
 import { setSortOptions, createSortPanel, changePlaylistOrder } from "./playlist/playlist.sorting.js";
 import { createMoveToPanel } from "./playlist/playlist.move-to.js";
@@ -20,14 +20,9 @@ function getVisiblePlaylistId() {
 
 function toggleToPlaylistTab(id, isForPhoneOnly) {
     const pl = getPlaylistById(id);
-    const track = getCurrentTrack();
 
     if (!pl.rendered) {
         renderPlaylist(pl);
-    }
-
-    if (track && track.playlistId === id && track.index !== -1) {
-        showTrack(id, track.index);
     }
 
     if (pl.type === "list" && isForPhoneOnly) {

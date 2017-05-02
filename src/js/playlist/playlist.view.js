@@ -1,5 +1,7 @@
 import { getElementById, replaceElement, removeElement, removeElementClass, getTrackArt } from "./../utils.js";
 import { getVisiblePlaylistId } from "./../tab.js";
+import { getPlayerState } from "./../player/player.js";
+import { togglePlayPauseBtn } from "./../player/player.controls.js";
 import { getPlaylistById, isPlaylistActive, getCurrentTrack } from "./playlist.js";
 import { updatePlaylist } from "./playlist.manage.js";
 import { enableTrackSelection } from "./playlist.track-selection.js";
@@ -17,10 +19,18 @@ function getPlaylistTrackElements(id) {
 function createListItem(item) {
     return `
         <li class="list-item track" data-index="${item.index}">
-            <span>${item.title}</span>
-            <span>${item.artist}</span>
-            <span>${item.album}</span>
-            <span>${item.duration}</span>
+            <span class="list-item-first-col">
+                <span class="list-item-index">${item.index + 1}.</span>
+                <button class="btn btn-icon list-item-play-pause-btn" data-btn="play">
+                    <svg viewBox="0 0 24 24">
+                        <use class="svg-icon" href="#play-icon"></use>
+                    </svg>
+                </button>
+            </span>
+            <span class="list-item-col">${item.title}</span>
+            <span class="list-item-col">${item.artist}</span>
+            <span class="list-item-col">${item.album}</span>
+            <span class="list-item-col">${item.duration}</span>
         </li>
     `;
 }
@@ -28,10 +38,10 @@ function createListItem(item) {
 function createList(id, items) {
     return `
         <ul class="list-view-header">
-            <li class="list-view-header-item">Title</li>
-            <li class="list-view-header-item">Artist</li>
-            <li class="list-view-header-item">Album</li>
-            <li class="list-view-header-item">Duration</li>
+            <li class="list-item-col list-view-header-item">Title</li>
+            <li class="list-item-col list-view-header-item">Artist</li>
+            <li class="list-item-col list-view-header-item">Album</li>
+            <li class="list-item-col list-view-header-item">Duration</li>
         </ul>
         <ul id="js-${id}" class="playlist-items list-view">${items}</ul>
     `;
@@ -82,9 +92,16 @@ function createPlaylistTab(pl) {
 function renderPlaylist(pl) {
     const tab = createPlaylistTab(pl);
     const container = getElementById("js-playlist-tabs");
+    const track = getCurrentTrack();
 
     pl.rendered = true;
     container.insertAdjacentHTML("beforeend", tab);
+
+    if (track && track.playlistId === pl.id) {
+        const state = getPlayerState();
+
+        showTrack(pl, track.index, true, state);
+    }
 }
 
 function updatePlaylistView({ id, type, tracks }) {
@@ -123,10 +140,14 @@ function scrollToTrackElement(trackElement, playlistElement) {
     }
 }
 
-function showTrack(id, index, scrollToTrack) {
-    const element = getPlaylistElement(id);
+function showTrack(pl, index, scrollToTrack, state) {
+    const element = getPlaylistElement(pl.id);
     const trackElement = element.children[index];
+    const btn = trackElement.querySelector(".btn-icon");
 
+    if (pl.type === "list") {
+        togglePlayPauseBtn(state, btn);
+    }
     removeElementClass("track", "playing");
     trackElement.classList.add("playing");
 
@@ -159,7 +180,9 @@ function changePlaylistType(type, pl) {
         const track = getCurrentTrack();
 
         if (track) {
-            showTrack(pl.id, track.index);
+            const state = getPlayerState();
+
+            showTrack(pl, track.index, false, state);
         }
     }
 }

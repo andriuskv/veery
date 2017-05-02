@@ -309,6 +309,12 @@ function onMousedown(event) {
     if (event.which !== 1) {
         return;
     }
+    const element = getElementByAttr(event.target, "data-btn");
+
+    if (element) {
+        deselectTrackElements();
+        return;
+    }
     playlistElementRect = playlistElement.getBoundingClientRect();
     maxScrollHeight = playlistElement.scrollHeight;
     maxWidth = playlistElement.clientWidth;
@@ -346,9 +352,16 @@ function removeSelectedPlaylistTracks(tracks, selectedTrackIndexes) {
     return resetTrackIndexes(filteredTracks);
 }
 
-function resetTrackElementIndexes(elements) {
-    Array.from(elements).forEach((element, index) => {
-        element.setAttribute("data-index", index);
+function resetListElementIndexes(elements, startIndex) {
+    Array.from(elements).slice(startIndex).forEach((element, index) => {
+        element.setAttribute("data-index", startIndex + index);
+        element.querySelector(".list-item-index").textContent = startIndex + index + 1;
+    });
+}
+
+function resetGridElementIndexes(elements, startIndex) {
+    Array.from(elements).slice(startIndex).forEach((element, index) => {
+        element.setAttribute("data-index", startIndex + index);
     });
 }
 
@@ -376,12 +389,20 @@ function removeSelectedTracks() {
     const selectedElements = getSelectedTrackElements();
     const pl = getPlaylistById(id);
     const selectedTrackIndexes = getSelectedTrackIndexes(selectedElements);
+    const smallestIndex = Math.min(...selectedTrackIndexes);
     const tracks = removeSelectedPlaylistTracks(pl.tracks, selectedTrackIndexes);
-    const elements = getPlaylistTrackElements(id);
     const playbackOrder = getPlaybackOrder(tracks, getSetting("shuffle"));
 
     removeElements(selectedElements);
-    resetTrackElementIndexes(elements);
+
+    const elements = getPlaylistTrackElements(id);
+
+    if (pl.type === "list") {
+        resetListElementIndexes(elements, smallestIndex);
+    }
+    else {
+        resetGridElementIndexes(elements, smallestIndex);
+    }
     updatePlaylist(id, { tracks, playbackOrder });
     updateCurrentTrackIndex(id, selectedTrackIndexes);
     removeElement(getElementById("js-move-to-panel-container"));

@@ -48,14 +48,14 @@ const elapsedTime = (function() {
 })();
 
 function setElementIconAndTitle(element, { id, title }) {
-    const icon = element.querySelector(".btn-icon");
+    const icon = element.querySelector(".svg-icon");
 
     icon.setAttribute("href", `#${id}`);
     element.setAttribute("title", title);
 }
 
-function togglePlayBtn(state) {
-    const element = getElementById("js-play-btn");
+// rename
+function togglePlayPauseBtn(state, element = getElementById("js-play-btn")) {
     const data = {
         on: {
             id: "play-icon",
@@ -221,7 +221,7 @@ getElementById("js-controls").addEventListener("click", ({ target }) => {
 
 function loadSetting(name) {
     const setting = getSetting(name);
-    const element = document.querySelector(`[data-ctrl-item="${name}"]`);
+    const element = document.querySelector(`[data-item="${name}"]`);
 
     if (setting && element) {
         element.classList.add("active");
@@ -244,7 +244,7 @@ window.addEventListener("DOMContentLoaded", function onLoad() {
 
 export {
     elapsedTime,
-    togglePlayBtn,
+    togglePlayPauseBtn,
     setTrackBarInnerWidth,
     setVolumeBarInnerWidth,
     displayCurrentTime,

@@ -3,33 +3,31 @@
     position: sticky;
     top: 0;
     display: flex;
-    height: 26px;
-    padding: 4px 8px;
+    align-items: center;
+    height: 30px;
+    padding: 4px 8px 4px 46px;
     background-color: $color2;
     user-select: none;
 }
 
 .list-view-header-item {
-    flex-basis: 30%;
     font-size: 16px;
-    color: #888;
-
-    &:last-of-type {
-        flex-basis: 10%;
-    }
+    color: $alt-text-color;
 }
 
 .list-view {
 
-    // -26px because of .list-view-header
-    height: calc(100% - 26px);
+    // -30px because of .list-view-header
+    height: calc(100% - 30px);
     padding-left: 4px;
     padding-right: 4px;
 }
 
 .list-item {
     display: flex;
-    padding: 4px;
+    align-items: center;
+    height: 33px;
+    padding: 2px 4px;
     color: $base-text-color;
     cursor: default;
 
@@ -41,15 +39,48 @@
         }
     }
 
-    span {
-        @include text-truncate;
+    &:hover, &.playing {
+        .list-item-index {
+            display: none;
+        }
 
-        flex-basis: 30%;
-        padding-right: 4px;
-
-        &:last-of-type {
-            flex-basis: 10%;
-            padding-right: 0;
+        .list-item-play-pause-btn {
+            display: flex;
         }
     }
+
+    .list-item-col {
+        @include text-truncate;
+    }
+}
+
+.list-item-col {
+    flex: 1 1 30%;
+    padding-right: 4px;
+
+    &:last-of-type {
+        flex: 0 0 70px;
+        padding-right: 0;
+    }
+}
+
+.list-item-first-col {
+    flex: 0 0 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-right: 4px;
+}
+
+.list-item-play-pause-btn {
+    display: none;
+    border: 1px solid currentColor;
+    border-radius: 50%;
+    background-color: transparent;
+    color: inherit;
+}
+
+.list-item-index {
+    color: $alt-text-color;
+    font-size: 12px;
 }
