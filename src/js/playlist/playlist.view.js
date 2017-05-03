@@ -16,12 +16,16 @@ function getPlaylistTrackElements(id) {
     return children;
 }
 
+function getPlaylistElementAtIndex(id, index) {
+    return getPlaylistTrackElements(id)[index];
+}
+
 function createListItem(item) {
     return `
         <li class="list-item track" data-index="${item.index}">
             <span class="list-item-first-col">
                 <span class="list-item-index">${item.index + 1}.</span>
-                <button class="btn btn-icon list-item-play-pause-btn" data-btn="play">
+                <button class="btn btn-icon track-play-pause-btn" data-btn="play">
                     <svg viewBox="0 0 24 24">
                         <use class="svg-icon" href="#play-icon"></use>
                     </svg>
@@ -43,7 +47,7 @@ function createList(id, items) {
             <li class="list-item-col list-view-header-item">Album</li>
             <li class="list-item-col list-view-header-item">Duration</li>
         </ul>
-        <ul id="js-${id}" class="playlist-items list-view">${items}</ul>
+        <ul id="js-${id}" class="list-view">${items}</ul>
     `;
 }
 
@@ -51,7 +55,7 @@ function createGridItem(item) {
     const thumbnail = getTrackArt(item.thumbnail);
     let trackNameTemp = `<div class="grid-item-title">${item.title}</div>`;
 
-    if (item.artist && item.title) {
+    if (item.artist) {
         trackNameTemp += `
             <div class="grid-item-artist">${item.artist} ${item.album ? `- ${item.album}` : ""}</div>
         `;
@@ -59,17 +63,22 @@ function createGridItem(item) {
 
     return `
         <li class="grid-item track" data-index="${item.index}">
-            <div class="grid-item-thumb-container">
-                <div class="grid-item-duration">${item.duration}</div>
-                <img src="${thumbnail}" class="grid-item-thumb" alt="">
+            <div class="grid-item-first-col">
+                <img src="${thumbnail}" class="grid-item-thumbnail" alt="">
+                <button class="btn track-play-pause-btn grid-item-play-pause-btn" data-btn="play">
+                    <svg viewBox="0 0 24 24">
+                        <use class="svg-icon" href="#play-icon"></use>
+                    </svg>
+                </button>
             </div>
-            <div>${trackNameTemp}</div>
+            <div class="grid-item-name">${trackNameTemp}</div>
+            <div class="grid-item-duration">${item.duration}</div>
         </li>
     `;
 }
 
 function createGrid(id, items) {
-    return `<ul id="js-${id}" class="playlist-items grid-view">${items}</ul>`;
+    return `<ul id="js-${id}" class="grid-view">${items}</ul>`;
 }
 
 function createItems(tracks, cb) {
@@ -98,9 +107,12 @@ function renderPlaylist(pl) {
     container.insertAdjacentHTML("beforeend", tab);
 
     if (track && track.playlistId === pl.id) {
-        const state = getPlayerState();
-
-        showTrack(pl, track.index, true, state);
+        requestAnimationFrame(() => {
+            showTrack(pl.id, track.index, {
+                scrollToTrack: true,
+                paused: getPlayerState()
+            });
+        });
     }
 }
 
@@ -128,32 +140,43 @@ function removePlaylistTab(id) {
     removeElement(parentElement);
 }
 
-function scrollToTrackElement(trackElement, playlistElement) {
-    const elementHeight = trackElement.offsetHeight;
-    const trackTop = trackElement.offsetTop;
-    const playlistScrollTop = playlistElement.scrollTop;
-    const playlistClientHeight = playlistElement.clientHeight;
-    const visiblePlaylistOffset = playlistScrollTop + playlistClientHeight;
+function scrollToTrackElement(element, id) {
+    const containerElement = getElementById(`js-tab-${id}`);
 
-    if (trackTop - elementHeight < playlistScrollTop || trackTop > visiblePlaylistOffset) {
-        playlistElement.scrollTop = trackTop - playlistClientHeight / 2;
+    const elementHeight = element.offsetHeight;
+    const trackTop = element.offsetTop;
+    const containerScrollTop = containerElement.scrollTop;
+    const containerClientHeight = containerElement.clientHeight;
+    const visibleContainerOffset = containerScrollTop + containerClientHeight;
+
+    if (trackTop - elementHeight < containerScrollTop || trackTop > visibleContainerOffset) {
+        containerElement.scrollTop = trackTop - containerClientHeight / 2;
     }
 }
 
-function showTrack(pl, index, scrollToTrack, state) {
-    const element = getPlaylistElement(pl.id);
-    const trackElement = element.children[index];
-    const btn = trackElement.querySelector(".btn-icon");
+function showTrack(id, index, { scrollToTrack, paused }) {
+    const element = getPlaylistElementAtIndex(id, index);
+    const btn = element.querySelector(".btn");
 
-    if (pl.type === "list") {
-        togglePlayPauseBtn(state, btn);
-    }
+    togglePlayPauseBtn(paused, btn);
     removeElementClass("track", "playing");
-    trackElement.classList.add("playing");
+    element.classList.add("playing");
 
     if (scrollToTrack) {
-        scrollToTrackElement(trackElement, element);
+        scrollToTrackElement(element, id);
     }
+}
+
+function toggleTrackPlayPauseBtn(track, paused) {
+    const pl = getPlaylistById(track.playlistId);
+
+    if (track.index === -1 || !pl.rendered) {
+        return;
+    }
+    const element = getPlaylistElementAtIndex(track.playlistId, track.index);
+    const btn = element.querySelector(".btn");
+
+    togglePlayPauseBtn(paused, btn);
 }
 
 function togglePlaylistTypeBtn(type) {
@@ -177,12 +200,13 @@ function changePlaylistType(type, pl) {
     togglePlaylistTypeBtn(type);
 
     if (isPlaylistActive(pl.id)) {
-        const track = getCurrentTrack();
+        const { index } = getCurrentTrack();
 
-        if (track) {
-            const state = getPlayerState();
-
-            showTrack(pl, track.index, false, state);
+        if (index !== -1) {
+            showTrack(pl.id, index, {
+                scrollToTrack: false,
+                paused: getPlayerState()
+            });
         }
     }
 }
@@ -214,6 +238,7 @@ export {
     updatePlaylistView,
     renderPlaylist,
     showTrack,
+    toggleTrackPlayPauseBtn,
     togglePlaylistTypeBtn,
     changePlaylistType
 };

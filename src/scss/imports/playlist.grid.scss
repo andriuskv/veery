@@ -5,12 +5,13 @@
     flex-wrap: wrap;
     height: 100%;
     padding: 2px;
-    overflow-y: auto;
 }
 
 .grid-item {
-    display: flex;
     flex-basis: 100%;
+    overflow: hidden;
+    display: flex;
+    height: 60px;
     padding: 2px;
     margin: 2px;
     cursor: default;
@@ -19,52 +20,67 @@
     @media (min-width: 782px) {
         flex-basis: calc(100% / 2 - 4px);
     }
+
     @media (min-width: 1086px) {
         flex-basis: calc(100% / 3 - 4px);
     }
+
     @media (min-width: 1390px) {
         flex-basis: calc(100% / 4 - 4px);
     }
+
     @media (min-width: 1694px) {
         flex-basis: calc(100% / 5 - 4px);
     }
 }
 
-.grid-item-thumb-container {
+.grid-item-first-col {
     position: relative;
-    height: 80px;
-    margin-right: 4px;
-
-    @include for-phone-only {
-        height: 60px;
-    }
 }
 
-.grid-item-duration {
+.grid-item-play-pause-btn {
+    @include svg-container {
+        width: 28px;
+        height: 28px;
+    }
+
     position: absolute;
-    bottom: 0;
-    right: 0;
-    padding: 1px 2px;
-    background-color: $color2;
-    font-size: 12px;
+    top: 50%;
+    left: 50%;
+    display: none;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0 8px 1px rgba(0, 0, 0, 0.2);
 }
 
-.grid-item-thumb {
-    display: block;
-    min-width: 80px;
+.grid-item-thumbnail {
     height: 100%;
+    width: 56px;
     object-fit: scale-down;
+}
 
-    @include for-phone-only {
-        min-width: 60px;
-    }
+.grid-item-name {
+    overflow: hidden;
+    flex-grow: 1;
+    margin-left: 4px;
 }
 
 .grid-item-title {
-    font-weight: 500;
+    @include text-truncate;
+
+    margin-top: 6px;
+    font-size: 14px;
 }
 
 .grid-item-artist {
-    margin-top: 4px;
-    font-size: 12px;
+    @include text-truncate;
+
+    margin-top: 2px;
+    font-size: 13px;
+}
+
+.grid-item-duration {
+    margin: 6px 4px 0 4px;
+    color: $alt-text-color;
+    font-size: 14px;
 }

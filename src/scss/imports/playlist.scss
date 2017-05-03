@@ -1,21 +1,22 @@
-.playlist-items {
-    backface-visibility: hidden;
-    user-select: none;
-    position: relative;
-}
-
 .track {
-    font-size: 14px;
+    &:hover, &.playing {
+        .track-play-pause-btn {
+            display: flex;
+        }
+    }
 
     &:hover {
         background-color: $color3;
     }
+
     &.playing {
         color: $brand-color;
     }
+
     &.hidden {
         display: none;
     }
+
     &.selected {
         background-color: $color1;
 
@@ -23,6 +24,14 @@
             background-color: $color1;
         }
      }
+ }
+
+ .track-play-pause-btn {
+     display: none;
+     border: 1px solid currentColor;
+     border-radius: 50%;
+     background-color: transparent;
+     color: inherit;
  }
 
 .selected-area {

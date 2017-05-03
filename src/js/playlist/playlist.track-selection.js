@@ -41,12 +41,12 @@ function enableTrackSelection(id) {
     if (playlistElement) {
         playlistElement.removeEventListener("mousedown", onMousedown);
     }
-    playlistElement = getPlaylistElement(id);
+    playlistElement = getPlaylistElement(`tab-${id}`);
     playlistElement.addEventListener("mousedown", onMousedown);
 }
 
 function initSelectionArea(parent) {
-    const element = document.createElement("li");
+    const element = document.createElement("div");
 
     selectedArea.top = startingPoint.y;
     selectedArea.left = startingPoint.x;
@@ -59,7 +59,8 @@ function initSelectionArea(parent) {
     return element;
 }
 
-function getTrackElements(elements) {
+function getTrackElements() {
+    const elements = getPlaylistTrackElements(getVisiblePlaylistId());
     const parentRect = playlistElementRect;
     const scrollTop = playlistElement.scrollTop;
 
@@ -232,7 +233,7 @@ function onMousemove(event) {
     event.preventDefault();
 
     if (!selectionElement && isAboveThreshold(mousePos, startingPoint)) {
-        trackElements = getTrackElements(playlistElement.children);
+        trackElements = getTrackElements();
         selectionElement = initSelectionArea(playlistElement);
 
         if (!event.ctrlKey) {
@@ -365,19 +366,30 @@ function resetGridElementIndexes(elements, startIndex) {
     });
 }
 
+function resetPlaylistElementIndexes(id, type, selectedTrackIndexes) {
+    const smallestIndex = Math.min(...selectedTrackIndexes);
+    const elements = getPlaylistTrackElements(id);
+
+    if (type === "list") {
+        resetListElementIndexes(elements, smallestIndex);
+    }
+    else {
+        resetGridElementIndexes(elements, smallestIndex);
+    }
+}
+
 function updateCurrentTrackIndex(playlistId, selectedTrackIndexes) {
     const currentTrack = getCurrentTrack();
 
     if (currentTrack && isPlaylistActive(playlistId)) {
+        const track = findTrack(playlistId, currentTrack.name);
         let index = currentTrack.index;
 
-        if (selectedTrackIndexes.includes(index)) {
+        if (selectedTrackIndexes.includes(index) || !track) {
             updateCurrentTrack({ index: -1 });
         }
         else {
-            const track = findTrack(playlistId, currentTrack.name);
             index = track.index;
-
             updateCurrentTrack({ index });
         }
         setPlaybackIndex(index);
@@ -389,20 +401,11 @@ function removeSelectedTracks() {
     const selectedElements = getSelectedTrackElements();
     const pl = getPlaylistById(id);
     const selectedTrackIndexes = getSelectedTrackIndexes(selectedElements);
-    const smallestIndex = Math.min(...selectedTrackIndexes);
     const tracks = removeSelectedPlaylistTracks(pl.tracks, selectedTrackIndexes);
     const playbackOrder = getPlaybackOrder(tracks, getSetting("shuffle"));
 
     removeElements(selectedElements);
-
-    const elements = getPlaylistTrackElements(id);
-
-    if (pl.type === "list") {
-        resetListElementIndexes(elements, smallestIndex);
-    }
-    else {
-        resetGridElementIndexes(elements, smallestIndex);
-    }
+    resetPlaylistElementIndexes(id, pl.type, selectedTrackIndexes);
     updatePlaylist(id, { tracks, playbackOrder });
     updateCurrentTrackIndex(id, selectedTrackIndexes);
     removeElement(getElementById("js-move-to-panel-container"));

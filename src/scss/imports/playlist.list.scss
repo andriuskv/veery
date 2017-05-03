@@ -30,6 +30,7 @@
     padding: 2px 4px;
     color: $base-text-color;
     cursor: default;
+    user-select: none;
 
     &:not(:last-of-type) {
         border-bottom: 1px solid $color1;
@@ -43,20 +44,15 @@
         .list-item-index {
             display: none;
         }
-
-        .list-item-play-pause-btn {
-            display: flex;
-        }
-    }
-
-    .list-item-col {
-        @include text-truncate;
     }
 }
 
 .list-item-col {
+    @include text-truncate;
+
     flex: 1 1 30%;
     padding-right: 4px;
+    font-size: 14px;
 
     &:last-of-type {
         flex: 0 0 70px;
@@ -70,14 +66,6 @@
     align-items: center;
     justify-content: center;
     padding-right: 4px;
-}
-
-.list-item-play-pause-btn {
-    display: none;
-    border: 1px solid currentColor;
-    border-radius: 50%;
-    background-color: transparent;
-    color: inherit;
 }
 
 .list-item-index {
