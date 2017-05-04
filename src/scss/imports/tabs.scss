@@ -1,3 +1,30 @@
+.tab-header {
+    z-index: 2;
+    position: absolute;
+    display: none;
+    height: 32px;
+    padding: 4px;
+
+    @include breakpoint-small {
+        display: block;
+    }
+}
+
+.sidebar-toggle-btn-container {
+    width: 24px;
+    height: 24px;
+    background-image: url("./assets/images/main-icon-alt.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.sidebar-toggle-btn {
+    width: inherit;
+    height: inherit;
+    padding: 0;
+    background-color: transparent;
+}
+
 .tab-container {
     display: none;
     flex-grow: 1;
@@ -8,14 +35,13 @@
         flex-direction: column;
     }
 
-    @include for-phone-only {
+    @include breakpoint-small {
         height: calc(100% - 64px);
     }
 }
 
 .tab {
     backface-visibility: hidden;
-    will-change: display;
     position: relative;
     display: none;
     height: 100%;
@@ -33,21 +59,21 @@
     height: calc(100% - 64px);
 }
 
-.tab-header {
+.playlist-tab-header {
     flex-shrink: 0;
     display: flex;
     padding: 4px;
     margin-bottom: 2px;
     background-color: $color2;
 
-    @include for-phone-only {
+    @include breakpoint-small {
         position: relative;
         justify-content: flex-end;
     }
 }
 
-.tab-header-item {
-    margin-left: 4px;
+.playlist-tab-header-item {
+    margin-right: 4px;
 }
 
 .filter-input-container {
@@ -55,18 +81,19 @@
     display: flex;
     margin-right: auto;
 
-    @include for-phone-only {
+    @include breakpoint-small {
         position: absolute;
-        left: 4px;
+        left: 32px;
     }
 }
 
 .filter-input-icon {
     position: absolute;
+    top: 50%;
     left: 2px;
-    top: 2px;
     width: 20px;
     height: 20px;
+    transform: translateY(-50%);
     fill: $base-text-color;
 }
 
@@ -91,16 +118,17 @@
         }
 
         position: absolute;
-        top: 2px;
+        top: 50%;
         right: 2px;
         padding: 0;
+        transform: translateY(-50%);
     }
 }
 
 .playlist-type-btns {
     display: flex;
 
-    @include for-phone-only {
+    @include breakpoint-smallest {
         display: none;
     }
 }
@@ -132,7 +160,7 @@
     }
 }
 
-.tab-footer {
+.playlist-tab-footer {
     flex-shrink: 0;
     display: flex;
     align-items: center;

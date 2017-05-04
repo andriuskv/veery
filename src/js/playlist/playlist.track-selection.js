@@ -41,12 +41,12 @@ function enableTrackSelection(id) {
     if (playlistElement) {
         playlistElement.removeEventListener("mousedown", onMousedown);
     }
-    playlistElement = getPlaylistElement(id);
+    playlistElement = getPlaylistElement(`tab-${id}`);
     playlistElement.addEventListener("mousedown", onMousedown);
 }
 
 function initSelectionArea(parent) {
-    const element = document.createElement("li");
+    const element = document.createElement("div");
 
     selectedArea.top = startingPoint.y;
     selectedArea.left = startingPoint.x;
@@ -59,7 +59,8 @@ function initSelectionArea(parent) {
     return element;
 }
 
-function getTrackElements(elements) {
+function getTrackElements() {
+    const elements = getPlaylistTrackElements(getVisiblePlaylistId());
     const parentRect = playlistElementRect;
     const scrollTop = playlistElement.scrollTop;
 
@@ -232,7 +233,7 @@ function onMousemove(event) {
     event.preventDefault();
 
     if (!selectionElement && isAboveThreshold(mousePos, startingPoint)) {
-        trackElements = getTrackElements(playlistElement.children);
+        trackElements = getTrackElements();
         selectionElement = initSelectionArea(playlistElement);
 
         if (!event.ctrlKey) {
@@ -309,6 +310,12 @@ function onMousedown(event) {
     if (event.which !== 1) {
         return;
     }
+    const element = getElementByAttr(event.target, "data-btn");
+
+    if (element) {
+        deselectTrackElements();
+        return;
+    }
     playlistElementRect = playlistElement.getBoundingClientRect();
     maxScrollHeight = playlistElement.scrollHeight;
     maxWidth = playlistElement.clientWidth;
@@ -346,25 +353,43 @@ function removeSelectedPlaylistTracks(tracks, selectedTrackIndexes) {
     return resetTrackIndexes(filteredTracks);
 }
 
-function resetTrackElementIndexes(elements) {
-    Array.from(elements).forEach((element, index) => {
-        element.setAttribute("data-index", index);
+function resetListElementIndexes(elements, startIndex) {
+    Array.from(elements).slice(startIndex).forEach((element, index) => {
+        element.setAttribute("data-index", startIndex + index);
+        element.querySelector(".list-item-index").textContent = startIndex + index + 1;
     });
+}
+
+function resetGridElementIndexes(elements, startIndex) {
+    Array.from(elements).slice(startIndex).forEach((element, index) => {
+        element.setAttribute("data-index", startIndex + index);
+    });
+}
+
+function resetPlaylistElementIndexes(id, type, selectedTrackIndexes) {
+    const smallestIndex = Math.min(...selectedTrackIndexes);
+    const elements = getPlaylistTrackElements(id);
+
+    if (type === "list") {
+        resetListElementIndexes(elements, smallestIndex);
+    }
+    else {
+        resetGridElementIndexes(elements, smallestIndex);
+    }
 }
 
 function updateCurrentTrackIndex(playlistId, selectedTrackIndexes) {
     const currentTrack = getCurrentTrack();
 
     if (currentTrack && isPlaylistActive(playlistId)) {
+        const track = findTrack(playlistId, currentTrack.name);
         let index = currentTrack.index;
 
-        if (selectedTrackIndexes.includes(index)) {
+        if (selectedTrackIndexes.includes(index) || !track) {
             updateCurrentTrack({ index: -1 });
         }
         else {
-            const track = findTrack(playlistId, currentTrack.name);
             index = track.index;
-
             updateCurrentTrack({ index });
         }
         setPlaybackIndex(index);
@@ -377,11 +402,10 @@ function removeSelectedTracks() {
     const pl = getPlaylistById(id);
     const selectedTrackIndexes = getSelectedTrackIndexes(selectedElements);
     const tracks = removeSelectedPlaylistTracks(pl.tracks, selectedTrackIndexes);
-    const elements = getPlaylistTrackElements(id);
     const playbackOrder = getPlaybackOrder(tracks, getSetting("shuffle"));
 
     removeElements(selectedElements);
-    resetTrackElementIndexes(elements);
+    resetPlaylistElementIndexes(id, pl.type, selectedTrackIndexes);
     updatePlaylist(id, { tracks, playbackOrder });
     updateCurrentTrackIndex(id, selectedTrackIndexes);
     removeElement(getElementById("js-move-to-panel-container"));

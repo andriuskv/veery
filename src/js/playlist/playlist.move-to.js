@@ -11,8 +11,8 @@ function showMoveToBtn() {
         return;
     }
     const element = `
-        <div id="${panelContainerId}" class="tab-header-item">
-            <button class="btn" data-header-item="move-to">Move to</button>
+        <div id="${panelContainerId}" class="playlist-tab-header-item">
+            <button class="btn" data-item="move-to">Move to</button>
         </div>
     `;
 

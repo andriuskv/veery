@@ -16,6 +16,10 @@
     }
 }
 
-@mixin for-phone-only {
-  @media (max-width: 599px) { @content; }
+@mixin breakpoint-small {
+  @media (max-width: 700px) { @content; }
+}
+
+@mixin breakpoint-smallest {
+  @media (max-width: 540px) { @content; }
 }

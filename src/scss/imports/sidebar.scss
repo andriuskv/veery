@@ -1,56 +1,58 @@
 .sidebar-container {
     cursor: default;
 
-    @include for-phone-only {
-        z-index: 1;
+    @include breakpoint-small {
+        z-index: 3;
         position: absolute;
         left: 0;
         bottom: 0;
         width: 100%;
         height: 100%;
         backdrop-filter: blur(2px);
-        background-color: transparentize($color2, 0.6);
+        background-color: transparentize($color2, 0.4);
 
         &.contracted {
-            z-index: 0;
+            order: 1;
+            position: static;
             height: 40px;
-            border-top: 1px solid $color1;
+            margin-top: 4px;
 
             .sidebar {
                 flex-direction: row;
                 width: 100%;
-                padding: 2px 0;
+                padding: 4px;
                 background-color: $color2;
             }
+
             .sidebar-header {
-                width: 20px;
-                height: 50%;
-                margin: 8px;
-                background-image: url("./assets/images/main-icon-alt.png");
+                display: none;
             }
+
             .sidebar-nav {
                 display: none;
             }
+
             .track-info {
+                flex-grow: 1;
+                overflow: hidden;
                 display: flex;
-                width: calc(100% - 40px);
                 margin-top: 0;
             }
-            .track-art-container {
-                flex-shrink: 0;
-                width: 48px;
-                height: 100%;
-                padding: 0 0 0 2px;
-                margin: 0;
 
-                &:hover .btn {
-                    display: none;
-                }
+            .track-art-container {
+                width: 32px;
+                height: 100%;
+                padding: 0;
+                margin-bottom: 0;
             }
-            .track-art {
-                width: 100%;
+
+            .track-art-wrapper, .track-art {
+                width: inherit;
             }
+
             .track-name {
+                @include text-truncate;
+
                 flex-grow: 1;
                 height: 100%;
                 padding: 0;
@@ -58,6 +60,7 @@
         }
     }
 }
+
 .sidebar {
     user-select: none;
     flex-grow: 0;
@@ -69,17 +72,15 @@
     padding-right: 2px;
     background-color: $color1;
 }
+
 .sidebar-header {
     height: 80px;
     background-image: url("./assets/images/main-icon.png");
     background-size: cover;
     background-repeat: no-repeat;
     background-color: $color2;
-
-    @include for-phone-only {
-        cursor: pointer;
-    }
 }
+
 .main-title {
     margin-top: 0;
     margin-bottom: 0;
@@ -87,20 +88,24 @@
     font-size: 24px;
     cursor: default;
 }
+
 .sidebar-nav {
     flex-basis: 50%;
     flex-grow: 1;
     display: flex;
     flex-direction: column;
 }
+
 .sidebar-btn-container {
     padding: 4px;
     margin-top: 2px;
     background-color: $color2;
 }
+
 .new-pl-btn {
     width: 100%;
 }
+
 .sidebar-form {
     display: flex;
     padding-top: 4px;
@@ -112,6 +117,7 @@
         margin-right: 4px;
     }
 }
+
 .sidebar-entries {
     overflow-y: auto;
     flex-grow: 1;
@@ -123,6 +129,7 @@
         margin-top: 4px;
     }
 }
+
 .sidebar-btn {
     @include text-truncate;
 
@@ -148,6 +155,7 @@
         box-shadow: -2px 0px 8px 5px $color2;
     }
 }
+
 .active-playlist-icon {
     position: absolute;
     top: 50%;
@@ -162,9 +170,11 @@
         height: 20px;
     }
 }
+
 .track-info {
     margin-top: 2px;
 }
+
 .track-art-container {
     display: flex;
     justify-content: center;
@@ -178,6 +188,7 @@
         display: flex;
     }
 }
+
 .track-art-wrapper {
     position: relative;
     display: inline-block;
@@ -196,10 +207,12 @@
 
     }
 }
+
 .track-art {
     height: 100%;
     object-fit: scale-down;
 }
+
 .track-name {
     display: flex;
     flex-direction: column;
@@ -213,12 +226,15 @@
     white-space: nowrap;
     overflow: hidden;
 }
+
 .track-title, .track-artist {
     will-change: transform;
 }
+
 .track-title {
     font-size: 14px;
 }
+
 .track-artist {
     font-size: 12px;
 }

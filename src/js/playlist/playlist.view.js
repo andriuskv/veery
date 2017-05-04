@@ -1,5 +1,7 @@
 import { getElementById, replaceElement, removeElement, removeElementClass, getTrackArt } from "./../utils.js";
 import { getVisiblePlaylistId } from "./../tab.js";
+import { getPlayerState } from "./../player/player.js";
+import { togglePlayPauseBtn } from "./../player/player.controls.js";
 import { getPlaylistById, isPlaylistActive, getCurrentTrack } from "./playlist.js";
 import { updatePlaylist } from "./playlist.manage.js";
 import { enableTrackSelection } from "./playlist.track-selection.js";
@@ -14,13 +16,25 @@ function getPlaylistTrackElements(id) {
     return children;
 }
 
+function getPlaylistElementAtIndex(id, index) {
+    return getPlaylistTrackElements(id)[index];
+}
+
 function createListItem(item) {
     return `
         <li class="list-item track" data-index="${item.index}">
-            <span>${item.title}</span>
-            <span>${item.artist}</span>
-            <span>${item.album}</span>
-            <span>${item.duration}</span>
+            <span class="list-item-first-col">
+                <span class="list-item-index">${item.index + 1}.</span>
+                <button class="btn btn-icon track-play-pause-btn" data-btn="play">
+                    <svg viewBox="0 0 24 24">
+                        <use class="svg-icon" href="#play-icon"></use>
+                    </svg>
+                </button>
+            </span>
+            <span class="list-item-col">${item.title}</span>
+            <span class="list-item-col">${item.artist}</span>
+            <span class="list-item-col">${item.album}</span>
+            <span class="list-item-col">${item.duration}</span>
         </li>
     `;
 }
@@ -28,12 +42,12 @@ function createListItem(item) {
 function createList(id, items) {
     return `
         <ul class="list-view-header">
-            <li class="list-view-header-item">Title</li>
-            <li class="list-view-header-item">Artist</li>
-            <li class="list-view-header-item">Album</li>
-            <li class="list-view-header-item">Duration</li>
+            <li class="list-item-col list-view-header-item">Title</li>
+            <li class="list-item-col list-view-header-item">Artist</li>
+            <li class="list-item-col list-view-header-item">Album</li>
+            <li class="list-item-col list-view-header-item">Duration</li>
         </ul>
-        <ul id="js-${id}" class="playlist-items list-view">${items}</ul>
+        <ul id="js-${id}" class="list-view">${items}</ul>
     `;
 }
 
@@ -41,7 +55,7 @@ function createGridItem(item) {
     const thumbnail = getTrackArt(item.thumbnail);
     let trackNameTemp = `<div class="grid-item-title">${item.title}</div>`;
 
-    if (item.artist && item.title) {
+    if (item.artist) {
         trackNameTemp += `
             <div class="grid-item-artist">${item.artist} ${item.album ? `- ${item.album}` : ""}</div>
         `;
@@ -49,17 +63,22 @@ function createGridItem(item) {
 
     return `
         <li class="grid-item track" data-index="${item.index}">
-            <div class="grid-item-thumb-container">
-                <div class="grid-item-duration">${item.duration}</div>
-                <img src="${thumbnail}" class="grid-item-thumb" alt="">
+            <div class="grid-item-first-col">
+                <img src="${thumbnail}" class="grid-item-thumbnail" alt="">
+                <button class="btn track-play-pause-btn grid-item-play-pause-btn" data-btn="play">
+                    <svg viewBox="0 0 24 24">
+                        <use class="svg-icon" href="#play-icon"></use>
+                    </svg>
+                </button>
             </div>
-            <div>${trackNameTemp}</div>
+            <div class="grid-item-name">${trackNameTemp}</div>
+            <div class="grid-item-duration">${item.duration}</div>
         </li>
     `;
 }
 
 function createGrid(id, items) {
-    return `<ul id="js-${id}" class="playlist-items grid-view">${items}</ul>`;
+    return `<ul id="js-${id}" class="grid-view">${items}</ul>`;
 }
 
 function createItems(tracks, cb) {
@@ -82,9 +101,19 @@ function createPlaylistTab(pl) {
 function renderPlaylist(pl) {
     const tab = createPlaylistTab(pl);
     const container = getElementById("js-playlist-tabs");
+    const track = getCurrentTrack();
 
     pl.rendered = true;
     container.insertAdjacentHTML("beforeend", tab);
+
+    if (track && track.playlistId === pl.id) {
+        requestAnimationFrame(() => {
+            showTrack(pl.id, track.index, {
+                scrollToTrack: true,
+                paused: getPlayerState()
+            });
+        });
+    }
 }
 
 function updatePlaylistView({ id, type, tracks }) {
@@ -111,28 +140,43 @@ function removePlaylistTab(id) {
     removeElement(parentElement);
 }
 
-function scrollToTrackElement(trackElement, playlistElement) {
-    const elementHeight = trackElement.offsetHeight;
-    const trackTop = trackElement.offsetTop;
-    const playlistScrollTop = playlistElement.scrollTop;
-    const playlistClientHeight = playlistElement.clientHeight;
-    const visiblePlaylistOffset = playlistScrollTop + playlistClientHeight;
+function scrollToTrackElement(element, id) {
+    const containerElement = getElementById(`js-tab-${id}`);
 
-    if (trackTop - elementHeight < playlistScrollTop || trackTop > visiblePlaylistOffset) {
-        playlistElement.scrollTop = trackTop - playlistClientHeight / 2;
+    const elementHeight = element.offsetHeight;
+    const trackTop = element.offsetTop;
+    const containerScrollTop = containerElement.scrollTop;
+    const containerClientHeight = containerElement.clientHeight;
+    const visibleContainerOffset = containerScrollTop + containerClientHeight;
+
+    if (trackTop - elementHeight < containerScrollTop || trackTop > visibleContainerOffset) {
+        containerElement.scrollTop = trackTop - containerClientHeight / 2;
     }
 }
 
-function showTrack(id, index, scrollToTrack) {
-    const element = getPlaylistElement(id);
-    const trackElement = element.children[index];
+function showTrack(id, index, { scrollToTrack, paused }) {
+    const element = getPlaylistElementAtIndex(id, index);
+    const btn = element.querySelector(".btn");
 
+    togglePlayPauseBtn(paused, btn);
     removeElementClass("track", "playing");
-    trackElement.classList.add("playing");
+    element.classList.add("playing");
 
     if (scrollToTrack) {
-        scrollToTrackElement(trackElement, element);
+        scrollToTrackElement(element, id);
     }
+}
+
+function toggleTrackPlayPauseBtn(track, paused) {
+    const pl = getPlaylistById(track.playlistId);
+
+    if (track.index === -1 || !pl.rendered) {
+        return;
+    }
+    const element = getPlaylistElementAtIndex(track.playlistId, track.index);
+    const btn = element.querySelector(".btn");
+
+    togglePlayPauseBtn(paused, btn);
 }
 
 function togglePlaylistTypeBtn(type) {
@@ -156,10 +200,13 @@ function changePlaylistType(type, pl) {
     togglePlaylistTypeBtn(type);
 
     if (isPlaylistActive(pl.id)) {
-        const track = getCurrentTrack();
+        const { index } = getCurrentTrack();
 
-        if (track) {
-            showTrack(pl.id, track.index);
+        if (index !== -1) {
+            showTrack(pl.id, index, {
+                scrollToTrack: false,
+                paused: getPlayerState()
+            });
         }
     }
 }
@@ -169,7 +216,7 @@ window.addEventListener("track-length-change", () => {
     const hours = Math.floor(duration / 3600);
     const minutes = Math.ceil(duration / 60 % 60);
 
-    getElementById("js-tab-footer").textContent = `${tracks.length} tracks, ${hours} hr ${minutes} min`;
+    getElementById("js-playlist-tab-footer").textContent = `${tracks.length} tracks, ${hours} hr ${minutes} min`;
 });
 
 window.addEventListener("resize", ({ target }) => {
@@ -178,7 +225,7 @@ window.addEventListener("resize", ({ target }) => {
     if (id) {
         const pl = getPlaylistById(id);
 
-        if (pl.type === "list" && target.innerWidth < 600) {
+        if (pl.type === "list" && target.innerWidth <= 540) {
             changePlaylistType("grid", pl);
         }
     }
@@ -191,6 +238,7 @@ export {
     updatePlaylistView,
     renderPlaylist,
     showTrack,
+    toggleTrackPlayPauseBtn,
     togglePlaylistTypeBtn,
     changePlaylistType
 };

@@ -62,7 +62,7 @@
     <div class="player">
         <div id="js-sidebar-container" class="sidebar-container contracted">
             <div id="js-sidebar" class="sidebar" data-target="sidebar">
-                <header class="sidebar-header" data-target="header"></header>
+                <header class="sidebar-header"></header>
                 <nav class="sidebar-nav">
                     <div class="sidebar-btn-container">
                         <a href="#/manage" id="js-sidebar-entry-manage" class="btn btn-dark sidebar-btn">
@@ -77,6 +77,11 @@
             </div>
         </div>
         <div class="main">
+            <div id="js-tab-header" class="tab-header">
+                <div class="sidebar-toggle-btn-container">
+                    <button class="btn sidebar-toggle-btn" data-item="sidebar-toggle"></button>
+                </div>
+            </div>
             <div id="js-tab-container" class="tab-container">
                 <div id="js-tab-manage" class="tab manage-tab">
                     <div class="import-option-container">
@@ -168,8 +173,8 @@
                 </div>
             </div>
             <div id="js-tab-playlist-container" class="tab-container">
-                <div id="js-tab-header" class="tab-header">
-                    <div class="filter-input-container">
+                <div id="js-playlist-tab-header" class="playlist-tab-header">
+                    <div class="playlist-tab-header-item filter-input-container">
                         <svg viewBox="0 0 24 24" class="filter-input-icon" data-filter-item="icon">
                             <path d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59
                                 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,
@@ -185,32 +190,32 @@
                             </svg>
                         </button>
                     </div>
-                    <div id="js-playlist-type-btns" class="tab-header-item playlist-type-btns">
+                    <div id="js-playlist-type-btns" class="playlist-tab-header-item playlist-type-btns">
                         <button id="js-list-toggle-btn" class="btn btn-icon list-type-btn"
-                            data-header-item="list" title="List">
+                            data-item="list" title="List">
                             <svg viewBox="0 0 24 24">
                                 <path d="M9,5V9H21V5M9,19H21V15H9M9,14H21V10H9M4,9H8V5H4M4,19H8V15H4M4,14H8V10H4V14Z">
                             </svg>
                         </button>
-                        <button id="js-grid-toggle-btn" class="btn btn-icon" data-header-item="grid" title="Grid">
+                        <button id="js-grid-toggle-btn" class="btn btn-icon" data-item="grid" title="Grid">
                             <svg viewBox="0 0 24 24">
                                 <path d="M3,11H11V3H3M3,21H11V13H3M13,21H21V13H13M13,3V11H21V3">
                             </svg>
                         </button>
                     </div>
-                    <div id="js-sort-panel-container" class="tab-header-item sort-panel-container">
+                    <div id="js-sort-panel-container" class="sort-panel-container">
                         <button id="js-sort-toggle" class="btn sort-panel-toggle-btn"
-                            data-header-item="sorting">Sorting</button>
+                            data-item="sorting">Sorting</button>
                         <button id="js-order-toggle" class="btn btn-icon"
-                            title="Ascending/Descending" data-header-item="order">
+                            title="Ascending/Descending" data-item="order">
                             <svg viewBox="0 0 24 24">
-                                <use class="btn-icon" href="#down-arrow-icon"></use>
+                                <use class="svg-icon" href="#down-arrow-icon"></use>
                             </svg>
                     </button>
                     </div>
                 </div>
                 <div id="js-playlist-tabs" class="playlist-tabs"></div>
-                <div id="js-tab-footer" class="tab-footer"></div>
+                <div id="js-playlist-tab-footer" class="playlist-tab-footer"></div>
             </div>
         </div>
     </div>
@@ -223,7 +228,7 @@
             </button>
             <button id="js-play-btn" class="btn btn-light main-control-btn" data-item="play" title="Play">
                 <svg viewBox="0 0 24 24">
-                    <use class="btn-icon" href="#play-icon"></use>
+                    <use class="svg-icon" href="#play-icon"></use>
                 </svg>
             </button>
             <button class="btn btn-light main-control-btn" data-item="stop" title="Stop">
@@ -267,7 +272,7 @@
             </button>
             <button id="js-volume-btn" class="btn btn-light control-btn" data-item="mute" title="Mute">
                 <svg viewBox="0 0 24 24">
-                    <use class="btn-icon" href="#volume-icon"></use>
+                    <use class="svg-icon" href="#volume-icon"></use>
                 </svg>
             </button>
         </div>

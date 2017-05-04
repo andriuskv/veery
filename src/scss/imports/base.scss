@@ -126,8 +126,11 @@ input {
     display: flex;
     height: calc(100% - 36px);
 
-    @include for-phone-only {
+    @include breakpoint-small {
         flex-direction: column;
+    }
+
+    @include breakpoint-smallest {
         height: calc(100% - 48px);
     }
 }
@@ -138,8 +141,9 @@ input {
     position: relative;
     width: calc(100% - 160px);
 
-    @include for-phone-only {
+    @include breakpoint-small {
+        flex-grow: 1;
         width: 100%;
-        height: calc(100% - 40px);
+        height: calc(100% - 44px);
     }
 }

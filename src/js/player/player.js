@@ -3,7 +3,7 @@ import {
     setVolumeBarInnerWidth,
     displayCurrentTime,
     showTrackDuration,
-    togglePlayBtn,
+    togglePlayPauseBtn,
     elapsedTime,
     resetTrackBar
 } from "./player.controls.js";
@@ -24,15 +24,16 @@ import { removeElementClass, getElementById, getElementByAttr } from "./../utils
 import { getVisiblePlaylistId } from "./../tab.js";
 import { setSetting, getSetting, removeSetting } from "./../settings.js";
 import { showTrackInfo, showActiveIcon, removeActiveIcon } from "./../sidebar.js";
-import { showTrack } from "./../playlist/playlist.view.js";
+import { showTrack, toggleTrackPlayPauseBtn } from "./../playlist/playlist.view.js";
 import * as nPlayer from "./player.native.js";
 import * as ytPlayer from "./player.youtube.js";
 import * as scPlayer from "./player.soundcloud.js";
 
+const tabContainer = getElementById("js-playlist-tabs");
 let paused = true;
 let scrollToTrack = false;
 
-const storedTrack = (function () {
+const storedTrack = (function() {
     function getTrack() {
         return JSON.parse(localStorage.getItem("track")) || {};
     }
@@ -77,14 +78,18 @@ const storedTrack = (function () {
     };
 })();
 
+function getPlayerState() {
+    return paused;
+}
+
 function beforeTrackStart(track) {
-    const id = getVisiblePlaylistId();
+    const pl = getPlaylistById(track.playlistId);
 
     showTrackInfo(track);
     showTrackDuration(track.duration);
 
-    if (id === track.playlistId && track.index !== -1) {
-        showTrack(track.playlistId, track.index, scrollToTrack);
+    if (pl.rendered && track.index !== -1) {
+        showTrack(pl.id, track.index, { scrollToTrack });
     }
     scrollToTrack = false;
 }
@@ -94,7 +99,7 @@ function onTrackStart(startTime) {
 
     paused = false;
     showActiveIcon(track.playlistId);
-    togglePlayBtn(paused);
+    togglePlayPauseBtn(paused);
     storedTrack.saveTrack({
         playlistId: track.playlistId,
         name: track.name,
@@ -116,12 +121,14 @@ function togglePlaying(track) {
     else if (track.player === "soundcloud") {
         scPlayer.togglePlaying(paused);
     }
-    if (!paused) {
+    paused = !paused;
+
+    if (paused) {
         removeActiveIcon();
         elapsedTime.stop();
-        togglePlayBtn(!paused);
+        togglePlayPauseBtn(paused);
     }
-    paused = !paused;
+    toggleTrackPlayPauseBtn(track, paused);
 }
 
 function playNewTrack(track, startTime) {
@@ -165,6 +172,7 @@ function play(source, sourceValue, id = getActivePlaylistId()) {
 
     if (currentTrack) {
         resetTrackBar();
+        toggleTrackPlayPauseBtn(currentTrack, true);
         stopTrack(currentTrack);
     }
 
@@ -183,7 +191,7 @@ function play(source, sourceValue, id = getActivePlaylistId()) {
     if (!track) {
 
         // If playlist is empty reset player
-        resetPlayer();
+        resetPlayer(currentTrack);
         return;
     }
     playNewTrack(track);
@@ -205,8 +213,8 @@ function playTrackFromElement({ target }) {
     }
 }
 
-function stopTrack(track, once) {
-    if (!once && track.player === "native") {
+function stopTrack(track) {
+    if (track.player === "native") {
         nPlayer.stopTrack(track);
     }
     else if (track.player === "youtube") {
@@ -217,28 +225,30 @@ function stopTrack(track, once) {
     }
 }
 
-function stopPlayer(once) {
+function stopPlayer() {
     const track = getCurrentTrack();
 
     if (track) {
-        stopTrack(track, once);
+        stopTrack(track);
     }
-    resetPlayer(once);
+    resetPlayer(track);
 }
 
-function resetPlayer(once) {
-    if (!once) {
-        setCurrentTrack();
-        setPlaylistAsActive();
-        showTrackInfo();
-    }
+function resetPlayer(track) {
     paused = true;
     storedTrack.remove();
     resetTrackBar();
     showTrackDuration();
-    togglePlayBtn(paused);
+    showTrackInfo();
+    setCurrentTrack();
+    setPlaylistAsActive();
+    togglePlayPauseBtn(paused);
     removeActiveIcon();
     removeElementClass("track", "playing");
+
+    if (track) {
+        toggleTrackPlayPauseBtn(track, paused);
+    }
 }
 
 function onControlButtonClick(button) {
@@ -316,49 +326,41 @@ function mutePlayer(muted) {
     }
 }
 
-(function () {
-    const tabContainer = getElementById("js-playlist-tabs");
+tabContainer.addEventListener("dblclick", playTrackFromElement);
 
-    function getTouchCoords(touch) {
-        return {
-            x: Math.floor(touch.clientX),
-            y: Math.floor(touch.clientY)
-        };
+tabContainer.addEventListener("click", ({ target }) => {
+    const element = getElementByAttr(target, "data-btn");
+
+    if (element) {
+        const trackElement = getElementByAttr(target, "data-index");
+        const index = parseInt(trackElement.attrValue, 10);
+        const track = getCurrentTrack();
+
+        if (!track || index !== track.index) {
+            play("index", index, getVisiblePlaylistId());
+        }
+        else {
+            togglePlaying(track);
+        }
     }
-
-    if (window.innerWidth < 600) {
-        let touchStartCoords = {};
-
-        tabContainer.addEventListener("touchstart", event => {
-            touchStartCoords = getTouchCoords(event.changedTouches[0]);
-        });
-
-        tabContainer.addEventListener("touchend", event => {
-            const { x, y } = getTouchCoords(event.changedTouches[0]);
-
-            if (touchStartCoords.x === x && touchStartCoords.y === y) {
-                playTrackFromElement(event);
-            }
-        });
-    }
-    tabContainer.addEventListener("dblclick", playTrackFromElement);
-})();
+});
 
 window.addEventListener("track-end", () => {
     if (getSetting("once")) {
-        stopPlayer(true);
+        stopPlayer();
         return;
     }
     storedTrack.remove();
 
-    if (!getSetting("repeat")) {
-        playNextTrack();
+    if (getSetting("repeat")) {
+        playNewTrack(getCurrentTrack());
         return;
     }
-    playNewTrack(getCurrentTrack());
+    playNextTrack();
 });
 
 export {
+    getPlayerState,
     onControlButtonClick,
     stopPlayer,
     toggleShuffle,

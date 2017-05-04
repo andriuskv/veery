@@ -11,7 +11,7 @@ function setSortBtnText(text = "Sorting") {
 }
 
 function toggleOrderBtn(order = 1) {
-    const icon = getElementById("js-order-toggle").querySelector(".btn-icon");
+    const icon = getElementById("js-order-toggle").querySelector(".svg-icon");
 
     icon.setAttribute("href", `#${order === 1 ? "down" : "up"}-arrow-icon`);
 }
