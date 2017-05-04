@@ -53,7 +53,7 @@ function updateCurrentTrack(pl) {
         if (track) {
             playlist.updateCurrentTrack({ index: track.index });
             playlist.setPlaybackIndex(track.index);
-            showTrack(pl, track.index);
+            showTrack(pl.id, track.index);
         }
     }
 }
