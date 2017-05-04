@@ -54,7 +54,6 @@ function setElementIconAndTitle(element, { id, title }) {
     element.setAttribute("title", title);
 }
 
-// rename
 function togglePlayPauseBtn(state, element = getElementById("js-play-btn")) {
     const data = {
         on: {
