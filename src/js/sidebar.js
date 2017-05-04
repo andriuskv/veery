@@ -169,15 +169,12 @@ function toggleSidebarForm() {
 }
 
 getElementById("js-sidebar-form-toggle-btn").addEventListener("click", toggleSidebarForm);
-getElementById("js-sidebar-container").addEventListener("click", function(event) {
-    const target = getElementByAttr(event.target, "data-target");
 
-    if (!target) {
+getElementById("js-sidebar-container").addEventListener("click", function({ target }) {
+    const element = getElementByAttr(target, "data-target");
+
+    if (!element) {
         this.classList.add("contracted");
-        return;
-    }
-    if (target.attrValue === "header") {
-        this.classList.toggle("contracted");
     }
 });
 

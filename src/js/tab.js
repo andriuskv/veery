@@ -18,14 +18,14 @@ function getVisiblePlaylistId() {
     return visiblePlaylistId;
 }
 
-function toggleToPlaylistTab(id, isForPhoneOnly) {
+function toggleToPlaylistTab(id, isSmallestBreakpoint) {
     const pl = getPlaylistById(id);
 
     if (!pl.rendered) {
         renderPlaylist(pl);
     }
 
-    if (pl.type === "list" && isForPhoneOnly) {
+    if (pl.type === "list" && isSmallestBreakpoint) {
         changePlaylistType("grid", pl);
     }
     else {
@@ -38,7 +38,20 @@ function toggleToPlaylistTab(id, isForPhoneOnly) {
 }
 
 getElementById("js-tab-header").addEventListener("click", ({ target }) => {
-    const element = getElementByAttr(target, "data-header-item");
+    const element = getElementByAttr(target, "data-item");
+
+    if (!element) {
+        return;
+    }
+    const item = element.attrValue;
+
+    if (item === "sidebar-toggle") {
+        getElementById("js-sidebar-container").classList.remove("contracted");
+    }
+});
+
+getElementById("js-playlist-tab-header").addEventListener("click", ({ target }) => {
+    const element = getElementByAttr(target, "data-item");
 
     if (!element) {
         return;
@@ -62,14 +75,16 @@ getElementById("js-tab-header").addEventListener("click", ({ target }) => {
 
 window.addEventListener("route-change", ({ detail: { isPlaylistTab, tabId } }) => {
     const entry = getSidebarEntry(tabId);
-    const isForPhoneOnly = window.innerWidth < 600;
+    const viewportWidth = window.innerWidth;
+    const isSmallestBreakpoint = viewportWidth <= 540;
+    const isSmallBreakpoint = viewportWidth <= 700;
 
     removeElementClass("sidebar-btn", "active");
     removeElementClass("tab", "active");
     setVisiblePlaylistId(isPlaylistTab ? tabId: "");
 
     if (isPlaylistTab) {
-        toggleToPlaylistTab(tabId, isForPhoneOnly);
+        toggleToPlaylistTab(tabId, isSmallestBreakpoint);
         getElementById("js-tab-playlist-container").classList.add("active");
         getElementById("js-tab-container").classList.remove("active");
     }
@@ -83,7 +98,7 @@ window.addEventListener("route-change", ({ detail: { isPlaylistTab, tabId } }) =
         entry.classList.add("active");
     }
 
-    if (isForPhoneOnly) {
+    if (isSmallBreakpoint) {
         getElementById("js-sidebar-container").classList.add("contracted");
     }
 });

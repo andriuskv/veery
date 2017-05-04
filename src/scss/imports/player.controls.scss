@@ -13,7 +13,7 @@
     padding: 4px;
     user-select: none;
 
-    @include for-phone-only {
+    @include breakpoint-smallest {
         align-items: flex-end;
         justify-content: center;
         height: 48px;
@@ -90,7 +90,7 @@
     align-items: center;
     flex-grow: 1;
 
-    @include for-phone-only {
+    @include breakpoint-smallest {
         position: absolute;
         top: 0;
         left: 0;
@@ -111,7 +111,7 @@
         height: 20px;
     }
 
-    @include for-phone-only {
+    @include breakpoint-smallest {
         margin-bottom: 2px;
     }
 }

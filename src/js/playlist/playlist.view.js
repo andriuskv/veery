@@ -216,7 +216,7 @@ window.addEventListener("track-length-change", () => {
     const hours = Math.floor(duration / 3600);
     const minutes = Math.ceil(duration / 60 % 60);
 
-    getElementById("js-tab-footer").textContent = `${tracks.length} tracks, ${hours} hr ${minutes} min`;
+    getElementById("js-playlist-tab-footer").textContent = `${tracks.length} tracks, ${hours} hr ${minutes} min`;
 });
 
 window.addEventListener("resize", ({ target }) => {
@@ -225,7 +225,7 @@ window.addEventListener("resize", ({ target }) => {
     if (id) {
         const pl = getPlaylistById(id);
 
-        if (pl.type === "list" && target.innerWidth < 600) {
+        if (pl.type === "list" && target.innerWidth <= 540) {
             changePlaylistType("grid", pl);
         }
     }

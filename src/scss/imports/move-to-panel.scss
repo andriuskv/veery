@@ -1,13 +1,13 @@
 .move-to-panel {
     z-index: 2;
     position: absolute;
-    top: 30px;
+    top: 32px;
     width: 200px;
     padding: 8px;
     box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
     background-color: $color1;
 
-    @include for-phone-only {
+    @include breakpoint-smallest {
         left: 4px;
         right: 4px;
         width: auto;
