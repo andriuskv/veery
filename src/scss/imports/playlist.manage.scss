@@ -23,7 +23,7 @@
 
 .import-options,
 .pl-entries {
-    padding: 4px;
+    padding: 2px;
     border: 1px solid $color3;
     background-color: $color1;
 }
@@ -51,50 +51,44 @@
 
 .import-option,
 .pl-entry {
-    &:first-of-type {
-        padding-top: 0;
-    }
+    padding: 2px;
+    border-bottom: 1px solid $color3;
 
     &:last-of-type {
-        padding-bottom: 0;
         border-bottom: none;
     }
 }
 
 .import-option {
     position: relative;
-    padding: 2px 0;
-    border-bottom: 1px solid $color3;
 }
 
 .import-option-btn {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 2px;
+}
+
+.import-option-icon {
     @include svg-container {
         width: 20px;
         height: 20px;
     }
 
-    justify-content: flex-start;
-    width: 100%;
-    padding: 1px 0;
-
-    &.active .import-option-title {
-        display: none;
-    }
-}
-
-.import-option-icon {
-    padding: 1px 0;
+    padding: 0;
     margin-right: 6px;
 }
 
 .import-form {
-    display: inline-flex;
+    display: flex;
     flex-grow: 1;
+    margin-top: 4px;
 
     input {
         flex-grow: 1;
         width: 50%;
-        margin-right: 4px;
+        margin-right: 2px;
         background-color: $color2;
     }
 }
@@ -110,8 +104,6 @@
 
 .pl-entry {
     display: flex;
-    padding: 4px 0;
-    border-bottom: 1px solid $color3;
 }
 
 .pl-entry-form {
@@ -138,6 +130,7 @@
         width: 20px;
         height: 20px;
     }
+
     margin-left: 2px;
 }
 
@@ -145,6 +138,7 @@
     .manage-tab.active {
         display: block;
     }
+
     .pl-entry-container {
         margin-left: 0;
     }
