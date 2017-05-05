@@ -122,13 +122,8 @@ input {
 }
 
 .player {
-    position: relative;
-    display: flex;
+    overflow: hidden;
     height: calc(100% - 36px);
-
-    @include breakpoint-small {
-        flex-direction: column;
-    }
 
     @include breakpoint-smallest {
         height: calc(100% - 48px);
@@ -136,13 +131,12 @@ input {
 }
 
 .main {
-    display: flex;
-    flex-direction: column;
-    position: relative;
+    float: right;
     width: calc(100% - 160px);
+    height: 100%;
+    transition: height 0.2s;
 
     @include breakpoint-small {
-        flex-grow: 1;
         width: 100%;
         height: calc(100% - 44px);
     }

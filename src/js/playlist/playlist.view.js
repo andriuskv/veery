@@ -142,7 +142,6 @@ function removePlaylistTab(id) {
 
 function scrollToTrackElement(element, id) {
     const containerElement = getElementById(`js-tab-${id}`);
-
     const elementHeight = element.offsetHeight;
     const trackTop = element.offsetTop;
     const containerScrollTop = containerElement.scrollTop;

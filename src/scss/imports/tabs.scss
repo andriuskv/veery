@@ -27,16 +27,10 @@
 
 .tab-container {
     display: none;
-    flex-grow: 1;
     height: 100%;
 
     &.active {
-        display: flex;
-        flex-direction: column;
-    }
-
-    @include breakpoint-small {
-        height: calc(100% - 64px);
+        display: block;
     }
 }
 
@@ -55,7 +49,6 @@
 }
 
 .playlist-tabs {
-    flex-grow: 1;
     height: calc(100% - 64px);
 }
 
