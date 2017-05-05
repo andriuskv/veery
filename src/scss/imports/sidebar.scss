@@ -1,5 +1,12 @@
 .sidebar-container {
-    cursor: default;
+    float: left;
+    height: 100%;
+
+    @include breakpoint-smallest {
+        &.contracted {
+            bottom: 48px;
+        }
+    }
 
     @include breakpoint-small {
         z-index: 3;
@@ -7,15 +14,20 @@
         left: 0;
         bottom: 0;
         width: 100%;
-        height: 100%;
         backdrop-filter: blur(2px);
         background-color: transparentize($color2, 0.4);
 
+        &:not(.contracted) + .main {
+            height: 100%;
+        }
+
         &.contracted {
-            order: 1;
-            position: static;
+            bottom: 36px;
             height: 40px;
-            margin-top: 4px;
+
+            @include breakpoint-smallest {
+                bottom: 48px;
+            }
 
             .sidebar {
                 flex-direction: row;
