@@ -17,11 +17,15 @@ function isNewImportOption(option) {
     return importOption !== option;
 }
 
-function createImportOptionMask(option, message = "") {
-    const optionElements = Array.from(document.querySelectorAll(`[data-option-id*=${option}]`));
+function getElementsByAttr(attr) {
+    return Array.from(document.querySelectorAll(`[${attr}]`));
+}
 
-    optionElements.forEach(element => {
-        element.parentElement.insertAdjacentHTML("beforeend", `
+function createImportOptionMask(option, message = "") {
+    const elements = getElementsByAttr(`data-item*=${option}`);
+
+    elements.forEach(element => {
+        element.insertAdjacentHTML("afterend", `
             <div class="option-mask" data-mask-id=${option}>
                 <img src="./assets/images/ring-alt.svg" alt="">
                 <span class="mask-message">${message}</span>
@@ -31,7 +35,7 @@ function createImportOptionMask(option, message = "") {
 }
 
 function getMaskElements(option) {
-    return Array.from(document.querySelectorAll(`[data-mask-id*=${option}]`));
+    return getElementsByAttr(`data-mask-id*=${option}`);
 }
 
 function removeImportOptionMask(option) {
@@ -106,30 +110,30 @@ async function addImportedPlaylist(playlist) {
     const fileredTracks = filterDuplicateTracks(plTracks, pl.tracks);
     const tracks = await replaceInvalidImages(fileredTracks);
 
-    setImportOption();
-    removePlaylistImportForm();
     addTracksToPlaylist(pl, tracks);
+    setImportOption();
+    removeImportForm();
     removeImportOptionMask(playlist.player);
 }
 
-function createPlaylistImportForm(container) {
-    const formId = "js-import-form";
+function createImportForm(container, item) {
+    const id = "js-import-form";
     const form = `
-        <form id=${formId} class="import-form">
-            <input type="text" name="playlist-url" class="input" placeholder="Playlist url" required>
+        <form id=${id} class="import-form" data-for="${item}">
+            <input type="text" name="url" class="input" placeholder="Url" required>
             <button class="btn btn-dark">Import</button>
         </form>
     `;
 
-    container.insertAdjacentHTML("beforeend", form);
+    container.insertAdjacentHTML("afterend", form);
 
-    const formElement = getElementById(formId);
+    const element = getElementById(id);
 
-    formElement.elements["playlist-url"].focus();
-    formElement.addEventListener("submit", handleImportFormSubmit);
+    element.elements["url"].focus();
+    element.addEventListener("submit", handleImportFormSubmit);
 }
 
-function removePlaylistImportForm() {
+function removeImportForm() {
     const form = getElementById("js-import-form");
 
     if (form) {
@@ -137,11 +141,6 @@ function removePlaylistImportForm() {
         removeElement(form);
         removeElementClass("import-option-btn", "active");
     }
-}
-
-function selectOption(optionElement) {
-    optionElement.classList.add("active");
-    createPlaylistImportForm(optionElement);
 }
 
 function handleChangeOnFileInput({ target }) {
@@ -181,10 +180,10 @@ function showFilePicker(choice) {
 }
 
 function handleImportFormSubmit(event) {
-    const url = event.target.elements["playlist-url"].value.trim();
+    const url = event.target.elements["url"].value.trim();
 
     if (url) {
-        const { attrValue: option } = getElementByAttr(event.target, "data-option-id");
+        const option = event.target.getAttribute("data-for");
 
         createImportOptionMask(option, "Importing");
         importPlaylist(option, url);
@@ -194,7 +193,7 @@ function handleImportFormSubmit(event) {
 }
 
 importOptions.addEventListener("mouseover", function onMouveover({ target }) {
-    const item = getElementByAttr(target, "data-option-id");
+    const item = getElementByAttr(target, "data-item");
 
     if (!item) {
         return;
@@ -212,29 +211,28 @@ importOptions.addEventListener("mouseover", function onMouveover({ target }) {
 });
 
 importOptions.addEventListener("click", ({ target }) => {
-    const item = getElementByAttr(target, "data-option-id");
+    const element = getElementByAttr(target, "data-item");
 
-    if (!item) {
+    if (!element) {
         return;
     }
-    const option = item.attrValue;
+    const { attrValue, elementRef } = element;
 
-    if (!isNewImportOption(option)) {
-        return;
-    }
-    setImportOption(option);
-    removePlaylistImportForm();
+    removeImportForm();
 
-    if (option.includes("local")) {
-        showFilePicker(option);
-        setImportOption();
+    if (attrValue.includes("local")) {
+        showFilePicker(attrValue);
     }
-    else if (option === "dropbox") {
+    else if (attrValue === "dropbox") {
         showDropboxChooser();
-        setImportOption();
+    }
+    else if (isNewImportOption(attrValue)) {
+        elementRef.classList.add("active");
+        createImportForm(elementRef, attrValue);
+        setImportOption(attrValue);
     }
     else {
-        selectOption(item.elementRef);
+        setImportOption();
     }
 });
 
