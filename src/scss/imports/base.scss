@@ -131,9 +131,6 @@ input {
 }
 
 .main {
-    position: relative;
-    display: flex;
-    flex-direction: column;
     float: right;
     width: calc(100% - 160px);
     height: 100%;
@@ -142,7 +139,5 @@ input {
     @include breakpoint-small {
         width: 100%;
         height: calc(100% - 44px);
-
-
     }
 }
