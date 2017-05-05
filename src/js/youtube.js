@@ -29,10 +29,15 @@ async function getVideoDuration(items) {
     const ids = items.map(item => item.snippet.resourceId.videoId).join();
     const data = await fetchYoutube("videos", "contentDetails", "id", ids);
 
-    return items.map((item, index) => {
-        item.durationInSeconds = parseDuration(data.items[index].contentDetails.duration);
-        return item;
-    });
+    return items.reduce((items, item) => {
+        const durationItem = data.items.find(({ id }) => id === item.snippet.resourceId.videoId);
+
+        if (durationItem) {
+            item.durationInSeconds = parseDuration(durationItem.contentDetails.duration);
+            items.push(item);
+        }
+        return items;
+    }, []);
 }
 
 function fetchYoutube(path, part, filter, id, token) {
