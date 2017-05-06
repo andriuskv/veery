@@ -9,7 +9,6 @@
     }
 
     @include breakpoint-small {
-        z-index: 3;
         position: absolute;
         left: 0;
         bottom: 0;
@@ -17,8 +16,12 @@
         backdrop-filter: blur(2px);
         background-color: transparentize($color2, 0.4);
 
-        &:not(.contracted) + .main {
-            height: 100%;
+        &:not(.contracted) {
+            z-index: 3;
+
+            & + .main {
+                height: 100%;
+            }
         }
 
         &.contracted {

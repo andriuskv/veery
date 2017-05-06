@@ -153,7 +153,7 @@ function scrollToTrackElement(element, id) {
     }
 }
 
-function showTrack(id, index, { scrollToTrack, paused }) {
+function showTrack(id, index, { scrollToTrack, paused } = {}) {
     const element = getPlaylistElementAtIndex(id, index);
     const btn = element.querySelector(".btn");
 
