@@ -4,6 +4,7 @@ import { getCurrentTrack } from "./../playlist/playlist.js";
 import { storedTrack, toggleShuffle, setVolume, seekTo, mutePlayer, onControlButtonClick } from "./player.js";
 
 let seeking = false;
+let clickTimeoutId = 0;
 const elapsedTime = (function() {
     let timeout = 0;
 
@@ -84,7 +85,7 @@ function toggleVolumeBtn(element, state) {
     setElementIconAndTitle(element, state ? data.on : data.off);
 }
 
-function getElapsedValue(bar, pageX) {
+function getPosInPercentage(bar, pageX) {
     const element = getElementById(`js-${bar}-bar`);
     const { left, width } = element.getBoundingClientRect();
     let value = (pageX - left) / width;
@@ -98,8 +99,8 @@ function getElapsedValue(bar, pageX) {
     return value * 100;
 }
 
-function getTrackElapsedValue(pageX) {
-    return getElapsedValue("track", pageX);
+function getTrackCurrentTime(pageX) {
+    return getPosInPercentage("track", pageX);
 }
 
 function resetTrackBar() {
@@ -108,12 +109,14 @@ function resetTrackBar() {
     setTrackBarInnerWidth();
 }
 
-function onVolumeTrackMousemove(event) {
-    const volume = getElapsedValue("volume", event.pageX) / 100;
+function onVolumeTrackMousemove({ pageX }) {
+    const percentage = getPosInPercentage("volume", pageX);
+    const volume = percentage / 100;
     const track = getCurrentTrack();
 
     setVolumeBarInnerWidth(volume);
     setSetting("volume", volume);
+    getElementById("js-volume-bar-label").textContent = `${Math.floor(percentage)}%`;
 
     if (track) {
         setVolume(track, volume);
@@ -121,8 +124,10 @@ function onVolumeTrackMousemove(event) {
 }
 
 function onVolumeTrackMouseup() {
-    document.removeEventListener("mousemove", onVolumeTrackMousemove);
-    document.removeEventListener("mouseup", onVolumeTrackMouseup);
+    clearTimeout(clickTimeoutId);
+    getElementById("js-volume-bar").classList.remove("active");
+    window.removeEventListener("mousemove", onVolumeTrackMousemove);
+    window.removeEventListener("mouseup", onVolumeTrackMouseup);
 }
 
 function setBarInnerWidth(bar, percent = 0) {
@@ -146,31 +151,41 @@ function showTrackDuration(duration = "0:00") {
 }
 
 function onPlayerTrackMousemove({ pageX }) {
-    setTrackBarInnerWidth(getTrackElapsedValue(pageX));
+    const { durationInSeconds } = getCurrentTrack();
+    const percentage = getTrackCurrentTime(pageX);
+    const durationAtThumb = Math.floor(durationInSeconds * percentage / 100);
+
+    setTrackBarInnerWidth(percentage);
+    getElementById("js-track-bar-label").textContent = formatTime(durationAtThumb);
 }
 
 function onPlayerTrackMouseup({ pageX }) {
     const track = getCurrentTrack();
 
     if (track) {
-        seekTo(track, getTrackElapsedValue(pageX));
+        seekTo(track, getTrackCurrentTime(pageX));
     }
     seeking = false;
-    document.removeEventListener("mousemove", onPlayerTrackMousemove);
-    document.removeEventListener("mouseup", onPlayerTrackMouseup);
+    clearTimeout(clickTimeoutId);
+    getElementById("js-track-bar").classList.remove("active");
+    window.removeEventListener("mousemove", onPlayerTrackMousemove);
+    window.removeEventListener("mouseup", onPlayerTrackMouseup);
 }
 
-getElementById("js-track-bar").addEventListener("mousedown", event => {
+getElementById("js-track-bar").addEventListener("mousedown", function(event) {
     if (event.which !== 1 || !getCurrentTrack()) {
         return;
     }
     seeking = true;
+    clickTimeoutId = setTimeout(() => {
+        this.classList.add("active");
+    }, 160);
     onPlayerTrackMousemove(event);
-    document.addEventListener("mousemove", onPlayerTrackMousemove);
-    document.addEventListener("mouseup", onPlayerTrackMouseup);
+    window.addEventListener("mousemove", onPlayerTrackMousemove);
+    window.addEventListener("mouseup", onPlayerTrackMouseup);
 });
 
-getElementById("js-volume-bar").addEventListener("mousedown", event => {
+getElementById("js-volume-bar").addEventListener("mousedown", function(event) {
     if (event.which !== 1) {
         return;
     }
@@ -184,9 +199,12 @@ getElementById("js-volume-bar").addEventListener("mousedown", event => {
         toggleVolumeBtn(element, !muted);
         element.classList.remove("active");
     }
+    clickTimeoutId = setTimeout(() => {
+        this.classList.add("active");
+    }, 160);
     onVolumeTrackMousemove(event);
-    document.addEventListener("mousemove", onVolumeTrackMousemove);
-    document.addEventListener("mouseup", onVolumeTrackMouseup);
+    window.addEventListener("mousemove", onVolumeTrackMousemove);
+    window.addEventListener("mouseup", onVolumeTrackMouseup);
 });
 
 getElementById("js-main-controls").addEventListener("click", ({ target }) => {

@@ -35,8 +35,22 @@
         height: 6px;
         border-radius: 3px;
 
-        .bar-thumb {
+        .bar-thumb-container {
             display: block;
+        }
+    }
+
+    &.active {
+        .bar-thumb-container {
+            display: block;
+        }
+
+        .bar-label {
+            display: block;
+        }
+
+        .bar-thumb {
+            background-color: #aaa;
         }
     }
 }
@@ -51,8 +65,26 @@
     background-color: $brand-color;
 }
 
-.bar-thumb {
+.bar-thumb-container {
+    position: relative;
     display: none;
+}
+
+.bar-label {
+    position: absolute;
+    left: -14px;
+    bottom: 18px;
+    display: none;
+    min-width: 40px;
+    padding: 4px;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
+    background-color: $color1;
+    color: $base-text-color;
+    font-size: 13px;
+    text-align: center;
+}
+
+.bar-thumb {
     flex-grow: 0;
     flex-shrink: 0;
     width: 12px;
