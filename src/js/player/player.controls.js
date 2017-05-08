@@ -1,6 +1,6 @@
-import { getElementById, getElementByAttr, formatTime, dispatchCustomEvent } from "./../utils.js";
-import { setSetting, getSetting, removeSetting, getSettings } from "./../settings.js";
-import { getCurrentTrack } from "./../playlist/playlist.js";
+import { getElementById, getElementByAttr, formatTime, dispatchCustomEvent } from "../utils.js";
+import { setSetting, getSetting, removeSetting, getSettings } from "../settings.js";
+import { getCurrentTrack } from "../playlist/playlist.js";
 import { storedTrack, toggleShuffle, setVolume, seekTo, mutePlayer, onControlButtonClick } from "./player.js";
 
 let seeking = false;

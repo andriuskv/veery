@@ -1,5 +1,5 @@
-import { getElementById, getElementByAttr, isOutsideElement } from "./../utils.js";
-import { getVisiblePlaylistId } from "./../tab.js";
+import { getElementById, getElementByAttr, isOutsideElement } from "../utils.js";
+import { getVisiblePlaylistId } from "../tab.js";
 import { getPlaylistById } from "./playlist.js";
 import { getPlaylistTrackElements } from "./playlist.view.js";
 

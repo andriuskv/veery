@@ -1,4 +1,4 @@
-import { updateCurrentTrack } from "./../playlist/playlist.js";
+import { updateCurrentTrack } from "../playlist/playlist.js";
 import { onTrackStart } from "./player.js";
 
 function playTrack(audioTrack, volume, startTime) {

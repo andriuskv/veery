@@ -85,12 +85,12 @@ function getSortOtions(sortedBy) {
     }).join("");
 }
 
-function createSortPanel(panelId, { sortedBy }) {
+function createSortPanel(id, { pl: { sortedBy } }) {
     const sortOptions = getSortOtions(sortedBy);
-    const sortPanelElement = `<ul id="${panelId}" class="sort-panel">${sortOptions}</ul>`;
+    const sortPanelElement = `<ul id="${id}" class="panel sort-panel">${sortOptions}</ul>`;
 
     getElementById("js-sort-panel-container").insertAdjacentHTML("beforeend", sortPanelElement);
-    getElementById(panelId).addEventListener("click", selectSortOption);
+    getElementById(id).addEventListener("click", selectSortOption);
 }
 
 function changePlaylistOrder(pl) {

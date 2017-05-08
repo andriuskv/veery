@@ -73,11 +73,11 @@ function createPlaylistList(playlistId) {
     }).join("");
 }
 
-function createMoveToPanel(panelId, { id }) {
+function createMoveToPanel(panelId, { pl: { id } }) {
     const listContent = createPlaylistList(id);
     const className = !listContent ? "hidden" : "";
     const moveToPanelElement = `
-        <div id="${panelId}" class="move-to-panel">
+        <div id="${panelId}" class="panel move-to-panel">
             <h2 class="move-to-panel-title">Move to</h2>
             <ul id="js-move-to-list" class="move-to-list ${className}">${listContent}</ul>
             <button id="js-move-to-new-pl-btn" class="btn move-to-new-pl-btn">Create new playlist</button>

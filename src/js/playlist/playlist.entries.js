@@ -1,5 +1,5 @@
-import { removeElement, getElementById, getElementByAttr } from "./../utils.js";
-import { editSidebarEntry } from "./../sidebar.js";
+import { removeElement, getElementById, getElementByAttr } from "../utils.js";
+import { editSidebarEntry } from "../sidebar.js";
 import { getPlaylistById } from "./playlist.js";
 import { removePlaylist, updatePlaylist } from "./playlist.manage.js";
 import { importPlaylist, createImportOptionMask } from "./playlist.import.js";

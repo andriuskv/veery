@@ -1,10 +1,11 @@
 import { removeElement, removeElements, removeElementClass, getElementById, getElementByAttr, scriptLoader } from "./../utils.js";
+import { togglePanel } from "../panels.js";
 import { getPlaylistById, createPlaylist } from "./playlist.js";
 import { addTracksToPlaylist } from "./playlist.manage.js";
-import { showDropboxChooser } from "./../dropbox.js";
-import { selectLocalFiles } from "./../local.js";
-import { fetchYoutubeItem } from "./../youtube.js";
-import { fetchSoundcloudPlaylist } from "./../soundcloud.js";
+import { showDropboxChooser } from "../dropbox.js";
+import { selectLocalFiles } from "../local.js";
+import { fetchYoutubeItem } from "../youtube.js";
+import { fetchSoundcloudPlaylist } from "../soundcloud.js";
 
 const importOptions = getElementById("js-import-options");
 let importOption = "";
@@ -22,7 +23,7 @@ function getElementsByAttr(attr) {
 }
 
 function createImportOptionMask(option, message = "") {
-    const elements = getElementsByAttr(`data-item*=${option}`);
+    const elements = getElementsByAttr(`data-item=${option}`);
 
     elements.forEach(element => {
         element.insertAdjacentHTML("afterend", `
@@ -35,7 +36,7 @@ function createImportOptionMask(option, message = "") {
 }
 
 function getMaskElements(option) {
-    return getElementsByAttr(`data-mask-id*=${option}`);
+    return getElementsByAttr(`data-mask-id=${option}`);
 }
 
 function removeImportOptionMask(option) {
@@ -120,7 +121,7 @@ function createImportForm(container, item) {
     const id = "js-import-form";
     const form = `
         <form id=${id} class="import-form" data-for="${item}">
-            <input type="text" name="url" class="input" placeholder="Url" required>
+            <input type="text" name="url" class="input" placeholder="URL" required>
             <button class="btn btn-dark">Import</button>
         </form>
     `;
@@ -161,16 +162,17 @@ function createFileInput() {
     return input;
 }
 
-function showFilePicker(choice) {
+function showFilePicker(element) {
+    const type = element.getAttribute("data-type");
     const filePicker = getElementById("js-file-picker") || createFileInput();
 
-    if (choice === "local-file") {
+    if (type === "file") {
         filePicker.removeAttribute("webkitdirectory");
         filePicker.removeAttribute("directory");
         filePicker.removeAttribute("allowdirs");
         filePicker.setAttribute("multiple", "");
     }
-    else if (choice === "local-folder") {
+    else if (type === "folder") {
         filePicker.removeAttribute("multiple");
         filePicker.setAttribute("webkitdirectory", "");
         filePicker.setAttribute("directory", "");
@@ -190,6 +192,34 @@ function handleImportFormSubmit(event) {
         event.target.reset();
     }
     event.preventDefault();
+}
+
+function createYouTubeInfoPanel(id, { element }) {
+    const a = `
+        <div id="${id}" class="panel info-panel">
+            <p class="info-panel-title">Accepted formats:</p>
+            <ul>
+                <li class="info-panel-content-item">https://www.youtube.com/playlist?list={playlistId}</li>
+                <li class="info-panel-content-item">https://www.youtube.com/watch?v={videoId}</li>
+            </ul>
+        </div>
+    `;
+
+    element.insertAdjacentHTML("afterend", a);
+}
+
+function createSoundCloudInfoPanel(id, { element }) {
+    const a = `
+        <div id="${id}" class="panel info-panel">
+            <p class="info-panel-title">Accepted formats:</p>
+            <ul>
+                <li class="info-panel-content-item">https://soundcloud.com/{userId}/sets/{playlistId}</li>
+                <li class="info-panel-content-item">https://soundcloud.com/{userId}/tracks</li>
+            </ul>
+        </div>
+    `;
+
+    element.insertAdjacentHTML("afterend", a);
 }
 
 importOptions.addEventListener("mouseover", function onMouveover({ target }) {
@@ -218,10 +248,23 @@ importOptions.addEventListener("click", ({ target }) => {
     }
     const { attrValue, elementRef } = element;
 
+    if (attrValue === "youtube-info") {
+        togglePanel(`js-${attrValue}-panel`, createYouTubeInfoPanel, {
+            element: elementRef
+        });
+        return;
+    }
+
+    if (attrValue === "soundcloud-info") {
+        togglePanel(`js-${attrValue}-panel`, createSoundCloudInfoPanel, {
+            element: elementRef
+        });
+        return;
+    }
     removeImportForm();
 
-    if (attrValue.includes("local")) {
-        showFilePicker(attrValue);
+    if (attrValue === "local") {
+        showFilePicker(elementRef);
     }
     else if (attrValue === "dropbox") {
         showDropboxChooser();

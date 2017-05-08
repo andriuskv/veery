@@ -60,13 +60,13 @@ getElementById("js-playlist-tab-header").addEventListener("click", ({ target }) 
     const item = element.attrValue;
 
     if (item === "move-to") {
-        togglePanel("js-move-to-panel", pl, createMoveToPanel);
+        togglePanel("js-move-to-panel", createMoveToPanel, { pl });
     }
     else if ((item === "list" || item === "grid") && item !== pl.type) {
         changePlaylistType(item, pl);
     }
     else if (item === "sorting") {
-        togglePanel("js-sort-panel", pl, createSortPanel);
+        togglePanel("js-sort-panel", createSortPanel, { pl });
     }
     else if (item === "order" && pl.sortedBy) {
         changePlaylistOrder(pl);

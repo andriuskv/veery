@@ -1,6 +1,6 @@
 /* global SC */
 
-import { initSoundcloud } from "./../soundcloud.js";
+import { initSoundcloud } from "../soundcloud.js";
 import { onTrackStart } from "./player.js";
 
 let scPlayer = null;

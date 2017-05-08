@@ -19,12 +19,12 @@ import {
     setPlaybackIndex,
     getTrack,
     getNextTrack
-} from "./../playlist/playlist.js";
-import { removeElementClass, getElementById, getElementByAttr } from "./../utils.js";
-import { getVisiblePlaylistId } from "./../tab.js";
-import { setSetting, getSetting, removeSetting } from "./../settings.js";
-import { showTrackInfo, showActiveIcon, removeActiveIcon } from "./../sidebar.js";
-import { showTrack, toggleTrackPlayPauseBtn } from "./../playlist/playlist.view.js";
+} from "../playlist/playlist.js";
+import { removeElementClass, getElementById, getElementByAttr } from "../utils.js";
+import { getVisiblePlaylistId } from "../tab.js";
+import { setSetting, getSetting, removeSetting } from "../settings.js";
+import { showTrackInfo, showActiveIcon, removeActiveIcon } from "../sidebar.js";
+import { showTrack, toggleTrackPlayPauseBtn } from "../playlist/playlist.view.js";
 import * as nPlayer from "./player.native.js";
 import * as ytPlayer from "./player.youtube.js";
 import * as scPlayer from "./player.soundcloud.js";

@@ -8,26 +8,26 @@ function removePanel() {
     visiblePanel = null;
 }
 
-function createPanel(id, pl, panelCreationCallback) {
-    panelCreationCallback(id, pl);
+function createPanel(id, panelCreationCallback, options) {
+    panelCreationCallback(id, options);
     visiblePanel = getElementById(id);
     window.addEventListener("click", handleClick, true);
 }
 
-function togglePanel(id, pl, panelCreationCallback) {
+function togglePanel(id, panelCreationCallback, options) {
     if (visiblePanel) {
         window.removeEventListener("click", handleClick, true);
         removeElement(visiblePanel);
 
         if (visiblePanel.id !== id) {
-            createPanel(id, pl, panelCreationCallback);
+            createPanel(id, panelCreationCallback, options);
         }
         else {
             visiblePanel = null;
         }
     }
     else {
-        createPanel(id, pl, panelCreationCallback);
+        createPanel(id, panelCreationCallback, options);
     }
 }
 

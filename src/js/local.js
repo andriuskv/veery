@@ -1,6 +1,6 @@
 /* global parse_audio_metadata */
 
-import parseFlacMetadata from "./../libs/parseFlacMetadata.js";
+import parseFlacMetadata from "../libs/parseFlacMetadata.js";
 import { scriptLoader, formatTime } from "./utils.js";
 import { getPlaylistById, createPlaylist } from "./playlist/playlist.js";
 import { addTracksToPlaylist } from "./playlist/playlist.manage.js";
