@@ -1,11 +1,11 @@
 import * as playlist from "./playlist.js";
 import { removePlaylistTab, showTrack, updatePlaylistView } from "./playlist.view.js";
-import { getElementById } from "./../utils.js";
-import { isRouteActive, addRoute, toggleRoute } from "./../router.js";
-import { getSetting } from "./../settings.js";
-import { postMessageToWorker } from "./../worker.js";
-import { createSidebarEntry, removeSidebarEntry } from "./../sidebar.js";
-import { stopPlayer } from "./../player/player.js";
+import { getElementById } from "../utils.js";
+import { isRouteActive, addRoute, toggleRoute } from "../router.js";
+import { getSetting } from "../settings.js";
+import { postMessageToWorker } from "../worker.js";
+import { createSidebarEntry, removeSidebarEntry } from "../sidebar.js";
+import { stopPlayer } from "../player/player.js";
 import { sortTracks } from "./playlist.sorting.js";
 import { createPlaylistEntry } from "./playlist.entries.js";
 

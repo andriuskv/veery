@@ -1,6 +1,6 @@
 /* global YT */
 
-import { scriptLoader, getElementById } from "./../utils.js";
+import { scriptLoader, getElementById } from "../utils.js";
 import { onTrackStart } from "./player.js";
 
 let ytPlayer = null;

@@ -1,7 +1,7 @@
-import { getElementById, replaceElement, removeElement, removeElementClass, getTrackArt } from "./../utils.js";
-import { getVisiblePlaylistId } from "./../tab.js";
-import { getPlayerState } from "./../player/player.js";
-import { togglePlayPauseBtn } from "./../player/player.controls.js";
+import { getElementById, replaceElement, removeElement, removeElementClass, getTrackArt } from "../utils.js";
+import { getVisiblePlaylistId } from "../tab.js";
+import { getPlayerState } from "../player/player.js";
+import { togglePlayPauseBtn } from "../player/player.controls.js";
 import { getPlaylistById, isPlaylistActive, getCurrentTrack } from "./playlist.js";
 import { updatePlaylist } from "./playlist.manage.js";
 import { enableTrackSelection } from "./playlist.track-selection.js";

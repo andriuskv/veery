@@ -144,3 +144,10 @@ input {
         height: calc(100% - 44px);
     }
 }
+
+.panel {
+    z-index: 2;
+    position: absolute;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
+    background-color: $color1;
+}

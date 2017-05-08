@@ -6,7 +6,7 @@ import {
     getElementByAttr,
     isOutsideElement,
     dispatchCustomEvent
-} from "./../utils.js";
+} from "../utils.js";
 import {
     getPlaylistById,
     updatePlaylistDuration,
@@ -18,8 +18,8 @@ import {
     getPlaybackOrder,
     setPlaybackIndex
 } from "./playlist.js";
-import { getSetting } from "./../settings.js";
-import { getVisiblePlaylistId } from "./../tab.js";
+import { getSetting } from "../settings.js";
+import { getVisiblePlaylistId } from "../tab.js";
 import { updatePlaylist } from "./playlist.manage.js";
 import { showMoveToBtn } from "./playlist.move-to.js";
 import { getPlaylistElement, getPlaylistTrackElements } from "./playlist.view.js";

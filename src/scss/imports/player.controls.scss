@@ -71,14 +71,11 @@
 }
 
 .bar-label {
-    position: absolute;
     left: -14px;
     bottom: 18px;
     display: none;
     min-width: 40px;
     padding: 4px;
-    box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
-    background-color: $color1;
     color: $base-text-color;
     font-size: 13px;
     text-align: center;
