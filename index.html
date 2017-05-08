@@ -58,6 +58,10 @@
             <path d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,
                 2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z">
         </symbol>
+        <symbol id="info-icon" viewBox="0 0 24 24">
+            <path d="M13,13H11V7H13M13,17H11V15H13M12,2A10,10 0 0,0 2,
+                12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z">
+        </symbol>
     </svg>
     <div class="player">
         <div id="js-sidebar-container" class="sidebar-container contracted">
@@ -88,7 +92,7 @@
                         <h3 class="manage-tab-section-title">Import</h3>
                         <ul id="js-import-options" class="import-options">
                             <li class="import-option">
-                                <button data-item="local-file" class="btn import-option-btn">
+                                <button class="btn import-option-btn" data-item="local" data-type="file">
                                     <span class="import-option-icon">
                                         <svg viewBox="0 0 24 24">
                                             <path d="M13,9H18.5L13,3.5V9M6,2H14L20,8V20A2,2 0 0,
@@ -101,7 +105,7 @@
                                 </button>
                             </li>
                             <li class="import-option">
-                                <button data-item="local-folder" class="btn import-option-btn">
+                                <button class="btn import-option-btn" data-item="local" data-type="folder">
                                     <span class="import-option-icon">
                                         <svg viewBox="0 0 24 24">
                                             <path d="M10,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,
@@ -112,7 +116,7 @@
                                 </button>
                             </li>
                             <li class="import-option">
-                                <button data-item="dropbox" class="btn import-option-btn">
+                                <button class="btn import-option-btn" data-item="dropbox">
                                     <span class="import-option-icon">
                                         <svg viewBox="0 0 24 24">
                                             <path d="M12,14.56L16.35,18.16L18.2,16.95V18.3L12,
@@ -127,7 +131,7 @@
                                 </button>
                             </li>
                             <li class="import-option">
-                                <button data-item="youtube" class="btn import-option-btn">
+                                <button class="btn import-option-btn" data-item="youtube">
                                     <span class="import-option-icon">
                                         <svg viewBox="0 0 24 24">
                                             <path d="M10,16.5V7.5L16,12M20,4.4C19.4,4.2 15.7,
@@ -139,9 +143,16 @@
                                     </span>
                                     <span class="import-option-title">YouTube</span>
                                 </button>
+                                <div class="info-panel-container">
+                                    <button class="btn btn-icon import-info-btn" data-item="youtube-info">
+                                        <svg viewBox="0 0 24 24">
+                                            <use class="svg-icon" href="#info-icon"></use>
+                                        </svg>
+                                    </button>
+                                </div>
                             </li>
                             <li class="import-option">
-                                <button data-item="soundcloud" class="btn import-option-btn">
+                                <button class="btn import-option-btn" data-item="soundcloud">
                                     <span class="import-option-icon">
                                         <svg viewBox="0 0 24 24">
                                             <path d="M11.56,8.87V17H20.32V17C22.17,16.87 23,
@@ -161,6 +172,13 @@
                                     </span>
                                     <span class="import-option-title">SoundCloud</span>
                                 </button>
+                                <div class="info-panel-container">
+                                    <button class="btn btn-icon import-info-btn" data-item="soundcloud-info">
+                                        <svg viewBox="0 0 24 24">
+                                            <use class="svg-icon" href="#info-icon"></use>
+                                        </svg>
+                                    </button>
+                                </div>
                             </li>
                         </ul>
                     </div>
@@ -247,7 +265,7 @@
             <div id="js-track-bar" class="control-bar track-bar">
                 <div id="js-track-bar-inner" class="control-bar-inner">
                     <div class="bar-thumb-container">
-                        <div id="js-track-bar-label" class="bar-label">0:00</div>
+                        <div id="js-track-bar-label" class="panel bar-label">0:00</div>
                         <div class="bar-thumb"></div>
                     </div>
                 </div>
@@ -283,7 +301,7 @@
             <div id="js-volume-bar" class="control-bar volume-bar">
                 <div id="js-volume-bar-inner" class="control-bar-inner">
                     <div class="bar-thumb-container">
-                        <div id="js-volume-bar-label" class="bar-label">0%</div>
+                        <div id="js-volume-bar-label" class="panel bar-label">0%</div>
                         <div class="bar-thumb"></div>
                     </div>
                 </div>
