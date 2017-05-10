@@ -34,6 +34,10 @@ function getPictureBlockLength(bytes, start) {
     return getBlockLength(bytes.slice(start, start + 4));
 }
 
+function getSampleRate(bytes) {
+    return bytes.reduce((result, byte) => (result << 8) + byte, 0) >> 4;
+}
+
 function parsePictureBlock(bytes, tags) {
 
     // Start from 4th byte to skip picture type
@@ -91,15 +95,24 @@ function parseBlocks(blob, buffer, size, step, tags) {
             });
         }
 
-        if (blockType === 4) {
+        if (blockType === 0) {
+            const bytes = getBytes(buffer, step, blockLength);
+            const sampleRate = getSampleRate(bytes.slice(10, 13));
+            const totalSamples = getBlockLength(bytes.slice(14, 18));
+
+            if (sampleRate) {
+                tags.duration = Math.floor(totalSamples / sampleRate);
+            }
+        }
+        else if (blockType === 4) {
             const bytes = getBytes(buffer, step, blockLength);
 
-            parseVorbisCommentBlock(bytes, tags);
+            tags = parseVorbisCommentBlock(bytes, tags);
         }
         else if (blockType === 6) {
             const bytes = getBytes(buffer, step, blockLength);
 
-            parsePictureBlock(bytes, tags);
+            tags = parsePictureBlock(bytes, tags);
         }
         step += blockLength;
     }

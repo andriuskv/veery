@@ -46,31 +46,34 @@ function filterDuplicateTracks(tracks, existingTracks) {
     }, []);
 }
 
-function getTrackMetadata(track) {
+async function getTrackMetadata(track) {
+    let data = {};
+
     if (track.type === "audio/flac") {
-        return parseFlacMetadata(track);
+        data = await parseFlacMetadata(track);
     }
-    return new Promise(resolve => {
-        parse_audio_metadata(track, resolve);
-    });
+    else {
+        [data, data.duration] = await Promise.all([
+            new Promise(resolve => { parse_audio_metadata(track, resolve); }),
+            getTrackDuration(track)
+        ]);
+    }
+    return data;
 }
 
 async function parseTracks(tracks, id, timeStamp, parsedTracks = []) {
     const { audioTrack, name } = tracks[parsedTracks.length];
-    const [{ artist, title, album, picture }, durationInSeconds] = await Promise.all([
-        getTrackMetadata(audioTrack),
-        getTrackDuration(audioTrack)
-    ]);
+    const { artist, title, album, duration, picture } = await getTrackMetadata(audioTrack);
 
     parsedTracks.push({
         audioTrack,
-        durationInSeconds,
         name,
         title: artist ? title.trim(): name,
         artist: artist ? artist.trim() : "",
         album: album ? album.trim() : "",
         thumbnail: picture || "assets/images/album-art-placeholder.png",
-        duration: formatTime(durationInSeconds),
+        durationInSeconds: duration,
+        duration: formatTime(duration),
         player: "native",
         playlistId: id,
         createdAt: timeStamp
