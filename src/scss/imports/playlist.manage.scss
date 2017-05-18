@@ -4,7 +4,8 @@
 
     &.active {
         display: flex;
-        align-items: flex-start;
+        align-content: flex-start;
+        flex-wrap: wrap;
     }
 }
 
@@ -17,7 +18,8 @@
 }
 
 .import-option-container {
-    flex-basis: 288px;
+    flex: 0 0 40%;
+    min-width: 300px;
     margin-bottom: 8px;
 }
 
@@ -171,9 +173,15 @@
     margin-left: 2px;
 }
 
-@media (max-width: 758px) {
+@media (max-width: 840px) {
     .manage-tab.active {
-        display: block;
+        justify-content: center;
+    }
+
+    .import-option-container,
+    .pl-entry-container {
+        flex-basis: 100%;
+        max-width: 500px;
     }
 
     .pl-entry-container {
