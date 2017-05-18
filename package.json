@@ -24,7 +24,7 @@
     "whatwg-fetch": "^2.0.3"
   },
   "devDependencies": {
-    "autoprefixer": "^7.0.1",
+    "autoprefixer": "^7.1.0",
     "babel-core": "^6.24.1",
     "babel-eslint": "^7.2.3",
     "babel-loader": "^7.0.0",
@@ -32,10 +32,11 @@
     "css-mqpacker": "^6.0.0",
     "csso-cli": "^1.0.0",
     "eslint": "^3.19.0",
+    "eslint-plugin-compat": "^1.0.2",
     "live-server": "^1.2.0",
-    "node-sass": "^4.5.2",
+    "node-sass": "^4.5.3",
     "onchange": "^3.2.1",
-    "postcss-cli": "^3.2.0",
+    "postcss-cli": "^4.0.0",
     "webpack": "^2.5.1"
   },
   "browserslist": [
