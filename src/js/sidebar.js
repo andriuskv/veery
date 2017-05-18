@@ -1,6 +1,5 @@
 import { removeElement, getElementById, getElementByAttr, getTrackArt } from "./utils.js";
 import { createNewPlaylistInputForm, onNewPlaylistFormSubmit } from "./playlist/playlist.manage.js";
-import { updatePlayerDimentions } from "./player/player.youtube.js";
 
 let animationId = 0;
 let timeoutId = 0;
