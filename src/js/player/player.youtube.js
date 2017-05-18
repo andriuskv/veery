@@ -34,15 +34,14 @@ function createPlayerContainer() {
     const content = `
         <div id="js-yt-player-container" class="yt-player-container">
             <button id="js-close-player-btn" class="btn">Hide</button>
-            <div id="yt-player"></div>
+            <div id="yt-player" class="yt-player"></div>
         </div>
     `;
 
     document.querySelector(".main").insertAdjacentHTML("beforeend", content);
-    getElementById("js-close-player-btn").addEventListener("click", () => {
-        getElementById("js-yt-player-container").classList.remove("visible");
+    getElementById("js-close-player-btn").addEventListener("click", event => {
+        event.currentTarget.parentElement.classList.remove("visible");
     });
-    window.addEventListener("orientationchange", updatePlayerDimentions);
 }
 
 function initPlayer() {
@@ -94,7 +93,13 @@ function playTrack(track, volume, startTime) {
 }
 
 function stopTrack() {
+    const element = getElementById("js-yt-player-container");
+
     ytPlayer.stopVideo();
+
+    if (element && element.classList.contains("visible")) {
+        element.classList.remove("visible");
+    }
 }
 
 function setVolume(volume) {
@@ -105,38 +110,10 @@ function seekTo(currentTime) {
     ytPlayer.seekTo(currentTime, true);
 }
 
-function updatePlayerDimentions() {
-    const playerContainer = getElementById("js-yt-player-container");
-
-    if (!playerContainer.classList.contains("visible")) {
-        return;
-    }
-    const player = getElementById("yt-player");
-    const windowWidth = window.innerWidth;
-    const windowHeight = window.innerHeight;
-    const breakPoint = 600;
-    let playerWidth = windowWidth;
-
-    // -88 to account for controls and sidebar
-    let playerHeight = windowHeight - 88;
-
-    if (windowWidth > breakPoint) {
-        const sidebarWidth = 160;
-
-        playerWidth = windowWidth - sidebarWidth;
-
-        // -36 to account for controls
-        playerHeight = windowHeight - 36;
-    }
-    player.setAttribute("width", `${playerWidth}px`);
-    player.setAttribute("height", `${playerHeight}px`);
-}
-
 export {
     playTrack,
     stopTrack,
     togglePlaying,
     seekTo,
-    setVolume,
-    updatePlayerDimentions
+    setVolume
 };

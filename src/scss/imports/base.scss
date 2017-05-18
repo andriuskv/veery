@@ -41,37 +41,31 @@ input {
 }
 
 .yt-player-container {
+    z-index: 2;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
     display: none;
+    width: 100%;
+    height: 100%;
 
     &.visible {
-        z-index: 3;
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background-color: transparentize($color2, 0.2);
-
-        &:before {
-            position: absolute;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
-            content: "";
-            display: block;
-        }
-
-        .btn {
-            z-index: 1;
-            position: absolute;
-            top: 8px;
-            right: 8px;
-        }
+        display: block;
     }
+
+    .btn {
+        z-index: 1;
+        position: absolute;
+        top: 8px;
+        right: 8px;
+    }
+}
+
+.yt-player {
+    width: 100%;
+    height: 100%;
 }
 
 // SoundCloud player container
