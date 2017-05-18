@@ -84,37 +84,90 @@ function handleMouseleave({ target }) {
     target.style.transform = "translateX(0)";
 }
 
-function handleClickOnPlayerBtn() {
+function toggleYoutubePlayer() {
     getElementById("js-yt-player-container").classList.toggle("visible");
-    updatePlayerDimentions();
+    getElementById("js-sidebar-container").classList.add("contracted");
 }
 
-function getExpandBtn(player) {
-    if (player !== "youtube") {
+function toggleArtworkSize(button) {
+    const trackInfo = getElementById("js-track-info");
+    const isEnlarged = trackInfo.classList.contains("enlarged");
+    const icon = button.querySelector(".svg-icon");
+    let buttonTitle = "";
+    let iconState = "";
+
+    if (isEnlarged) {
+        iconState = "up";
+        buttonTitle = "Enlarge";
+    }
+    else {
+        iconState = "down";
+        buttonTitle = "Lower";
+    }
+    icon.setAttribute("href", `#${iconState}-arrow-icon`);
+    button.setAttribute("title", `${buttonTitle} artwork`);
+    trackInfo.classList.toggle("enlarged");
+}
+
+function handleClickOnArtBtn(event) {
+    const element = getElementByAttr(event.target, "data-button");
+
+    if (!element) {
+        return;
+    }
+    const button = element.attrValue;
+
+    if (button === "youtube") {
+        toggleYoutubePlayer();
+    }
+    else if (button === "size") {
+        toggleArtworkSize(element.elementRef);
+    }
+}
+
+function getArtButtons(player) {
+    return `
+        <div id="js-track-art-button-container" class="track-art-button-container">
+            <button class='btn artwork-size-btn' title="Enlarge artwork" data-button="size">
+                <svg viewBox="0 0 24 24">
+                    <use href="#up-arrow-icon" class="svg-icon"></use>
+                </svg>
+            </button>
+            ${player === "youtube" ? `
+                <button class='btn' title="Toggle YouTube player" data-button="youtube">
+                    <svg viewBox="0 0 24 24">
+                        <use href="#expand-icon"></use>
+                    </svg>
+                </button>
+            ` : ""}
+        </div>
+    `;
+}
+
+function getTrackArtTemplate(thumbnail, player) {
+    if (typeof thumbnail === "string" && thumbnail.includes("assets")) {
         return "";
     }
+    const buttons = getArtButtons(player);
+    thumbnail = getTrackArt(thumbnail);
+
     return `
-        <button id='js-player-btn' class='btn'>
-            <svg viewBox="0 0 24 24">
-                <use href="#expand-icon"></use>
-            </svg>
-        </button>
+        <div class="track-art-container">
+            <div class="track-art-wrapper">
+                ${buttons}
+                <img src=${thumbnail} id="js-track-art" class="track-art" alt="">
+            </div>
+        </div>
     `;
 }
 
 function createTrackInfo(track) {
     const trackArtist = track.artist && track.title ? track.artist : track.name;
     const trackTitle = trackArtist !== track.name ? track.title : "";
-    const thumbnail = getTrackArt(track.thumbnail);
-    const btn = getExpandBtn(track.player);
+    const trackArt = getTrackArtTemplate(track.thumbnail, track.player);
     const trackInfoElement = `
         <div id="js-track-info" class="track-info">
-            <div class="track-art-container">
-                <div class="track-art-wrapper">
-                    ${btn}
-                    <img src=${thumbnail} id="js-track-art" class="track-art" alt="">
-                </div>
-            </div>
+            ${trackArt}
             <div class="track-name">
                 <div id="js-track-title" class="track-title">${trackTitle}</div>
                 <div id="js-track-artist" class="track-artist">${trackArtist}</div>
@@ -126,19 +179,19 @@ function createTrackInfo(track) {
     getElementById("js-track-title").addEventListener("mouseenter", handleMouseenter);
     getElementById("js-track-artist").addEventListener("mouseenter", handleMouseenter);
 
-    if (track.player === "youtube") {
-        getElementById("js-player-btn").addEventListener("click", handleClickOnPlayerBtn);
+    if (trackArt) {
+        getElementById("js-track-art-button-container").addEventListener("click", handleClickOnArtBtn);
     }
 }
 
 function removeTrackInfoElement(element) {
-    const btn = getElementById("js-player-btn");
+    const buttonContainer = getElementById("js-track-art-button-container");
 
     getElementById("js-track-title").removeEventListener("mouseenter", handleMouseenter);
     getElementById("js-track-artist").removeEventListener("mouseenter", handleMouseenter);
 
-    if (btn) {
-        btn.removeEventListener("click", handleClickOnPlayerBtn);
+    if (buttonContainer) {
+        buttonContainer.removeEventListener("click", handleClickOnArtBtn);
     }
     removeElement(element);
 }

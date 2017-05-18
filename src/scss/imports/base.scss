@@ -101,15 +101,18 @@ input {
         color: $brand-color;
         cursor: pointer;
     }
+
     &.btn-dark {
         background-color: $color2;
     }
+
     &.active {
         color: $brand-color;
 
         &.btn-light {
             background-color: $color2;
         }
+
         &.btn-dark {
             background-color: $color1;
         }
@@ -135,7 +138,7 @@ input {
 .main {
     position: relative;
     float: right;
-    width: calc(100% - 160px);
+    width: calc(100% - 200px);
     height: 100%;
     transition: height 0.2s;
 

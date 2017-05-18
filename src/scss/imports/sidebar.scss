@@ -35,7 +35,6 @@
             .sidebar {
                 flex-direction: row;
                 width: 100%;
-                padding: 4px;
                 background-color: $color2;
             }
 
@@ -55,22 +54,22 @@
             }
 
             .track-art-container {
-                width: 32px;
+                width: 36px;
                 height: 100%;
-                padding: 0;
-                margin-bottom: 0;
+
+                &:hover .artwork-size-btn {
+                    display: none;
+                }
             }
 
             .track-art-wrapper, .track-art {
-                width: inherit;
+                width: 100%;
             }
 
             .track-name {
-                @include text-truncate;
-
                 flex-grow: 1;
                 height: 100%;
-                padding: 0;
+                text-overflow: ellipsis;
             }
         }
     }
@@ -82,7 +81,7 @@
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
-    width: 160px;
+    width: 200px;
     height: 100%;
     padding-right: 2px;
     background-color: $color1;
@@ -91,9 +90,10 @@
 .sidebar-header {
     height: 80px;
     background-image: url("./assets/images/main-icon.png");
-    background-size: cover;
+    background-size: contain;
     background-repeat: no-repeat;
     background-color: $color2;
+    text-indent: -9999px;
 }
 
 .main-title {
@@ -187,19 +187,42 @@
 }
 
 .track-info {
+    display: flex;
+    height: 40px;
     margin-top: 2px;
+    transition: all 0.4s;
+
+    &.enlarged {
+        flex-direction: column;
+        height: 160px;
+
+        .track-art-container {
+            height: calc(100% - 42px);
+            margin-bottom: 2px;
+        }
+
+        .track-art-wrapper {
+            width: 100%;
+        }
+
+        .track-art {
+            width: 100%;
+        }
+
+        .track-name {
+            height: 40px;
+        }
+    }
 }
 
 .track-art-container {
     display: flex;
     justify-content: center;
-    height: 100px;
-    padding: 2px;
-    margin-bottom: 2px;
+    height: 100%;
     background-color: $color2;
     text-align: center;
 
-    &:hover .btn {
+    &:hover .track-art-button-container {
         display: flex;
     }
 }
@@ -208,31 +231,40 @@
     position: relative;
     display: inline-block;
     height: 100%;
+}
+
+.track-art-button-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: none;
+    justify-content: flex-end;
+    width: 100%;
 
     .btn {
         @include svg-container {
-            width: 20px;
-            height: 20px;
+            width: 16px;
+            height: 16px;
         }
-
-        position: absolute;
-        top: 4px;
-        right: 4px;
-        display: none;
-
     }
 }
 
+.artwork-size-btn {
+    margin-right: auto;
+}
+
 .track-art {
+    width: 40px;
     height: 100%;
     object-fit: scale-down;
 }
 
 .track-name {
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    height: 40px;
+    height: 100%;
     padding: 4px 0;
     border-left: 4px solid $color2;
     border-right: 4px solid $color2;
@@ -240,10 +272,6 @@
     color: $base-text-color;
     white-space: nowrap;
     overflow: hidden;
-}
-
-.track-title, .track-artist {
-    will-change: transform;
 }
 
 .track-title {
