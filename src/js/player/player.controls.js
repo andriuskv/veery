@@ -172,20 +172,22 @@ function onPlayerTrackMouseup({ pageX }) {
     window.removeEventListener("mouseup", onPlayerTrackMouseup);
 }
 
-getElementById("js-track-bar").addEventListener("mousedown", function(event) {
+getElementById("js-track-bar").addEventListener("mousedown", event => {
     if (event.which !== 1 || !getCurrentTrack()) {
         return;
     }
+    const element = event.currentTarget;
+
     seeking = true;
     clickTimeoutId = setTimeout(() => {
-        this.classList.add("active");
+        element.classList.add("active");
     }, 160);
     onPlayerTrackMousemove(event);
     window.addEventListener("mousemove", onPlayerTrackMousemove);
     window.addEventListener("mouseup", onPlayerTrackMouseup);
 });
 
-getElementById("js-volume-bar").addEventListener("mousedown", function(event) {
+getElementById("js-volume-bar").addEventListener("mousedown", event => {
     if (event.which !== 1) {
         return;
     }
@@ -199,8 +201,10 @@ getElementById("js-volume-bar").addEventListener("mousedown", function(event) {
         toggleVolumeBtn(element, !muted);
         element.classList.remove("active");
     }
+    const element = event.currentTarget;
+
     clickTimeoutId = setTimeout(() => {
-        this.classList.add("active");
+        element.classList.add("active");
     }, 160);
     onVolumeTrackMousemove(event);
     window.addEventListener("mousemove", onVolumeTrackMousemove);

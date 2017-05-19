@@ -74,9 +74,9 @@ function handleKeyup({ target }) {
     timeout = setTimeout(filterPlaylist, 400, id, filter);
 }
 
-filterInput.addEventListener("focus", function() {
-    this.classList.add("active");
-    this.addEventListener("keyup", handleKeyup);
+filterInput.addEventListener("focus", ({ currentTarget }) => {
+    currentTarget.classList.add("active");
+    currentTarget.addEventListener("keyup", handleKeyup);
     window.addEventListener("click", blurInput);
 });
 
