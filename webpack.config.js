@@ -40,7 +40,7 @@ module.exports = function(env = {}) {
             ww: "./src/js/ww.js"
         },
         output: {
-            path: path.resolve(__dirname, "../dist"),
+            path: path.resolve(__dirname, "./dist"),
             filename: "[name].js"
         },
         module: {
