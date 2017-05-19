@@ -27,9 +27,9 @@ function handleSubmit(event) {
     element.innerHTML = createPlaylistList(getVisiblePlaylistId());
 }
 
-function showInputContainer() {
+function showInputContainer({ currentTarget }) {
     createNewPlaylistInputForm("move-to", this, handleSubmit);
-    this.classList.add("hidden");
+    currentTarget.classList.add("hidden");
 }
 
 function moveTracks(playlistId) {

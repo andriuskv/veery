@@ -102,13 +102,13 @@ function changePlaylistOrder(pl) {
     }
 }
 
-function selectSortOption({ target }) {
+function selectSortOption({ currentTarget, target }) {
     const sortBy = target.getAttribute("data-sort");
 
     if (sortBy) {
         const pl = getPlaylistById(getVisiblePlaylistId());
 
-        this.removeEventListener("click", selectSortOption);
+        currentTarget.removeEventListener("click", selectSortOption);
         removePanel();
 
         if (sortBy === pl.sortedBy) {

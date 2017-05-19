@@ -66,18 +66,18 @@ function slideElementLeft(element, width, maxWidth, x = 0) {
     });
 }
 
-function handleMouseenter({ target }) {
+function handleMouseenter({ currentTarget, target }) {
     const width = target.scrollWidth;
     const maxWidth = target.parentElement.offsetWidth - 8;
 
     if (width > maxWidth) {
-        this.addEventListener("mouseleave", handleMouseleave);
+        currentTarget.addEventListener("mouseleave", handleMouseleave);
         timeoutId = setTimeout(slideElementLeft, 400, target, width, maxWidth);
     }
 }
 
-function handleMouseleave({ target }) {
-    this.removeEventListener("mouseleave", handleMouseleave);
+function handleMouseleave({ currentTarget, target }) {
+    currentTarget.removeEventListener("mouseleave", handleMouseleave);
     clearTimeout(timeoutId);
     cancelAnimationFrame(animationId);
     target.style.transform = "translateX(0)";
@@ -222,11 +222,11 @@ function toggleSidebarForm() {
 
 getElementById("js-sidebar-form-toggle-btn").addEventListener("click", toggleSidebarForm);
 
-getElementById("js-sidebar-container").addEventListener("click", function({ target }) {
+getElementById("js-sidebar-container").addEventListener("click", ({ currentTarget, target }) => {
     const element = getElementByAttr(target, "data-target");
 
     if (!element) {
-        this.classList.add("contracted");
+        currentTarget.classList.add("contracted");
     }
 });
 

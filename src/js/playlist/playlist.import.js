@@ -222,7 +222,7 @@ function createSoundCloudInfoPanel(id, { element }) {
     element.insertAdjacentHTML("afterend", a);
 }
 
-importOptions.addEventListener("mouseover", function onMouveover({ target }) {
+importOptions.addEventListener("mouseover", function onMouveover({ currentTarget, target }) {
     const item = getElementByAttr(target, "data-item");
 
     if (!item) {
@@ -231,7 +231,7 @@ importOptions.addEventListener("mouseover", function onMouveover({ target }) {
     const option = item.attrValue;
 
     if (option === "dropbox") {
-        this.removeEventListener("mouseover", onMouveover);
+        currentTarget.removeEventListener("mouseover", onMouveover);
         scriptLoader.load({
             src: "https://www.dropbox.com/static/api/2/dropins.js",
             id: "dropboxjs",
