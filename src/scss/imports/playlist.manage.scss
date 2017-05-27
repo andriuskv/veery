@@ -42,6 +42,7 @@
     align-items: center;
     background-color: transparentize($color1, 0.2);
     font-size: 14px;
+    text-align: center;
 
     img {
         width: 24px;
@@ -83,12 +84,33 @@
     margin-right: 6px;
 }
 
-.info-panel-container {
+.import-option-btns {
     position: absolute;
     top: 0;
     right: 0;
     display: none;
     padding: 2px;
+}
+
+.google-sign-in-or-out-btn {
+    position: relative;
+
+    &:disabled {
+        color: transparentize($base-text-color, 0.6);
+
+        img {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: scale-down;
+        }
+    }
+}
+
+.info-panel-container {
+    position: relative;
+    margin-left: 4px;
 }
 
 .import-info-btn {
@@ -127,8 +149,8 @@
         background-color: $color2;
     }
 
-    & + .info-panel-container {
-        display: block;
+    & + .import-option-btns {
+        display: flex;
     }
 }
 

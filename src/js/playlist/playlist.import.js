@@ -1,3 +1,5 @@
+/* global gapi */
+
 import { removeElement, removeElements, removeElementClass, getElementById, getElementByAttr, scriptLoader } from "./../utils.js";
 import { togglePanel } from "../panels.js";
 import { getPlaylistById, createPlaylist } from "./playlist.js";
@@ -222,6 +224,41 @@ function createSoundCloudInfoPanel(id, { element }) {
     element.insertAdjacentHTML("afterend", a);
 }
 
+function enableGoogleAuthBtn(element) {
+    element.disabled = false;
+    removeElement(element.lastElementChild);
+}
+
+function handleGoogleAuthClick(element) {
+    if (element.disabled) {
+        return;
+    }
+    const instance = gapi.auth2.getAuthInstance();
+    element.disabled = true;
+    element.insertAdjacentHTML("beforeend", `<img src="./assets/images/ring-alt.svg" alt="">`);
+
+    if (instance.isSignedIn.get()) {
+        instance.signOut()
+        .then(() => {
+            element.firstElementChild.textContent = "Sign In";
+            enableGoogleAuthBtn(element);
+        }, error => {
+            enableGoogleAuthBtn(element);
+            console.log(error);
+        });
+    }
+    else {
+        instance.signIn()
+        .then(() => {
+            element.firstElementChild.textContent = "Sign Out";
+            enableGoogleAuthBtn(element);
+        }, error => {
+            enableGoogleAuthBtn(element);
+            console.log(error);
+        });
+    }
+}
+
 importOptions.addEventListener("mouseover", function onMouveover({ currentTarget, target }) {
     const item = getElementByAttr(target, "data-item");
 
@@ -247,6 +284,11 @@ importOptions.addEventListener("click", ({ target }) => {
         return;
     }
     const { attrValue, elementRef } = element;
+
+    if (attrValue === "google-sign-in-or-out") {
+        handleGoogleAuthClick(elementRef);
+        return;
+    }
 
     if (attrValue === "youtube-info") {
         togglePanel(`js-${attrValue}-panel`, createYouTubeInfoPanel, {

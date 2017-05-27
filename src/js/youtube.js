@@ -1,3 +1,5 @@
+/* global gapi */
+
 import { formatTime } from "./utils.js";
 import { addImportedPlaylist, showNotice } from "./playlist/playlist.import.js";
 import { getPlaylistById } from "./playlist/playlist.js";
@@ -42,9 +44,13 @@ async function getVideoDuration(items) {
 
 function fetchYoutube(path, part, filter, id, token) {
     let params = `part=${part}&${filter}=${id}&maxResults=50&key=${process.env.YOUTUBE_API_KEY}`;
+    const googleAuth = gapi.auth2.getAuthInstance();
 
     if (token) {
         params += `&pageToken=${token}`;
+    }
+    if (googleAuth.isSignedIn.get()) {
+        params += `&access_token=${googleAuth.currentUser.get().getAuthResponse().access_token}`;
     }
     return fetch(`https://www.googleapis.com/youtube/v3/${path}?${params}`)
         .then(response => response.json());
@@ -74,8 +80,24 @@ function parseItems(items, id, timeStamp) {
     }));
 }
 
+function handleError(error) {
+    const code = error.code;
+
+    if (code === 403) {
+        showYoutubeNotice("You need to be sign in if you want to import private playlist");
+    }
+    else if (code === 404) {
+        showYoutubeNotice("Playlist was not found");
+    }
+    throw new Error(error.message);
+}
+
 async function fetchPlaylistItems(id, timeStamp, token) {
     const data = await fetchYoutube("playlistItems", "snippet", "playlistId", id, token);
+
+    if (data.error) {
+        handleError(data.error);
+    }
     const validItems = filterInvalidItems(data.items);
     const items = await getVideoDuration(validItems);
     const tracks = parseItems(items, id, timeStamp);
@@ -131,27 +153,27 @@ async function addPlaylist(url) {
         showYoutubeNotice("Invalid url");
         return;
     }
-    const title = await getPlaylistTitle(id);
 
-    if (!title) {
-        showYoutubeNotice("Playlist was not found");
+    if (id === "WL") {
+        showYoutubeNotice("Importing Watch Later playlist is not allowed");
         return;
     }
     const timeStamp = new Date().getTime();
-    const playlist = {
+    const tracks = await fetchPlaylistItems(id, timeStamp);
+    const title = await getPlaylistTitle(id);
+
+    addImportedPlaylist({
         url,
         title,
         id,
-        tracks: await fetchPlaylistItems(id, timeStamp),
+        tracks,
         player: "youtube",
         type: "grid"
-    };
-
-    addImportedPlaylist(playlist);
+    });
 }
 
 async function fetchYoutubeItem(url) {
-    const match = url.match(/v=[a-zA-Z0-9\-]+/);
+    const match = url.match(/v=[a-zA-Z0-9\-_]+/);
 
     if (match) {
         addVideo(match[0].slice(2));
