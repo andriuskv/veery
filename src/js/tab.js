@@ -1,5 +1,7 @@
+/* global gapi */
+
 import { renderPlaylist, changePlaylistType, togglePlaylistTypeBtn } from "./playlist/playlist.view.js";
-import { removeElementClass, getElementById, getElementByAttr, dispatchCustomEvent } from "./utils.js";
+import { scriptLoader, removeElementClass, getElementById, getElementByAttr, dispatchCustomEvent } from "./utils.js";
 import { getSidebarEntry } from "./sidebar.js";
 import { togglePanel } from "./panels.js";
 import { getPlaylistById } from "./playlist/playlist.js";
@@ -9,6 +11,7 @@ import { createMoveToPanel } from "./playlist/playlist.move-to.js";
 import { resetFilteredPlaylist } from "./playlist/playlist.filter.js";
 
 let visiblePlaylistId = "";
+let googleAuthInitialized = false;
 
 function setVisiblePlaylistId(id = "") {
     visiblePlaylistId = id;
@@ -35,6 +38,28 @@ function toggleToPlaylistTab(id, isSmallestBreakpoint) {
     enableTrackSelection(pl.id);
     resetFilteredPlaylist();
     dispatchCustomEvent("track-length-change");
+}
+
+function initGoogleAuth() {
+    googleAuthInitialized = true;
+
+    scriptLoader.load({ src: "https://apis.google.com/js/api.js" })
+    .then(() => {
+        gapi.load('client:auth2', () => {
+            gapi.client.init({
+                apiKey: process.env.YOUTUBE_API_KEY,
+                clientId: "293076144560-r5cear7rprgo094u6ibcd6nl3bbg18te.apps.googleusercontent.com",
+                discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest"],
+                scope: "https://www.googleapis.com/auth/youtube.force-ssl"
+            })
+            .then(() => {
+                if (gapi.auth2.getAuthInstance().isSignedIn.get()) {
+                    const btn = document.querySelector(".google-sign-in-or-out-btn");
+                    btn.firstElementChild.textContent = "Sign Out";
+                }
+            });
+        });
+    });
 }
 
 getElementById("js-tab-header").addEventListener("click", ({ target }) => {
@@ -91,6 +116,10 @@ window.addEventListener("route-change", ({ detail: { isPlaylistTab, tabId } }) =
     else {
         getElementById("js-tab-container").classList.add("active");
         getElementById("js-tab-playlist-container").classList.remove("active");
+
+        if (tabId === "manage" && !googleAuthInitialized) {
+            initGoogleAuth();
+        }
     }
     getElementById(`js-tab-${tabId}`).classList.add("active");
 
