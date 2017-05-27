@@ -147,12 +147,13 @@ async function addVideo(id) {
 }
 
 async function addPlaylist(url) {
-    const id = url.split("list=")[1];
+    const match = url.match(/list=[a-zA-Z0-9\-_]+/);
 
-    if (!id) {
+    if (!match) {
         showYoutubeNotice("Invalid url");
         return;
     }
+    const id = match[0].slice(5);
 
     if (id === "WL") {
         showYoutubeNotice("Importing Watch Later playlist is not allowed");
