@@ -6,12 +6,12 @@ import { updateCurrentTrack, updatePlaylist } from "./playlist.manage.js";
 import { getPlaylistTrackElements, updatePlaylistView } from "./playlist.view.js";
 import { filterTracks } from "./playlist.filter.js";
 
-function setSortBtnText(text = "Sorting") {
+function setSortBtnText(text) {
     getElementById("js-sort-toggle").textContent = text;
 }
 
 function toggleOrderBtn(order = 1) {
-    const icon = getElementById("js-order-toggle").querySelector(".svg-icon");
+    const icon = getElementById("js-order-toggle").querySelector(".js-icon");
 
     icon.setAttribute("href", `#${order === 1 ? "down" : "up"}-arrow-icon`);
 }
@@ -62,22 +62,19 @@ function changePlaylistSorting(pl, sortBy) {
 }
 
 function setSortOptions({ sortedBy, order }) {
-    let btnTitle = "Sorting";
+    const btnTitle = sortedBy ? capitalize(sortedBy) : "Sorting";
 
-    if (sortedBy) {
-        btnTitle = capitalize(sortedBy);
-    }
     setSortBtnText(btnTitle);
     toggleOrderBtn(order);
 }
 
 function getSortOtions(sortedBy) {
     return ["name", "title", "artist", "album", "duration", "age"].map(option => {
-        const activeClass = option === sortedBy ? "active" : "";
+        const activeClass = option === sortedBy ? " active" : "";
 
         return `
             <li class="sort-option">
-                <button class="btn btn-transparent ${activeClass}" data-sort="${option}">
+                <button class="btn btn-transparent${activeClass}" data-sort="${option}">
                     ${capitalize(option)}
                 </button>
             </li>

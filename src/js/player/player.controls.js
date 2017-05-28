@@ -49,7 +49,7 @@ const elapsedTime = (function() {
 })();
 
 function setElementIconAndTitle(element, { id, title }) {
-    const icon = element.querySelector(".svg-icon");
+    const icon = element.querySelector(".js-icon");
 
     icon.setAttribute("href", `#${id}`);
     element.setAttribute("title", title);

@@ -39,10 +39,10 @@ function getSyncBtn(url) {
         return "";
     }
     return `
-        <button type="submit" class="btn btn-light pl-entry-btn"
+        <button type="submit" class="btn btn-light btn-icon pl-entry-btn"
             data-action="sync" title="Synchronize playlist">
             <svg viewBox="0 0 24 24">
-                <use class="btn-icon" href="#sync-icon">
+                <use href="#sync-icon">
             </svg>
         </button>
     `;
@@ -55,17 +55,17 @@ function createPlaylistEntry(title, id, url) {
         <li class="pl-entry" data-id=${id}>
             <form class="pl-entry-form">
                 <input type="text" class="input pl-entry-title" value="${title}" readonly>
-                <button type="submit" class="btn btn-light pl-entry-btn"
+                <button type="submit" class="btn btn-light btn-icon pl-entry-btn"
                     data-action="edit" title="Edit playlist title">
                     <svg viewBox="0 0 24 24">
-                        <use class="btn-icon" href="#edit-icon">
+                        <use href="#edit-icon">
                     </svg>
                 </button>
             </form>
             ${btn}
-            <button class="btn btn-light pl-entry-btn" data-action="remove" title="Remove playlist">
+            <button class="btn btn-light btn-icon pl-entry-btn" data-action="remove" title="Remove playlist">
                 <svg viewBox="0 0 24 24">
-                    <use class="btn-icon" href="#trash-icon">
+                    <use href="#trash-icon">
                 </svg>
             </button>
         </li>

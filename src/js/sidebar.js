@@ -35,11 +35,9 @@ function removeSidebarEntry(id) {
 
 function createActiveIcon() {
     return `
-        <span id="js-active-playlist-icon" class="active-playlist-icon">
-            <svg viewBox="0 0 24 24">
-                <use href="#volume-icon"></use>
-            </svg>
-        </span>
+        <svg viewBox="0 0 24 24" id="js-active-playlist-icon" class="active-playlist-icon">
+            <use href="#volume-icon"></use>
+        </svg>
     `;
 }
 
@@ -91,7 +89,7 @@ function toggleYoutubePlayer() {
 function toggleArtworkSize(button) {
     const trackInfo = getElementById("js-track-info");
     const isEnlarged = trackInfo.classList.contains("enlarged");
-    const icon = button.querySelector(".svg-icon");
+    const icon = button.querySelector(".js-icon");
     let buttonTitle = "";
     let iconState = "";
 
@@ -127,13 +125,13 @@ function handleClickOnArtBtn(event) {
 function getArtButtons(player) {
     return `
         <div id="js-track-art-button-container" class="track-art-button-container">
-            <button class='btn artwork-size-btn' title="Enlarge artwork" data-button="size">
+            <button class='btn btn-icon artwork-size-btn' title="Enlarge artwork" data-button="size">
                 <svg viewBox="0 0 24 24">
-                    <use href="#up-arrow-icon" class="svg-icon"></use>
+                    <use href="#up-arrow-icon" class="js-icon"></use>
                 </svg>
             </button>
             ${player === "youtube" ? `
-                <button class='btn' title="Toggle YouTube player" data-button="youtube">
+                <button class="btn btn-icon" title="Toggle YouTube player" data-button="youtube">
                     <svg viewBox="0 0 24 24">
                         <use href="#expand-icon"></use>
                     </svg>

@@ -53,13 +53,13 @@
 .move-to-form {
     display: flex;
 
-    input {
+    .input {
         flex-grow: 1;
         width: 50%;
-        margin-right: 4px;
+        margin-right: 2px;
     }
 
-    input,
+    .input,
     .btn {
         background-color: $color3;
     }
