@@ -112,7 +112,7 @@ function onNewPlaylistFormSubmit(event) {
 function createNewPlaylistInputForm(id, element, handleSubmit) {
     const formElement = `
         <form id="js-${id}-form" class="${id}-form">
-            <input type="text" name="title" autocomplete="off" required>
+            <input type="text" name="title" class="input" autocomplete="off" required>
             <button class="btn">Create</button>
         </form>
     `;

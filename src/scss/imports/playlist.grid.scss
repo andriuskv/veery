@@ -39,18 +39,17 @@
 }
 
 .grid-item-play-pause-btn {
-    @include svg-container {
-        width: 28px;
-        height: 28px;
-    }
-
     position: absolute;
     top: 50%;
     left: 50%;
-    display: none;
     transform: translate(-50%, -50%);
     background-color: rgba(0, 0, 0, 0.4);
     box-shadow: 0 0 8px 1px rgba(0, 0, 0, 0.2);
+
+    svg {
+        width: 28px;
+        height: 28px;
+    }
 }
 
 .grid-item-thumbnail {

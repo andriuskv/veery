@@ -2,7 +2,8 @@
     box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
     overflow: hidden;
     height: 100%;
 }
@@ -24,8 +25,8 @@ ul {
     list-style: none;
 }
 
-input {
-    @extend %default-input-styles;
+svg {
+    fill: currentColor;
 }
 
 ::-webkit-scrollbar {
@@ -86,35 +87,42 @@ input {
     }
 }
 
+.input {
+    @extend %default-input-styles;
+}
+
 .btn {
     @extend %default-input-styles;
 
     transition: all 0.1s;
 
-    &:hover {
-        color: $brand-color;
-        cursor: pointer;
-    }
-
-    &.btn-dark {
-        background-color: $color2;
-    }
-
+    &:hover,
     &.active {
         color: $brand-color;
+    }
 
-        &.btn-light {
-            background-color: $color2;
-        }
-
-        &.btn-dark {
-            background-color: $color1;
-        }
+    &:hover {
+        cursor: pointer;
     }
 }
 
+.btn-dark {
+    background-color: $color2;
+
+    &.active {
+        background-color: $color1;
+    }
+}
+
+.btn-light.active {
+    background-color: $color2;
+}
+
 .btn-icon {
-    @include svg-container {
+    display: flex;
+    padding: 2px;
+
+    svg {
         width: 20px;
         height: 20px;
     }

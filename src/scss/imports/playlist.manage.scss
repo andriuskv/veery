@@ -75,12 +75,8 @@
 }
 
 .import-option-icon {
-    @include svg-container {
-        width: 20px;
-        height: 20px;
-    }
-
-    padding: 0;
+    width: 20px;
+    height: 20px;
     margin-right: 6px;
 }
 
@@ -187,11 +183,6 @@
 }
 
 .pl-entry-btn {
-    @include svg-container {
-        width: 20px;
-        height: 20px;
-    }
-
     margin-left: 2px;
 }
 

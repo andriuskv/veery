@@ -102,19 +102,15 @@
 }
 
 .clear-input-btn {
+    position: absolute;
+    top: 50%;
+    right: 2px;
     display: none;
+    padding: 0;
+    transform: translateY(-50%);
 
     &.visible {
-        @include svg-container {
-            width: 20px;
-            height: 20px;
-        }
-
-        position: absolute;
-        top: 50%;
-        right: 2px;
-        padding: 0;
-        transform: translateY(-50%);
+        display: flex;
     }
 }
 

@@ -332,7 +332,7 @@ tabContainer.addEventListener("click", ({ target }) => {
     const element = getElementByAttr(target, "data-btn");
 
     if (element) {
-        const trackElement = getElementByAttr(target, "data-index");
+        const trackElement = getElementByAttr(element.elementRef, "data-index");
         const index = parseInt(trackElement.attrValue, 10);
         const track = getCurrentTrack();
 

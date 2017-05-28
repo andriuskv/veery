@@ -4,18 +4,6 @@
   white-space: nowrap;
 }
 
-@mixin svg-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 2px;
-    fill: currentColor;
-
-    svg {
-        @content;
-    }
-}
-
 @mixin breakpoint-small {
   @media (max-width: 760px) { @content; }
 }

@@ -27,7 +27,7 @@ function createListItem(item) {
                 <span class="list-item-index">${item.index + 1}.</span>
                 <button class="btn btn-icon track-play-pause-btn" data-btn="play">
                     <svg viewBox="0 0 24 24">
-                        <use class="svg-icon" href="#play-icon"></use>
+                        <use class="js-icon" href="#play-icon"></use>
                     </svg>
                 </button>
             </span>
@@ -60,14 +60,13 @@ function createGridItem(item) {
             <div class="grid-item-artist">${item.artist} ${item.album ? `- ${item.album}` : ""}</div>
         `;
     }
-
     return `
         <li class="grid-item track" data-index="${item.index}">
             <div class="grid-item-first-col">
                 <img src="${thumbnail}" class="grid-item-thumbnail" alt="">
-                <button class="btn track-play-pause-btn grid-item-play-pause-btn" data-btn="play">
+                <button class="btn btn-icon track-play-pause-btn grid-item-play-pause-btn" data-btn="play">
                     <svg viewBox="0 0 24 24">
-                        <use class="svg-icon" href="#play-icon"></use>
+                        <use class="js-icon" href="#play-icon"></use>
                     </svg>
                 </button>
             </div>
