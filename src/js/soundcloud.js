@@ -2,6 +2,7 @@
 
 import { scriptLoader, formatTime } from "./utils.js";
 import { addImportedPlaylist, showNotice } from "./playlist/playlist.import.js";
+import { getPlaylistById } from "./playlist/playlist.js";
 
 let initialized = false;
 
@@ -50,7 +51,7 @@ function parsePlaylist(playlist, url) {
     };
 }
 
-async function fetchSoundcloudPlaylist(url) {
+async function fetchSoundcloudPlaylist(url, type) {
     if (!url.includes("soundcloud")) {
         showNotice("soundcloud", "Invalid url");
         return;
@@ -60,10 +61,14 @@ async function fetchSoundcloudPlaylist(url) {
         const data = await SC.resolve(url);
         const playlist = parsePlaylist(data, url);
 
-        addImportedPlaylist(playlist);
+        if (!type) {
+            type = getPlaylistById(playlist.id) ? "update" : "new";
+        }
+        addImportedPlaylist(playlist, type);
     }
     catch (e) {
         console.log(e);
+
         if (e.status === 404) {
             showNotice("soundcloud", "Playlist was not found");
         }
