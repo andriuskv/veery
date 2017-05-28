@@ -146,7 +146,7 @@ async function addVideo(id) {
     addImportedPlaylist(playlist);
 }
 
-async function addPlaylist(url) {
+async function addPlaylist(url, type) {
     const match = url.match(/list=[a-zA-Z0-9\-_]+/);
 
     if (!match) {
@@ -163,6 +163,9 @@ async function addPlaylist(url) {
     const tracks = await fetchPlaylistItems(id, timeStamp);
     const title = await getPlaylistTitle(id);
 
+    if (!type) {
+        type = getPlaylistById(id) ? "update" : "new";
+    }
     addImportedPlaylist({
         url,
         title,
@@ -170,17 +173,17 @@ async function addPlaylist(url) {
         tracks,
         player: "youtube",
         type: "grid"
-    });
+    }, type);
 }
 
-async function fetchYoutubeItem(url) {
+function fetchYoutubeItem(url, type) {
     const match = url.match(/v=[a-zA-Z0-9\-_]+/);
 
     if (match) {
         addVideo(match[0].slice(2));
         return;
     }
-    addPlaylist(url);
+    addPlaylist(url, type);
 }
 
 export {

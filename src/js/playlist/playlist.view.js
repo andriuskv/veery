@@ -1,4 +1,4 @@
-import { getElementById, replaceElement, removeElement, removeElementClass, getTrackArt } from "../utils.js";
+import { getElementById, removeElement, removeElementClass, getTrackArt } from "../utils.js";
 import { getVisiblePlaylistId } from "../tab.js";
 import { getPlayerState } from "../player/player.js";
 import { togglePlayPauseBtn } from "../player/player.controls.js";
@@ -116,22 +116,10 @@ function renderPlaylist(pl) {
     }
 }
 
-function updatePlaylistView({ id, type, tracks }) {
-    const playlistElement = getPlaylistElement(id);
-    const elements = playlistElement.children;
-    const cb = type === "list" ? createListItem: createGridItem;
+function updatePlaylistView(pl) {
+    const { parentElement } = getPlaylistElement(pl.id);
 
-    tracks.forEach((track, index) => {
-        if (elements[index]) {
-            const div = document.createElement("div");
-
-            div.innerHTML = cb(track);
-            replaceElement(div.firstElementChild, elements[index]);
-        }
-        else {
-            playlistElement.insertAdjacentHTML("beforeend", cb(track));
-        }
-    });
+    parentElement.innerHTML = createPlaylist(pl);
 }
 
 function removePlaylistTab(id) {
@@ -194,7 +182,7 @@ function togglePlaylistTypeBtn(type) {
 
 function changePlaylistType(type, pl) {
     updatePlaylist(pl.id, { type });
-    getElementById(`js-tab-${pl.id}`).innerHTML = createPlaylist(pl);
+    updatePlaylistView(pl);
     enableTrackSelection(pl.id);
     togglePlaylistTypeBtn(type);
 

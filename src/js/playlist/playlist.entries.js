@@ -34,15 +34,15 @@ function getEntryContainer() {
     return getElementById(containerId) || createEntryContainer(containerId);
 }
 
-function getRefreshBtn(url) {
+function getSyncBtn(url) {
     if (!url) {
         return "";
     }
     return `
         <button type="submit" class="btn btn-light pl-entry-btn"
-            data-action="refresh" title="Refresh playlist">
+            data-action="sync" title="Synchronize playlist">
             <svg viewBox="0 0 24 24">
-                <use class="btn-icon" href="#refresh-icon">
+                <use class="btn-icon" href="#sync-icon">
             </svg>
         </button>
     `;
@@ -50,7 +50,7 @@ function getRefreshBtn(url) {
 
 function createPlaylistEntry(title, id, url) {
     const playlistEntryContainer = getEntryContainer();
-    const btn = getRefreshBtn(url);
+    const btn = getSyncBtn(url);
     const entry = `
         <li class="pl-entry" data-id=${id}>
             <form class="pl-entry-form">
@@ -130,11 +130,15 @@ function handleClickOnEntryContainer(event) {
         removePlaylistEntry(entry.elementRef);
         return;
     }
-    if (action === "refresh") {
+
+    if (action === "sync") {
         const { url, player } = getPlaylistById(playlistId);
 
-        createImportOptionMask(player, "Refreshing");
-        importPlaylist(player, url);
+        createImportOptionMask(player, "Synchronizing");
+        importPlaylist(player, {
+            url,
+            type: "sync"
+        });
         removeElement(btn.elementRef);
         return;
     }

@@ -59,12 +59,12 @@ function showNotice(option, message) {
     setTimeout(removeElements, 3200, elements);
 }
 
-function importPlaylist(option, url) {
+function importPlaylist(option, { url, type }) {
     if (option === "youtube") {
-        fetchYoutubeItem(url);
+        fetchYoutubeItem(url, type);
     }
     else if (option === "soundcloud") {
-        fetchSoundcloudPlaylist(url);
+        fetchSoundcloudPlaylist(url, type);
     }
 }
 
@@ -107,13 +107,30 @@ function replaceInvalidImages(tracks) {
     });
 }
 
-async function addImportedPlaylist(playlist) {
-    const plTracks = playlist.tracks.splice(0);
-    const pl = getPlaylistById(playlist.id) || createPlaylist(playlist);
-    const fileredTracks = filterDuplicateTracks(plTracks, pl.tracks);
-    const tracks = await replaceInvalidImages(fileredTracks);
+async function addImportedPlaylist(playlist, type) {
+    const tempTracks = playlist.tracks.splice(0);
+    let pl = null;
+    let tracks = [];
 
-    addTracksToPlaylist(pl, tracks);
+    if (type === "new") {
+        pl = createPlaylist(playlist);
+        tracks = tempTracks;
+    }
+    else if (type === "sync") {
+        pl = getPlaylistById(playlist.id);
+        pl.tracks.length = 0;
+        tracks = tempTracks;
+    }
+    else if (type === "update") {
+        pl = getPlaylistById(playlist.id);
+        tracks = filterDuplicateTracks(tempTracks, pl.tracks);
+    }
+    else {
+        throw new Error("Unknown import type");
+    }
+    const newTracks = await replaceInvalidImages(tracks);
+
+    addTracksToPlaylist(pl, newTracks);
     setImportOption();
     removeImportForm();
     removeImportOptionMask(playlist.player);
@@ -190,7 +207,7 @@ function handleImportFormSubmit(event) {
         const option = event.target.getAttribute("data-for");
 
         createImportOptionMask(option, "Importing");
-        importPlaylist(option, url);
+        importPlaylist(option, { url });
         event.target.reset();
     }
     event.preventDefault();
