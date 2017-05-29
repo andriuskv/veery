@@ -1,8 +1,9 @@
-import { removeElement, getElementById, getElementByAttr, getTrackArt } from "./utils.js";
+import { removeElement, getElementById, getElementByAttr, getTrackArt, setElementIconAndTitle } from "./utils.js";
 import { createNewPlaylistInputForm, onNewPlaylistFormSubmit } from "./playlist/playlist.manage.js";
 
 let animationId = 0;
 let timeoutId = 0;
+let isTrackArtEnlarged = false;
 
 function getSidebarEntry(id) {
     return getElementById(`js-sidebar-entry-${id}`);
@@ -86,24 +87,26 @@ function toggleYoutubePlayer() {
     getElementById("js-sidebar-container").classList.add("contracted");
 }
 
-function toggleArtworkSize(button) {
-    const trackInfo = getElementById("js-track-info");
-    const isEnlarged = trackInfo.classList.contains("enlarged");
-    const icon = button.querySelector(".js-icon");
-    let buttonTitle = "";
-    let iconState = "";
+function getArtBtnState(isTrackArtEnlarged) {
+    const data = {
+        on: {
+            id: "up-arrow-icon",
+            title: "Enlarge artwork"
+        },
+        off: {
+            id:"down-arrow-icon",
+            title: "Lower artwork"
+        }
+    };
 
-    if (isEnlarged) {
-        iconState = "up";
-        buttonTitle = "Enlarge";
-    }
-    else {
-        iconState = "down";
-        buttonTitle = "Lower";
-    }
-    icon.setAttribute("href", `#${iconState}-arrow-icon`);
-    button.setAttribute("title", `${buttonTitle} artwork`);
-    trackInfo.classList.toggle("enlarged");
+    return isTrackArtEnlarged ? data.off : data.on;
+}
+
+function toggleArtworkSize(button) {
+    isTrackArtEnlarged = !isTrackArtEnlarged;
+
+    getElementById("js-track-info").classList.toggle("enlarged");
+    setElementIconAndTitle(button, getArtBtnState(isTrackArtEnlarged));
 }
 
 function handleClickOnArtBtn(event) {
@@ -123,11 +126,13 @@ function handleClickOnArtBtn(event) {
 }
 
 function getArtButtons(player) {
+    const { id, title } = getArtBtnState(isTrackArtEnlarged);
+
     return `
         <div id="js-track-art-button-container" class="track-art-button-container">
-            <button class='btn btn-icon artwork-size-btn' title="Enlarge artwork" data-button="size">
+            <button class='btn btn-icon artwork-size-btn' title="${title}" data-button="size">
                 <svg viewBox="0 0 24 24">
-                    <use href="#up-arrow-icon" class="js-icon"></use>
+                    <use href="#${id}" class="js-icon"></use>
                 </svg>
             </button>
             ${player === "youtube" ? `
@@ -163,7 +168,7 @@ function createTrackInfo(track) {
     const trackTitle = trackArtist !== track.name ? track.title : "";
     const trackArt = getTrackArtTemplate(track.thumbnail, track.player);
     const trackInfoElement = `
-        <div id="js-track-info" class="track-info">
+        <div id="js-track-info" class="track-info${trackArt && isTrackArtEnlarged ? " enlarged": ""}">
             ${trackArt}
             <div class="track-name">
                 <div id="js-track-title" class="track-title">${trackTitle}</div>
