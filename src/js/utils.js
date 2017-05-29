@@ -112,6 +112,13 @@ function getTrackArt(thumbnail = "assets/images/album-art-placeholder.png") {
     return typeof thumbnail === "object" ? URL.createObjectURL(thumbnail) : thumbnail;
 }
 
+function setElementIconAndTitle(element, { id, title }) {
+    const icon = element.querySelector(".js-icon");
+
+    icon.setAttribute("href", `#${id}`);
+    element.setAttribute("title", title);
+}
+
 export {
     scriptLoader,
     capitalize,
@@ -124,5 +131,6 @@ export {
     formatTime,
     isOutsideElement,
     dispatchCustomEvent,
-    getTrackArt
+    getTrackArt,
+    setElementIconAndTitle
 };

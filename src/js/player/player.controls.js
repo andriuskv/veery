@@ -1,4 +1,4 @@
-import { getElementById, getElementByAttr, formatTime, dispatchCustomEvent } from "../utils.js";
+import { getElementById, getElementByAttr, formatTime, dispatchCustomEvent, setElementIconAndTitle } from "../utils.js";
 import { setSetting, getSetting, removeSetting, getSettings } from "../settings.js";
 import { getCurrentTrack } from "../playlist/playlist.js";
 import { storedTrack, toggleShuffle, setVolume, seekTo, mutePlayer, onControlButtonClick } from "./player.js";
@@ -47,13 +47,6 @@ const elapsedTime = (function() {
 
     return { stop, start };
 })();
-
-function setElementIconAndTitle(element, { id, title }) {
-    const icon = element.querySelector(".js-icon");
-
-    icon.setAttribute("href", `#${id}`);
-    element.setAttribute("title", title);
-}
 
 function togglePlayPauseBtn(state, element = getElementById("js-play-btn")) {
     const data = {

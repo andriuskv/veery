@@ -40,13 +40,18 @@
                 overflow: hidden;
                 display: flex;
                 margin-top: 0;
+
+                &.enlarged {
+                    height: 100%;
+                    flex-direction: row;
+                }
             }
 
             .track-art-container {
                 width: 36px;
                 height: 100%;
 
-                &:hover .artwork-size-btn {
+                .artwork-size-btn {
                     display: none;
                 }
             }
