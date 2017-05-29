@@ -130,6 +130,7 @@ svg {
 
 .player {
     overflow: hidden;
+    position: relative;
     height: calc(100% - 36px);
 
     @include breakpoint-smallest {
@@ -138,7 +139,6 @@ svg {
 }
 
 .main {
-    position: relative;
     float: right;
     width: calc(100% - 200px);
     height: 100%;
