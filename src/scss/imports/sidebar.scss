@@ -2,12 +2,6 @@
     float: left;
     height: 100%;
 
-    @include breakpoint-smallest {
-        &.contracted {
-            bottom: 48px;
-        }
-    }
-
     @include breakpoint-small {
         position: absolute;
         left: 0;
@@ -25,12 +19,7 @@
         }
 
         &.contracted {
-            bottom: 36px;
             height: 40px;
-
-            @include breakpoint-smallest {
-                bottom: 48px;
-            }
 
             .sidebar {
                 flex-direction: row;

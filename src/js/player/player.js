@@ -227,9 +227,14 @@ function stopTrack(track) {
 
 function stopPlayer() {
     const track = getCurrentTrack();
+    const element = getElementById("js-yt-player-container");
 
     if (track) {
         stopTrack(track);
+    }
+
+    if (element && element.classList.contains("visible")) {
+        element.classList.remove("visible");
     }
     resetPlayer(track);
 }
