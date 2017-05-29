@@ -93,13 +93,7 @@ function playTrack(track, volume, startTime) {
 }
 
 function stopTrack() {
-    const element = getElementById("js-yt-player-container");
-
     ytPlayer.stopVideo();
-
-    if (element && element.classList.contains("visible")) {
-        element.classList.remove("visible");
-    }
 }
 
 function setVolume(volume) {
