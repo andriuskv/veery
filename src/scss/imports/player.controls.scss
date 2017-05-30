@@ -26,6 +26,7 @@
 }
 
 .control-bar {
+    position: relative;
     height: 4px;
     border-radius: 2px;
     background: #666;
@@ -35,21 +36,22 @@
         height: 6px;
         border-radius: 3px;
 
-        .bar-thumb-container {
-            display: block;
-        }
-    }
-
-    &.active {
-        .bar-thumb-container {
-            display: block;
-        }
-
-        .bar-label {
+        .bar-label:not(.hidden) {
             display: block;
         }
 
         .bar-thumb {
+            display: block;
+        }
+    }
+
+    &:active {
+        .bar-label:not(.hidden) {
+            display: block;
+        }
+
+        .bar-thumb {
+            display: block;
             background-color: #aaa;
         }
     }
@@ -65,13 +67,8 @@
     background-color: $brand-color;
 }
 
-.bar-thumb-container {
-    position: relative;
-    display: none;
-}
-
 .bar-label {
-    left: -14px;
+    left: 0;
     bottom: 18px;
     display: none;
     min-width: 40px;
@@ -79,21 +76,23 @@
     color: $base-text-color;
     font-size: 13px;
     text-align: center;
+    transform: translateX(-50%);
+
+    &.hidden {
+        display: none;
+    }
 }
 
 .bar-thumb {
     flex-grow: 0;
     flex-shrink: 0;
+    display: none;
     width: 12px;
     height: 12px;
     margin-right: -6px;
     border: 3px solid #ddd;
     border-radius: 50%;
     background: #ddd;
-
-    &:active {
-        background-color: #aaa;
-    }
 }
 
 .main-control-btn {
