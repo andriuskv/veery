@@ -1,8 +1,8 @@
 /* global SC */
 
-import { scriptLoader, formatTime } from "./utils.js";
+import { scriptLoader, formatTime, dispatchCustomEvent } from "./utils.js";
 import { addImportedPlaylist, showNotice } from "./playlist/playlist.import.js";
-import { getPlaylistById } from "./playlist/playlist.js";
+import { getPlaylistByPropValue } from "./playlist/playlist.js";
 
 let initialized = false;
 
@@ -57,13 +57,15 @@ async function fetchSoundcloudPlaylist(url, type) {
         return;
     }
     try {
+        if (!type) {
+            type = getPlaylistByPropValue("url", url) ? "update" : "new";
+        }
+        dispatchCustomEvent("playlist-status-update", { type, url });
+
         await initSoundcloud();
         const data = await SC.resolve(url);
         const playlist = parsePlaylist(data, url);
 
-        if (!type) {
-            type = getPlaylistById(playlist.id) ? "update" : "new";
-        }
         addImportedPlaylist(playlist, type);
     }
     catch (e) {
@@ -72,6 +74,7 @@ async function fetchSoundcloudPlaylist(url, type) {
         if (e.status === 404) {
             showNotice("soundcloud", "Playlist was not found");
         }
+        dispatchCustomEvent("playlist-status-update");
     }
 }
 

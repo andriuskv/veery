@@ -161,3 +161,18 @@
     font-size: 14px;
     user-select: none;
 }
+
+.playlist-status-container {
+    display: none;
+    align-items: center;
+    margin-left: auto;
+
+    &.visible {
+        display: flex;
+    }
+
+    img {
+        width: 20px;
+        margin-right: 4px;
+    }
+}

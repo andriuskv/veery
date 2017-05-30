@@ -1,7 +1,6 @@
 /* global YT */
 
-import { scriptLoader, getElementById } from "../utils.js";
-import { onTrackStart } from "./player.js";
+import { scriptLoader, getElementById, dispatchCustomEvent } from "../utils.js";
 
 let ytPlayer = null;
 let isStoredTrack = false;
@@ -16,7 +15,7 @@ function onPlayerStateChange({ data: state }) {
             isStoredTrack = false;
             return;
         }
-        onTrackStart(Math.floor(ytPlayer.getCurrentTime()));
+        dispatchCustomEvent("track-start", ytPlayer.getCurrentTime());
     }
 }
 

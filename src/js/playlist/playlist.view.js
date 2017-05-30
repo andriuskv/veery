@@ -198,11 +198,52 @@ function changePlaylistType(type, pl) {
 }
 
 window.addEventListener("track-length-change", () => {
-    const { duration, tracks } = getPlaylistById(getVisiblePlaylistId());
+    const id = getVisiblePlaylistId();
+
+    if (!id) {
+        return;
+    }
+    const elementId = "js-playlist-info-container";
+    const element = getElementById(elementId);
+
+    if (element) {
+        removeElement(element);
+    }
+    const { duration, tracks } = getPlaylistById(id);
     const hours = Math.floor(duration / 3600);
     const minutes = Math.ceil(duration / 60 % 60);
+    const info = `${tracks.length} tracks, ${hours} hr ${minutes} min`;
 
-    getElementById("js-playlist-tab-footer").textContent = `${tracks.length} tracks, ${hours} hr ${minutes} min`;
+    getElementById("js-playlist-tab-footer").insertAdjacentHTML("afterbegin", `
+        <div id="${elementId}">${info}</div>
+    `);
+});
+
+window.addEventListener("playlist-status-update", ({ detail }) => {
+    const elementId = "js-playlist-status-container";
+    const element = getElementById(elementId);
+
+    if (element) {
+        removeElement(element);
+    }
+
+    if (!detail) {
+        return;
+    }
+    let status = "";
+
+    if (detail.type === "sync") {
+        status = "Synchronizing";
+    }
+    else if (detail.type === "update") {
+        status = "Updating";
+    }
+    getElementById("js-playlist-tab-footer").insertAdjacentHTML("beforeend", `
+        <div id="${elementId}" class="playlist-status-container" data-id="${detail.id || detail.url}">
+            <img src="./assets/images/ring-alt.svg" alt="">
+            <span>${status}</span>
+        </div>
+    `);
 });
 
 window.addEventListener("resize", ({ target }) => {

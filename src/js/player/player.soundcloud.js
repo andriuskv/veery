@@ -1,7 +1,7 @@
 /* global SC */
 
+import { dispatchCustomEvent } from "../utils.js";
 import { initSoundcloud } from "../soundcloud.js";
-import { onTrackStart } from "./player.js";
 
 let scPlayer = null;
 
@@ -19,7 +19,7 @@ async function playTrack(track, volume, startTime) {
     }
 
     scPlayer.on("play-resume", () => {
-        onTrackStart(Math.floor(scPlayer.currentTime() / 1000));
+        dispatchCustomEvent("track-start", scPlayer.currentTime() / 1000);
     });
 
     scPlayer.on("audio_error", error => {

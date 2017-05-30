@@ -1,6 +1,6 @@
 import * as playlist from "./playlist.js";
+import { getElementById, dispatchCustomEvent } from "../utils.js";
 import { removePlaylistTab, showTrack, updatePlaylistView } from "./playlist.view.js";
-import { getElementById } from "../utils.js";
 import { isRouteActive, addRoute, toggleRoute } from "../router.js";
 import { getSetting } from "../settings.js";
 import { postMessageToWorker } from "../worker.js";
@@ -65,6 +65,7 @@ function addTracksToPlaylist(pl, tracks, showPlaylist = isRouteActive("manage"))
         initPlaylist(pl);
     }
     else {
+        dispatchCustomEvent("playlist-status-update");
         updateTracks(pl);
 
         if (pl.rendered) {
@@ -75,6 +76,9 @@ function addTracksToPlaylist(pl, tracks, showPlaylist = isRouteActive("manage"))
 
     if (showPlaylist) {
         toggleRoute(`playlist/${pl.id}`);
+    }
+    else {
+        dispatchCustomEvent("track-length-change");
     }
     postMessageToWorker({
         action: "put",
