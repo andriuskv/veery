@@ -340,9 +340,10 @@ tabContainer.addEventListener("click", ({ target }) => {
         const trackElement = getElementByAttr(element.elementRef, "data-index");
         const index = parseInt(trackElement.attrValue, 10);
         const track = getCurrentTrack();
+        const id = getVisiblePlaylistId();
 
-        if (!track || index !== track.index) {
-            play("index", index, getVisiblePlaylistId());
+        if (!track || track.playlistId !== id || index !== track.index) {
+            play("index", index, id);
         }
         else {
             togglePlaying(track);
