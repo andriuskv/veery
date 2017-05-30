@@ -1,6 +1,6 @@
 /* global gapi */
 
-import { formatTime } from "./utils.js";
+import { formatTime, dispatchCustomEvent } from "./utils.js";
 import { addImportedPlaylist, showNotice } from "./playlist/playlist.import.js";
 import { getPlaylistById } from "./playlist/playlist.js";
 
@@ -89,6 +89,7 @@ function handleError(error) {
     else if (code === 404) {
         showYoutubeNotice("Playlist was not found");
     }
+    dispatchCustomEvent("playlist-status-update");
     throw new Error(error.message);
 }
 
@@ -159,13 +160,16 @@ async function addPlaylist(url, type) {
         showYoutubeNotice("Importing Watch Later playlist is not allowed");
         return;
     }
-    const timeStamp = new Date().getTime();
-    const tracks = await fetchPlaylistItems(id, timeStamp);
-    const title = await getPlaylistTitle(id);
 
     if (!type) {
         type = getPlaylistById(id) ? "update" : "new";
     }
+    dispatchCustomEvent("playlist-status-update", { type, id });
+
+    const timeStamp = new Date().getTime();
+    const tracks = await fetchPlaylistItems(id, timeStamp);
+    const title = await getPlaylistTitle(id);
+
     addImportedPlaylist({
         url,
         title,

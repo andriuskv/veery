@@ -21,6 +21,21 @@ function getVisiblePlaylistId() {
     return visiblePlaylistId;
 }
 
+function updatePlaylistStatus(pl) {
+    const element = getElementById("js-playlist-status-container");
+
+    if (element) {
+        const id = element.getAttribute("data-id");
+
+        if (id === pl.id || id === pl.url) {
+            element.classList.add("visible");
+        }
+        else {
+            element.classList.remove("visible");
+        }
+    }
+}
+
 function toggleToPlaylistTab(id, isSmallestBreakpoint) {
     const pl = getPlaylistById(id);
 
@@ -37,6 +52,7 @@ function toggleToPlaylistTab(id, isSmallestBreakpoint) {
     setSortOptions(pl);
     enableTrackSelection(pl.id);
     resetFilteredPlaylist();
+    updatePlaylistStatus(pl);
     dispatchCustomEvent("track-length-change");
 }
 

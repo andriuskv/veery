@@ -1,5 +1,5 @@
+import { dispatchCustomEvent } from "../utils.js";
 import { updateCurrentTrack } from "../playlist/playlist.js";
-import { onTrackStart } from "./player.js";
 
 function playTrack(audioTrack, volume, startTime) {
     const audioBlobURL = URL.createObjectURL(audioTrack);
@@ -12,7 +12,7 @@ function playTrack(audioTrack, volume, startTime) {
     });
 
     audio.onplaying = function() {
-        onTrackStart(Math.floor(audio.currentTime));
+        dispatchCustomEvent("track-start", audio.currentTime);
     };
 
     if (typeof startTime === "number") {

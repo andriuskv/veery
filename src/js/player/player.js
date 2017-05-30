@@ -94,23 +94,6 @@ function beforeTrackStart(track) {
     scrollToTrack = false;
 }
 
-function onTrackStart(startTime) {
-    const track = getCurrentTrack();
-
-    paused = false;
-    showActiveIcon(track.playlistId);
-    togglePlayPauseBtn(paused);
-    storedTrack.saveTrack({
-        playlistId: track.playlistId,
-        name: track.name,
-        player: track.player
-    });
-    elapsedTime.start({
-        currentTime: startTime,
-        duration: track.durationInSeconds
-    });
-}
-
 function togglePlaying(track) {
     if (track.player === "native") {
         nPlayer.togglePlaying(paused, track.audio);
@@ -351,6 +334,23 @@ tabContainer.addEventListener("click", ({ target }) => {
     }
 });
 
+window.addEventListener("track-start", ({ detail: startTime }) => {
+    const track = getCurrentTrack();
+
+    paused = false;
+    showActiveIcon(track.playlistId);
+    togglePlayPauseBtn(paused);
+    storedTrack.saveTrack({
+        playlistId: track.playlistId,
+        name: track.name,
+        player: track.player
+    });
+    elapsedTime.start({
+        currentTime: Math.floor(startTime),
+        duration: track.durationInSeconds
+    });
+});
+
 window.addEventListener("track-end", () => {
     if (getSetting("once")) {
         stopPlayer();
@@ -373,6 +373,5 @@ export {
     setVolume,
     seekTo,
     mutePlayer,
-    onTrackStart,
     storedTrack
 };
