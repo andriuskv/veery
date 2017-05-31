@@ -1,4 +1,4 @@
-import { removeElement, getElementById, getElementByAttr } from "../utils.js";
+import { removeElement, getElementById, getElementByAttr, enableBtn, disableBtn } from "../utils.js";
 import { editSidebarEntry } from "../sidebar.js";
 import { getPlaylistById } from "./playlist.js";
 import { removePlaylist, updatePlaylist } from "./playlist.manage.js";
@@ -34,7 +34,32 @@ function getEntryContainer() {
     return getElementById(containerId) || createEntryContainer(containerId);
 }
 
-function getSyncBtn(url) {
+function getSyncBtn(id) {
+    const entry = document.querySelector(`[data-entry-id="${id}"]`);
+
+    if (entry) {
+        return entry.querySelector(`[data-action="sync"]`);
+    }
+    return null;
+}
+
+function enableSyncBtn(id) {
+    const btn = getSyncBtn(id);
+
+    if (btn) {
+        enableBtn(btn);
+    }
+}
+
+function disableSyncBtn(id) {
+    const btn = getSyncBtn(id);
+
+    if (btn) {
+        disableBtn(btn);
+    }
+}
+
+function getSyncBtnTemp(url) {
     if (!url) {
         return "";
     }
@@ -49,10 +74,10 @@ function getSyncBtn(url) {
 }
 
 function createPlaylistEntry(title, id, url) {
-    const playlistEntryContainer = getEntryContainer();
-    const btn = getSyncBtn(url);
+    const container = getEntryContainer();
+    const btn = getSyncBtnTemp(url);
     const entry = `
-        <li class="pl-entry" data-id=${id}>
+        <li class="pl-entry" data-entry-id=${id}>
             <form class="pl-entry-form">
                 <input type="text" class="input pl-entry-title" value="${title}" readonly>
                 <button type="submit" class="btn btn-light btn-icon pl-entry-btn"
@@ -71,7 +96,7 @@ function createPlaylistEntry(title, id, url) {
         </li>
     `;
 
-    playlistEntryContainer.insertAdjacentHTML("beforeend", entry);
+    container.insertAdjacentHTML("beforeend", entry);
 }
 
 function removePlaylistEntry(entryElement) {
@@ -114,12 +139,12 @@ function editPlaylistTitle(action, parentElement, playlistId) {
 }
 
 function handleClickOnEntryContainer(event) {
-    const entry = getElementByAttr(event.target, "data-id");
+    const entry = getElementByAttr(event.target, "data-entry-id");
     const btn = getElementByAttr(event.target, "data-action");
 
     event.preventDefault();
 
-    if (!entry || !btn) {
+    if (!entry || !btn || btn.elementRef.disabled) {
         return;
     }
     const playlistId = entry.attrValue;
@@ -139,7 +164,6 @@ function handleClickOnEntryContainer(event) {
             url,
             type: "sync"
         });
-        removeElement(btn.elementRef);
         return;
     }
     editPlaylistTitle(action, entry.elementRef,playlistId);
@@ -147,5 +171,7 @@ function handleClickOnEntryContainer(event) {
 }
 
 export {
-    createPlaylistEntry
+    createPlaylistEntry,
+    enableSyncBtn,
+    disableSyncBtn
 };

@@ -1,9 +1,19 @@
 /* global gapi */
 
-import { removeElement, removeElements, removeElementClass, getElementById, getElementByAttr, scriptLoader } from "./../utils.js";
+import {
+    removeElement,
+    removeElements,
+    removeElementClass,
+    getElementById,
+    getElementByAttr,
+    scriptLoader,
+    enableBtn,
+    disableBtn
+} from "./../utils.js";
 import { togglePanel } from "../panels.js";
 import { getPlaylistById, createPlaylist } from "./playlist.js";
 import { addTracksToPlaylist } from "./playlist.manage.js";
+import { enableSyncBtn } from "./playlist.entries.js";
 import { showDropboxChooser } from "../dropbox.js";
 import { selectLocalFiles } from "../local.js";
 import { fetchYoutubeItem } from "../youtube.js";
@@ -134,6 +144,7 @@ async function addImportedPlaylist(playlist, type) {
     setImportOption();
     removeImportForm();
     removeImportOptionMask(playlist.player);
+    enableSyncBtn(pl.id);
 }
 
 function createImportForm(container, item) {
@@ -241,26 +252,21 @@ function createSoundCloudInfoPanel(id, { element }) {
     element.insertAdjacentHTML("afterend", a);
 }
 
-function enableGoogleAuthBtn(element) {
-    element.disabled = false;
-    removeElement(element.lastElementChild);
-}
-
 function handleGoogleAuthClick(element) {
     if (element.disabled) {
         return;
     }
     const instance = gapi.auth2.getAuthInstance();
-    element.disabled = true;
-    element.insertAdjacentHTML("beforeend", `<img src="./assets/images/ring-alt.svg" alt="">`);
+
+    disableBtn(element);
 
     if (instance.isSignedIn.get()) {
         instance.signOut()
         .then(() => {
             element.firstElementChild.textContent = "Sign In";
-            enableGoogleAuthBtn(element);
+            enableBtn(element);
         }, error => {
-            enableGoogleAuthBtn(element);
+            enableBtn(element);
             console.log(error);
         });
     }
@@ -268,9 +274,9 @@ function handleGoogleAuthClick(element) {
         instance.signIn()
         .then(() => {
             element.firstElementChild.textContent = "Sign Out";
-            enableGoogleAuthBtn(element);
+            enableBtn(element);
         }, error => {
-            enableGoogleAuthBtn(element);
+            enableBtn(element);
             console.log(error);
         });
     }

@@ -184,6 +184,21 @@
 
 .pl-entry-btn {
     margin-left: 2px;
+
+    &:disabled {
+        position: relative;
+        color: transparentize($base-text-color, 0.6);
+        cursor: default;
+
+        img {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            transform: translate(-50%, -50%);
+            object-fit: scale-down;
+        }
+    }
 }
 
 @media (max-width: 840px) {

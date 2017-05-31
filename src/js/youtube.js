@@ -2,6 +2,7 @@
 
 import { formatTime, dispatchCustomEvent } from "./utils.js";
 import { addImportedPlaylist, showNotice } from "./playlist/playlist.import.js";
+import { disableSyncBtn } from "./playlist/playlist.entries.js";
 import { getPlaylistById } from "./playlist/playlist.js";
 
 function showYoutubeNotice(notice) {
@@ -165,6 +166,7 @@ async function addPlaylist(url, type) {
         type = getPlaylistById(id) ? "update" : "new";
     }
     dispatchCustomEvent("playlist-status-update", { type, id });
+    disableSyncBtn(id);
 
     const timeStamp = new Date().getTime();
     const tracks = await fetchPlaylistItems(id, timeStamp);

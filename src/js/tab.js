@@ -21,13 +21,13 @@ function getVisiblePlaylistId() {
     return visiblePlaylistId;
 }
 
-function updatePlaylistStatus(pl) {
+function updatePlaylistStatus(playlistId) {
     const element = getElementById("js-playlist-status-container");
 
     if (element) {
         const id = element.getAttribute("data-id");
 
-        if (id === pl.id || id === pl.url) {
+        if (id === playlistId) {
             element.classList.add("visible");
         }
         else {
@@ -52,7 +52,7 @@ function toggleToPlaylistTab(id, isSmallestBreakpoint) {
     setSortOptions(pl);
     enableTrackSelection(pl.id);
     resetFilteredPlaylist();
-    updatePlaylistStatus(pl);
+    updatePlaylistStatus(pl.id);
     dispatchCustomEvent("track-length-change");
 }
 
