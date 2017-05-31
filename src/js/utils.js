@@ -119,6 +119,16 @@ function setElementIconAndTitle(element, { id, title }) {
     element.setAttribute("title", title);
 }
 
+function enableBtn(element) {
+    element.disabled = false;
+    removeElement(element.lastElementChild);
+}
+
+function disableBtn(element) {
+    element.disabled = true;
+    element.insertAdjacentHTML("beforeend", `<img src="./assets/images/ring-alt.svg" alt="">`);
+}
+
 export {
     scriptLoader,
     capitalize,
@@ -132,5 +142,7 @@ export {
     isOutsideElement,
     dispatchCustomEvent,
     getTrackArt,
-    setElementIconAndTitle
+    setElementIconAndTitle,
+    enableBtn,
+    disableBtn
 };

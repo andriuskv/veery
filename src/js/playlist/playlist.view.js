@@ -239,7 +239,7 @@ window.addEventListener("playlist-status-update", ({ detail }) => {
         status = "Updating";
     }
     getElementById("js-playlist-tab-footer").insertAdjacentHTML("beforeend", `
-        <div id="${elementId}" class="playlist-status-container" data-id="${detail.id || detail.url}">
+        <div id="${elementId}" class="playlist-status-container" data-id="${detail.id}">
             <img src="./assets/images/ring-alt.svg" alt="">
             <span>${status}</span>
         </div>

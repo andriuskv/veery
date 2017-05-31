@@ -2,6 +2,7 @@
 
 import { scriptLoader, formatTime, dispatchCustomEvent } from "./utils.js";
 import { addImportedPlaylist, showNotice } from "./playlist/playlist.import.js";
+import { disableSyncBtn } from "./playlist/playlist.entries.js";
 import { getPlaylistByPropValue } from "./playlist/playlist.js";
 
 let initialized = false;
@@ -57,10 +58,16 @@ async function fetchSoundcloudPlaylist(url, type) {
         return;
     }
     try {
+        const pl = getPlaylistByPropValue("url", url);
+
         if (!type) {
-            type = getPlaylistByPropValue("url", url) ? "update" : "new";
+            type = pl ? "update" : "new";
         }
-        dispatchCustomEvent("playlist-status-update", { type, url });
+
+        if (pl) {
+            dispatchCustomEvent("playlist-status-update", { type, id: pl.id });
+            disableSyncBtn(pl.id);
+        }
 
         await initSoundcloud();
         const data = await SC.resolve(url);
