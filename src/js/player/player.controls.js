@@ -104,7 +104,7 @@ function resetTrackBar() {
 function updateVolumeBarLabel(percentage) {
     const label = getElementById("js-volume-bar-label");
 
-    label.textContent = `${percentage}%`;
+    label.textContent = `${Math.floor(percentage)}%`;
     label.style.left = `${percentage}%`;
 }
 
@@ -115,7 +115,7 @@ function onVolumeTrackMousemove({ pageX }) {
 
     setVolumeBarInnerWidth(volume);
     setSetting("volume", volume);
-    updateVolumeBarLabel(Math.floor(percentage));
+    updateVolumeBarLabel(percentage);
 
     if (track) {
         setVolume(track, volume);
@@ -154,7 +154,7 @@ function onPlayerTrackMousemove({ pageX }) {
     const label = getElementById("js-track-bar-label");
 
     setTrackBarInnerWidth(percentage);
-    label.style.left = `${Math.floor(percentage)}%`;
+    label.style.left = `${percentage}%`;
     label.textContent = formatTime(durationAtThumb);
 }
 
@@ -193,7 +193,7 @@ getElementById("js-track-bar").addEventListener("mousemove", ({ pageX }) => {
     const durationAtThumb = Math.floor(track.durationInSeconds * percentage / 100);
 
     label.classList.remove("hidden");
-    label.style.left = `${Math.floor(percentage)}%`;
+    label.style.left = `${percentage}%`;
     label.textContent = formatTime(durationAtThumb);
 });
 
@@ -220,7 +220,7 @@ getElementById("js-volume-bar").addEventListener("mousedown", event => {
 getElementById("js-volume-bar").addEventListener("mousemove", ({ pageX }) => {
     const percentage = getPosInPercentage("volume", pageX);
 
-    updateVolumeBarLabel(Math.floor(percentage));
+    updateVolumeBarLabel(percentage);
 });
 
 getElementById("js-main-controls").addEventListener("click", ({ target }) => {
