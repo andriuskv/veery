@@ -3,6 +3,7 @@
     height: 100%;
 
     @include breakpoint-small {
+        z-index: 3;
         position: absolute;
         left: 0;
         bottom: 0;
@@ -10,16 +11,16 @@
         backdrop-filter: blur(2px);
         background-color: transparentize($color2, 0.4);
 
-        &:not(.contracted) {
-            z-index: 3;
-
-            & + .main {
-                height: 100%;
-            }
-        }
-
         &.contracted {
             height: 40px;
+
+            &.hidden {
+                display: none;
+            }
+
+            &:not(.hidden) + .main {
+                height: calc(100% - 44px);
+            }
 
             .sidebar {
                 flex-direction: row;
