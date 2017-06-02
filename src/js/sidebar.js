@@ -177,6 +177,7 @@ function createTrackInfo(track) {
         </div>
     `;
 
+    getElementById("js-sidebar-container").classList.remove("hidden");
     getElementById("js-sidebar").insertAdjacentHTML("beforeend", trackInfoElement);
     getElementById("js-track-title").addEventListener("mouseenter", handleMouseenter);
     getElementById("js-track-artist").addEventListener("mouseenter", handleMouseenter);
@@ -191,6 +192,7 @@ function removeTrackInfoElement(element) {
 
     getElementById("js-track-title").removeEventListener("mouseenter", handleMouseenter);
     getElementById("js-track-artist").removeEventListener("mouseenter", handleMouseenter);
+    getElementById("js-sidebar-container").classList.add("hidden");
 
     if (buttonContainer) {
         buttonContainer.removeEventListener("click", handleClickOnArtBtn);
