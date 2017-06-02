@@ -45,16 +45,15 @@ function moveTracks(playlistId) {
     addTracksToPlaylist(pl, selectedTracks, true);
 }
 
-function onListClick(event) {
-    const item = getElementByAttr(event.target, "data-item");
+function onListClick({ target }) {
+    const element = getElementByAttr("data-item", target);
 
-    if (item) {
-        const playlistId = item.attrValue;
-
-        moveTracks(playlistId);
-        getElementById("js-move-to-list").removeEventListener("click", onListClick);
-        removeElement(getElementById("js-move-to-panel-container"));
+    if (!element) {
+        return;
     }
+    moveTracks(element.attrValue);
+    getElementById("js-move-to-list").removeEventListener("click", onListClick);
+    removeElement(getElementById("js-move-to-panel-container"));
 }
 
 function createPlaylistList(playlistId) {

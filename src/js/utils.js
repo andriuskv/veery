@@ -51,7 +51,7 @@ function getElementById(id) {
     return document.getElementById(id);
 }
 
-function getElementByAttr(element, attr) {
+function getElementByAttr(attr, element) {
     while (element) {
         const attrValue = element.getAttribute(attr);
 

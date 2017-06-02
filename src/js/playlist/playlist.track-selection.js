@@ -275,10 +275,10 @@ function onMouseup({ target, ctrlKey }) {
         }
     }
     else {
-        const item = getElementByAttr(target, "data-index");
+        const element = getElementByAttr("data-index", target);
 
-        if (item) {
-            selectTrackElement(item.elementRef, ctrlKey);
+        if (element) {
+            selectTrackElement(element.elementRef, ctrlKey);
             window.addEventListener("keypress", onKeypress);
             window.addEventListener("click", onClick);
         }
@@ -310,7 +310,7 @@ function onMousedown(event) {
     if (event.which !== 1) {
         return;
     }
-    const element = getElementByAttr(event.target, "data-btn");
+    const element = getElementByAttr("data-btn", event.target);
 
     if (element) {
         deselectTrackElements();

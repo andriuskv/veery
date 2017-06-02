@@ -79,20 +79,15 @@ function initGoogleAuth() {
 }
 
 getElementById("js-tab-header").addEventListener("click", ({ target }) => {
-    const element = getElementByAttr(target, "data-item");
+    const element = getElementByAttr("data-item", target);
 
-    if (!element) {
-        return;
-    }
-    const item = element.attrValue;
-
-    if (item === "sidebar-toggle") {
+    if (element && element.attrValue === "sidebar-toggle") {
         getElementById("js-sidebar-container").classList.remove("contracted");
     }
 });
 
 getElementById("js-playlist-tab-header").addEventListener("click", ({ target }) => {
-    const element = getElementByAttr(target, "data-item");
+    const element = getElementByAttr("data-item", target);
 
     if (!element) {
         return;
