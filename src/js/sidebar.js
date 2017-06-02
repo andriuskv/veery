@@ -109,19 +109,19 @@ function toggleArtworkSize(button) {
     setElementIconAndTitle(button, getArtBtnState(isTrackArtEnlarged));
 }
 
-function handleClickOnArtBtn(event) {
-    const element = getElementByAttr(event.target, "data-button");
+function handleClickOnArtBtn({ target }) {
+    const element = getElementByAttr("data-button", target);
 
     if (!element) {
         return;
     }
-    const button = element.attrValue;
+    const { attrValue, elementRef } = element;
 
-    if (button === "youtube") {
+    if (attrValue === "youtube") {
         toggleYoutubePlayer();
     }
-    else if (button === "size") {
-        toggleArtworkSize(element.elementRef);
+    else if (attrValue === "size") {
+        toggleArtworkSize(elementRef);
     }
 }
 
@@ -226,7 +226,7 @@ function toggleSidebarForm() {
 getElementById("js-sidebar-form-toggle-btn").addEventListener("click", toggleSidebarForm);
 
 getElementById("js-sidebar-container").addEventListener("click", ({ currentTarget, target }) => {
-    const element = getElementByAttr(target, "data-target");
+    const element = getElementByAttr("data-target", target);
 
     if (!element) {
         currentTarget.classList.add("contracted");

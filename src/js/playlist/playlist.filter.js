@@ -81,7 +81,7 @@ filterInput.addEventListener("focus", ({ currentTarget }) => {
 });
 
 filterInputContainer.addEventListener("click", ({ target }) => {
-    const element = getElementByAttr(target, "data-filter-item");
+    const element = getElementByAttr("data-filter-item", target);
 
     if (!element) {
         return;

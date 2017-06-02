@@ -189,7 +189,7 @@ function playPreviousTrack() {
 }
 
 function playTrackFromElement({ target }) {
-    const element = getElementByAttr(target, "data-index");
+    const element = getElementByAttr("data-index", target);
 
     if (element) {
         play("index", element.attrValue, getVisiblePlaylistId());
@@ -317,20 +317,21 @@ function mutePlayer(muted) {
 tabContainer.addEventListener("dblclick", playTrackFromElement);
 
 tabContainer.addEventListener("click", ({ target }) => {
-    const element = getElementByAttr(target, "data-btn");
+    const element = getElementByAttr("data-btn", target);
 
-    if (element) {
-        const trackElement = getElementByAttr(element.elementRef, "data-index");
-        const index = parseInt(trackElement.attrValue, 10);
-        const track = getCurrentTrack();
-        const id = getVisiblePlaylistId();
+    if (!element) {
+        return;
+    }
+    const { attrValue } = getElementByAttr("data-index", element.elementRef);
+    const index = parseInt(attrValue, 10);
+    const track = getCurrentTrack();
+    const id = getVisiblePlaylistId();
 
-        if (!track || track.playlistId !== id || index !== track.index) {
-            play("index", index, id);
-        }
-        else {
-            togglePlaying(track);
-        }
+    if (!track || track.playlistId !== id || index !== track.index) {
+        play("index", index, id);
+    }
+    else {
+        togglePlaying(track);
     }
 });
 

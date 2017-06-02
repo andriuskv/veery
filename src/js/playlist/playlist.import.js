@@ -283,14 +283,13 @@ function handleGoogleAuthClick(element) {
 }
 
 importOptions.addEventListener("mouseover", function onMouveover({ currentTarget, target }) {
-    const item = getElementByAttr(target, "data-item");
+    const element = getElementByAttr("data-item", target);
 
-    if (!item) {
+    if (!element) {
         return;
     }
-    const option = item.attrValue;
 
-    if (option === "dropbox") {
+    if (element.attrValue === "dropbox") {
         currentTarget.removeEventListener("mouseover", onMouveover);
         scriptLoader.load({
             src: "https://www.dropbox.com/static/api/2/dropins.js",
@@ -301,7 +300,7 @@ importOptions.addEventListener("mouseover", function onMouveover({ currentTarget
 });
 
 importOptions.addEventListener("click", ({ target }) => {
-    const element = getElementByAttr(target, "data-item");
+    const element = getElementByAttr("data-item", target);
 
     if (!element) {
         return;

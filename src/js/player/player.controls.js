@@ -224,7 +224,7 @@ getElementById("js-volume-bar").addEventListener("mousemove", ({ pageX }) => {
 });
 
 getElementById("js-main-controls").addEventListener("click", ({ target }) => {
-    const element = getElementByAttr(target, "data-item");
+    const element = getElementByAttr("data-item", target);
 
     if (element) {
         onControlButtonClick(element.attrValue);
@@ -232,23 +232,23 @@ getElementById("js-main-controls").addEventListener("click", ({ target }) => {
 });
 
 getElementById("js-controls").addEventListener("click", ({ target }) => {
-    const element = getElementByAttr(target, "data-item");
+    const element = getElementByAttr("data-item", target);
 
-    if (element) {
-        const action = element.attrValue;
-        const elementRef = element.elementRef;
-        const newSetting = !getSetting(action);
+    if (!element) {
+        return;
+    }
+    const { attrValue: action, elementRef } = element;
+    const newSetting = !getSetting(action);
 
-        elementRef.classList.toggle("active");
-        setSetting(action, newSetting);
+    elementRef.classList.toggle("active");
+    setSetting(action, newSetting);
 
-        if (action === "shuffle") {
-            toggleShuffle(newSetting);
-        }
-        else if (action === "mute") {
-            mutePlayer(newSetting);
-            toggleVolumeBtn(elementRef, newSetting);
-        }
+    if (action === "shuffle") {
+        toggleShuffle(newSetting);
+    }
+    else if (action === "mute") {
+        mutePlayer(newSetting);
+        toggleVolumeBtn(elementRef, newSetting);
     }
 });
 

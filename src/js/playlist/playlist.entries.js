@@ -139,8 +139,8 @@ function editPlaylistTitle(action, parentElement, playlistId) {
 }
 
 function handleClickOnEntryContainer(event) {
-    const entry = getElementByAttr(event.target, "data-entry-id");
-    const btn = getElementByAttr(event.target, "data-action");
+    const entry = getElementByAttr("data-entry-id", event.target);
+    const btn = getElementByAttr("data-action", event.target);
 
     event.preventDefault();
 
