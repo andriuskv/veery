@@ -37,7 +37,7 @@ function createPlayerContainer() {
         </div>
     `;
 
-    document.querySelector(".main").insertAdjacentHTML("beforeend", content);
+    document.querySelector(".player").insertAdjacentHTML("afterbegin", content);
     getElementById("js-close-player-btn").addEventListener("click", event => {
         event.currentTarget.parentElement.classList.remove("visible");
     });

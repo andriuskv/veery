@@ -2,8 +2,21 @@
     float: left;
     height: 100%;
 
+    .yt-player-container.visible ~ & {
+        visibility: hidden;
+
+        .track-name {
+            visibility: visible;
+            z-index: 2;
+            position: absolute;
+            height: auto;
+            bottom: 0;
+            left: 0;
+        }
+    }
+
     @include breakpoint-small {
-        z-index: 3;
+        z-index: 2;
         position: absolute;
         left: 0;
         bottom: 0;
