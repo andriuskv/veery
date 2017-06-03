@@ -61,6 +61,12 @@
             <path d="M13,13H11V7H13M13,17H11V15H13M12,2A10,10 0 0,0 2,
                 12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z">
         </symbol>
+        <symbol id="close-icon" viewBox="0 0 24 24">
+            <path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z">
+        </symbol>
+        <symbol id="youtube-icon" viewBox="0 0 24 24">
+            <path d="M10,16.5V7.5L16,12M20,4.4C19.4,4.2 15.7,4 12,4C8.3,4 4.6,4.19 4,4.38C2.44,4.9 2,8.4 2,12C2,15.59 2.44,19.1 4,19.61C4.6,19.81 8.3,20 12,20C15.7,20 19.4,19.81 20,19.61C21.56,19.1 22,15.59 22,12C22,8.4 21.56,4.91 20,4.4Z">
+        </symbol>
     </svg>
     <div class="player">
         <div id="js-sidebar-container" class="sidebar-container contracted hidden">
@@ -126,11 +132,7 @@
                             <li class="import-option">
                                 <button class="btn import-option-btn" data-item="youtube">
                                     <svg viewBox="0 0 24 24" class="import-option-icon">
-                                        <path d="M10,16.5V7.5L16,12M20,4.4C19.4,4.2 15.7,
-                                            4 12,4C8.3,4 4.6,4.19 4,4.38C2.44,4.9 2,8.4 2,
-                                            12C2,15.59 2.44,19.1 4,19.61C4.6,19.81 8.3,20 12,
-                                            20C15.7,20 19.4,19.81 20,19.61C21.56,19.1 22,15.59 22,
-                                            12C22,8.4 21.56,4.91 20,4.4Z">
+                                        <use href="#youtube-icon"></use>
                                     </svg>
                                     <span class="import-option-title">YouTube</span>
                                 </button>
