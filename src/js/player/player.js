@@ -368,6 +368,7 @@ window.addEventListener("track-end", () => {
 
 export {
     getPlayerState,
+    togglePlaying,
     onControlButtonClick,
     stopPlayer,
     toggleShuffle,
