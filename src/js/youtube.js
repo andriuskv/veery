@@ -2,7 +2,7 @@
 
 import { formatTime, dispatchCustomEvent } from "./utils.js";
 import { addImportedPlaylist, showNotice } from "./playlist/playlist.import.js";
-import { disableSyncBtn } from "./playlist/playlist.entries.js";
+import { enableSyncBtn, disableSyncBtn } from "./playlist/playlist.entries.js";
 import { getPlaylistById } from "./playlist/playlist.js";
 
 function showYoutubeNotice(notice) {
@@ -81,7 +81,7 @@ function parseItems(items, id, timeStamp) {
     }));
 }
 
-function handleError(error) {
+function handleError(error, id) {
     const code = error.code;
 
     if (code === 403) {
@@ -91,6 +91,8 @@ function handleError(error) {
         showYoutubeNotice("Playlist was not found");
     }
     dispatchCustomEvent("playlist-status-update");
+    enableSyncBtn(id);
+
     throw new Error(error.message);
 }
 
@@ -98,7 +100,7 @@ async function fetchPlaylistItems(id, timeStamp, token) {
     const data = await fetchYoutube("playlistItems", "snippet", "playlistId", id, token);
 
     if (data.error) {
-        handleError(data.error);
+        handleError(data.error, id);
     }
     const validItems = filterInvalidItems(data.items);
     const items = await getVideoDuration(validItems);
