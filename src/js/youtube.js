@@ -145,6 +145,7 @@ async function addVideo(id) {
         player: "youtube",
         type: "grid"
     };
+
     addImportedPlaylist(playlist);
 }
 

@@ -117,7 +117,7 @@ function replaceInvalidImages(tracks) {
     });
 }
 
-async function addImportedPlaylist(playlist, type) {
+async function addImportedPlaylist(playlist, type = "new") {
     const tempTracks = playlist.tracks.splice(0);
     let pl = null;
     let tracks = [];
