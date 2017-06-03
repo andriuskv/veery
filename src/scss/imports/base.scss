@@ -27,6 +27,8 @@ ul {
 }
 
 svg {
+    stroke-width: 0;
+    stroke: currentColor;
     fill: currentColor;
 }
 
@@ -145,7 +147,7 @@ svg {
     height: calc(100% - 36px);
 
     @include breakpoint-smallest {
-        height: calc(100% - 48px);
+        height: calc(100% - 62px);
     }
 }
 
