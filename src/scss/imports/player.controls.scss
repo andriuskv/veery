@@ -9,20 +9,21 @@
     right: 0;
     bottom: 0;
     left: 0;
+    align-items: center;
     height: 36px;
     padding: 4px;
     user-select: none;
 
     @include breakpoint-smallest {
         align-items: flex-end;
-        justify-content: center;
-        height: 48px;
-        padding: 2px 4px;
+        height: 62px;
     }
 }
 
 .controls {
-    align-items: center;
+    @include breakpoint-smallest {
+        margin-left: auto;
+    }
 }
 
 .control-bar {
@@ -89,16 +90,15 @@
     display: none;
     width: 12px;
     height: 12px;
-    margin-right: -6px;
     border: 3px solid #ddd;
     border-radius: 50%;
-    background: #ddd;
+    background-color: #ddd;
+    transform: translateX(50%);
 }
 
 .main-control-btn {
     padding: 0;
-    margin-left: 2px;
-    margin-right: 2px;
+    margin-right: 4px;
 
     svg {
         width: 28px;
@@ -120,10 +120,9 @@
 
     @include breakpoint-smallest {
         position: absolute;
-        top: 0;
+        top: 8px;
         left: 0;
         right: 0;
-        padding-top: 4px;
     }
 }
 
@@ -133,16 +132,11 @@
 
 .control-btn {
     margin-right: 4px;
-
-    @include breakpoint-smallest {
-        margin-bottom: 2px;
-    }
 }
 
 .volume-bar-container {
     display: flex;
     align-items: center;
-    height: 28px;
 }
 
 .volume-bar {
