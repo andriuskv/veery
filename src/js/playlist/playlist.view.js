@@ -3,6 +3,7 @@ import { getVisiblePlaylistId } from "../tab.js";
 import { getPlayerState } from "../player/player.js";
 import { togglePlayPauseBtn } from "../player/player.controls.js";
 import { getPlaylistById, isPlaylistActive, getCurrentTrack } from "./playlist.js";
+import { enableSyncBtn, disableSyncBtn } from "./playlist.entries.js";
 import { updatePlaylist } from "./playlist.manage.js";
 import { enableTrackSelection } from "./playlist.track-selection.js";
 
@@ -219,31 +220,33 @@ window.addEventListener("track-length-change", () => {
     `);
 });
 
-window.addEventListener("playlist-status-update", ({ detail }) => {
+window.addEventListener("playlist-status-update", ({ detail: { id, type } }) => {
     const elementId = "js-playlist-status-container";
-    const element = getElementById(elementId);
 
-    if (element) {
-        removeElement(element);
-    }
+    if (!type) {
+        const element = getElementById(elementId);
 
-    if (!detail) {
+        if (element) {
+            removeElement(element);
+        }
+        enableSyncBtn(id);
         return;
     }
     let status = "";
 
-    if (detail.type === "sync") {
+    if (type === "sync") {
         status = "Synchronizing";
     }
-    else if (detail.type === "update") {
+    else if (type === "update") {
         status = "Updating";
     }
     getElementById("js-playlist-tab-footer").insertAdjacentHTML("beforeend", `
-        <div id="${elementId}" class="playlist-status-container" data-id="${detail.id}">
+        <div id="${elementId}" class="playlist-status-container" data-id="${id}">
             <img src="./assets/images/ring-alt.svg" alt="">
             <span>${status}</span>
         </div>
     `);
+    disableSyncBtn(id);
 });
 
 window.addEventListener("resize", ({ target }) => {

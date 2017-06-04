@@ -64,8 +64,7 @@ function getSyncBtnTemp(url) {
         return "";
     }
     return `
-        <button type="submit" class="btn btn-light btn-icon pl-entry-btn"
-            data-action="sync" title="Synchronize playlist">
+        <button class="btn btn-light btn-icon pl-entry-btn" data-action="sync" title="Synchronize playlist">
             <svg viewBox="0 0 24 24">
                 <use href="#sync-icon">
             </svg>
