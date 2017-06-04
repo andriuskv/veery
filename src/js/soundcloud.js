@@ -2,7 +2,6 @@
 
 import { scriptLoader, formatTime, dispatchCustomEvent } from "./utils.js";
 import { addImportedPlaylist, showNotice } from "./playlist/playlist.import.js";
-import { disableSyncBtn } from "./playlist/playlist.entries.js";
 import { getPlaylistByPropValue } from "./playlist/playlist.js";
 
 let initialized = false;
@@ -57,16 +56,15 @@ async function fetchSoundcloudPlaylist(url, type) {
         showNotice("soundcloud", "Invalid url");
         return;
     }
-    try {
-        const pl = getPlaylistByPropValue("url", url);
+    const pl = getPlaylistByPropValue("url", url);
 
+    try {
         if (!type) {
             type = pl ? "update" : "new";
         }
 
         if (pl) {
             dispatchCustomEvent("playlist-status-update", { type, id: pl.id });
-            disableSyncBtn(pl.id);
         }
 
         await initSoundcloud();
@@ -81,7 +79,8 @@ async function fetchSoundcloudPlaylist(url, type) {
         if (e.status === 404) {
             showNotice("soundcloud", "Playlist was not found");
         }
-        dispatchCustomEvent("playlist-status-update");
+
+        dispatchCustomEvent("playlist-status-update", { id: pl.id });
     }
 }
 

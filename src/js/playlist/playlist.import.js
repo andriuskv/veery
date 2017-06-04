@@ -13,7 +13,6 @@ import {
 import { togglePanel } from "../panels.js";
 import { getPlaylistById, createPlaylist } from "./playlist.js";
 import { addTracksToPlaylist } from "./playlist.manage.js";
-import { enableSyncBtn } from "./playlist.entries.js";
 import { showDropboxChooser } from "../dropbox.js";
 import { selectLocalFiles } from "../local.js";
 import { fetchYoutubeItem } from "../youtube.js";
@@ -144,7 +143,6 @@ async function addImportedPlaylist(playlist, type = "new") {
     setImportOption();
     removeImportForm();
     removeImportOptionMask(playlist.player);
-    enableSyncBtn(pl.id);
 }
 
 function createImportForm(container, item) {

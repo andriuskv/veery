@@ -65,7 +65,7 @@ function addTracksToPlaylist(pl, tracks, showPlaylist = isRouteActive("manage"))
         initPlaylist(pl);
     }
     else {
-        dispatchCustomEvent("playlist-status-update");
+        dispatchCustomEvent("playlist-status-update", { id: pl.id });
         updateTracks(pl);
 
         if (pl.rendered) {

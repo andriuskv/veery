@@ -2,7 +2,6 @@
 
 import { formatTime, dispatchCustomEvent } from "./utils.js";
 import { addImportedPlaylist, showNotice } from "./playlist/playlist.import.js";
-import { enableSyncBtn, disableSyncBtn } from "./playlist/playlist.entries.js";
 import { getPlaylistById } from "./playlist/playlist.js";
 
 function showYoutubeNotice(notice) {
@@ -90,8 +89,7 @@ function handleError(error, id) {
     else if (code === 404) {
         showYoutubeNotice("Playlist was not found");
     }
-    dispatchCustomEvent("playlist-status-update");
-    enableSyncBtn(id);
+    dispatchCustomEvent("playlist-status-update", { id });
 
     throw new Error(error.message);
 }
@@ -164,12 +162,15 @@ async function addPlaylist(url, type) {
         showYoutubeNotice("Importing Watch Later playlist is not allowed");
         return;
     }
+    const pl = getPlaylistById(id);
 
     if (!type) {
-        type = getPlaylistById(id) ? "update" : "new";
+        type = pl ? "update" : "new";
     }
-    dispatchCustomEvent("playlist-status-update", { type, id });
-    disableSyncBtn(id);
+
+    if (pl) {
+        dispatchCustomEvent("playlist-status-update", { type, id });
+    }
 
     const timeStamp = new Date().getTime();
     const tracks = await fetchPlaylistItems(id, timeStamp);
