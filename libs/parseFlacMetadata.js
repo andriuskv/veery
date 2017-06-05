@@ -34,8 +34,8 @@ function getPictureBlockLength(bytes, start) {
     return getBlockLength(bytes.slice(start, start + 4));
 }
 
-function getSampleRate(bytes) {
-    return bytes.reduce((result, byte) => (result << 8) + byte, 0) >> 4;
+function bytesToNum(bytes) {
+    return bytes.reduce((result, byte) => (result << 8) + byte, 0);
 }
 
 function parsePictureBlock(bytes, tags) {
@@ -97,8 +97,9 @@ function parseBlocks(blob, buffer, size, step, tags) {
 
         if (blockType === 0) {
             const bytes = getBytes(buffer, step, blockLength);
-            const sampleRate = getSampleRate(bytes.slice(10, 13));
-            const totalSamples = getBlockLength(bytes.slice(14, 18));
+            const sampleRate = bytesToNum(bytes.slice(10, 13)) >> 4;
+            const sampleBytes = [bytes[13] & 0x0F, ...bytes.slice(14, 18)];
+            const totalSamples = bytesToNum(sampleBytes);
 
             if (sampleRate) {
                 tags.duration = Math.floor(totalSamples / sampleRate);
