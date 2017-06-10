@@ -19,6 +19,7 @@ import { fetchYoutubeItem } from "../youtube.js";
 import { fetchSoundcloudPlaylist } from "../soundcloud.js";
 
 const importOptions = getElementById("js-import-options");
+let googleAuthInitialized = false;
 let importOption = "";
 
 function setImportOption(option = "") {
@@ -280,6 +281,30 @@ function handleGoogleAuthClick(element) {
     }
 }
 
+function initGoogleAuth() {
+    const element = document.querySelector(".google-sign-in-or-out-btn");
+
+    disableBtn(element);
+    scriptLoader.load({ src: "https://apis.google.com/js/api.js" })
+    .then(() => {
+        gapi.load('client:auth2', () => {
+            gapi.client.init({
+                apiKey: process.env.YOUTUBE_API_KEY,
+                clientId: "293076144560-r5cear7rprgo094u6ibcd6nl3bbg18te.apps.googleusercontent.com",
+                discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest"],
+                scope: "https://www.googleapis.com/auth/youtube.force-ssl"
+            })
+            .then(() => {
+                enableBtn(element);
+
+                if (gapi.auth2.getAuthInstance().isSignedIn.get()) {
+                    element.firstElementChild.textContent = "Sign Out";
+                }
+            });
+        });
+    });
+}
+
 importOptions.addEventListener("mouseover", function onMouveover({ currentTarget, target }) {
     const element = getElementByAttr("data-item", target);
 
@@ -335,6 +360,11 @@ importOptions.addEventListener("click", ({ target }) => {
         elementRef.classList.add("active");
         createImportForm(elementRef, attrValue);
         setImportOption(attrValue);
+
+        if (attrValue === "youtube" && !googleAuthInitialized) {
+            googleAuthInitialized = true;
+            initGoogleAuth();
+        }
     }
     else {
         setImportOption();
