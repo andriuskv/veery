@@ -40,7 +40,7 @@
         }
     }
 
-    &:hover, &.playing {
+    &:hover, &:focus, &:focus-within, &.playing {
         .list-item-index {
             display: none;
         }
