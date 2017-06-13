@@ -260,8 +260,7 @@ function handleGoogleAuthClick(element) {
     disableBtn(element);
 
     if (instance.isSignedIn.get()) {
-        instance.signOut()
-        .then(() => {
+        instance.signOut().then(() => {
             element.firstElementChild.textContent = "Sign In";
             enableBtn(element);
         }, error => {
@@ -270,8 +269,7 @@ function handleGoogleAuthClick(element) {
         });
     }
     else {
-        instance.signIn()
-        .then(() => {
+        instance.signIn().then(() => {
             element.firstElementChild.textContent = "Sign Out";
             enableBtn(element);
         }, error => {
@@ -281,28 +279,34 @@ function handleGoogleAuthClick(element) {
     }
 }
 
-function initGoogleAuth() {
+async function initGoogleAuth() {
+    if (googleAuthInitialized) {
+        return;
+    }
     const element = document.querySelector(".google-sign-in-or-out-btn");
+    googleAuthInitialized = true;
 
-    disableBtn(element);
-    scriptLoader.load({ src: "https://apis.google.com/js/api.js" })
-    .then(() => {
-        gapi.load('client:auth2', () => {
-            gapi.client.init({
-                apiKey: process.env.YOUTUBE_API_KEY,
-                clientId: "293076144560-r5cear7rprgo094u6ibcd6nl3bbg18te.apps.googleusercontent.com",
-                discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest"],
-                scope: "https://www.googleapis.com/auth/youtube.force-ssl"
-            })
-            .then(() => {
-                enableBtn(element);
+    try {
+        disableBtn(element);
 
-                if (gapi.auth2.getAuthInstance().isSignedIn.get()) {
-                    element.firstElementChild.textContent = "Sign Out";
-                }
-            });
+        await scriptLoader.load({ src: "https://apis.google.com/js/api.js" });
+        await new Promise(resolve => gapi.load('client:auth2', resolve));
+        await gapi.client.init({
+            apiKey: process.env.YOUTUBE_API_KEY,
+            clientId: "293076144560-r5cear7rprgo094u6ibcd6nl3bbg18te.apps.googleusercontent.com",
+            discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest"],
+            scope: "https://www.googleapis.com/auth/youtube.force-ssl"
         });
-    });
+
+        enableBtn(element);
+
+        if (gapi.auth2.getAuthInstance().isSignedIn.get()) {
+            element.firstElementChild.textContent = "Sign Out";
+        }
+    }
+    catch (e) {
+        console.log(e);
+    }
 }
 
 importOptions.addEventListener("mouseover", function onMouveover({ currentTarget, target }) {
@@ -362,7 +366,6 @@ importOptions.addEventListener("click", ({ target }) => {
         setImportOption(attrValue);
 
         if (attrValue === "youtube" && !googleAuthInitialized) {
-            googleAuthInitialized = true;
             initGoogleAuth();
         }
     }
@@ -376,5 +379,6 @@ export {
     addImportedPlaylist,
     showNotice,
     createImportOptionMask,
-    removeImportOptionMask
+    removeImportOptionMask,
+    initGoogleAuth
 };
