@@ -2,7 +2,7 @@ import { removeElement, getElementById, getElementByAttr, enableBtn, disableBtn 
 import { editSidebarEntry } from "../sidebar.js";
 import { getPlaylistById } from "./playlist.js";
 import { removePlaylist, updatePlaylist } from "./playlist.manage.js";
-import { importPlaylist, createImportOptionMask } from "./playlist.import.js";
+import { importPlaylist, createImportOptionMask, initGoogleAuth } from "./playlist.import.js";
 
 function createEntryContainer(id) {
     const div = document.createElement("div");
@@ -137,6 +137,21 @@ function editPlaylistTitle(action, parentElement, playlistId) {
     }
 }
 
+async function syncPlaylist(id) {
+    const { url, player } = getPlaylistById(id);
+
+    if (player === "youtube") {
+        disableSyncBtn(id);
+        await initGoogleAuth();
+        enableSyncBtn(id);
+    }
+    createImportOptionMask(player, "Synchronizing");
+    importPlaylist(player, {
+        url,
+        type: "sync"
+    });
+}
+
 function handleClickOnEntryContainer(event) {
     const entry = getElementByAttr("data-entry-id", event.target);
     const btn = getElementByAttr("data-action", event.target);
@@ -156,13 +171,7 @@ function handleClickOnEntryContainer(event) {
     }
 
     if (action === "sync") {
-        const { url, player } = getPlaylistById(playlistId);
-
-        createImportOptionMask(player, "Synchronizing");
-        importPlaylist(player, {
-            url,
-            type: "sync"
-        });
+        syncPlaylist(playlistId);
         return;
     }
     editPlaylistTitle(action, entry.elementRef,playlistId);
