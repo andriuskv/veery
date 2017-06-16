@@ -53,7 +53,10 @@ function updateCurrentTrack(pl) {
         if (track) {
             playlist.updateCurrentTrack({ index: track.index });
             playlist.setPlaybackIndex(track.index);
-            showTrack(pl.id, track.index);
+
+            if (pl.rendered) {
+                showTrack(pl.id, track.index);
+            }
         }
     }
 }
@@ -67,10 +70,10 @@ function addTracksToPlaylist(pl, tracks, showPlaylist = isRouteActive("manage"))
     else {
         dispatchCustomEvent("playlist-status-update", { id: pl.id });
         updateTracks(pl);
+        updateCurrentTrack(pl);
 
         if (pl.rendered) {
             updatePlaylistView(pl);
-            updateCurrentTrack(pl);
         }
     }
 
