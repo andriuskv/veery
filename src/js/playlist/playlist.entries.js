@@ -1,7 +1,8 @@
 import { removeElement, getElementById, getElementByAttr, enableBtn, disableBtn } from "../utils.js";
 import { editSidebarEntry } from "../sidebar.js";
-import { getPlaylistById } from "./playlist.js";
-import { removePlaylist, updatePlaylist } from "./playlist.manage.js";
+import { postMessageToWorker } from "../worker.js";
+import { getPlaylistById, updatePlaylist } from "./playlist.js";
+import { removePlaylist } from "./playlist.manage.js";
 import { importPlaylist, createImportOptionMask, initGoogleAuth } from "./playlist.import.js";
 
 function createEntryContainer(id) {
@@ -125,12 +126,19 @@ function editPlaylistTitle(action, parentElement, playlistId) {
         titleElement.selectionStart = playlistTitle.length;
     }
     else if (action === "save") {
-        const { title } = getPlaylistById(playlistId);
-        const newTitle = playlistTitle ? playlistTitle : title;
+        const { _id, title } = getPlaylistById(playlistId);
+        const newTitle = playlistTitle || title;
 
         if (newTitle !== title) {
             editSidebarEntry(playlistId, newTitle);
             updatePlaylist(playlistId, { title: newTitle });
+            postMessageToWorker({
+                action: "change-title",
+                playlist: {
+                    _id,
+                    title: newTitle
+                }
+            });
         }
         titleElement.value = newTitle;
         titleElement.setAttribute("readonly", "readonly");

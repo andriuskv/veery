@@ -9,6 +9,7 @@ import {
 } from "../utils.js";
 import {
     getPlaylistById,
+    updatePlaylist,
     updatePlaylistDuration,
     isPlaylistActive,
     getCurrentTrack,
@@ -20,7 +21,7 @@ import {
 } from "./playlist.js";
 import { getSetting } from "../settings.js";
 import { getVisiblePlaylistId } from "../tab.js";
-import { updatePlaylist } from "./playlist.manage.js";
+import { postMessageToWorker } from "../worker.js";
 import { showMoveToBtn } from "./playlist.move-to.js";
 import { getPlaylistElement, getPlaylistTrackElements } from "./playlist.view.js";
 
@@ -401,12 +402,23 @@ function removeSelectedTracks() {
     const selectedElements = getSelectedTrackElements();
     const pl = getPlaylistById(id);
     const selectedTrackIndexes = getSelectedTrackIndexes(selectedElements);
+    const tracksToRemove = pl.tracks.filter(track => selectedTrackIndexes.includes(track.index));
     const tracks = removeSelectedPlaylistTracks(pl.tracks, selectedTrackIndexes);
     const playbackOrder = getPlaybackOrder(tracks, getSetting("shuffle"));
 
     removeElements(selectedElements);
     resetPlaylistElementIndexes(id, pl.type, selectedTrackIndexes);
-    updatePlaylist(id, { tracks, playbackOrder });
+    updatePlaylist(id, {
+        playbackOrder,
+        tracks
+    });
+    postMessageToWorker({
+        action: "remove-tracks",
+        playlist: {
+            _id: pl._id,
+            tracks: tracksToRemove
+        }
+    });
     updateCurrentTrackIndex(id, selectedTrackIndexes);
     removeElement(getElementById("js-move-to-panel-container"));
     updatePlaylistDuration(pl);

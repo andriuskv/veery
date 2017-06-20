@@ -1,8 +1,9 @@
 import { capitalize, getElementById } from "./../utils.js";
 import { getVisiblePlaylistId } from "./../tab.js";
 import { removePanel } from "./../panels.js";
-import { getPlaylistById, resetTrackIndexes } from "./playlist.js";
-import { updateCurrentTrack, updatePlaylist } from "./playlist.manage.js";
+import { postMessageToWorker } from "../worker.js";
+import { getPlaylistById, resetTrackIndexes, updatePlaylist } from "./playlist.js";
+import { updateCurrentTrack } from "./playlist.manage.js";
 import { getPlaylistTrackElements, updatePlaylistView } from "./playlist.view.js";
 import { filterTracks } from "./playlist.filter.js";
 
@@ -50,6 +51,14 @@ function changePlaylistSorting(pl, sortBy) {
         order,
         sortedBy: sortBy,
         tracks: resetTrackIndexes(pl.tracks)
+    });
+    postMessageToWorker({
+        action: "change-sorting",
+        playlist: {
+            order,
+            _id: pl._id,
+            sortedBy: sortBy
+        }
     });
     updatePlaylistView(pl);
     updateCurrentTrack(pl);
