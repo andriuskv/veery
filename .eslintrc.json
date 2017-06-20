@@ -14,7 +14,6 @@
         "worker": true
     },
     "extends": "eslint:recommended",
-    "plugins": ["compat"],
     "rules": {
         "semi": 2,
         "prefer-const": 2,
@@ -66,7 +65,6 @@
         "prefer-spread": 2,
         "prefer-rest-params": 2,
         "object-shorthand": 2,
-        "array-callback-return": 2,
         "prefer-template": 2,
         "prefer-arrow-callback": 2,
         "no-useless-constructor": 2,

@@ -10,7 +10,7 @@
     "dist": "rm -rf dist && mkdir dist && cp -R src/assets src/libs src/index.html src/favicon.ico dist",
     "postcss": "postcss -u autoprefixer -u css-mqpacker -r dist/main.css",
     "scss": "node-sass --source-map-embed src/scss/main.scss dist/main.css && npm run postcss",
-    "webpack": "if which config/env; then source config/env; fi; webpack --progress --colors --config ./webpack.config.js",
+    "webpack": "if which config/env; then source config/env; fi; webpack --progress --colors",
     "watch:html": "onchange 'src/index.html' -- cp src/index.html dist",
     "watch:scss": "onchange 'src/scss/*.scss' 'src/scss/imports/*.scss' -i -- npm run scss",
     "watch:js": "npm run webpack -- --watch",
@@ -27,17 +27,16 @@
     "autoprefixer": "^7.1.1",
     "babel-core": "^6.25.0",
     "babel-eslint": "^7.2.3",
-    "babel-loader": "^7.0.0",
+    "babel-loader": "^7.1.0",
     "babel-preset-env": "^1.5.2",
     "css-mqpacker": "^6.0.1",
     "csso-cli": "^1.0.0",
     "eslint": "^4.0.0",
-    "eslint-plugin-compat": "^1.0.3",
     "live-server": "^1.2.0",
     "node-sass": "^4.5.3",
     "onchange": "^3.2.1",
     "postcss-cli": "^4.1.0",
-    "webpack": "^2.6.1"
+    "webpack": "^3.0.0"
   },
   "browserslist": [
     "last 2 versions",

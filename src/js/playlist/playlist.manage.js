@@ -89,16 +89,6 @@ function addTracksToPlaylist(pl, tracks, showPlaylist = isRouteActive("manage"))
     });
 }
 
-function updatePlaylist(id, data) {
-    const { _id } = playlist.getPlaylistById(id);
-
-    playlist.updatePlaylist(id, data);
-    postMessageToWorker({
-        action: "update",
-        playlist: Object.assign({ _id }, data)
-    });
-}
-
 function onNewPlaylistFormSubmit(event) {
     const form = event.target;
     const pl = playlist.createPlaylist({
@@ -133,7 +123,6 @@ export {
     removePlaylist,
     updateCurrentTrack,
     addTracksToPlaylist,
-    updatePlaylist,
     onNewPlaylistFormSubmit,
     createNewPlaylistInputForm
 };

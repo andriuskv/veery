@@ -1,10 +1,10 @@
 import { getElementById, removeElement, removeElementClass, getTrackArt } from "../utils.js";
 import { getVisiblePlaylistId } from "../tab.js";
+import { postMessageToWorker } from "../worker.js";
 import { getPlayerState } from "../player/player.js";
 import { togglePlayPauseBtn } from "../player/player.controls.js";
-import { getPlaylistById, isPlaylistActive, getCurrentTrack } from "./playlist.js";
+import { getPlaylistById, isPlaylistActive, getCurrentTrack, updatePlaylist } from "./playlist.js";
 import { enableSyncBtn, disableSyncBtn } from "./playlist.entries.js";
-import { updatePlaylist } from "./playlist.manage.js";
 import { enableTrackSelection } from "./playlist.track-selection.js";
 
 function getPlaylistElement(id) {
@@ -182,6 +182,13 @@ function togglePlaylistTypeBtn(type) {
 
 function changePlaylistType(type, pl) {
     updatePlaylist(pl.id, { type });
+    postMessageToWorker({
+        action: "change-type",
+        playlist: {
+            _id: pl._id,
+            type
+        }
+    });
     updatePlaylistView(pl);
     enableTrackSelection(pl.id);
     togglePlaylistTypeBtn(type);
