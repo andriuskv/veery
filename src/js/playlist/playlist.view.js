@@ -3,7 +3,7 @@ import { getVisiblePlaylistId } from "../tab.js";
 import { postMessageToWorker } from "../worker.js";
 import { getPlayerState } from "../player/player.js";
 import { togglePlayPauseBtn } from "../player/player.controls.js";
-import { getPlaylistById, isPlaylistActive, getCurrentTrack, updatePlaylist } from "./playlist.js";
+import { getPlaylistById, getCurrentTrack, updatePlaylist } from "./playlist.js";
 import { enableSyncBtn, disableSyncBtn } from "./playlist.entries.js";
 import { enableTrackSelection } from "./playlist.track-selection.js";
 
@@ -98,17 +98,12 @@ function createPlaylistTab(pl) {
     return `<div id="js-tab-${pl.id}" class="tab">${playlist}</div>`;
 }
 
-function renderPlaylist(pl) {
-    const tab = createPlaylistTab(pl);
-    const container = getElementById("js-playlist-tabs");
+function showCurrentTrack(id) {
     const track = getCurrentTrack();
 
-    pl.rendered = true;
-    container.insertAdjacentHTML("beforeend", tab);
-
-    if (track && track.playlistId === pl.id) {
+    if (track && track.playlistId === id && track.index !== -1) {
         requestAnimationFrame(() => {
-            showTrack(pl.id, track.index, {
+            showTrack(id, track.index, {
                 scrollToTrack: true,
                 paused: getPlayerState()
             });
@@ -116,10 +111,20 @@ function renderPlaylist(pl) {
     }
 }
 
+function renderPlaylist(pl) {
+    const tab = createPlaylistTab(pl);
+    const container = getElementById("js-playlist-tabs");
+    pl.rendered = true;
+
+    container.insertAdjacentHTML("beforeend", tab);
+    showCurrentTrack(pl.id);
+}
+
 function updatePlaylistView(pl) {
     const { parentElement } = getPlaylistElement(pl.id);
 
     parentElement.innerHTML = createPlaylist(pl);
+    showCurrentTrack(pl.id);
 }
 
 function removePlaylistTab(id) {
@@ -192,17 +197,6 @@ function changePlaylistType(type, pl) {
     updatePlaylistView(pl);
     enableTrackSelection(pl.id);
     togglePlaylistTypeBtn(type);
-
-    if (isPlaylistActive(pl.id)) {
-        const { index } = getCurrentTrack();
-
-        if (index !== -1) {
-            showTrack(pl.id, index, {
-                scrollToTrack: false,
-                paused: getPlayerState()
-            });
-        }
-    }
 }
 
 window.addEventListener("track-length-change", () => {
