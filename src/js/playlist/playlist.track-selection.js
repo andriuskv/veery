@@ -264,12 +264,16 @@ function onMouseup({ target, ctrlKey }) {
     if (intervalId) {
         stopScrolling();
     }
+
     if (selectionElement) {
         const elements = getSelectedTrackElements();
 
         resetSelection();
 
         if (elements.length) {
+
+            // Move focus to first selected element
+            elements[0].focus();
             showMoveToBtn();
             window.addEventListener("keypress", onKeypress);
             window.addEventListener("click", onClick);

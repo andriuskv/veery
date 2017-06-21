@@ -38,12 +38,12 @@ function createPlayerContainer() {
             <div class="yt-player-btns">
                 <a href="" class="btn btn-icon" data-item="watch" title="Watch on YouTube" target="_blank">
                     <svg viewBox="0 0 24 24">
-                        <use href="#youtube-icon"></use>
+                        <use href="#youtube"></use>
                     </svg>
                 </a>
                 <button class="btn btn-icon" data-item="close" title="Close YouTube player">
                     <svg viewBox="0 0 24 24">
-                        <use href="#close-icon"></use>
+                        <use href="#close"></use>
                     </svg>
                 </button>
             </div>
