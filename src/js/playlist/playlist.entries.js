@@ -67,7 +67,7 @@ function getSyncBtnTemp(url) {
     return `
         <button class="btn btn-light btn-icon pl-entry-btn" data-action="sync" title="Synchronize playlist">
             <svg viewBox="0 0 24 24">
-                <use href="#sync-icon">
+                <use href="#sync">
             </svg>
         </button>
     `;
@@ -83,14 +83,14 @@ function createPlaylistEntry(title, id, url) {
                 <button type="submit" class="btn btn-light btn-icon pl-entry-btn"
                     data-action="edit" title="Edit playlist title">
                     <svg viewBox="0 0 24 24">
-                        <use href="#edit-icon">
+                        <use href="#edit">
                     </svg>
                 </button>
             </form>
             ${btn}
             <button class="btn btn-light btn-icon pl-entry-btn" data-action="remove" title="Remove playlist">
                 <svg viewBox="0 0 24 24">
-                    <use href="#trash-icon">
+                    <use href="#trash">
                 </svg>
             </button>
         </li>

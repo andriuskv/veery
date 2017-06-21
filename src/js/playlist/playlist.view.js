@@ -28,7 +28,7 @@ function createListItem(item) {
                 <span class="list-item-index">${item.index + 1}.</span>
                 <button class="btn btn-icon track-play-pause-btn" data-btn="play">
                     <svg viewBox="0 0 24 24">
-                        <use class="js-icon" href="#play-icon"></use>
+                        <use class="js-icon" href="#play"></use>
                     </svg>
                 </button>
             </span>
@@ -67,7 +67,7 @@ function createGridItem(item) {
                 <img src="${thumbnail}" class="grid-item-thumbnail" alt="">
                 <button class="btn btn-icon track-play-pause-btn grid-item-play-pause-btn" data-btn="play">
                     <svg viewBox="0 0 24 24">
-                        <use class="js-icon" href="#play-icon"></use>
+                        <use class="js-icon" href="#play"></use>
                     </svg>
                 </button>
             </div>

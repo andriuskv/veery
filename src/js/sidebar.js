@@ -37,7 +37,7 @@ function removeSidebarEntry(id) {
 function createActiveIcon() {
     return `
         <svg viewBox="0 0 24 24" id="js-active-playlist-icon" class="active-playlist-icon">
-            <use href="#volume-icon"></use>
+            <use href="#volume"></use>
         </svg>
     `;
 }
@@ -90,11 +90,11 @@ function toggleYoutubePlayer() {
 function getArtBtnState(isTrackArtEnlarged) {
     const data = {
         on: {
-            id: "up-arrow-icon",
+            id: "up-arrow",
             title: "Enlarge artwork"
         },
         off: {
-            id:"down-arrow-icon",
+            id:"down-arrow",
             title: "Lower artwork"
         }
     };
@@ -138,7 +138,7 @@ function getArtButtons(player) {
             ${player === "youtube" ? `
                 <button class="btn btn-icon" title="Toggle YouTube player" data-button="youtube">
                     <svg viewBox="0 0 24 24">
-                        <use href="#expand-icon"></use>
+                        <use href="#expand"></use>
                     </svg>
                 </button>
             ` : ""}

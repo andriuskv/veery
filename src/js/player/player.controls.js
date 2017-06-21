@@ -50,11 +50,11 @@ const elapsedTime = (function() {
 function togglePlayPauseBtn(state, element = getElementById("js-play-btn")) {
     const data = {
         on: {
-            id: "play-icon",
+            id: "play",
             title: "Play"
         },
         off: {
-            id:"pause-icon",
+            id:"pause",
             title: "Pause"
         }
     };
@@ -65,11 +65,11 @@ function togglePlayPauseBtn(state, element = getElementById("js-play-btn")) {
 function toggleVolumeBtn(element, state) {
     const data = {
         on: {
-            id: "volume-off-icon",
+            id: "volume-off",
             title: "Unmute"
         },
         off: {
-            id:"volume-icon",
+            id:"volume",
             title: "Mute"
         }
     };
@@ -182,6 +182,8 @@ getElementById("js-track-bar").addEventListener("mousedown", event => {
 });
 
 getElementById("js-track-bar").addEventListener("mousemove", event => {
+
+    // If left mouse button is pressed down let global mousemove handler handle the event
     if ("buttons" in event && event.buttons) {
         return;
     }
@@ -220,6 +222,8 @@ getElementById("js-volume-bar").addEventListener("mousedown", event => {
 });
 
 getElementById("js-volume-bar").addEventListener("mousemove", event => {
+
+    // If left mouse button is pressed down let global mousemove handler handle the event
     if ("buttons" in event && event.buttons) {
         return;
     }
@@ -257,10 +261,8 @@ getElementById("js-controls").addEventListener("click", ({ target }) => {
     }
 });
 
-window.addEventListener("DOMContentLoaded", function onLoad() {
-    const volume = getSetting("volume");
-
-    setVolumeBarInnerWidth(volume);
+(function () {
+    setVolumeBarInnerWidth(getSetting("volume"));
 
     Array.from(document.querySelectorAll(".control-btn")).forEach(element => {
         const item = element.getAttribute("data-item");
@@ -274,9 +276,7 @@ window.addEventListener("DOMContentLoaded", function onLoad() {
             }
         }
     });
-
-    window.removeEventListener("DOMContentLoaded", onLoad);
-});
+})();
 
 export {
     elapsedTime,
