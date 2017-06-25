@@ -87,9 +87,14 @@ function addTracksToPlaylist(pl, tracks, showPlaylist = isRouteActive("manage"))
 
 function onNewPlaylistFormSubmit(event) {
     const form = event.target;
+    const title = form.title.value.trim();
+
+    if (!title) {
+        return;
+    }
     const pl = playlist.createPlaylist({
+        title,
         id: Math.random().toString(36).slice(2),
-        title: form.title.value,
         type: "grid"
     });
 
@@ -102,16 +107,19 @@ function onNewPlaylistFormSubmit(event) {
     form.reset();
 }
 
-function createNewPlaylistInputForm(id, element, handleSubmit) {
-    const formElement = `
+function createNewPlaylistInputForm(id, containerElement, handleSubmit) {
+    containerElement.insertAdjacentHTML("afterend", `
         <form id="js-${id}-form" class="${id}-form">
-            <input type="text" name="title" class="input" autocomplete="off" required>
+            <input type="text" name="title" class="input" autocomplete="off" placeholder="Playlist title" required>
             <button class="btn">Create</button>
         </form>
-    `;
+    `);
 
-    element.insertAdjacentHTML("afterend", formElement);
-    getElementById(`js-${id}-form`).addEventListener("submit", handleSubmit);
+    const element = getElementById(`js-${id}-form`);
+
+    element.querySelector(".input").focus();
+    element.addEventListener("submit", handleSubmit);
+
 }
 
 export {
