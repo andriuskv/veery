@@ -170,6 +170,22 @@ function onTrackBarMouseup({ pageX }) {
     window.removeEventListener("mouseup", onTrackBarMouseup);
 }
 
+function updateSetting({ attrValue, elementRef }) {
+    const setting = !getSetting(attrValue);
+
+    elementRef.classList.toggle("active");
+    elementRef.setAttribute("aria-checked", setting);
+    setSetting(attrValue, setting);
+
+    if (attrValue === "shuffle") {
+        toggleShuffle(setting);
+    }
+    else if (attrValue === "mute") {
+        mutePlayer(setting);
+        toggleVolumeBtn(elementRef, setting);
+    }
+}
+
 getElementById("js-track-bar").addEventListener("mousedown", event => {
     if (event.which !== 1 || !getCurrentTrack()) {
         return;
@@ -246,18 +262,12 @@ getElementById("js-controls").addEventListener("click", ({ target }) => {
     if (!element) {
         return;
     }
-    const { attrValue: action, elementRef } = element;
-    const newSetting = !getSetting(action);
+    updateSetting(element);
+});
 
-    elementRef.classList.toggle("active");
-    setSetting(action, newSetting);
-
-    if (action === "shuffle") {
-        toggleShuffle(newSetting);
-    }
-    else if (action === "mute") {
-        mutePlayer(newSetting);
-        toggleVolumeBtn(elementRef, newSetting);
+getElementById("js-controls").addEventListener("keyup", ({ which, target }) => {
+    if (which === 32 || which === 13) {
+        updateSetting(getElementByAttr("data-item", target));
     }
 });
 
@@ -270,6 +280,7 @@ getElementById("js-controls").addEventListener("click", ({ target }) => {
 
         if (setting) {
             element.classList.add("active");
+            element.setAttribute("aria-checked", true);
 
             if (item === "mute") {
                 toggleVolumeBtn(element, setting);
