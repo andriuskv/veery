@@ -271,7 +271,7 @@ getElementById("js-controls").addEventListener("keyup", ({ which, target }) => {
     }
 });
 
-(function () {
+(function() {
     setVolumeBarInnerWidth(getSetting("volume"));
 
     Array.from(document.querySelectorAll(".control-btn")).forEach(element => {
