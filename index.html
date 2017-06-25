@@ -70,16 +70,14 @@
     </svg>
     <div class="player">
         <div id="js-sidebar-container" class="sidebar-container contracted hidden">
-            <div id="js-sidebar" class="sidebar" data-target="sidebar">
+            <div id="js-sidebar" class="sidebar">
                 <header class="sidebar-header">Veery</header>
                 <nav class="sidebar-nav">
                     <div class="sidebar-btn-container">
-                        <a href="#/manage" id="js-sidebar-entry-manage" class="btn btn-dark sidebar-btn">
-                            Manage playlists
-                        </a>
+                        <button id="js-sidebar-entry-manage" class="btn btn-dark sidebar-btn" data-item="btn" data-hash="manage">Manage playlists</button>
                     </div>
                     <div class="sidebar-btn-container">
-                        <button id="js-sidebar-form-toggle-btn" class="btn btn-dark new-pl-btn">+ New playlist</button>
+                        <button class="btn btn-dark sidebar-btn" data-item="btn">+ New playlist</button>
                     </div>
                     <ul id="js-sidebar-entries" class="sidebar-entries"></ul>
                 </nav>
