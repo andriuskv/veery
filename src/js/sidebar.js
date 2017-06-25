@@ -1,4 +1,5 @@
-import { removeElement, getElementById, getElementByAttr, getTrackArt, setElementIconAndTitle } from "./utils.js";
+import { removeElement, getElementById, getElementByAttr, isOutsideElement, getTrackArt, setElementIconAndTitle } from "./utils.js";
+import { toggleRoute, isRouteActive } from "./router.js";
 import { createNewPlaylistInputForm, onNewPlaylistFormSubmit } from "./playlist/playlist.manage.js";
 
 let animationId = 0;
@@ -10,16 +11,13 @@ function getSidebarEntry(id) {
 }
 
 function createSidebarEntry(title, id) {
-    const sidebarEntries = getElementById("js-sidebar-entries");
-    const newEntry = `
+    getElementById("js-sidebar-entries").insertAdjacentHTML("beforeend", `
         <li>
-            <a href="#/playlist/${id}" id="js-sidebar-entry-${id}" class="btn btn-dark sidebar-btn">
+            <button id="js-sidebar-entry-${id}" class="btn btn-dark sidebar-btn" data-item="btn" data-hash="playlist/${id}">
                 <span>${title}</span>
-            </a>
+            </button>
         </li>
-    `;
-
-    sidebarEntries.insertAdjacentHTML("beforeend", newEntry);
+    `);
 }
 
 function editSidebarEntry(id, title) {
@@ -215,23 +213,35 @@ function showTrackInfo(track) {
     document.title = track.artist && track.title ? `${track.artist} - ${track.title}` : track.name;
 }
 
-function toggleSidebarForm() {
-    const sidebarForm = getElementById("js-sidebar-form");
+function toggleSidebarForm(btn) {
+    const element = getElementById("js-sidebar-form");
 
-    if (sidebarForm) {
-        removeElement(sidebarForm);
+    if (element) {
+        removeElement(element);
         return;
     }
-    createNewPlaylistInputForm("sidebar", this, onNewPlaylistFormSubmit);
+    createNewPlaylistInputForm("sidebar", btn, onNewPlaylistFormSubmit);
 }
 
-getElementById("js-sidebar-form-toggle-btn").addEventListener("click", toggleSidebarForm);
-
 getElementById("js-sidebar-container").addEventListener("click", ({ currentTarget, target }) => {
-    const element = getElementByAttr("data-target", target);
+    currentTarget.classList.add("contracted");
 
-    if (!element) {
-        currentTarget.classList.add("contracted");
+    if (isOutsideElement(target, currentTarget.firstElementChild)) {
+        return;
+    }
+    const element = getElementByAttr("data-item", target);
+
+    if (element) {
+        const hash = element.elementRef.getAttribute("data-hash");
+
+        if (!hash) {
+            toggleSidebarForm(element.elementRef);
+            return;
+        }
+
+        if (!isRouteActive(hash)) {
+            toggleRoute(hash);
+        }
     }
 });
 

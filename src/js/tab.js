@@ -33,7 +33,8 @@ function updatePlaylistStatus(playlistId) {
     }
 }
 
-function toggleToPlaylistTab(id, isSmallestBreakpoint) {
+function toggleToPlaylistTab(id) {
+    const isSmallestBreakpoint = window.innerWidth <= 540;
     const pl = getPlaylistById(id);
 
     if (!pl.rendered) {
@@ -86,16 +87,13 @@ getElementById("js-playlist-tab-header").addEventListener("click", ({ target }) 
 
 window.addEventListener("route-change", ({ detail: { isPlaylistTab, tabId } }) => {
     const entry = getSidebarEntry(tabId);
-    const viewportWidth = window.innerWidth;
-    const isSmallestBreakpoint = viewportWidth <= 540;
-    const isSmallBreakpoint = viewportWidth <= 700;
 
     removeElementClass("sidebar-btn", "active");
     removeElementClass("tab", "active");
     setVisiblePlaylistId(isPlaylistTab ? tabId: "");
 
     if (isPlaylistTab) {
-        toggleToPlaylistTab(tabId, isSmallestBreakpoint);
+        toggleToPlaylistTab(tabId);
         getElementById("js-tab-playlist-container").classList.add("active");
         getElementById("js-tab-container").classList.remove("active");
     }
@@ -107,10 +105,6 @@ window.addEventListener("route-change", ({ detail: { isPlaylistTab, tabId } }) =
 
     if (entry) {
         entry.classList.add("active");
-    }
-
-    if (isSmallBreakpoint) {
-        getElementById("js-sidebar-container").classList.add("contracted");
     }
 });
 

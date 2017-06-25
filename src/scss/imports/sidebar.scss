@@ -127,10 +127,6 @@
     background-color: $color2;
 }
 
-.new-pl-btn {
-    width: 100%;
-}
-
 .sidebar-form {
     display: flex;
     padding-top: 4px;
@@ -160,9 +156,9 @@
 
     position: relative;
     display: block;
+    width: 100%;
     padding-top: 6px;
     padding-bottom: 6px;
-    text-align: center;
 
     &.active {
         color: $base-text-color;
@@ -175,10 +171,6 @@
             box-shadow: -2px 0px 8px 5px $color1;
         }
     }
-
-    .active-playlist-icon {
-        box-shadow: -2px 0px 8px 5px $color2;
-    }
 }
 
 .active-playlist-icon {
@@ -188,6 +180,7 @@
     width: 20px;
     height: 20px;
     background-color: inherit;
+    box-shadow: -2px 0px 8px 5px $color2;
     transform: translateY(-50%);
     transition: 0.1s box-shadow;
 }

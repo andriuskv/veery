@@ -89,6 +89,8 @@ function onNewPlaylistFormSubmit(event) {
     const form = event.target;
     const title = form.title.value.trim();
 
+    event.preventDefault();
+
     if (!title) {
         return;
     }
@@ -103,7 +105,6 @@ function onNewPlaylistFormSubmit(event) {
         action: "put",
         playlist: pl
     });
-    event.preventDefault();
     form.reset();
 }
 
