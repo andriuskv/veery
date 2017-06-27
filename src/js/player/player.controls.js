@@ -4,6 +4,9 @@ import { getCurrentTrack } from "../playlist/playlist.js";
 import { storedTrack, toggleShuffle, setVolume, seekTo, mutePlayer, onControlButtonClick } from "./player.js";
 
 let seeking = false;
+const volumeSlider = getElementById("js-volume-slider");
+const trackSlider = getElementById("js-track-slider");
+const controlsElement = getElementById("js-controls");
 const elapsedTime = (function() {
     let timeout = 0;
 
@@ -11,26 +14,21 @@ const elapsedTime = (function() {
         clearTimeout(timeout);
     }
 
-    function updateTrackSlider(track, startTime, elapsed) {
+    function update(track, startTime, elapsed) {
         const ideal = performance.now() - startTime;
         const diff = ideal - elapsed;
 
-        displayCurrentTime(track.currentTime);
-
         if (!seeking) {
-            const elapsedInPercentage = track.currentTime / track.duration * 100;
-
-            setTrackBarInnerWidth(elapsedInPercentage);
-            storedTrack.updateSavedTrack({
-                elapsed: elapsedInPercentage,
-                currentTime: track.currentTime
-            });
+            updateTrackSlider(track.currentTime);
         }
+        storedTrack.updateSavedTrack({
+            currentTime: track.currentTime
+        });
 
         if (track.currentTime <= track.duration) {
             track.currentTime += 1;
             elapsed += 1000;
-            timeout = setTimeout(updateTrackSlider, 1000 - diff, track, startTime, elapsed);
+            timeout = setTimeout(update, 1000 - diff, track, startTime, elapsed);
         }
         else {
             dispatchCustomEvent("track-end");
@@ -41,7 +39,7 @@ const elapsedTime = (function() {
         const startTime = performance.now();
 
         stop();
-        updateTrackSlider(track, startTime, 0);
+        update(track, startTime, 0);
     }
 
     return { stop, start };
@@ -77,97 +75,111 @@ function toggleVolumeBtn(element, state) {
     setElementIconAndTitle(element, state ? data.on : data.off);
 }
 
-function getPosInPercentage(bar, pageX) {
-    const element = getElementById(`js-${bar}-bar`);
-    const { left, width } = element.getBoundingClientRect();
-    let value = (pageX - left) / width;
+function getPosInPercentage(slider, pageX) {
+    const { left, width } = getElementById(`js-${slider}-slider`).getBoundingClientRect();
+    let percentage = (pageX - left) / width * 100;
 
-    if (value < 0) {
-        value = 0;
+    if (percentage < 0) {
+        percentage = 0;
     }
-    else if (value > 1) {
-        value = 1;
+    else if (percentage > 100) {
+        percentage = 100;
     }
-    return value * 100;
+    return percentage;
 }
 
 function getTrackCurrentTime(pageX) {
     return getPosInPercentage("track", pageX);
 }
 
-function resetTrackBar() {
+function resetTrackSlider() {
     elapsedTime.stop();
-    displayCurrentTime();
-    setTrackBarInnerWidth();
+    updateTrackSlider();
 }
 
-function updateVolumeBarLabel(percentage) {
-    const label = getElementById("js-volume-bar-label");
+function updateVolumeSliderLabel(percentage) {
+    const label = getElementById("js-volume-slider-label");
 
     label.textContent = `${Math.floor(percentage)}%`;
     label.style.left = `${percentage}%`;
 }
 
-function onVolumeBarMousemove({ pageX }) {
+function onVolumeSliderMousemove({ pageX }) {
     const percentage = getPosInPercentage("volume", pageX);
     const volume = percentage / 100;
     const track = getCurrentTrack();
 
-    setVolumeBarInnerWidth(volume);
+    updateVolumeSliderThumb(volume);
     setSetting("volume", volume);
-    updateVolumeBarLabel(percentage);
+    updateVolumeSliderLabel(percentage);
 
     if (track) {
         setVolume(track, volume);
     }
 }
 
-function onVolumeBarMouseup() {
-    window.removeEventListener("mousemove", onVolumeBarMousemove);
-    window.removeEventListener("mouseup", onVolumeBarMouseup);
+function onVolumeSliderMouseup() {
+    window.removeEventListener("mousemove", onVolumeSliderMousemove);
+    window.removeEventListener("mouseup", onVolumeSliderMouseup);
 }
 
-function setBarInnerWidth(bar, percent = 0) {
-    getElementById(`js-${bar}-bar-inner`).style.width = `${percent}%`;
+function updateSliderThumb(slider, percentage = 0) {
+    getElementById(`js-${slider}-slider-thumb`).style.left = `${percentage}%`;
 }
 
-function setTrackBarInnerWidth(percent) {
-    setBarInnerWidth("track", percent);
+function updateTrackSlider(currentTime = 0) {
+    const formatedCurrentTime = formatTime(currentTime);
+    const track = getCurrentTrack();
+    const durationInSeconds = track ? track.durationInSeconds : 1;
+    const duration = track ? track.duration : formatedCurrentTime;
+    const percentage = currentTime / durationInSeconds * 100;
+
+    if (!seeking) {
+        getElementById("js-track-current").textContent = formatedCurrentTime;
+    }
+    updateSliderThumb("track", percentage);
+    trackSlider.setAttribute("aria-valuenow", currentTime);
+    trackSlider.setAttribute("aria-valuetext", `${formatedCurrentTime} of ${duration}`);
 }
 
-function setVolumeBarInnerWidth(fraction) {
-    setBarInnerWidth("volume", fraction * 100);
+function updateVolumeSliderThumb(volume) {
+    const percentage = volume * 100;
+
+    updateSliderThumb("volume", percentage);
+    volumeSlider.setAttribute("aria-valuenow", percentage);
+    volumeSlider.setAttribute("aria-valuetext", `${Math.round(percentage)}% volume`);
 }
 
-function displayCurrentTime(time = 0) {
-    getElementById("js-track-current").textContent = formatTime(time);
-}
-
-function showTrackDuration(duration = "0:00") {
+function showTrackDuration(duration = "0:00", durationInSeconds = 0) {
     getElementById("js-track-duration").textContent = duration;
+    trackSlider.setAttribute("aria-valuemax", durationInSeconds);
 }
 
-function onTrackBarMousemove({ pageX }) {
+function onTrackSliderMousemove({ pageX }) {
     const { durationInSeconds } = getCurrentTrack();
     const percentage = getTrackCurrentTime(pageX);
-    const durationAtThumb = Math.floor(durationInSeconds * percentage / 100);
-    const label = getElementById("js-track-bar-label");
+    const currentTime = Math.floor(durationInSeconds * percentage / 100);
+    const label = getElementById("js-track-slider-label");
 
-    setTrackBarInnerWidth(percentage);
+    updateTrackSlider(currentTime);
     label.style.left = `${percentage}%`;
-    label.textContent = formatTime(durationAtThumb);
+    label.textContent = formatTime(currentTime);
 }
 
-function onTrackBarMouseup({ pageX }) {
+function onTrackSliderMouseup({ pageX }) {
     const track = getCurrentTrack();
 
-    if (track) {
-        seekTo(track, getTrackCurrentTime(pageX));
-    }
     seeking = false;
 
-    window.removeEventListener("mousemove", onTrackBarMousemove);
-    window.removeEventListener("mouseup", onTrackBarMouseup);
+    if (track) {
+        const percentage = getTrackCurrentTime(pageX);
+        const currentTime = Math.floor(track.durationInSeconds * percentage / 100);
+
+        updateTrackSlider(currentTime);
+        seekTo(track, currentTime);
+    }
+    window.removeEventListener("mousemove", onTrackSliderMousemove);
+    window.removeEventListener("mouseup", onTrackSliderMouseup);
 }
 
 function updateSetting({ attrValue, elementRef }) {
@@ -186,42 +198,7 @@ function updateSetting({ attrValue, elementRef }) {
     }
 }
 
-getElementById("js-track-bar").addEventListener("mousedown", event => {
-    if (event.which !== 1 || !getCurrentTrack()) {
-        return;
-    }
-    seeking = true;
-
-    onTrackBarMousemove(event);
-    window.addEventListener("mousemove", onTrackBarMousemove);
-    window.addEventListener("mouseup", onTrackBarMouseup);
-});
-
-getElementById("js-track-bar").addEventListener("mousemove", event => {
-
-    // If left mouse button is pressed down let global mousemove handler handle the event
-    if ("buttons" in event && event.buttons) {
-        return;
-    }
-    const track = getCurrentTrack();
-    const label = getElementById("js-track-bar-label");
-
-    if (!track) {
-        label.classList.add("hidden");
-        return;
-    }
-    const percentage = getTrackCurrentTime(event.pageX);
-    const durationAtThumb = Math.floor(track.durationInSeconds * percentage / 100);
-
-    label.classList.remove("hidden");
-    label.style.left = `${percentage}%`;
-    label.textContent = formatTime(durationAtThumb);
-});
-
-getElementById("js-volume-bar").addEventListener("mousedown", event => {
-    if (event.which !== 1) {
-        return;
-    }
+function unmutePlayer() {
     const muted = getSetting("mute");
 
     if (muted) {
@@ -232,12 +209,79 @@ getElementById("js-volume-bar").addEventListener("mousedown", event => {
         toggleVolumeBtn(element, !muted);
         element.classList.remove("active");
     }
-    onVolumeBarMousemove(event);
-    window.addEventListener("mousemove", onVolumeBarMousemove);
-    window.addEventListener("mouseup", onVolumeBarMouseup);
+}
+
+trackSlider.addEventListener("mousedown", event => {
+    if (event.which !== 1 || !getCurrentTrack()) {
+        return;
+    }
+    seeking = true;
+
+    onTrackSliderMousemove(event);
+    window.addEventListener("mousemove", onTrackSliderMousemove);
+    window.addEventListener("mouseup", onTrackSliderMouseup);
 });
 
-getElementById("js-volume-bar").addEventListener("mousemove", event => {
+trackSlider.addEventListener("mousemove", event => {
+
+    // If left mouse button is pressed down let global mousemove handler handle the event
+    if ("buttons" in event && event.buttons) {
+        return;
+    }
+    const track = getCurrentTrack();
+    const label = getElementById("js-track-slider-label");
+
+    if (!track) {
+        label.classList.add("hidden");
+        return;
+    }
+    const percentage = getTrackCurrentTime(event.pageX);
+    const currentTime = Math.floor(track.durationInSeconds * percentage / 100);
+
+    label.classList.remove("hidden");
+    label.style.left = `${percentage}%`;
+    label.textContent = formatTime(currentTime);
+});
+
+trackSlider.addEventListener("keydown", ({ which }) => {
+    const track = getCurrentTrack();
+
+    if (!track || which < 37 || which > 40) {
+        return;
+    }
+    const duration = track.durationInSeconds;
+    const percentage = parseFloat(getElementById(`js-track-slider-thumb`).style.left);
+    let currentTime = Math.round(duration * percentage / 100);
+
+    if (which === 38 || which === 39) {
+        currentTime += 5;
+
+        if (currentTime > duration) {
+            currentTime = duration;
+        }
+    }
+    else if (which === 37 || which === 40) {
+        currentTime -= 5;
+
+        if (currentTime < 0) {
+            currentTime = 0;
+        }
+    }
+    updateTrackSlider(currentTime);
+    seekTo(track, currentTime);
+});
+
+volumeSlider.addEventListener("mousedown", event => {
+    if (event.which !== 1) {
+        return;
+    }
+    unmutePlayer();
+    onVolumeSliderMousemove(event);
+    window.addEventListener("mousemove", onVolumeSliderMousemove);
+    window.addEventListener("mouseup", onVolumeSliderMouseup);
+});
+
+volumeSlider.addEventListener("mousemove", event => {
 
     // If left mouse button is pressed down let global mousemove handler handle the event
     if ("buttons" in event && event.buttons) {
@@ -245,7 +289,41 @@ getElementById("js-volume-bar").addEventListener("mousemove", event => {
     }
     const percentage = getPosInPercentage("volume", event.pageX);
 
-    updateVolumeBarLabel(percentage);
+    updateVolumeSliderLabel(percentage);
+});
+
+volumeSlider.addEventListener("keydown", ({ which }) => {
+    let volume = getSetting("volume");
+
+    if (which === 38 || which === 39) {
+        volume += 0.05;
+
+        if (volume > 1) {
+            volume = 1;
+        }
+        unmutePlayer();
+    }
+    else if (volume && (which === 37 || which === 40)) {
+        volume -= 0.05;
+
+        if (volume <= 0) {
+            volume = 0;
+
+            updateSetting({
+                attrValue: "mute",
+                elementRef: getElementById("js-volume-btn")
+            });
+            return;
+        }
+    }
+    const track = getCurrentTrack();
+
+    updateVolumeSliderThumb(volume);
+    setSetting("volume", volume);
+
+    if (track) {
+        setVolume(track, volume);
+    }
 });
 
 getElementById("js-main-controls").addEventListener("click", ({ target }) => {
@@ -256,7 +334,7 @@ getElementById("js-main-controls").addEventListener("click", ({ target }) => {
     }
 });
 
-getElementById("js-controls").addEventListener("click", ({ target }) => {
+controlsElement.addEventListener("click", ({ target }) => {
     const element = getElementByAttr("data-item", target);
 
     if (!element) {
@@ -265,14 +343,16 @@ getElementById("js-controls").addEventListener("click", ({ target }) => {
     updateSetting(element);
 });
 
-getElementById("js-controls").addEventListener("keyup", ({ which, target }) => {
-    if (which === 32 || which === 13) {
-        updateSetting(getElementByAttr("data-item", target));
+controlsElement.addEventListener("keyup", ({ which, target }) => {
+    const element = getElementByAttr("data-item", target);
+
+    if (element && (which === 32 || which === 13)) {
+        updateSetting(element);
     }
 });
 
 (function() {
-    setVolumeBarInnerWidth(getSetting("volume"));
+    updateVolumeSliderThumb(getSetting("volume"));
 
     Array.from(document.querySelectorAll(".control-btn")).forEach(element => {
         const item = element.getAttribute("data-item");
@@ -292,9 +372,8 @@ getElementById("js-controls").addEventListener("keyup", ({ which, target }) => {
 export {
     elapsedTime,
     togglePlayPauseBtn,
-    setTrackBarInnerWidth,
-    setVolumeBarInnerWidth,
-    displayCurrentTime,
+    updateTrackSlider,
+    updateVolumeSliderThumb,
     showTrackDuration,
-    resetTrackBar
+    resetTrackSlider
 };

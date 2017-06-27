@@ -1,11 +1,10 @@
 import {
-    setTrackBarInnerWidth,
-    setVolumeBarInnerWidth,
-    displayCurrentTime,
+    updateTrackSlider,
+    updateVolumeSliderThumb,
     showTrackDuration,
     togglePlayPauseBtn,
     elapsedTime,
-    resetTrackBar
+    resetTrackSlider
 } from "./player.controls.js";
 import {
     getPlaylistById,
@@ -64,9 +63,8 @@ const storedTrack = (function() {
             removeTrack();
             return;
         }
-        setTrackBarInnerWidth(storedTrack.elapsed);
-        displayCurrentTime(storedTrack.currentTime);
         playNewTrack(track, storedTrack.currentTime);
+        updateTrackSlider(storedTrack.currentTime);
     }
 
     return {
@@ -86,7 +84,7 @@ function beforeTrackStart(track) {
     const pl = getPlaylistById(track.playlistId);
 
     showTrackInfo(track);
-    showTrackDuration(track.duration);
+    showTrackDuration(track.duration, track.durationInSeconds);
 
     if (pl.rendered && track.index !== -1) {
         showTrack(pl.id, track.index, { scrollToTrack });
@@ -154,7 +152,7 @@ function play(source, sourceValue, id = getActivePlaylistId()) {
     }
 
     if (currentTrack) {
-        resetTrackBar();
+        resetTrackSlider();
         toggleTrackPlayPauseBtn(currentTrack, true);
         stopTrack(currentTrack);
     }
@@ -225,7 +223,6 @@ function stopPlayer() {
 function resetPlayer(track) {
     paused = true;
     storedTrack.remove();
-    resetTrackBar();
     showTrackDuration();
     showTrackInfo();
     setCurrentTrack();
@@ -235,6 +232,7 @@ function resetPlayer(track) {
     removeElementClass("track", "playing");
 
     if (track) {
+        resetTrackSlider();
         toggleTrackPlayPauseBtn(track, paused);
     }
 }
@@ -276,9 +274,7 @@ function setVolume(track, volume) {
     }
 }
 
-function seekTo(track, percent) {
-    const currentTime = Math.floor(track.durationInSeconds / 100 * percent);
-
+function seekTo(track, currentTime) {
     elapsedTime.stop();
 
     if (track.player === "native") {
@@ -290,7 +286,6 @@ function seekTo(track, percent) {
     else if (track.player === "soundcloud") {
         scPlayer.seekTo(currentTime);
     }
-    displayCurrentTime(currentTime);
 }
 
 function mutePlayer(muted) {
@@ -307,7 +302,7 @@ function mutePlayer(muted) {
     }
     setSetting("mute", muted);
     setSetting("volume", newVolume);
-    setVolumeBarInnerWidth(newVolume);
+    updateVolumeSliderThumb(newVolume);
 
     if (track) {
         setVolume(track, newVolume);

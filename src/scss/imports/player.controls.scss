@@ -20,79 +20,6 @@
     }
 }
 
-.controls {
-    @include breakpoint-smallest {
-        margin-left: auto;
-    }
-}
-
-.control-bar {
-    position: relative;
-    height: 4px;
-    border-radius: 2px;
-    background: #666;
-    cursor: pointer;
-
-    &:hover, &:active {
-        .bar-label:not(.hidden) {
-            display: block;
-        }
-
-        .bar-thumb {
-            visibility: visible;
-            transform: translateX(50%) scale(1);
-        }
-    }
-
-    &:hover {
-        height: 6px;
-        border-radius: 3px;
-    }
-
-    &:active .bar-thumb {
-        background-color: #aaa;
-    }
-}
-
-.control-bar-inner {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    width: 0;
-    height: 100%;
-    border-radius: inherit;
-    background-color: $brand-color;
-}
-
-.bar-label {
-    left: 0;
-    bottom: 18px;
-    display: none;
-    min-width: 40px;
-    padding: 4px;
-    color: $base-text-color;
-    font-size: 13px;
-    text-align: center;
-    transform: translateX(-50%);
-
-    &.hidden {
-        display: none;
-    }
-}
-
-.bar-thumb {
-    flex-grow: 0;
-    flex-shrink: 0;
-    visibility: hidden;
-    width: 12px;
-    height: 12px;
-    border: 3px solid #ddd;
-    border-radius: 50%;
-    background-color: #ddd;
-    transform: translateX(50%) scale(0.4);
-    transition: transform 0.1s;
-}
-
 .main-control-btn {
     padding: 0;
     margin-right: 4px;
@@ -103,6 +30,21 @@
     }
 }
 
+.track-slider-panel {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    height: 100%;
+
+    @include breakpoint-smallest {
+        position: absolute;
+        top: 4px;
+        left: 0;
+        right: 0;
+        height: 24px;
+    }
+}
+
 .track-time {
     margin-left: 8px;
     margin-right: 8px;
@@ -110,34 +52,124 @@
     font-size: 12px;
 }
 
-.track-bar-container {
-    display: flex;
-    align-items: center;
-    flex-grow: 1;
+.control-slider-container {
+    position: relative;
+    height: 100%;
+    width: 100%;
+}
 
-    @include breakpoint-smallest {
-        position: absolute;
-        top: 8px;
-        left: 0;
-        right: 0;
+.control-slider {
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+
+    &:hover, &:active {
+        & + .slider-label:not(.hidden) {
+            display: block;
+        }
+    }
+
+    &:active .slider-thumb {
+        background-color: #aaa;
+    }
+
+    &:focus {
+        @extend %focus-styles;
     }
 }
 
-.track-bar {
-    flex-grow: 1;
+.slider-inner {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: calc(100% - 12px);
+    height: 100%;
+}
+
+.slider-thumb {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border: 3px solid #ddd;
+    border-radius: 50%;
+    background-color: #ddd;
+    will-change: left;
+
+    &::before, &::after {
+        z-index: -1;
+        content: "";
+        position: absolute;
+        top: 50%;
+        display: block;
+        height: 4px;
+        margin-top: -2px;
+    }
+
+    &::before {
+        background-color: $brand-color;
+    }
+
+    &::after {
+        left: 0;
+        background-color: $color2;
+    }
+}
+
+.track-slider-thumb {
+    &::before, &::after {
+        width: 100vw;
+    }
+
+    &::before {
+        left: -100vw;
+    }
+}
+
+.slider-label {
+    left: 0;
+    bottom: 28px;
+    display: none;
+    min-width: 40px;
+    padding: 4px;
+    color: $base-text-color;
+    font-size: 13px;
+    text-align: center;
+    transform: translateX(-50%);
+    will-change: left;
+
+    &.hidden {
+        display: none;
+    }
+}
+
+.controls {
+    @include breakpoint-smallest {
+        margin-left: auto;
+    }
 }
 
 .control-btn {
     margin-right: 4px;
 }
 
-.volume-bar-container {
+.volume-controls {
     display: flex;
     align-items: center;
 }
 
-.volume-bar {
+.volume-slider-container {
     width: 100px;
     margin-left: 4px;
     margin-right: 8px;
+}
+
+.volume-slider-thumb {
+    &::before, &::after {
+        width: 100px;
+    }
+
+    &::before {
+        left: -100px;
+    }
 }

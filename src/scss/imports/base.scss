@@ -93,6 +93,11 @@ svg {
     display: none;
 }
 
+%focus-styles {
+    outline: 1px solid darken($brand-color, 32%);
+    outline-offset: 0;
+}
+
 %default-input-styles {
     padding: 4px 6px;
     border: none;
@@ -101,8 +106,7 @@ svg {
     color: $base-text-color;
 
     &:focus {
-        outline: 1px solid darken($brand-color, 32%);
-        outline-offset: 0;
+        @extend %focus-styles;
     }
 }
 

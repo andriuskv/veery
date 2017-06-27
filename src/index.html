@@ -257,13 +257,15 @@
                 </svg>
             </button>
         </div>
-        <div class="track-bar-container">
+        <div class="track-slider-panel">
             <div id="js-track-current" class="track-time">0:00</div>
-            <div id="js-track-bar" class="control-bar track-bar">
-                <div id="js-track-bar-inner" class="control-bar-inner">
-                    <div id="js-track-bar-label" class="panel bar-label">0:00</div>
-                    <div class="bar-thumb"></div>
+            <div class="control-slider-container">
+                <div id="js-track-slider" role="slider" aria-label="Seek slider" aria-valuemin="0" class="control-slider" tabindex="0">
+                    <div class="slider-inner">
+                        <div id="js-track-slider-thumb" class="slider-thumb track-slider-thumb"></div>
+                    </div>
                 </div>
+                <div id="js-track-slider-label" class="panel slider-label">0%</div>
             </div>
             <div id="js-track-duration" class="track-time">0:00</div>
         </div>
@@ -286,17 +288,19 @@
                         7H17V10L21,6L17,2V5H5V11H7V7Z">
                 </svg>
             </div>
-            <div class="volume-bar-container">
+            <div class="volume-controls">
                 <div role="checkbox" aria-checked="false" id="js-volume-btn" class="btn btn-light btn-icon control-btn" data-item="mute" title="Mute" tabindex="0">
                     <svg viewBox="0 0 24 24">
                         <use class="js-icon" href="#volume"></use>
                     </svg>
                 </div>
-                <div id="js-volume-bar" class="control-bar volume-bar">
-                    <div id="js-volume-bar-inner" class="control-bar-inner">
-                        <div id="js-volume-bar-label" class="panel bar-label">0%</div>
-                        <div class="bar-thumb"></div>
+                <div class="control-slider-container volume-slider-container">
+                    <div id="js-volume-slider" role="slider" aria-valuemin="0" aria-valuemax="100" class="control-slider volume-slider" tabindex="0">
+                        <div class="slider-inner volume-slider-inner">
+                            <div id="js-volume-slider-thumb" class="slider-thumb volume-slider-thumb"></div>
+                        </div>
                     </div>
+                    <div id="js-volume-slider-label" class="panel slider-label">0%</div>
                 </div>
             </div>
         </div>
