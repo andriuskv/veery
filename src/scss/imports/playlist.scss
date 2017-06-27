@@ -1,8 +1,7 @@
 .track {
     &:hover, &:focus, &:focus-within, &.playing {
         .track-play-pause-btn {
-            visibility: visible;
-            transform: translate(-50%, -50%) scale(1);
+            display: flex;
         }
     }
 
@@ -11,7 +10,7 @@
     }
 
     &:focus {
-        outline: none;
+        @extend %focus-styles;
     }
 
     &.playing {
@@ -35,18 +34,15 @@
      position: absolute;
      top: 50%;
      left: 50%;
-     visibility: collapse;
-     display: flex;
+     display: none;
      border: 1px solid currentColor;
      border-radius: 50%;
      background-color: transparent;
      color: inherit;
-     transform: translate(-50%, -50%) scale(0.6);
-     transition: transform 0.1s;
+     transform: translate(-50%, -50%);
 
      &:focus {
-         visibility: visible;
-         transform: translate(-50%, -50%) scale(1);
+         display: flex;
      }
  }
 
