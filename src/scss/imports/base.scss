@@ -117,7 +117,7 @@ svg {
 .btn {
     @extend %default-input-styles;
 
-    transition: all 0.1s;
+    transition: color 0.1s, background-color 0.1s;
 
     &:hover,
     &.active {
