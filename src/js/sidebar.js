@@ -5,6 +5,7 @@ import { createNewPlaylistInputForm, onNewPlaylistFormSubmit } from "./playlist/
 let animationId = 0;
 let timeoutId = 0;
 let isTrackArtEnlarged = false;
+let animationTarget = null;
 
 function getSidebarEntry(id) {
     return getElementById(`js-sidebar-entry-${id}`);
@@ -55,29 +56,51 @@ function removeActiveIcon() {
     }
 }
 
-function slideElementLeft(element, width, maxWidth, x = 0) {
+function resetAnimationTarget() {
+    clearTimeout(timeoutId);
+    cancelAnimationFrame(animationId);
+
+    animationTarget.style.textIndent = "0";
+    timeoutId = 0;
+    animationTarget = null;
+}
+
+function indentText(element, width, maxWidth, x = 0) {
     x = Math.abs(x) < width + 10 ? x - 1 : maxWidth;
-    element.style.transform = `translateX(${x}px)`;
+    element.style.textIndent = `${x}px`;
     animationId = requestAnimationFrame(() => {
-        slideElementLeft(element, width, maxWidth, x);
+        indentText(element, width, maxWidth, x);
     });
 }
 
-function handleMouseenter({ currentTarget, target }) {
+function handleMousemove({ currentTarget, target }) {
+    if (currentTarget === target) {
+        return;
+    }
+
+    if (animationTarget && target !== animationTarget) {
+        resetAnimationTarget();
+    }
+    else if (timeoutId) {
+        return;
+    }
     const width = target.scrollWidth;
     const maxWidth = target.parentElement.offsetWidth - 8;
 
     if (width > maxWidth) {
+        animationTarget = target;
+        timeoutId = setTimeout(indentText, 400, target, width, maxWidth);
+
         currentTarget.addEventListener("mouseleave", handleMouseleave);
-        timeoutId = setTimeout(slideElementLeft, 400, target, width, maxWidth);
     }
 }
 
-function handleMouseleave({ currentTarget, target }) {
+function handleMouseleave({ currentTarget }) {
     currentTarget.removeEventListener("mouseleave", handleMouseleave);
-    clearTimeout(timeoutId);
-    cancelAnimationFrame(animationId);
-    target.style.transform = "translateX(0)";
+
+    if (animationTarget) {
+        resetAnimationTarget();
+    }
 }
 
 function toggleYoutubePlayer() {
@@ -103,7 +126,7 @@ function getArtBtnState(isTrackArtEnlarged) {
 function toggleArtworkSize(button) {
     isTrackArtEnlarged = !isTrackArtEnlarged;
 
-    getElementById("js-track-info").classList.toggle("enlarged");
+    getElementById("js-now-playing").classList.toggle("enlarged");
     setElementIconAndTitle(button, getArtBtnState(isTrackArtEnlarged));
 }
 
@@ -161,36 +184,34 @@ function getTrackArtTemplate(thumbnail, player) {
     `;
 }
 
-function createTrackInfo(track) {
+function initNowPlayingElement(track) {
     const trackArtist = track.artist && track.title ? track.artist : track.name;
-    const trackTitle = trackArtist !== track.name ? track.title : "";
+    const trackTitle = trackArtist !== track.name ? `<div class="track-title">${track.title}</div>` : "";
     const trackArt = getTrackArtTemplate(track.thumbnail, track.player);
-    const trackInfoElement = `
-        <div id="js-track-info" class="track-info${trackArt && isTrackArtEnlarged ? " enlarged": ""}">
+    const nowPlayingView = `
+        <div id="js-now-playing" class="now-playing${trackArt && isTrackArtEnlarged ? " enlarged": ""}">
             ${trackArt}
-            <div class="track-name">
-                <div id="js-track-title" class="track-title">${trackTitle}</div>
-                <div id="js-track-artist" class="track-artist">${trackArtist}</div>
+            <div id="js-track-name" class="track-name ">
+                ${trackTitle}
+                <div class="track-artist">${trackArtist}</div>
             </div>
         </div>
     `;
 
     getElementById("js-sidebar-container").classList.remove("hidden");
-    getElementById("js-sidebar").insertAdjacentHTML("beforeend", trackInfoElement);
-    getElementById("js-track-title").addEventListener("mouseenter", handleMouseenter);
-    getElementById("js-track-artist").addEventListener("mouseenter", handleMouseenter);
+    getElementById("js-sidebar").insertAdjacentHTML("beforeend", nowPlayingView);
+    getElementById("js-track-name").addEventListener("mousemove", handleMousemove);
 
     if (trackArt) {
         getElementById("js-track-art-button-container").addEventListener("click", handleClickOnArtBtn);
     }
 }
 
-function removeTrackInfoElement(element) {
+function removeNowPlayingElement(element) {
     const buttonContainer = getElementById("js-track-art-button-container");
 
-    getElementById("js-track-title").removeEventListener("mouseenter", handleMouseenter);
-    getElementById("js-track-artist").removeEventListener("mouseenter", handleMouseenter);
     getElementById("js-sidebar-container").classList.add("hidden");
+    getElementById("js-track-name").removeEventListener("mousemove", handleMousemove);
 
     if (buttonContainer) {
         buttonContainer.removeEventListener("click", handleClickOnArtBtn);
@@ -198,18 +219,18 @@ function removeTrackInfoElement(element) {
     removeElement(element);
 }
 
-function showTrackInfo(track) {
-    const trackInfoElement = getElementById("js-track-info");
+function showNowPlaying(track) {
+    const nowPlayingElement = getElementById("js-now-playing");
 
-    if (trackInfoElement) {
-        removeTrackInfoElement(trackInfoElement);
+    if (nowPlayingElement) {
+        removeNowPlayingElement(nowPlayingElement);
     }
 
     if (!track) {
         document.title = "Veery";
         return;
     }
-    createTrackInfo(track);
+    initNowPlayingElement(track);
     document.title = track.artist && track.title ? `${track.artist} - ${track.title}` : track.name;
 }
 
@@ -250,7 +271,7 @@ export {
     editSidebarEntry,
     removeSidebarEntry,
     getSidebarEntry,
-    showTrackInfo,
+    showNowPlaying,
     showActiveIcon,
     removeActiveIcon
 };

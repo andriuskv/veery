@@ -51,7 +51,7 @@
                 display: none;
             }
 
-            .track-info {
+            .now-playing {
                 flex-grow: 1;
                 overflow: hidden;
                 display: flex;
@@ -181,23 +181,23 @@
     height: 20px;
     background-color: inherit;
     box-shadow: -2px 0px 8px 5px $color2;
+    fill: $base-text-color;
     transform: translateY(-50%);
     transition: 0.1s box-shadow;
 }
 
-.track-info {
+.now-playing {
     display: flex;
     height: 40px;
     margin-top: 2px;
-    transition: all 0.4s;
+    transition: all 0.2s;
 
     &.enlarged {
         flex-direction: column;
         height: 160px;
 
         .track-art-container {
-            height: calc(100% - 42px);
-            margin-bottom: 2px;
+            height: calc(100% - 40px);
         }
 
         .track-art-wrapper {
@@ -260,11 +260,9 @@
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: center;
     height: 100%;
-    padding: 4px 0;
-    border-left: 4px solid $color2;
-    border-right: 4px solid $color2;
+    padding: 4px;
     background-color: $color2;
     color: $base-text-color;
     white-space: nowrap;
@@ -272,9 +270,14 @@
 }
 
 .track-title {
+    @include text-truncate;
+
+    padding-bottom: 4px;
     font-size: 14px;
 }
 
 .track-artist {
+    @include text-truncate;
+
     font-size: 12px;
 }

@@ -22,7 +22,7 @@ import {
 import { removeElementClass, getElementById, getElementByAttr } from "../utils.js";
 import { getVisiblePlaylistId } from "../tab.js";
 import { setSetting, getSetting, removeSetting } from "../settings.js";
-import { showTrackInfo, showActiveIcon, removeActiveIcon } from "../sidebar.js";
+import { showNowPlaying, showActiveIcon, removeActiveIcon } from "../sidebar.js";
 import { showTrack, toggleTrackPlayPauseBtn } from "../playlist/playlist.view.js";
 import * as nPlayer from "./player.native.js";
 import * as ytPlayer from "./player.youtube.js";
@@ -83,7 +83,7 @@ function getPlayerState() {
 function beforeTrackStart(track) {
     const pl = getPlaylistById(track.playlistId);
 
-    showTrackInfo(track);
+    showNowPlaying(track);
     showTrackDuration(track.duration, track.durationInSeconds);
 
     if (pl.rendered && track.index !== -1) {
@@ -224,7 +224,7 @@ function resetPlayer(track) {
     paused = true;
     storedTrack.remove();
     showTrackDuration();
-    showTrackInfo();
+    showNowPlaying();
     setCurrentTrack();
     setPlaylistAsActive();
     togglePlayPauseBtn(paused);
