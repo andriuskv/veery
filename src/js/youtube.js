@@ -73,7 +73,7 @@ function parseItems(items, id, timeStamp) {
         title: track.snippet.title,
         artist: "",
         album: "",
-        thumbnail: track.snippet.thumbnails.default.url,
+        thumbnail: track.snippet.thumbnails.medium.url,
         player: "youtube",
         playlistId: id,
         createdAt: timeStamp
