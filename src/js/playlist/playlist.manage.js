@@ -1,5 +1,5 @@
 import * as playlist from "./playlist.js";
-import { getElementById, dispatchCustomEvent } from "../utils.js";
+import { getElementById, removeElementClass, dispatchCustomEvent } from "../utils.js";
 import { removePlaylistTab, updatePlaylistView } from "./playlist.view.js";
 import { isRouteActive, addRoute, toggleRoute } from "../router.js";
 import { getSetting } from "../settings.js";
@@ -49,11 +49,16 @@ function updateCurrentTrack(pl) {
 
     if (currentTrack && playlist.isPlaylistActive(pl.id)) {
         const track = playlist.findTrack(pl.id, currentTrack.name);
+        let index = -1;
 
         if (track) {
-            playlist.updateCurrentTrack({ index: track.index });
-            playlist.setPlaybackIndex(track.index);
+            index = track.index;
         }
+        else {
+            removeElementClass("track", "playing");
+        }
+        playlist.updateCurrentTrack({ index });
+        playlist.setPlaybackIndex(index);
     }
 }
 
