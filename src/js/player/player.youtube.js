@@ -2,6 +2,7 @@
 
 import { scriptLoader, getElementById, dispatchCustomEvent, getElementByAttr } from "../utils.js";
 import { storedTrack, getPlayerState, togglePlaying as togglePlayerPlaying } from "./player.js";
+import { elapsedTime } from "./player.controls.js";
 import { getCurrentTrack } from "../playlist/playlist.js";
 
 let ytPlayer = null;
@@ -11,13 +12,18 @@ let args = null;
 window.onYouTubeIframeAPIReady = initPlayer;
 
 function onPlayerStateChange({ data: state }) {
-    if (state === YT.PlayerState.PLAYING) {
+    const { PLAYING, BUFFERING } = YT.PlayerState;
+
+    if (state === PLAYING) {
         if (isStoredTrack) {
             ytPlayer.pauseVideo();
             isStoredTrack = false;
             return;
         }
         dispatchCustomEvent("track-start", ytPlayer.getCurrentTime());
+    }
+    else if (state === BUFFERING) {
+        elapsedTime.stop();
     }
 }
 
