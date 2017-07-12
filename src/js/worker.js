@@ -10,8 +10,8 @@ worker.onmessage = function({ data: { action, payload } }) {
         Object.keys(payload).forEach(id => {
             initPlaylist(createPlaylist(payload[id]));
         });
-        storedTrack.initTrack();
         toggleCurrentRoute();
+        storedTrack.initTrack();
     }
     else if (action === "update") {
         updatePlaylist(payload.id, payload);

@@ -1,6 +1,15 @@
-import { getElementById, getElementByAttr, formatTime, dispatchCustomEvent, setElementIconAndTitle } from "../utils.js";
+import {
+    getElementById,
+    getElementByAttr,
+    formatTime,
+    dispatchCustomEvent,
+    setElementIconAndTitle,
+    removeElement,
+    addSpinner
+} from "../utils.js";
 import { setSetting, getSetting, removeSetting } from "../settings.js";
 import { getCurrentTrack } from "../playlist/playlist.js";
+import { getTrackPlayPauseBtn } from "../playlist/playlist.view.js";
 import { storedTrack, toggleShuffle, setVolume, seekTo, mutePlayer, onControlButtonClick } from "./player.js";
 
 let seeking = false;
@@ -45,7 +54,35 @@ const elapsedTime = (function() {
     return { stop, start };
 })();
 
-function togglePlayPauseBtn(state, element = getElementById("js-play-btn")) {
+function showPlayPauseBtnSpinner() {
+    const element = getElementById("js-play-btn");
+
+    if (element.childElementCount === 1) {
+        const track = getCurrentTrack();
+        const btn = getTrackPlayPauseBtn(track);
+
+        if (btn) {
+            addSpinner(btn);
+        }
+        addSpinner(element);
+    }
+}
+
+function hidePlayPauseBtnSpinner() {
+    const element = getElementById("js-play-btn");
+
+    if (element.childElementCount > 1) {
+        const track = getCurrentTrack();
+        const btn = getTrackPlayPauseBtn(track);
+
+        if (btn) {
+            removeElement(btn.lastElementChild);
+        }
+        removeElement(element.lastElementChild);
+    }
+}
+
+function togglePlayPauseBtn(element, state) {
     const data = {
         on: {
             id: "play",
@@ -371,6 +408,8 @@ controlsElement.addEventListener("keyup", ({ which, target }) => {
 
 export {
     elapsedTime,
+    showPlayPauseBtnSpinner,
+    hidePlayPauseBtnSpinner,
     togglePlayPauseBtn,
     updateTrackSlider,
     updateVolumeSliderThumb,

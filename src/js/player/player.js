@@ -4,7 +4,8 @@ import {
     showTrackDuration,
     togglePlayPauseBtn,
     elapsedTime,
-    resetTrackSlider
+    resetTrackSlider,
+    hidePlayPauseBtnSpinner
 } from "./player.controls.js";
 import {
     getPlaylistById,
@@ -65,6 +66,8 @@ const storedTrack = (function() {
         }
         playNewTrack(track, storedTrack.currentTime);
         updateTrackSlider(storedTrack.currentTime);
+
+        paused = true;
     }
 
     return {
@@ -90,6 +93,14 @@ function beforeTrackStart(track) {
         showTrack(pl.id, track.index, { scrollToTrack });
     }
     scrollToTrack = false;
+    paused = false;
+}
+
+function togglePlayPauseBtns(track, isPaused) {
+    const element = getElementById("js-play-btn");
+
+    togglePlayPauseBtn(element, isPaused);
+    toggleTrackPlayPauseBtn(track, isPaused);
 }
 
 function togglePlaying(track) {
@@ -107,9 +118,8 @@ function togglePlaying(track) {
     if (paused) {
         removeActiveIcon();
         elapsedTime.stop();
-        togglePlayPauseBtn(paused);
     }
-    toggleTrackPlayPauseBtn(track, paused);
+    togglePlayPauseBtns(track, paused);
 }
 
 function playNewTrack(track, startTime) {
@@ -119,6 +129,10 @@ function playNewTrack(track, startTime) {
     setPlaybackIndex(track.index);
     setCurrentTrack(track);
     beforeTrackStart(track);
+
+    if (!startTime) {
+        togglePlayPauseBtns(track, paused);
+    }
 
     if (track.player === "native") {
         nPlayer.playTrack(track.audioTrack, volume, startTime);
@@ -153,7 +167,7 @@ function play(source, sourceValue, id = getActivePlaylistId()) {
 
     if (currentTrack) {
         resetTrackSlider();
-        toggleTrackPlayPauseBtn(currentTrack, true);
+        togglePlayPauseBtns(currentTrack, true);
         stopTrack(currentTrack);
     }
 
@@ -187,6 +201,11 @@ function playPreviousTrack() {
 }
 
 function playTrackFromElement({ target }) {
+    const playPauseBtn = getElementByAttr("data-btn", target);
+
+    if (playPauseBtn) {
+        return;
+    }
     const element = getElementByAttr("data-index", target);
 
     if (element) {
@@ -227,13 +246,12 @@ function resetPlayer(track) {
     showNowPlaying();
     setCurrentTrack();
     setPlaylistAsActive();
-    togglePlayPauseBtn(paused);
     removeActiveIcon();
     removeElementClass("track", "playing");
 
     if (track) {
         resetTrackSlider();
-        toggleTrackPlayPauseBtn(track, paused);
+        togglePlayPauseBtns(track, paused);
     }
 }
 
@@ -333,9 +351,7 @@ tabContainer.addEventListener("click", ({ target }) => {
 window.addEventListener("track-start", ({ detail: startTime }) => {
     const track = getCurrentTrack();
 
-    paused = false;
     showActiveIcon(track.playlistId);
-    togglePlayPauseBtn(paused);
     storedTrack.saveTrack({
         playlistId: track.playlistId,
         name: track.name,

@@ -2,33 +2,48 @@
 
 import { scriptLoader, getElementById, dispatchCustomEvent, getElementByAttr } from "../utils.js";
 import { storedTrack, getPlayerState, togglePlaying as togglePlayerPlaying } from "./player.js";
-import { elapsedTime } from "./player.controls.js";
+import { elapsedTime, showPlayPauseBtnSpinner, hidePlayPauseBtnSpinner } from "./player.controls.js";
 import { getCurrentTrack } from "../playlist/playlist.js";
 
-let ytPlayer = null;
+const PLAYING = 1;
+const PAUSED = 2;
+const BUFFERING = 3;
+const UNSTARTED = -1;
 let isStoredTrack = false;
 let initialized = false;
+let ytPlayer = null;
 let args = null;
 window.onYouTubeIframeAPIReady = initPlayer;
 
 function onPlayerStateChange({ data: state }) {
-    const { PLAYING, BUFFERING } = YT.PlayerState;
+    const latestState = getPlayerState() ? PAUSED: PLAYING;
+
+    hidePlayPauseBtnSpinner();
 
     if (state === PLAYING) {
-        if (isStoredTrack) {
-            ytPlayer.pauseVideo();
+        if (latestState === PLAYING) {
             isStoredTrack = false;
+        }
+
+        if (isStoredTrack || latestState === PAUSED) {
+            isStoredTrack = false;
+            ytPlayer.pauseVideo();
             return;
         }
         dispatchCustomEvent("track-start", ytPlayer.getCurrentTime());
     }
+    else if (state === PAUSED && latestState === PLAYING) {
+        ytPlayer.playVideo();
+    }
     else if (state === BUFFERING) {
         elapsedTime.stop();
+        showPlayPauseBtnSpinner();
     }
 }
 
 function onPlayerReady() {
     initialized = true;
+    hidePlayPauseBtnSpinner();
     playTrack(...args);
     args = null;
 }
@@ -84,6 +99,15 @@ function initPlayer() {
 }
 
 function togglePlaying(paused) {
+    if (!initialized) {
+        return;
+    }
+    const state = ytPlayer.getPlayerState();
+
+    if (state === BUFFERING || state === UNSTARTED) {
+        return;
+    }
+
     if (paused) {
         ytPlayer.playVideo();
     }
@@ -95,6 +119,7 @@ function togglePlaying(paused) {
 function playTrack(track, volume, startTime) {
     if (!initialized) {
         args = [track, volume, startTime];
+        showPlayPauseBtnSpinner();
         scriptLoader.load({ src: "https://www.youtube.com/iframe_api" });
         return;
     }
@@ -110,6 +135,10 @@ function playTrack(track, volume, startTime) {
 }
 
 function stopTrack() {
+    if (!initialized) {
+        return;
+    }
+    hidePlayPauseBtnSpinner();
     ytPlayer.stopVideo();
 }
 

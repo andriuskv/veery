@@ -119,14 +119,18 @@ function setElementIconAndTitle(element, { id, title }) {
     element.setAttribute("title", title);
 }
 
+function addSpinner(element) {
+    element.insertAdjacentHTML("beforeend", `<img src="./assets/images/ring-alt.svg" alt="">`);
+}
+
 function enableBtn(element) {
     element.disabled = false;
     removeElement(element.lastElementChild);
 }
 
-function disableBtn(element) {
-    element.disabled = true;
-    element.insertAdjacentHTML("beforeend", `<img src="./assets/images/ring-alt.svg" alt="">`);
+function disableBtn(element, disabled) {
+    element.disabled = disabled;
+    addSpinner(element);
 }
 
 export {
@@ -143,6 +147,7 @@ export {
     dispatchCustomEvent,
     getTrackArt,
     setElementIconAndTitle,
+    addSpinner,
     enableBtn,
     disableBtn
 };
