@@ -21,6 +21,18 @@ function getPlaylistElementAtIndex(id, index) {
     return getPlaylistTrackElements(id)[index];
 }
 
+function getTrackPlayPauseBtn(track) {
+    const pl = getPlaylistById(track.playlistId);
+
+    if (track.index === -1 || !pl.rendered) {
+        return;
+    }
+    const element = getPlaylistElementAtIndex(track.playlistId, track.index);
+
+    return element.querySelector(".btn");
+}
+
+
 function createListItem(item) {
     return `
         <li class="list-item track" data-index="${item.index}" tabindex="0">
@@ -104,9 +116,9 @@ function showCurrentTrack(id) {
     if (track && track.playlistId === id && track.index !== -1) {
         requestAnimationFrame(() => {
             showTrack(id, track.index, {
-                scrollToTrack: true,
-                paused: getPlayerState()
+                scrollToTrack: true
             });
+            toggleTrackPlayPauseBtn(track, getPlayerState());
         });
     }
 }
@@ -146,11 +158,9 @@ function scrollToTrackElement(element, id) {
     }
 }
 
-function showTrack(id, index, { scrollToTrack, paused } = {}) {
+function showTrack(id, index, { scrollToTrack } = {}) {
     const element = getPlaylistElementAtIndex(id, index);
-    const btn = element.querySelector(".btn");
 
-    togglePlayPauseBtn(paused, btn);
     removeElementClass("track", "playing");
     element.classList.add("playing");
 
@@ -160,15 +170,11 @@ function showTrack(id, index, { scrollToTrack, paused } = {}) {
 }
 
 function toggleTrackPlayPauseBtn(track, paused) {
-    const pl = getPlaylistById(track.playlistId);
+    const element = getTrackPlayPauseBtn(track);
 
-    if (track.index === -1 || !pl.rendered) {
-        return;
+    if (element) {
+        togglePlayPauseBtn(element, paused);
     }
-    const element = getPlaylistElementAtIndex(track.playlistId, track.index);
-    const btn = element.querySelector(".btn");
-
-    togglePlayPauseBtn(paused, btn);
 }
 
 function togglePlaylistTypeBtn(type) {
@@ -265,6 +271,7 @@ window.addEventListener("resize", ({ target }) => {
 export {
     getPlaylistElement,
     getPlaylistTrackElements,
+    getTrackPlayPauseBtn,
     removePlaylistTab,
     updatePlaylistView,
     renderPlaylist,
