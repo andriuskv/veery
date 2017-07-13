@@ -128,8 +128,8 @@ function enableBtn(element) {
     removeElement(element.lastElementChild);
 }
 
-function disableBtn(element, disabled) {
-    element.disabled = disabled;
+function disableBtn(element) {
+    element.disabled = true;
     addSpinner(element);
 }
 
