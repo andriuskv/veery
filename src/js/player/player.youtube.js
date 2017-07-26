@@ -1,7 +1,7 @@
 /* global YT */
 
 import { scriptLoader, getElementById, dispatchCustomEvent, getElementByAttr } from "../utils.js";
-import { storedTrack, getPlayerState, togglePlaying as togglePlayerPlaying } from "./player.js";
+import { storedTrack, getPlayerState, updatePlayerState } from "./player.js";
 import { elapsedTime, showPlayPauseBtnSpinner, hidePlayPauseBtnSpinner } from "./player.controls.js";
 import { getCurrentTrack } from "../playlist/playlist.js";
 
@@ -16,9 +16,21 @@ let args = null;
 window.onYouTubeIframeAPIReady = initPlayer;
 
 function onPlayerStateChange({ data: state }) {
-    const latestState = getPlayerState() ? PAUSED: PLAYING;
+    const iframe = getElementById("yt-player");
+    const isPaused = getPlayerState();
+    const latestState = isPaused ? PAUSED: PLAYING;
 
     hidePlayPauseBtnSpinner();
+
+    if (document.activeElement === iframe) {
+        iframe.blur();
+
+        if (latestState === PAUSED) {
+            dispatchCustomEvent("track-start", ytPlayer.getCurrentTime());
+        }
+        updatePlayerState(!isPaused, getCurrentTrack());
+        return;
+    }
 
     if (state === PLAYING) {
         if (latestState === PLAYING) {
@@ -152,23 +164,23 @@ function seekTo(currentTime) {
 
 function handleClick({ currentTarget, target }) {
     const element = getElementByAttr("data-item", target);
-    const track = getCurrentTrack();
 
     if (!element) {
-        togglePlayerPlaying(track);
         return;
     }
     const { attrValue } = element;
 
     if (attrValue === "watch") {
+        const isPaused = getPlayerState();
+        const track = getCurrentTrack();
         const { currentTime } = storedTrack.get();
         const href = `https://www.youtube.com/watch?time_continue=${currentTime}&v=${track.id}`;
 
-        window.open(href, "_blank");
-
-        if (!getPlayerState()) {
-            togglePlayerPlaying(track);
+        if (!isPaused) {
+            ytPlayer.pauseVideo();
+            updatePlayerState(!isPaused, getCurrentTrack());
         }
+        window.open(href, "_blank");
     }
     else if (attrValue === "close") {
         currentTarget.classList.remove("visible");
