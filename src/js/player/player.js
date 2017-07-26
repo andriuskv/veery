@@ -28,7 +28,7 @@ import * as nPlayer from "./player.native.js";
 import * as ytPlayer from "./player.youtube.js";
 
 const tabContainer = getElementById("js-playlist-tabs");
-let paused = true;
+let isPaused = true;
 let scrollToTrack = false;
 
 const storedTrack = (function() {
@@ -65,7 +65,7 @@ const storedTrack = (function() {
         playNewTrack(track, storedTrack.currentTime);
         updateTrackSlider(storedTrack.currentTime);
 
-        paused = true;
+        isPaused = true;
     }
 
     return {
@@ -78,7 +78,17 @@ const storedTrack = (function() {
 })();
 
 function getPlayerState() {
-    return paused;
+    return isPaused;
+}
+
+function updatePlayerState(state, track) {
+    isPaused = state;
+
+    if (isPaused) {
+        removeActiveIcon();
+        elapsedTime.stop();
+    }
+    togglePlayPauseBtns(track, isPaused);
 }
 
 function beforeTrackStart(track) {
@@ -91,7 +101,7 @@ function beforeTrackStart(track) {
         showTrack(pl.id, track.index, { scrollToTrack });
     }
     scrollToTrack = false;
-    paused = false;
+    isPaused = false;
 }
 
 function togglePlayPauseBtns(track, isPaused) {
@@ -103,18 +113,12 @@ function togglePlayPauseBtns(track, isPaused) {
 
 function togglePlaying(track) {
     if (track.player === "native") {
-        nPlayer.togglePlaying(paused, track.audio);
+        nPlayer.togglePlaying(isPaused, track.audio);
     }
     else if (track.player === "youtube") {
-        ytPlayer.togglePlaying(paused);
+        ytPlayer.togglePlaying(isPaused);
     }
-    paused = !paused;
-
-    if (paused) {
-        removeActiveIcon();
-        elapsedTime.stop();
-    }
-    togglePlayPauseBtns(track, paused);
+    updatePlayerState(!isPaused, track);
 }
 
 function playNewTrack(track, startTime) {
@@ -126,7 +130,7 @@ function playNewTrack(track, startTime) {
     beforeTrackStart(track);
 
     if (!startTime) {
-        togglePlayPauseBtns(track, paused);
+        togglePlayPauseBtns(track, isPaused);
     }
 
     if (track.player === "native") {
@@ -229,7 +233,7 @@ function stopPlayer() {
 }
 
 function resetPlayer(track) {
-    paused = true;
+    isPaused = true;
     storedTrack.remove();
     showTrackDuration();
     showNowPlaying();
@@ -240,7 +244,7 @@ function resetPlayer(track) {
 
     if (track) {
         resetTrackSlider();
-        togglePlayPauseBtns(track, paused);
+        togglePlayPauseBtns(track, isPaused);
     }
 }
 
@@ -362,6 +366,7 @@ window.addEventListener("track-end", () => {
 
 export {
     getPlayerState,
+    updatePlayerState,
     togglePlaying,
     onControlButtonClick,
     stopPlayer,
