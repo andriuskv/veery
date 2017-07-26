@@ -16,7 +16,6 @@ import { addTracksToPlaylist } from "./playlist.manage.js";
 import { showDropboxChooser } from "../dropbox.js";
 import { selectLocalFiles } from "../local.js";
 import { fetchYoutubeItem } from "../youtube.js";
-import { fetchSoundcloudPlaylist } from "../soundcloud.js";
 
 const importOptions = getElementById("js-import-options");
 let googleAuthInitialized = false;
@@ -72,9 +71,6 @@ function showNotice(option, message) {
 function importPlaylist(option, { url, type }) {
     if (option === "youtube") {
         fetchYoutubeItem(url, type);
-    }
-    else if (option === "soundcloud") {
-        fetchSoundcloudPlaylist(url, type);
     }
 }
 
@@ -237,20 +233,6 @@ function createYouTubeInfoPanel(id, { element }) {
     element.insertAdjacentHTML("afterend", a);
 }
 
-function createSoundCloudInfoPanel(id, { element }) {
-    const a = `
-        <div id="${id}" class="panel info-panel">
-            <p class="info-panel-title">Accepted formats:</p>
-            <ul>
-                <li class="info-panel-content-item">https://soundcloud.com/{userId}/sets/{playlistId}</li>
-                <li class="info-panel-content-item">https://soundcloud.com/{userId}/tracks</li>
-            </ul>
-        </div>
-    `;
-
-    element.insertAdjacentHTML("afterend", a);
-}
-
 function handleGoogleAuthClick(element) {
     if (element.disabled) {
         return;
@@ -346,12 +328,6 @@ importOptions.addEventListener("click", ({ target }) => {
         return;
     }
 
-    if (attrValue === "soundcloud-info") {
-        togglePanel(`js-${attrValue}-panel`, createSoundCloudInfoPanel, {
-            element: elementRef
-        });
-        return;
-    }
     removeImportForm();
 
     if (attrValue === "local") {

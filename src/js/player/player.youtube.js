@@ -57,11 +57,11 @@ function createPlayerContainer() {
     const content = `
         <div id="${id}" class="yt-player-container">
             <div class="yt-player-btns">
-                <a href="" class="btn btn-icon" data-item="watch" title="Watch on YouTube" target="_blank">
+                <button class="btn btn-icon" data-item="watch" title="Watch on YouTube">
                     <svg viewBox="0 0 24 24">
                         <use href="#youtube"></use>
                     </svg>
-                </a>
+                </button>
                 <button class="btn btn-icon" data-item="close" title="Close YouTube player">
                     <svg viewBox="0 0 24 24">
                         <use href="#close"></use>
@@ -158,13 +158,13 @@ function handleClick({ currentTarget, target }) {
         togglePlayerPlaying(track);
         return;
     }
-    const { attrValue, elementRef } = element;
+    const { attrValue } = element;
 
     if (attrValue === "watch") {
         const { currentTime } = storedTrack.get();
         const href = `https://www.youtube.com/watch?time_continue=${currentTime}&v=${track.id}`;
 
-        elementRef.setAttribute("href", href);
+        window.open(href, "_blank");
 
         if (!getPlayerState()) {
             togglePlayerPlaying(track);

@@ -4,8 +4,7 @@ import {
     showTrackDuration,
     togglePlayPauseBtn,
     elapsedTime,
-    resetTrackSlider,
-    hidePlayPauseBtnSpinner
+    resetTrackSlider
 } from "./player.controls.js";
 import {
     getPlaylistById,
@@ -27,7 +26,6 @@ import { showNowPlaying, showActiveIcon, removeActiveIcon } from "../sidebar.js"
 import { showTrack, toggleTrackPlayPauseBtn } from "../playlist/playlist.view.js";
 import * as nPlayer from "./player.native.js";
 import * as ytPlayer from "./player.youtube.js";
-import * as scPlayer from "./player.soundcloud.js";
 
 const tabContainer = getElementById("js-playlist-tabs");
 let paused = true;
@@ -110,9 +108,6 @@ function togglePlaying(track) {
     else if (track.player === "youtube") {
         ytPlayer.togglePlaying(paused);
     }
-    else if (track.player === "soundcloud") {
-        scPlayer.togglePlaying(paused);
-    }
     paused = !paused;
 
     if (paused) {
@@ -139,9 +134,6 @@ function playNewTrack(track, startTime) {
     }
     else if (track.player === "youtube") {
         ytPlayer.playTrack(track, volume, startTime);
-    }
-    else if (track.player === "soundcloud") {
-        scPlayer.playTrack(track, volume, startTime);
     }
 }
 
@@ -220,9 +212,6 @@ function stopTrack(track) {
     else if (track.player === "youtube") {
         ytPlayer.stopTrack();
     }
-    else if (track.player === "soundcloud") {
-        scPlayer.stopTrack();
-    }
 }
 
 function stopPlayer() {
@@ -287,9 +276,6 @@ function setVolume(track, volume) {
     else if (track.player === "youtube") {
         ytPlayer.setVolume(volume);
     }
-    else if (track.player === "soundcloud") {
-        scPlayer.setVolume(volume);
-    }
 }
 
 function seekTo(track, currentTime) {
@@ -300,9 +286,6 @@ function seekTo(track, currentTime) {
     }
     else if (track.player === "youtube") {
         ytPlayer.seekTo(currentTime);
-    }
-    else if (track.player === "soundcloud") {
-        scPlayer.seekTo(currentTime);
     }
 }
 
