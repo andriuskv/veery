@@ -129,24 +129,32 @@ async function getPlaylistTitle(id) {
     return items.length ? items[0].snippet.title: "";
 }
 
-async function addVideo(id) {
+async function addVideo(id, type) {
+    const playlistId = "youtube";
+    const pl = getPlaylistById(playlistId);
+
+    if (!type) {
+        type = pl ? "update" : "new";
+    }
+
+    if (pl) {
+        dispatchCustomEvent("playlist-status-update", { type, id: playlistId });
+    }
     const { items } = await fetchYoutube("videos", "snippet", "id", id);
+    const latestIndex = pl && pl.tracks.length || 0;
 
     if (!items.length) {
         showYoutubeNotice("Video was not found");
+        dispatchCustomEvent("playlist-status-update", { id: playlistId });
         return;
     }
-    const pl = getPlaylistById("youtube");
-    const latestIndex = pl && pl.tracks.length || 0;
-    const playlist = {
+    addImportedPlaylist({
         title: "YouTube",
-        id: "youtube",
+        id: playlistId,
         tracks: await parseVideos(items, latestIndex),
-        player: "youtube",
+        player: playlistId,
         type: "grid"
-    };
-
-    addImportedPlaylist(playlist);
+    }, type);
 }
 
 async function addPlaylist(url, id, type) {
@@ -205,7 +213,7 @@ function fetchYoutubeItem(url, type) {
     const { videoId, playlistId } = parseUrl(url);
 
     if (videoId) {
-        addVideo(videoId);
+        addVideo(videoId, type);
         return;
     }
 
