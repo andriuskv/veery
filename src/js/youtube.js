@@ -149,19 +149,7 @@ async function addVideo(id) {
     addImportedPlaylist(playlist);
 }
 
-async function addPlaylist(url, type) {
-    const match = url.match(/list=[a-zA-Z0-9\-_]+/);
-
-    if (!match) {
-        showYoutubeNotice("Invalid url");
-        return;
-    }
-    const id = match[0].slice(5);
-
-    if (id === "WL") {
-        showYoutubeNotice("Importing Watch Later playlist is not allowed");
-        return;
-    }
+async function addPlaylist(url, id, type) {
     const pl = getPlaylistById(id);
 
     if (!type) {
@@ -171,7 +159,6 @@ async function addPlaylist(url, type) {
     if (pl) {
         dispatchCustomEvent("playlist-status-update", { type, id });
     }
-
     const timeStamp = new Date().getTime();
     const tracks = await fetchPlaylistItems(id, timeStamp);
     const title = await getPlaylistTitle(id);
@@ -186,14 +173,51 @@ async function addPlaylist(url, type) {
     }, type);
 }
 
-function fetchYoutubeItem(url, type) {
-    const match = url.match(/v=[a-zA-Z0-9\-_]+/);
+function parseUrl(url) {
+    let videoId = "";
+    let playlistId = "";
 
-    if (match) {
-        addVideo(match[0].slice(2));
+    try {
+        const { searchParams } = new URL(url);
+        videoId = searchParams.get("v");
+        playlistId = searchParams.get("list");
+    }
+    catch (e) {
+        const videoMatch = url.match(/v=[a-zA-Z0-9\-_]+/);
+        const playlistMatch = url.match(/list=[a-zA-Z0-9\-_]+/);
+
+        if (videoMatch) {
+            videoId = videoMatch[0].slice(2);
+        }
+
+        if (playlistMatch) {
+            playlistId = playlistMatch[0].slice(5);
+        }
+    }
+
+    return {
+        videoId,
+        playlistId
+    };
+}
+
+function fetchYoutubeItem(url, type) {
+    const { videoId, playlistId } = parseUrl(url);
+
+    if (videoId) {
+        addVideo(videoId);
         return;
     }
-    addPlaylist(url, type);
+
+    if (!playlistId) {
+        showYoutubeNotice("Invalid url");
+    }
+    else if (playlistId === "WL") {
+        showYoutubeNotice("Importing Watch Later playlist is not allowed");
+    }
+    else {
+        addPlaylist(url, playlistId, type);
+    }
 }
 
 export {
