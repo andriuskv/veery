@@ -35,7 +35,7 @@ async function getVideoDuration(items) {
         const durationItem = data.items.find(({ id }) => id === item.snippet.resourceId.videoId);
 
         if (durationItem) {
-            item.durationInSeconds = parseDuration(durationItem.contentDetails.duration);
+            item.durationInSeconds = parseDuration(durationItem.contentDetails.duration) - 1;
             items.push(item);
         }
         return items;
