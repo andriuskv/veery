@@ -48,8 +48,7 @@ module.exports = function(env = {}) {
         },
         output: {
             path: path.resolve(__dirname, "./dist"),
-            filename: "[name].js",
-            publicPath: "/"
+            filename: "[name].js"
         },
         module: {
             rules: [
@@ -60,7 +59,8 @@ module.exports = function(env = {}) {
                         use: [{
                             loader: "css-loader",
                             options: {
-                                sourceMap: !env.prod
+                                sourceMap: !env.prod,
+                                url: false
                             }
                         }, {
                             loader: "postcss-loader",
@@ -99,10 +99,6 @@ module.exports = function(env = {}) {
                             }
                         }]]
                     }
-                },
-                {
-                    test: /\.(png|svg)$/,
-                    loader: "file-loader"
                 }
             ]
         },
