@@ -1,8 +1,15 @@
 const webpack = require("webpack");
 const path = require("path");
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = function(env = {}) {
     const plugins = [
+        new ExtractTextPlugin("main.css"),
+        new HtmlWebpackPlugin({
+            template: "./src/index.html",
+            excludeChunks: ["ww"]
+        }),
         new webpack.DefinePlugin({
             "process.env": {
                 YOUTUBE_API_KEY: JSON.stringify(process.env.YOUTUBE_API_KEY),
@@ -41,10 +48,44 @@ module.exports = function(env = {}) {
         },
         output: {
             path: path.resolve(__dirname, "./dist"),
-            filename: "[name].js"
+            filename: "[name].js",
+            publicPath: "/"
         },
         module: {
             rules: [
+                {
+                    test: /\.scss$/,
+                    use: ExtractTextPlugin.extract({
+                        fallback: "style-loader",
+                        use: [{
+                            loader: "css-loader",
+                            options: {
+                                sourceMap: !env.prod
+                            }
+                        }, {
+                            loader: "postcss-loader",
+                            options: {
+                                sourceMap: !env.prod,
+                                plugins: () => {
+                                    const plugins = [require("autoprefixer")()];
+
+                                    if (env.prod) {
+                                        plugins.push(
+                                            require("css-mqpacker")(),
+                                            require("cssnano")()
+                                        );
+                                    }
+                                    return plugins;
+                                }
+                            }
+                        }, {
+                            loader: "sass-loader",
+                            options: {
+                                sourceMap: !env.prod
+                            }
+                        }]
+                    })
+                },
                 {
                     test: /\.js$/,
                     loader: "babel-loader",
@@ -58,6 +99,10 @@ module.exports = function(env = {}) {
                             }
                         }]]
                     }
+                },
+                {
+                    test: /\.(png|svg)$/,
+                    loader: "file-loader"
                 }
             ]
         },
