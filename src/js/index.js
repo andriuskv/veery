@@ -1,6 +1,8 @@
 import "babel-polyfill";
 import "whatwg-fetch";
 
+import "../scss/index.scss";
+
 import "./utils.js";
 import "./settings.js";
 import "./worker.js";
