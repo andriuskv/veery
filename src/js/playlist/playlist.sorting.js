@@ -91,7 +91,7 @@ function getSortOtions(sortedBy) {
     }).join("");
 }
 
-function createSortPanel(id, { pl: { sortedBy } }) {
+function createSortPanel(id, { sortedBy }) {
     const sortOptions = getSortOtions(sortedBy);
     const sortPanelElement = `<ul id="${id}" class="panel sort-panel">${sortOptions}</ul>`;
 

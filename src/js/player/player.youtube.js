@@ -1,7 +1,7 @@
 /* global YT */
 
 import { scriptLoader, getElementById, dispatchCustomEvent, getElementByAttr } from "../utils.js";
-import { storedTrack, getPlayerState, updatePlayerState } from "./player.js";
+import { storedTrack, getPlayerState, updatePlayerState, stopPlayer, showPlayerMessage } from "./player.js";
 import { elapsedTime, showPlayPauseBtnSpinner, hidePlayPauseBtnSpinner } from "./player.controls.js";
 import { getCurrentTrack } from "../playlist/playlist.js";
 
@@ -62,6 +62,14 @@ function onPlayerReady() {
 
 function onError(error) {
     console.log(error);
+
+    if (error.data >= 100) {
+        stopPlayer();
+        showPlayerMessage({
+            title: "Cannot play this track",
+            body: "It is either removed or marked as private"
+        });
+    }
 }
 
 function createPlayerContainer() {

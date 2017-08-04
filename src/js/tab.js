@@ -72,13 +72,19 @@ getElementById("js-playlist-tab-header").addEventListener("click", ({ target }) 
     const item = element.attrValue;
 
     if (item === "move-to") {
-        togglePanel("js-move-to-panel", createMoveToPanel, { pl });
+        togglePanel("js-move-to-panel", createMoveToPanel, {
+            playlistId: pl.id,
+            element: element.elementRef
+        });
     }
     else if ((item === "list" || item === "grid") && item !== pl.type) {
         changePlaylistType(item, pl);
     }
     else if (item === "sorting") {
-        togglePanel("js-sort-panel", createSortPanel, { pl });
+        togglePanel("js-sort-panel", createSortPanel, {
+            sortedBy: pl.sortedBy,
+            element: element.elementRef
+        });
     }
     else if (item === "order" && pl.sortedBy) {
         changePlaylistOrder(pl);

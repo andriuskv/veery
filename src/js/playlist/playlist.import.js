@@ -220,7 +220,7 @@ function handleImportFormSubmit(event) {
 }
 
 function createYouTubeInfoPanel(id, { element }) {
-    const a = `
+    element.insertAdjacentHTML("afterend", `
         <div id="${id}" class="panel info-panel">
             <p class="info-panel-title">Accepted formats:</p>
             <ul>
@@ -228,9 +228,7 @@ function createYouTubeInfoPanel(id, { element }) {
                 <li class="info-panel-content-item">https://www.youtube.com/watch?v={videoId}</li>
             </ul>
         </div>
-    `;
-
-    element.insertAdjacentHTML("afterend", a);
+    `);
 }
 
 function handleGoogleAuthClick(element) {
