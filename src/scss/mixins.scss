@@ -1,13 +1,27 @@
 @mixin text-truncate {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+@mixin popup-arrow {
+    &::before {
+        content: "";
+        display: block;
+        position: absolute;
+        width: 0;
+        height: 0;
+        border-left: 4px solid transparent;
+        border-right: 4px solid transparent;
+
+        @content;
+    }
 }
 
 @mixin breakpoint-small {
-  @media (max-width: 760px) { @content; }
+    @media (max-width: 760px) { @content; }
 }
 
 @mixin breakpoint-smallest {
-  @media (max-width: 560px) { @content; }
+    @media (max-width: 560px) { @content; }
 }

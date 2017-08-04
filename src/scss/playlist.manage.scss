@@ -114,10 +114,17 @@
 }
 
 .info-panel {
-    top: 28px;
+    top: 30px;
     left: 0;
     width: 320px;
     padding: 8px;
+
+    @include popup-arrow {
+        top: -4px;
+        left: 8px;
+        border-bottom: 4px solid $color1;
+        filter: drop-shadow(0 -1px 1px $color2);
+    }
 }
 
 .info-panel-title {
@@ -209,5 +216,10 @@
     .info-panel {
         right: 0;
         left: auto;
+
+        &::before {
+            left: auto;
+            right: 8px;
+        }
     }
 }
