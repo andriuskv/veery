@@ -60,20 +60,20 @@ function createPlaylistList(playlistId) {
     const playlists = getAllPlaylists();
 
     return Object.keys(playlists)
-    .filter(id => id !== playlistId)
-    .map(id => {
-        const { title } = playlists[id];
+        .filter(id => id !== playlistId)
+        .map(id => {
+            const { title } = playlists[id];
 
-        return `
-            <li class="move-to-list-item" data-item="${id}">
-                <button class="btn">${title}</button>
-            </li>
-        `;
-    }).join("");
+            return `
+                <li class="move-to-list-item" data-item="${id}">
+                    <button class="btn">${title}</button>
+                </li>
+            `;
+        }).join("");
 }
 
-function createMoveToPanel(panelId, { pl: { id } }) {
-    const listContent = createPlaylistList(id);
+function createMoveToPanel(panelId, { playlistId }) {
+    const listContent = createPlaylistList(playlistId);
     const className = !listContent ? "hidden" : "";
     const moveToPanelElement = `
         <div id="${panelId}" class="panel move-to-panel">

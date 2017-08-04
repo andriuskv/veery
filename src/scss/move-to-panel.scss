@@ -1,7 +1,6 @@
 .move-to-panel {
     top: 32px;
     width: 200px;
-    padding: 8px;
 
     @include breakpoint-smallest {
         right: 4px;

@@ -4,35 +4,45 @@ let visiblePanel = null;
 
 function removePanel() {
     window.removeEventListener("click", handleClick, true);
-    removeElement(visiblePanel);
+    removeElement(visiblePanel.element);
     visiblePanel = null;
 }
 
-function createPanel(id, panelCreationCallback, options) {
-    panelCreationCallback(id, options);
-    visiblePanel = getElementById(id);
+function createPanel(id, panelCreationCallback, params) {
+    panelCreationCallback(id, params);
+    visiblePanel = {
+        id,
+        element: getElementById(id),
+        removeOnClick: params.removeOnClick,
+        initiator: params.element
+    };
     window.addEventListener("click", handleClick, true);
 }
 
-function togglePanel(id, panelCreationCallback, options) {
+function togglePanel(id, panelCreationCallback, params) {
     if (visiblePanel) {
-        window.removeEventListener("click", handleClick, true);
-        removeElement(visiblePanel);
+        const panelId = visiblePanel.id;
 
-        if (visiblePanel.id !== id) {
-            createPanel(id, panelCreationCallback, options);
-        }
-        else {
-            visiblePanel = null;
+        removePanel();
+
+        if (panelId !== id) {
+            createPanel(id, panelCreationCallback, params);
         }
     }
     else {
-        createPanel(id, panelCreationCallback, options);
+        createPanel(id, panelCreationCallback, params);
     }
 }
 
 function handleClick({ target }) {
-    if (isOutsideElement(target, visiblePanel.parentElement)) {
+    if (visiblePanel.removeOnClick) {
+        removePanel();
+        return;
+    }
+    const isOutsidePanel = isOutsideElement(target, visiblePanel.element);
+    const isOutsideInitiator = isOutsideElement(target, visiblePanel.initiator);
+
+    if (isOutsidePanel && isOutsideInitiator) {
         removePanel();
     }
 }

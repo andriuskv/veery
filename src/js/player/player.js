@@ -23,6 +23,7 @@ import { removeElementClass, getElementById, getElementByAttr } from "../utils.j
 import { getVisiblePlaylistId } from "../tab.js";
 import { setSetting, getSetting, removeSetting } from "../settings.js";
 import { showNowPlaying, showActiveIcon, removeActiveIcon } from "../sidebar.js";
+import { togglePanel } from "../panels.js";
 import { showTrack, toggleTrackPlayPauseBtn } from "../playlist/playlist.view.js";
 import * as nPlayer from "./player.native.js";
 import * as ytPlayer from "./player.youtube.js";
@@ -314,6 +315,26 @@ function mutePlayer(muted) {
     }
 }
 
+function getPlayerMessageCb(title, body) {
+    return (id, { element }) => {
+        element.insertAdjacentHTML("beforeend", `
+            <div id="${id}" class="panel player-message">
+                <p class="play-message-title">${title}</p>
+                <p class="play-message-body">${body}</p>
+            </div>
+        `);
+    };
+}
+
+function showPlayerMessage({ title, body }) {
+    const createPlayerMessage = getPlayerMessageCb(title, body);
+
+    togglePanel("js-player-message", createPlayerMessage, {
+        element: document.querySelector(".player"),
+        removeOnClick: true
+    });
+}
+
 tabContainer.addEventListener("dblclick", playTrackFromElement);
 
 tabContainer.addEventListener("click", ({ target }) => {
@@ -374,5 +395,6 @@ export {
     setVolume,
     seekTo,
     mutePlayer,
-    storedTrack
+    storedTrack,
+    showPlayerMessage
 };
