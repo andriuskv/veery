@@ -141,6 +141,14 @@
     &.hidden {
         display: none;
     }
+
+    @include popup-arrow {
+        bottom: -4px;
+        left: 50%;
+        border-top: 4px solid $color1;
+        filter: drop-shadow(0 1px 1px $color2);
+        transform: translateX(-50%);
+    }
 }
 
 .controls {
