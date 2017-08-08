@@ -19,8 +19,7 @@ function onPlayerStateChange({ data: state }) {
     const iframe = getElementById("yt-player");
     const isPaused = getPlayerState();
     const latestState = isPaused ? PAUSED: PLAYING;
-
-    hidePlayPauseBtnSpinner();
+    const track = getCurrentTrack();
 
     if (document.activeElement === iframe) {
         iframe.blur();
@@ -28,7 +27,7 @@ function onPlayerStateChange({ data: state }) {
         if (latestState === PAUSED) {
             dispatchCustomEvent("track-start", ytPlayer.getCurrentTime());
         }
-        updatePlayerState(!isPaused, getCurrentTrack());
+        updatePlayerState(!isPaused, track);
         return;
     }
 
@@ -40,22 +39,23 @@ function onPlayerStateChange({ data: state }) {
         if (isStoredTrack || latestState === PAUSED) {
             isStoredTrack = false;
             ytPlayer.pauseVideo();
+            hidePlayPauseBtnSpinner(track);
             return;
         }
         dispatchCustomEvent("track-start", ytPlayer.getCurrentTime());
     }
     else if (state === PAUSED && latestState === PLAYING) {
         ytPlayer.playVideo();
+        hidePlayPauseBtnSpinner(track);
     }
     else if (state === BUFFERING) {
         elapsedTime.stop();
-        showPlayPauseBtnSpinner();
+        showPlayPauseBtnSpinner(track);
     }
 }
 
 function onPlayerReady() {
     initialized = true;
-    hidePlayPauseBtnSpinner();
     playTrack(...args);
     args = null;
 }
@@ -139,7 +139,7 @@ function togglePlaying(paused) {
 function playTrack(track, volume, startTime) {
     if (!initialized) {
         args = [track, volume, startTime];
-        showPlayPauseBtnSpinner();
+        showPlayPauseBtnSpinner(track);
         scriptLoader.load({ src: "https://www.youtube.com/iframe_api" });
         return;
     }

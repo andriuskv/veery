@@ -4,7 +4,9 @@ import {
     showTrackDuration,
     togglePlayPauseBtn,
     elapsedTime,
-    resetTrackSlider
+    resetTrackSlider,
+    showPlayPauseBtnSpinner,
+    hidePlayPauseBtnSpinner
 } from "./player.controls.js";
 import {
     getPlaylistById,
@@ -131,6 +133,7 @@ function playNewTrack(track, startTime) {
     beforeTrackStart(track);
 
     if (!startTime) {
+        showPlayPauseBtnSpinner(track);
         togglePlayPauseBtns(track, isPaused);
     }
 
@@ -245,6 +248,7 @@ function resetPlayer(track) {
 
     if (track) {
         resetTrackSlider();
+        hidePlayPauseBtnSpinner(track);
         togglePlayPauseBtns(track, isPaused);
     }
 }
@@ -369,6 +373,7 @@ window.addEventListener("track-start", ({ detail: startTime }) => {
         currentTime: Math.floor(startTime),
         duration: track.durationInSeconds
     });
+    hidePlayPauseBtnSpinner(track);
 });
 
 window.addEventListener("track-end", () => {

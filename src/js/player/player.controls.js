@@ -12,10 +12,12 @@ import { getCurrentTrack } from "../playlist/playlist.js";
 import { getTrackPlayPauseBtn } from "../playlist/playlist.view.js";
 import { storedTrack, toggleShuffle, setVolume, seekTo, mutePlayer, onControlButtonClick } from "./player.js";
 
-let seeking = false;
 const volumeSlider = getElementById("js-volume-slider");
 const trackSlider = getElementById("js-track-slider");
 const controlsElement = getElementById("js-controls");
+let seeking = false;
+let isSpinnerActive = false;
+
 const elapsedTime = (function() {
     let timeout = 0;
 
@@ -54,32 +56,32 @@ const elapsedTime = (function() {
     return { stop, start };
 })();
 
-function showPlayPauseBtnSpinner() {
-    const element = getElementById("js-play-btn");
-
-    if (element.childElementCount === 1) {
-        const track = getCurrentTrack();
-        const btn = getTrackPlayPauseBtn(track);
-
-        if (btn) {
-            addSpinner(btn);
-        }
-        addSpinner(element);
+function showPlayPauseBtnSpinner(track) {
+    if (isSpinnerActive) {
+        return;
     }
+    const element = getElementById("js-play-btn");
+    const btn = getTrackPlayPauseBtn(track);
+    isSpinnerActive = true;
+
+    if (btn) {
+        addSpinner(btn);
+    }
+    addSpinner(element);
 }
 
-function hidePlayPauseBtnSpinner() {
-    const element = getElementById("js-play-btn");
-
-    if (element.childElementCount > 1) {
-        const track = getCurrentTrack();
-        const btn = getTrackPlayPauseBtn(track);
-
-        if (btn) {
-            removeElement(btn.lastElementChild);
-        }
-        removeElement(element.lastElementChild);
+function hidePlayPauseBtnSpinner(track) {
+    if (!isSpinnerActive) {
+        return;
     }
+    const element = getElementById("js-play-btn");
+    const btn = getTrackPlayPauseBtn(track);
+    isSpinnerActive = false;
+
+    if (btn) {
+        removeElement(btn.lastElementChild);
+    }
+    removeElement(element.lastElementChild);
 }
 
 function togglePlayPauseBtn(element, state) {
