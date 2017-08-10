@@ -1,4 +1,4 @@
-import { getElementById, removeElement, removeElementClass, getTrackArt } from "../utils.js";
+import { getElementById, removeElement, removeElementClass, getImage } from "../utils.js";
 import { getVisiblePlaylistId } from "../tab.js";
 import { postMessageToWorker } from "../worker.js";
 import { getPlayerState } from "../player/player.js";
@@ -65,7 +65,7 @@ function createList(id, items) {
 }
 
 function createGridItem(item) {
-    const thumbnail = getTrackArt(item.thumbnail);
+    const thumbnail = getImage(item.thumbnail);
     let trackNameTemp = `<div class="grid-item-title">${item.title}</div>`;
 
     if (item.artist) {

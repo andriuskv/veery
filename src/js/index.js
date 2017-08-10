@@ -22,6 +22,7 @@ import "./playlist/playlist.sorting.js";
 import "./playlist/playlist.track-selection.js";
 import "./playlist/playlist.move-to.js";
 import "./player/player.controls.js";
+import "./player/player.now-playing.js";
 import "./player/player.js";
 import "./player/player.native.js";
 import "./player/player.youtube.js";

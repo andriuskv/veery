@@ -168,7 +168,7 @@
         }
 
         .active-playlist-icon {
-            box-shadow: -2px 0px 8px 5px $color1;
+            box-shadow: -2px 0 8px 5px $color1;
         }
     }
 }
@@ -180,7 +180,7 @@
     width: 20px;
     height: 20px;
     background-color: inherit;
-    box-shadow: -2px 0px 8px 5px $color2;
+    box-shadow: -2px 0 8px 5px $color2;
     fill: $base-text-color;
     transform: translateY(-50%);
     transition: 0.1s box-shadow;

@@ -24,9 +24,10 @@ import {
 import { removeElementClass, getElementById, getElementByAttr } from "../utils.js";
 import { getVisiblePlaylistId } from "../tab.js";
 import { setSetting, getSetting, removeSetting } from "../settings.js";
-import { showNowPlaying, showActiveIcon, removeActiveIcon } from "../sidebar.js";
+import { showActiveIcon, removeActiveIcon } from "../sidebar.js";
 import { togglePanel } from "../panels.js";
 import { showTrack, toggleTrackPlayPauseBtn } from "../playlist/playlist.view.js";
+import { showNowPlaying } from "./player.now-playing.js";
 import * as nPlayer from "./player.native.js";
 import * as ytPlayer from "./player.youtube.js";
 
