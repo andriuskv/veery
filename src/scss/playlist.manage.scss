@@ -185,6 +185,7 @@
 
     &:read-only {
         background-color: transparent;
+        pointer-events: none;
     }
 }
 

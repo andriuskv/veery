@@ -108,8 +108,8 @@ function dispatchCustomEvent(eventName, data) {
     window.dispatchEvent(event);
 }
 
-function getTrackArt(thumbnail = "assets/images/album-art-placeholder.png") {
-    return typeof thumbnail === "object" ? URL.createObjectURL(thumbnail) : thumbnail;
+function getImage(image = "assets/images/album-art-placeholder.png") {
+    return typeof image === "object" ? URL.createObjectURL(image) : image;
 }
 
 function setElementIconAndTitle(element, { id, title }) {
@@ -145,7 +145,7 @@ export {
     formatTime,
     isOutsideElement,
     dispatchCustomEvent,
-    getTrackArt,
+    getImage,
     setElementIconAndTitle,
     addSpinner,
     enableBtn,

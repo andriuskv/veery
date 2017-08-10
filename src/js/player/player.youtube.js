@@ -139,7 +139,6 @@ function togglePlaying(paused) {
 function playTrack(track, volume, startTime) {
     if (!initialized) {
         args = [track, volume, startTime];
-        showPlayPauseBtnSpinner(track);
         scriptLoader.load({ src: "https://www.youtube.com/iframe_api" });
         return;
     }
