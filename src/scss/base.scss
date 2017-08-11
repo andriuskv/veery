@@ -154,11 +154,7 @@ svg {
 .player {
     overflow: hidden;
     position: relative;
-    height: calc(100% - 36px);
-
-    @include breakpoint-smallest {
-        height: calc(100% - 62px);
-    }
+    height: calc(100% - 80px);
 }
 
 .player-message {

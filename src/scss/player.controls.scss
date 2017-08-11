@@ -1,32 +1,136 @@
-.player-controls,
-.main-controls,
-.controls {
-    display: flex;
-}
-
 .player-controls {
     position: absolute;
     right: 0;
     bottom: 0;
     left: 0;
+    display: flex;
     align-items: center;
-    height: 36px;
-    padding: 4px;
+    height: 80px;
+    padding: 8px;
     user-select: none;
 
-    @include breakpoint-smallest {
-        align-items: flex-end;
-        height: 62px;
+    @include breakpoint-small {
+        padding: 4px;
+        flex-wrap: wrap;
+    }
+}
+
+.now-playing {
+    display: flex;
+    width: 30%;
+    height: 100%;
+
+    @include breakpoint-small {
+        width: 100%;
+        height: calc(50% - 4px);
+    }
+}
+
+.now-playing-art-container {
+    flex-shrink: 0;
+    overflow-x: hidden;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    height: 100%;
+    width: 64px;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
+
+    &:hover .now-playing-art-button-container {
+        display: flex;
+    }
+
+    @include breakpoint-small {
+        width: 32px;
+    }
+}
+
+.now-playing-art-button-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: none;
+    justify-content: flex-end;
+    width: 100%;
+
+    svg {
+        width: 16px;
+        height: 16px;
+    }
+}
+
+.now-playing-art {
+    height: 100%;
+    object-fit: scale-down;
+}
+
+.track-name {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+    padding-left: 8px;
+    padding-right: 8px;
+    color: $base-text-color;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.track-title {
+    @include text-truncate;
+
+    margin-bottom: 4px;
+    font-size: 14px;
+}
+
+.track-artist {
+    @include text-truncate;
+
+    font-size: 12px;
+}
+
+.main-controls {
+    display: flex;
+    flex-direction: column-reverse;
+    height: 100%;
+    width: 40%;
+
+    @include breakpoint-small {
+        flex-grow: 1;
+        flex-direction: row;
+        align-items: center;
+        height: 46px;
+    }
+}
+
+.main-control-btns {
+    display: flex;
+    justify-content: center;
+    margin-top: 8px;
+
+    @include breakpoint-small {
+        margin-top: 0;
     }
 }
 
 .main-control-btn {
     padding: 0;
-    margin-right: 4px;
+
+    &:not(:last-of-type) {
+        margin-right: 4px;
+    }
 
     svg {
-        width: 28px;
-        height: 28px;
+        width: 32px;
+        height: 32px;
+    }
+
+    @include breakpoint-small {
+        svg {
+            width: 28px;
+            height: 28px;
+        }
     }
 }
 
@@ -34,15 +138,7 @@
     display: flex;
     align-items: center;
     flex-grow: 1;
-    height: 100%;
-
-    @include breakpoint-smallest {
-        position: absolute;
-        top: 4px;
-        left: 0;
-        right: 0;
-        height: 24px;
-    }
+    height: 24px;
 }
 
 .track-time {
@@ -150,8 +246,12 @@
 }
 
 .controls {
-    @include breakpoint-smallest {
-        margin-left: auto;
+    display: flex;
+    justify-content: flex-end;
+    width: 30%;
+
+    @include breakpoint-small {
+        width: auto;
     }
 }
 
