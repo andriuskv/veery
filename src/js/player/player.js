@@ -27,7 +27,7 @@ import { setSetting, getSetting, removeSetting } from "../settings.js";
 import { showActiveIcon, removeActiveIcon } from "../sidebar.js";
 import { togglePanel } from "../panels.js";
 import { showTrack, toggleTrackPlayPauseBtn } from "../playlist/playlist.view.js";
-import { showNowPlaying } from "./player.now-playing.js";
+import { showNowPlaying, removeNowPlaying } from "./player.now-playing.js";
 import * as nPlayer from "./player.native.js";
 import * as ytPlayer from "./player.youtube.js";
 
@@ -241,7 +241,7 @@ function resetPlayer(track) {
     isPaused = true;
     storedTrack.remove();
     showTrackDuration();
-    showNowPlaying();
+    removeNowPlaying();
     setCurrentTrack();
     setPlaylistAsActive();
     removeActiveIcon();
@@ -261,9 +261,6 @@ function onControlButtonClick(button) {
             break;
         case "play":
             playTrack();
-            break;
-        case "stop":
-            stopPlayer();
             break;
         case "next":
             playNextTrack();

@@ -2,21 +2,6 @@
     float: left;
     height: 100%;
 
-    .yt-player-container.visible + & {
-        visibility: hidden;
-        backdrop-filter: none;
-
-        .track-name {
-            visibility: visible;
-            z-index: 2;
-            position: absolute;
-            max-width: 100%;
-            height: auto;
-            bottom: 0;
-            left: 0;
-        }
-    }
-
     @include breakpoint-small {
         z-index: 2;
         position: absolute;
@@ -49,37 +34,6 @@
 
             .sidebar-nav {
                 display: none;
-            }
-
-            .now-playing {
-                flex-grow: 1;
-                overflow: hidden;
-                display: flex;
-                margin-top: 0;
-
-                &.enlarged {
-                    height: 100%;
-                    flex-direction: row;
-                }
-            }
-
-            .track-art-container {
-                width: 36px;
-                height: 100%;
-
-                .artwork-size-btn {
-                    display: none;
-                }
-            }
-
-            .track-art-wrapper, .track-art {
-                width: 100%;
-            }
-
-            .track-name {
-                flex-grow: 1;
-                height: 100%;
-                text-overflow: ellipsis;
             }
         }
     }
@@ -184,100 +138,4 @@
     fill: $base-text-color;
     transform: translateY(-50%);
     transition: 0.1s box-shadow;
-}
-
-.now-playing {
-    display: flex;
-    height: 40px;
-    margin-top: 2px;
-    transition: all 0.2s;
-
-    &.enlarged {
-        flex-direction: column;
-        height: 160px;
-
-        .track-art-container {
-            height: calc(100% - 40px);
-        }
-
-        .track-art-wrapper {
-            width: 100%;
-        }
-
-        .track-art {
-            width: 100%;
-        }
-
-        .track-name {
-            height: 40px;
-        }
-    }
-}
-
-.track-art-container {
-    display: flex;
-    justify-content: center;
-    height: 100%;
-    background-color: $color2;
-    text-align: center;
-
-    &:hover .track-art-button-container {
-        display: flex;
-    }
-}
-
-.track-art-wrapper {
-    position: relative;
-    display: inline-block;
-    height: 100%;
-}
-
-.track-art-button-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    display: none;
-    justify-content: flex-end;
-    width: 100%;
-
-    svg {
-        width: 16px;
-        height: 16px;
-    }
-}
-
-.artwork-size-btn {
-    margin-right: auto;
-}
-
-.track-art {
-    width: 40px;
-    height: 100%;
-    object-fit: scale-down;
-}
-
-.track-name {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    height: 100%;
-    padding: 4px;
-    background-color: $color2;
-    color: $base-text-color;
-    white-space: nowrap;
-    overflow: hidden;
-}
-
-.track-title {
-    @include text-truncate;
-
-    padding-bottom: 4px;
-    font-size: 14px;
-}
-
-.track-artist {
-    @include text-truncate;
-
-    font-size: 12px;
 }
