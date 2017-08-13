@@ -1,6 +1,6 @@
 import { removeElement, getElementById, getElementByAttr, isOutsideElement } from "./utils.js";
 import { toggleRoute, isRouteActive } from "./router.js";
-import { createNewPlaylistInputForm, onNewPlaylistFormSubmit } from "./playlist/playlist.manage.js";
+import { createNewPlaylistForm, onNewPlaylistFormSubmit } from "./playlist/playlist.manage.js";
 
 function getSidebarEntry(id) {
     return getElementById(`js-sidebar-entry-${id}`);
@@ -9,7 +9,7 @@ function getSidebarEntry(id) {
 function createSidebarEntry(title, id) {
     getElementById("js-sidebar-entries").insertAdjacentHTML("beforeend", `
         <li>
-            <button id="js-sidebar-entry-${id}" class="btn btn-dark sidebar-btn" data-item="btn" data-hash="playlist/${id}">
+            <button id="js-sidebar-entry-${id}" class="btn sidebar-btn" data-item="btn" data-hash="playlist/${id}">
                 <span>${title}</span>
             </button>
         </li>
@@ -54,13 +54,12 @@ function toggleSidebarForm(btn) {
         removeElement(element);
         return;
     }
-    createNewPlaylistInputForm("sidebar", btn, onNewPlaylistFormSubmit);
+    createNewPlaylistForm("sidebar", btn.parentElement, onNewPlaylistFormSubmit);
 }
 
 getElementById("js-sidebar-container").addEventListener("click", ({ currentTarget, target }) => {
-    currentTarget.classList.add("contracted");
-
     if (isOutsideElement(target, currentTarget.firstElementChild)) {
+        currentTarget.classList.add("hidden");
         return;
     }
     const element = getElementByAttr("data-item", target);
@@ -72,6 +71,7 @@ getElementById("js-sidebar-container").addEventListener("click", ({ currentTarge
             toggleSidebarForm(element.elementRef);
             return;
         }
+        currentTarget.classList.add("hidden");
 
         if (!isRouteActive(hash)) {
             toggleRoute(hash);

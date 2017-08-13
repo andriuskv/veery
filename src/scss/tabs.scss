@@ -39,7 +39,6 @@
     position: relative;
     display: none;
     height: 100%;
-    background-color: $color2;
     color: $base-text-color;
     overflow-y: auto;
 
@@ -57,7 +56,10 @@
     display: flex;
     padding: 4px;
     margin-bottom: 2px;
-    background-color: $color2;
+
+    .btn {
+        background-color: $color1;
+    }
 
     @include breakpoint-small {
         position: relative;
@@ -134,22 +136,6 @@
     text-align: center;
 }
 
-.tab-404-content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    height: 100%;
-
-    h2, h3 {
-        margin-top: 0;
-    }
-    h2 {
-        margin-bottom: 0;
-        font-size: 64px;
-    }
-}
-
 .playlist-tab-footer {
     flex-shrink: 0;
     display: flex;
@@ -157,7 +143,6 @@
     height: 28px;
     padding: 0 4px;
     margin-top: 2px;
-    background-color: $color2;
     color: $base-text-color;
     font-size: 14px;
     user-select: none;

@@ -2,7 +2,7 @@ import { getElementById, getElementByAttr, removeElement } from "./../utils.js";
 import { getVisiblePlaylistId } from "./../tab.js";
 import { getPlaylistById, getAllPlaylists, findTrack } from "./playlist.js";
 import { getSelectedTrackElements, getSelectedTrackIndexes } from "./playlist.track-selection.js";
-import { onNewPlaylistFormSubmit, createNewPlaylistInputForm, addTracksToPlaylist } from "./playlist.manage.js";
+import { onNewPlaylistFormSubmit, createNewPlaylistForm, addTracksToPlaylist } from "./playlist.manage.js";
 
 function showMoveToBtn() {
     const panelContainerId = "js-move-to-panel-container";
@@ -27,8 +27,8 @@ function handleSubmit(event) {
     element.innerHTML = createPlaylistList(getVisiblePlaylistId());
 }
 
-function showInputContainer({ currentTarget }) {
-    createNewPlaylistInputForm("move-to", this, handleSubmit);
+function showForm({ currentTarget }) {
+    createNewPlaylistForm("move-to", currentTarget, handleSubmit);
     currentTarget.classList.add("hidden");
 }
 
@@ -85,7 +85,7 @@ function createMoveToPanel(panelId, { playlistId }) {
 
     getElementById("js-move-to-panel-container").insertAdjacentHTML("beforeend", moveToPanelElement);
     getElementById("js-move-to-list").addEventListener("click", onListClick);
-    getElementById("js-move-to-new-pl-btn").addEventListener("click", showInputContainer, { once: true });
+    getElementById("js-move-to-new-pl-btn").addEventListener("click", showForm, { once: true });
 }
 
 export {

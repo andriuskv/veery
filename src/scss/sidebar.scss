@@ -4,36 +4,23 @@
 
     @include breakpoint-small {
         z-index: 2;
+        overflow: hidden;
         position: absolute;
+        top: 0;
         left: 0;
-        bottom: 0;
         width: 100%;
-        backdrop-filter: blur(2px);
+        backdrop-filter: blur(1px);
         background-color: transparentize($color2, 0.4);
+        opacity: 1;
+        transition: opacity 0.2s;
+        will-change: opacity;
 
-        &.contracted {
-            height: 40px;
-
-            &.hidden {
-                display: none;
-            }
-
-            &:not(.hidden) + .main {
-                height: calc(100% - 44px);
-            }
+        &.hidden {
+            opacity: 0;
+            visibility: hidden;
 
             .sidebar {
-                flex-direction: row;
-                width: 100%;
-                background-color: $color2;
-            }
-
-            .sidebar-header {
-                display: none;
-            }
-
-            .sidebar-nav {
-                display: none;
+                left: -210px;
             }
         }
     }
@@ -47,8 +34,15 @@
     flex-direction: column;
     width: 200px;
     height: 100%;
-    padding-right: 2px;
-    background-color: $color1;
+    background-color: $color3;
+    box-shadow: 1px 0 4px rgba(0, 0, 0, 0.1);
+
+    @include breakpoint-small {
+        position: relative;
+        left: 0;
+        transition: left 0.2s;
+        will-change: left;
+    }
 }
 
 .sidebar-header {
@@ -56,7 +50,6 @@
     background-image: url("./assets/images/main-icon.png");
     background-size: contain;
     background-repeat: no-repeat;
-    background-color: $color2;
     text-indent: -9999px;
 }
 
@@ -75,18 +68,39 @@
     flex-direction: column;
 }
 
-.sidebar-btn-container {
-    padding: 4px;
-    margin-top: 2px;
-    background-color: $color2;
+.sidebar-home-btn {
+    flex-shrink: 0;
+    margin-top: 8px;
+
+    svg {
+        margin-right: 4px;
+    }
+}
+
+.sidebar-section-title {
+    position: relative;
+    padding-top: 16px;
+    padding-bottom: 16px;
+    color: $alt-text-color;
+    font-size: 13px;
+    text-align: center;
+}
+
+.sidebar-form-toggle-btn {
+    position: absolute;
+    top: 50%;
+    right: 8px;
+    transform: translateY(-50%);
 }
 
 .sidebar-form {
+    flex-shrink: 0;
     display: flex;
-    padding-top: 4px;
-    border-top: 1px solid $color1;
+    padding-left: 4px;
+    padding-right: 4px;
+    margin-bottom: 8px;
 
-    input {
+    .input {
         flex-grow: 1;
         width: 50%;
         margin-right: 2px;
@@ -96,28 +110,25 @@
 .sidebar-entries {
     overflow-y: auto;
     flex-grow: 1;
-    padding: 0 4px 4px 4px;
-    margin-top: 2px;
-    background-color: $color2;
-
-    li {
-        margin-top: 4px;
-    }
 }
 
 .sidebar-btn {
     @include text-truncate;
 
     position: relative;
-    display: block;
     width: 100%;
-    padding-top: 6px;
-    padding-bottom: 6px;
+    padding: 12px 8px;
+    background-color: $color3;
 
-    &.active {
+    &.sidebar-home-btn {
+        padding: 10px 8px;
+    }
+
+    &:hover {
+        background-color: $color1;
         color: $base-text-color;
 
-        &:hover {
+        &.active {
             color: $brand-color;
         }
 
@@ -130,12 +141,11 @@
 .active-playlist-icon {
     position: absolute;
     top: 50%;
-    right: 2px;
+    right: 8px;
     width: 20px;
     height: 20px;
-    background-color: inherit;
-    box-shadow: -2px 0 8px 5px $color2;
+    box-shadow: -2px 0 8px 5px $color3;
     fill: $base-text-color;
     transform: translateY(-50%);
-    transition: 0.1s box-shadow;
+    transition: box-shadow 0.1s;
 }

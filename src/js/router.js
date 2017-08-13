@@ -1,8 +1,7 @@
 import { dispatchCustomEvent } from "./utils.js";
 
 const routes = [
-    "manage",
-    "404"
+    "home"
 ];
 
 function contains(hash) {
@@ -24,12 +23,8 @@ function toggleRoute(route) {
 }
 
 function toggleRouteTab(route) {
-    if (!route) {
-        toggleRoute("manage");
-        return;
-    }
-    if (route !== "404" && !contains(route)) {
-        toggleRoute("404");
+    if (!contains(route)) {
+        toggleRoute("home");
         return;
     }
     const isPlaylistTab = route.startsWith("playlist/");

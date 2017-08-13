@@ -68,15 +68,23 @@
         </symbol>
     </svg>
     <div class="player">
-        <div id="js-sidebar-container" class="sidebar-container contracted hidden">
+        <div id="js-sidebar-container" class="sidebar-container hidden">
             <div id="js-sidebar" class="sidebar">
                 <header class="sidebar-header">Veery</header>
                 <nav class="sidebar-nav">
-                    <div class="sidebar-btn-container">
-                        <button id="js-sidebar-entry-manage" class="btn btn-dark sidebar-btn" data-item="btn" data-hash="manage">Manage playlists</button>
-                    </div>
-                    <div class="sidebar-btn-container">
-                        <button class="btn btn-dark sidebar-btn" data-item="btn">+ New playlist</button>
+                    <button id="js-sidebar-entry-home" class="btn btn-icon sidebar-btn sidebar-home-btn" data-item="btn" data-hash="home">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M10,20V14H14V20H19V12H22L12,3L2,12H5V20H10Z" />
+                        </svg>
+                        <span>Home</span>
+                    </button>
+                    <div class="sidebar-section-title">
+                        <span>Playlists</span>
+                        <button class="btn btn-icon sidebar-form-toggle-btn" data-item="btn" title="Toggle playlist form">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z" />
+                            </svg>
+                        </button>
                     </div>
                     <ul id="js-sidebar-entries" class="sidebar-entries"></ul>
                 </nav>
@@ -89,9 +97,9 @@
                 </div>
             </div>
             <div id="js-tab-container" class="tab-container">
-                <div id="js-tab-manage" class="tab manage-tab">
+                <div id="js-tab-home" class="tab home-tab">
                     <div class="import-option-container">
-                        <h3 class="manage-tab-section-title">Import</h3>
+                        <h3 class="home-tab-section-title">Import</h3>
                         <ul id="js-import-options" class="import-options">
                             <li class="import-option">
                                 <button class="btn import-option-btn" data-item="local" data-type="file">
@@ -148,12 +156,6 @@
                                 </div>
                             </li>
                         </ul>
-                    </div>
-                </div>
-                <div id="js-tab-404" class="tab">
-                    <div class="tab-404-content">
-                        <h2>404</h2>
-                        <h3>Not found</h3>
                     </div>
                 </div>
             </div>
