@@ -8,6 +8,8 @@
     height: 80px;
     padding: 8px;
     user-select: none;
+    background-color: $color1;
+    box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.1);
 
     @include breakpoint-small {
         padding: 4px;
@@ -192,7 +194,6 @@
     will-change: left;
 
     &::before, &::after {
-        z-index: -1;
         content: "";
         position: absolute;
         top: 50%;
@@ -206,7 +207,7 @@
     }
 
     &::after {
-        left: 0;
+        left: 9px;
         background-color: $color2;
     }
 }
@@ -217,7 +218,7 @@
     }
 
     &::before {
-        left: -100vw;
+        left: calc(-100vw - 3px);
     }
 }
 
@@ -240,7 +241,6 @@
         bottom: -4px;
         left: 50%;
         border-top: 4px solid $color1;
-        filter: drop-shadow(0 1px 1px $color2);
         transform: translateX(-50%);
     }
 }
@@ -257,6 +257,10 @@
 
 .control-btn {
     margin-right: 4px;
+
+    &.active {
+        background-color: $color2;
+    }
 }
 
 .volume-controls {
@@ -276,6 +280,6 @@
     }
 
     &::before {
-        left: -100px;
+        left: -103px;
     }
 }

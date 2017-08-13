@@ -1,4 +1,4 @@
-.manage-tab {
+.home-tab {
     overflow-y: auto;
     padding: 8px;
 
@@ -9,7 +9,7 @@
     }
 }
 
-.manage-tab-section-title {
+.home-tab-section-title {
     margin-top: 4px;
     margin-bottom: 12px;
     text-align: center;
@@ -144,11 +144,15 @@
     flex-grow: 1;
     margin-top: 4px;
 
-    input {
+    .input,
+    .btn {
+        background-color: $color2;
+    }
+
+    .input {
         flex-grow: 1;
         width: 50%;
         margin-right: 2px;
-        background-color: $color2;
     }
 
     & + .import-option-btns {
@@ -196,10 +200,14 @@
         color: transparentize($base-text-color, 0.6);
         cursor: default;
     }
+
+    &.active {
+        background-color: $color2;
+    }
 }
 
 @media (max-width: 840px) {
-    .manage-tab.active {
+    .home-tab.active {
         justify-content: center;
     }
 

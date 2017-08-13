@@ -147,7 +147,7 @@ function createImportForm(container, item) {
     const form = `
         <form id=${id} class="import-form" data-for="${item}">
             <input type="text" name="url" class="input" placeholder="URL" required>
-            <button class="btn btn-dark">Import</button>
+            <button class="btn">Import</button>
         </form>
     `;
 

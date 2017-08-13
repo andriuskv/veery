@@ -58,7 +58,7 @@ getElementById("js-tab-header").addEventListener("click", ({ target }) => {
     const element = getElementByAttr("data-item", target);
 
     if (element && element.attrValue === "sidebar-toggle") {
-        getElementById("js-sidebar-container").classList.remove("contracted");
+        getElementById("js-sidebar-container").classList.remove("hidden");
     }
 });
 
@@ -108,10 +108,7 @@ window.addEventListener("route-change", ({ detail: { isPlaylistTab, tabId } }) =
         getElementById("js-tab-playlist-container").classList.remove("active");
     }
     getElementById(`js-tab-${tabId}`).classList.add("active");
-
-    if (entry) {
-        entry.classList.add("active");
-    }
+    entry.classList.add("active");
 });
 
 export {

@@ -9,7 +9,7 @@ body {
 }
 
 body {
-    background-color: $color1;
+    background-color: $color2;
     font-family: sans-serif;
     scrollbar-face-color: transparent;
     scrollbar-track-color: $color1;
@@ -78,11 +78,6 @@ svg {
     }
 }
 
-// SoundCloud player container
-#flashAudioObject-container {
-    display: none;
-}
-
 %focus-styles {
     outline: 1px solid darken($brand-color, 32%);
     outline-offset: 0;
@@ -119,22 +114,13 @@ svg {
     }
 }
 
-.btn-dark {
-    background-color: $color2;
-
-    &.active {
-        background-color: $color1;
-    }
-}
-
-.btn-light.active {
-    background-color: $color2;
-}
-
 .btn-icon {
     position: relative;
     display: flex;
+    justify-content: center;
+    align-items: center;
     padding: 2px;
+    background-color: transparent;
 
     svg {
         width: 20px;
@@ -189,7 +175,7 @@ svg {
     z-index: 2;
     position: absolute;
     padding: 8px;
-    box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
+    filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.4));
     background-color: $color1;
     color: $base-text-color;
 }

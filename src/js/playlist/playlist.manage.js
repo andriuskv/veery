@@ -113,7 +113,7 @@ function onNewPlaylistFormSubmit(event) {
     form.reset();
 }
 
-function createNewPlaylistInputForm(id, containerElement, handleSubmit) {
+function createNewPlaylistForm(id, containerElement, handleSubmit) {
     containerElement.insertAdjacentHTML("afterend", `
         <form id="js-${id}-form" class="${id}-form">
             <input type="text" name="title" class="input" autocomplete="off" placeholder="Playlist title" required>
@@ -125,7 +125,6 @@ function createNewPlaylistInputForm(id, containerElement, handleSubmit) {
 
     element.querySelector(".input").focus();
     element.addEventListener("submit", handleSubmit);
-
 }
 
 export {
@@ -134,5 +133,5 @@ export {
     updateCurrentTrack,
     addTracksToPlaylist,
     onNewPlaylistFormSubmit,
-    createNewPlaylistInputForm
+    createNewPlaylistForm
 };

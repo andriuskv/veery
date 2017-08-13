@@ -11,7 +11,7 @@ function createEntryContainer(id) {
     const ul = document.createElement("ul");
 
     div.classList.add("pl-entry-container");
-    h3.classList.add("manage-tab-section-title");
+    h3.classList.add("home-tab-section-title");
     ul.classList.add("pl-entries");
 
     h3.textContent = "Playlist entries";
@@ -20,7 +20,7 @@ function createEntryContainer(id) {
 
     div.appendChild(h3);
     div.appendChild(ul);
-    getElementById("js-tab-manage").appendChild(div);
+    getElementById("js-tab-home").appendChild(div);
     return ul;
 }
 
@@ -65,7 +65,7 @@ function getSyncBtnTemp(url) {
         return "";
     }
     return `
-        <button class="btn btn-light btn-icon pl-entry-btn" data-action="sync" title="Synchronize playlist">
+        <button class="btn btn-icon pl-entry-btn" data-action="sync" title="Synchronize playlist">
             <svg viewBox="0 0 24 24">
                 <use href="#sync">
             </svg>
@@ -80,7 +80,7 @@ function createPlaylistEntry(title, id, url) {
         <li class="pl-entry" data-entry-id=${id}>
             <form class="pl-entry-form">
                 <input type="text" class="input pl-entry-title" value="${title}" readonly>
-                <button type="submit" class="btn btn-light btn-icon pl-entry-btn"
+                <button type="submit" class="btn btn-icon pl-entry-btn"
                     data-action="edit" title="Edit playlist title">
                     <svg viewBox="0 0 24 24">
                         <use href="#edit">
@@ -88,7 +88,7 @@ function createPlaylistEntry(title, id, url) {
                 </button>
             </form>
             ${btn}
-            <button class="btn btn-light btn-icon pl-entry-btn" data-action="remove" title="Remove playlist">
+            <button class="btn btn-icon pl-entry-btn" data-action="remove" title="Remove playlist">
                 <svg viewBox="0 0 24 24">
                     <use href="#trash">
                 </svg>
