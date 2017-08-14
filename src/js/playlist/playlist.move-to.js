@@ -10,13 +10,15 @@ function showMoveToBtn() {
     if (getElementById(panelContainerId)) {
         return;
     }
-    const element = `
+    getElementById("js-playlist-type-btns").insertAdjacentHTML("beforebegin", `
         <div id="${panelContainerId}" class="playlist-tab-header-item">
-            <button class="btn" data-item="move-to">Move to</button>
+            <button class="btn btn-icon" data-item="move-to" title="Move to">
+                <svg viewBox="0 0 24 24">
+                    <path d="M2,16H10V14H2M18,14V10H16V14H12V16H16V20H18V16H22V14M14,6H2V8H14M14,10H2V12H14V10Z" />
+                </svg>
+            </button>
         </div>
-    `;
-
-    getElementById("js-playlist-type-btns").insertAdjacentHTML("beforebegin", element);
+    `);
 }
 
 function handleSubmit(event) {
@@ -65,8 +67,8 @@ function createPlaylistList(playlistId) {
             const { title } = playlists[id];
 
             return `
-                <li class="move-to-list-item" data-item="${id}">
-                    <button class="btn">${title}</button>
+                <li data-item="${id}">
+                    <button class="btn move-to-list-item-btn">${title}</button>
                 </li>
             `;
         }).join("");
@@ -75,15 +77,19 @@ function createPlaylistList(playlistId) {
 function createMoveToPanel(panelId, { playlistId }) {
     const listContent = createPlaylistList(playlistId);
     const className = !listContent ? "hidden" : "";
-    const moveToPanelElement = `
+
+    getElementById("js-move-to-panel-container").insertAdjacentHTML("beforeend", `
         <div id="${panelId}" class="panel move-to-panel">
             <h2 class="move-to-panel-title">Move to</h2>
             <ul id="js-move-to-list" class="move-to-list ${className}">${listContent}</ul>
-            <button id="js-move-to-new-pl-btn" class="btn move-to-new-pl-btn">Create new playlist</button>
+            <button id="js-move-to-new-pl-btn" class="btn btn-icon move-to-new-pl-btn">
+                <svg viewBox="0 0 24 24">
+                    <use href="#plus"></use>
+                </svg>
+                <span>Create new playlist</span>
+            </button>
         </div>
-    `;
-
-    getElementById("js-move-to-panel-container").insertAdjacentHTML("beforeend", moveToPanelElement);
+    `);
     getElementById("js-move-to-list").addEventListener("click", onListClick);
     getElementById("js-move-to-new-pl-btn").addEventListener("click", showForm, { once: true });
 }

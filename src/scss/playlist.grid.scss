@@ -34,12 +34,14 @@
 }
 
 .grid-item-first-col {
+    flex-shrink: 0;
+    overflow-x: hidden;
     position: relative;
+    width: 56px;
 }
 
 .grid-item-play-pause-btn {
     background-color: rgba(0, 0, 0, 0.6);
-    box-shadow: 0 0 8px 1px rgba(0, 0, 0, 0.2);
 
     svg {
         width: 24px;
@@ -48,9 +50,6 @@
 }
 
 .grid-item-thumbnail {
-    height: 100%;
-    width: 56px;
-    object-fit: scale-down;
     pointer-events: none;
 }
 

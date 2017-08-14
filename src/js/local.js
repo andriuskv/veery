@@ -3,7 +3,7 @@
 import parseFlacMetadata from "../libs/parseFlacMetadata.js";
 import { scriptLoader, formatTime } from "./utils.js";
 import { getPlaylistById, createPlaylist } from "./playlist/playlist.js";
-import { addTracksToPlaylist } from "./playlist/playlist.manage.js";
+import { addTracksToPlaylist, showStatusIndicator, hideStatusIndicator } from "./playlist/playlist.manage.js";
 import { createImportOptionMask, removeImportOptionMask, showNotice } from "./playlist/playlist.import.js";
 
 function getTrackDuration(track) {
@@ -90,14 +90,17 @@ async function addTracks(importOption, pl, newTracks, parseTracks) {
 
     if (!newTracks.length) {
         showNotice(importOption, "No valid audio files found");
+        hideStatusIndicator(pl.id);
         return;
     }
     const tracks = filterDuplicateTracks(newTracks, pl.tracks);
 
     if (!tracks.length) {
         showNotice(importOption, "Tracks already exist");
+        hideStatusIndicator(pl.id);
         return;
     }
+
     try {
         await scriptLoader.load({ src: "libs/metadata-audio-parser.min.js" });
         const timeStamp = new Date().getTime();
@@ -108,18 +111,26 @@ async function addTracks(importOption, pl, newTracks, parseTracks) {
     }
     catch (error) {
         console.log(error);
+        hideStatusIndicator(pl.id);
     }
 }
 
 function selectLocalFiles(files) {
     const supportedTracks = filterUnsupportedFiles(files);
-    const pl = getPlaylistById("local-files") || createPlaylist({
-        id: "local-files",
-        title: "Local files",
-        type: "list",
-        player: "native"
-    });
+    const id = "local-files";
+    let pl = getPlaylistById(id);
 
+    if (pl) {
+        showStatusIndicator(pl.id);
+    }
+    else {
+        pl = createPlaylist({
+            id,
+            title: "Local files",
+            type: "list",
+            player: "native"
+        });
+    }
     addTracks("local", pl, supportedTracks, parseTracks);
 }
 

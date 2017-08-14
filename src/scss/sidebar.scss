@@ -1,9 +1,11 @@
 .sidebar-container {
+    z-index: 2;
+    position: relative;
     float: left;
     height: 100%;
 
     @include breakpoint-small {
-        z-index: 2;
+        z-index: 4;
         overflow: hidden;
         position: absolute;
         top: 0;
@@ -87,10 +89,9 @@
 }
 
 .sidebar-form-toggle-btn {
-    position: absolute;
-    top: 50%;
+    @include center-vertically;
+
     right: 8px;
-    transform: translateY(-50%);
 }
 
 .sidebar-form {
@@ -133,19 +134,26 @@
         }
 
         .active-playlist-icon {
-            box-shadow: -2px 0 8px 5px $color1;
+            box-shadow: -2px 0 4px 0 $color1;
         }
     }
 }
 
 .active-playlist-icon {
-    position: absolute;
-    top: 50%;
+    @include center-vertically;
+
     right: 8px;
-    width: 20px;
-    height: 20px;
-    box-shadow: -2px 0 8px 5px $color3;
+    box-shadow: -2px 0 4px 0 $color3;
+    background-color: inherit;
     fill: $base-text-color;
-    transform: translateY(-50%);
     transition: box-shadow 0.1s;
+}
+
+.sidebar-entry-spinner {
+    @include center-vertically;
+
+    z-index: 1;
+    right: 5px;
+    width: 26px;
+    height: 26px;
 }

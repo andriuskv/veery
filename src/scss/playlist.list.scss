@@ -5,7 +5,7 @@
     display: flex;
     align-items: center;
     height: 30px;
-    padding: 4px 8px 4px 46px;
+    padding: 4px 8px;
     background-color: $color2;
     user-select: none;
 }
@@ -46,7 +46,7 @@
 .list-item-col {
     @include text-truncate;
 
-    flex: 1 1 30%;
+    flex: 1 1 25%;
     padding-right: 4px;
     font-size: 14px;
 

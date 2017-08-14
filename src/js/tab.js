@@ -1,5 +1,5 @@
 import { renderPlaylist, changePlaylistType, togglePlaylistTypeBtn } from "./playlist/playlist.view.js";
-import { removeElementClass, getElementById, getElementByAttr, dispatchCustomEvent } from "./utils.js";
+import { removeElementClass, getElementById, getElementByAttr } from "./utils.js";
 import { getSidebarEntry } from "./sidebar.js";
 import { togglePanel } from "./panels.js";
 import { getPlaylistById } from "./playlist/playlist.js";
@@ -51,7 +51,6 @@ function toggleToPlaylistTab(id) {
     enableTrackSelection(pl.id);
     resetFilteredPlaylist();
     updatePlaylistStatus(pl.id);
-    dispatchCustomEvent("track-length-change");
 }
 
 getElementById("js-tab-header").addEventListener("click", ({ target }) => {

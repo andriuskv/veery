@@ -27,6 +27,8 @@ ul {
 }
 
 svg {
+    width: 20px;
+    height: 20px;
     stroke-width: 0;
     stroke: currentColor;
     fill: currentColor;
@@ -45,7 +47,7 @@ svg {
 }
 
 .yt-player-container {
-    z-index: 2;
+    z-index: 4;
     position: absolute;
     top: 0;
     right: 0;
@@ -122,11 +124,6 @@ svg {
     padding: 2px;
     background-color: transparent;
 
-    svg {
-        width: 20px;
-        height: 20px;
-    }
-
     img {
         position: absolute;
         top: 50%;
@@ -178,4 +175,12 @@ svg {
     filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.4));
     background-color: $color1;
     color: $base-text-color;
+}
+
+.artwork {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 100%;
 }

@@ -60,10 +60,7 @@ function disableSyncBtn(id) {
     }
 }
 
-function getSyncBtnTemp(url) {
-    if (!url) {
-        return "";
-    }
+function getSyncBtnTemplate() {
     return `
         <button class="btn btn-icon pl-entry-btn" data-action="sync" title="Synchronize playlist">
             <svg viewBox="0 0 24 24">
@@ -75,7 +72,7 @@ function getSyncBtnTemp(url) {
 
 function createPlaylistEntry(title, id, url) {
     const container = getEntryContainer();
-    const btn = getSyncBtnTemp(url);
+    const btn = url ? getSyncBtnTemplate() : "";
     const entry = `
         <li class="pl-entry" data-entry-id=${id}>
             <form class="pl-entry-form">

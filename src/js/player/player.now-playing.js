@@ -79,7 +79,7 @@ function renderNowPlaying(track) {
                     </button>
                 ` : ""}
             </div>
-            <img src=${getImage(track.thumbnail)} class="now-playing-art" alt="">
+            <img src=${getImage(track.thumbnail)} class="artwork" alt="">
         </div>
         <div id="js-track-name" class="track-name">
             ${trackTitle}
