@@ -1,4 +1,5 @@
 .player-controls {
+    z-index: 2;
     position: absolute;
     right: 0;
     bottom: 0;
@@ -12,8 +13,9 @@
     box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.1);
 
     @include breakpoint-small {
-        padding: 4px;
+        z-index: 4;
         flex-wrap: wrap;
+        padding: 4px;
     }
 }
 
@@ -32,8 +34,6 @@
     flex-shrink: 0;
     overflow-x: hidden;
     position: relative;
-    display: flex;
-    justify-content: center;
     height: 100%;
     width: 64px;
     box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
@@ -48,6 +48,7 @@
 }
 
 .now-playing-art-button-container {
+    z-index: 1;
     position: absolute;
     top: 0;
     left: 0;
@@ -59,11 +60,6 @@
         width: 16px;
         height: 16px;
     }
-}
-
-.now-playing-art {
-    height: 100%;
-    object-fit: scale-down;
 }
 
 .track-name {

@@ -1,6 +1,7 @@
 .move-to-panel {
-    top: 32px;
+    top: 36px;
     width: 200px;
+    padding: 8px 0;
 
     @include breakpoint-smallest {
         right: 4px;
@@ -9,16 +10,14 @@
 }
 
 .move-to-panel-title {
-    margin-top: 0;
-    margin-bottom: 8px;
-    color: $base-text-color;
+    margin: 7px 0 15px 10px;
     font-size: 16px;
     font-weight: normal;
 }
 
 .move-to-list {
-    padding-top: 2px;
-    padding-bottom: 2px;
+    padding-top: 8px;
+    padding-bottom: 8px;
     margin-bottom: 8px;
     border-top: 1px solid $color3;
     border-bottom: 1px solid $color3;
@@ -28,29 +27,39 @@
     }
 }
 
-.move-to-list-item {
-    margin-top: 2px;
-    margin-bottom: 2px;
-
-    .btn {
-        @include text-truncate;
-
-        width: 100%;
-        text-align: left;
-    }
-}
-
+.move-to-list-item-btn,
 .move-to-new-pl-btn {
     width: 100%;
     text-align: left;
 
+    &:hover {
+        background-color: $color3;
+        color: $base-text-color;
+    }
+}
+
+.move-to-list-item-btn {
+    @include text-truncate;
+
+    padding: 8px 10px;
+}
+
+.move-to-new-pl-btn {
+    padding: 6px;
+
     &.hidden {
         display: none;
+    }
+
+    svg {
+        margin-right: 4px;
     }
 }
 
 .move-to-form {
     display: flex;
+    padding-left: 8px;
+    padding-right: 8px;
 
     .input {
         flex-grow: 1;

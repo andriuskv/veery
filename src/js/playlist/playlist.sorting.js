@@ -8,7 +8,7 @@ import { getPlaylistTrackElements, updatePlaylistView } from "./playlist.view.js
 import { filterTracks } from "./playlist.filter.js";
 
 function setSortBtnText(text) {
-    getElementById("js-sort-toggle").textContent = text;
+    getElementById("js-sort-toggle").textContent = capitalize(text);
 }
 
 function toggleOrderBtn(order = 1) {
@@ -21,6 +21,7 @@ function getSortingValue(sortBy, track) {
     if (sortBy === "duration") {
         return track.durationInSeconds;
     }
+
     if (sortBy === "age") {
         return track.createdAt;
     }
@@ -33,8 +34,9 @@ function sortTracks(tracks, sortBy, order) {
         const bValue = getSortingValue(sortBy, b);
 
         if (aValue < bValue) {
-            return -1 * order;
+            return -order;
         }
+
         if (aValue > bValue) {
             return order;
         }
@@ -71,9 +73,7 @@ function changePlaylistSorting(pl, sortBy) {
 }
 
 function setSortOptions({ sortedBy, order }) {
-    const btnTitle = sortedBy ? capitalize(sortedBy) : "Sorting";
-
-    setSortBtnText(btnTitle);
+    setSortBtnText(sortedBy || "sorting");
     toggleOrderBtn(order);
 }
 
@@ -82,8 +82,8 @@ function getSortOtions(sortedBy) {
         const activeClass = option === sortedBy ? " active" : "";
 
         return `
-            <li class="sort-option">
-                <button class="btn btn-transparent${activeClass}" data-sort="${option}">
+            <li>
+                <button class="btn sort-option-btn${activeClass}" data-sort="${option}">
                     ${capitalize(option)}
                 </button>
             </li>
@@ -102,28 +102,21 @@ function createSortPanel(id, { sortedBy }) {
 function changePlaylistOrder(pl) {
     changePlaylistSorting(pl, pl.sortedBy);
     toggleOrderBtn(pl.order);
-
-    if (getElementById("js-sort-panel")) {
-        removePanel();
-    }
 }
 
 function selectSortOption({ currentTarget, target }) {
     const sortBy = target.getAttribute("data-sort");
+    const pl = getPlaylistById(getVisiblePlaylistId());
 
-    if (sortBy) {
-        const pl = getPlaylistById(getVisiblePlaylistId());
+    currentTarget.removeEventListener("click", selectSortOption);
+    removePanel();
 
-        currentTarget.removeEventListener("click", selectSortOption);
-        removePanel();
-
-        if (sortBy === pl.sortedBy) {
-            return;
-        }
-        setSortBtnText(capitalize(sortBy));
-        toggleOrderBtn();
-        changePlaylistSorting(pl, sortBy);
+    if (sortBy === pl.sortedBy) {
+        return;
     }
+    setSortBtnText(sortBy);
+    toggleOrderBtn();
+    changePlaylistSorting(pl, sortBy);
 }
 
 export {

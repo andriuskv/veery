@@ -1,9 +1,8 @@
 .tab-header {
-    z-index: 1;
+    z-index: 3;
     position: absolute;
     display: none;
-    height: 32px;
-    padding: 4px;
+    padding: 8px;
 
     @include breakpoint-small {
         display: block;
@@ -48,56 +47,43 @@
 }
 
 .playlist-tabs {
-    height: calc(100% - 64px);
+    height: calc(100% - 40px);
 }
 
 .playlist-tab-header {
-    flex-shrink: 0;
+    z-index: 2;
+    position: relative;
     display: flex;
-    padding: 4px;
-    margin-bottom: 2px;
-
-    .btn {
-        background-color: $color1;
-    }
-
-    @include breakpoint-small {
-        position: relative;
-        justify-content: flex-end;
-    }
+    justify-content: flex-end;
+    padding: 8px;
+    background-color: $color3;
+    box-shadow: 3px 1px 4px rgba(0, 0, 0, 0.1);
 }
 
 .playlist-tab-header-item {
-    margin-right: 4px;
+    margin-right: 8px;
+    padding-right: 8px;
+    border-right: 1px solid $color1;
 }
 
 .filter-input-container {
     position: relative;
-    display: flex;
-    margin-right: auto;
-
-    @include breakpoint-small {
-        position: absolute;
-        left: 32px;
-    }
 }
 
 .filter-input-icon {
-    position: absolute;
-    top: 50%;
+    @include center-vertically;
+
     left: 2px;
-    width: 20px;
-    height: 20px;
-    transform: translateY(-50%);
-    fill: $base-text-color;
+    fill: $alt-text-color;
 }
 
 .filter-input {
+    user-select: none;
     width: 100px;
     padding-left: 24px;
     padding-right: 24px;
     transition: 0.2s width;
-    user-select: none;
+    box-shadow: 0 0 0 1px $color2;
 
     &.active {
         width: 184px;
@@ -105,12 +91,11 @@
 }
 
 .clear-input-btn {
-    position: absolute;
-    top: 50%;
-    right: 2px;
+    @include center-vertically;
+
+    right: 10px;
     display: none;
     padding: 0;
-    transform: translateY(-50%);
 
     &.visible {
         display: flex;
@@ -126,7 +111,7 @@
 }
 
 .list-type-btn {
-    margin-right: 2px;
+    margin-right: 4px;
 }
 
 .tab-title {
@@ -134,31 +119,4 @@
     margin-top: 0;
     margin-bottom: 20px;
     text-align: center;
-}
-
-.playlist-tab-footer {
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    height: 28px;
-    padding: 0 4px;
-    margin-top: 2px;
-    color: $base-text-color;
-    font-size: 14px;
-    user-select: none;
-}
-
-.playlist-status-container {
-    display: none;
-    align-items: center;
-    margin-left: auto;
-
-    &.visible {
-        display: flex;
-    }
-
-    img {
-        width: 20px;
-        margin-right: 4px;
-    }
 }

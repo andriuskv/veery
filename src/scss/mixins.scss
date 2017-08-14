@@ -4,6 +4,12 @@
     white-space: nowrap;
 }
 
+@mixin center-vertically {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
 @mixin popup-arrow {
     &::before {
         content: "";

@@ -1,13 +1,13 @@
 import * as playlist from "./playlist.js";
-import { getElementById, removeElementClass, dispatchCustomEvent } from "../utils.js";
+import { getElementById, removeElementClass, removeElement, addSpinner } from "../utils.js";
 import { removePlaylistTab, updatePlaylistView } from "./playlist.view.js";
 import { isRouteActive, addRoute, toggleRoute } from "../router.js";
 import { getSetting } from "../settings.js";
 import { postMessageToWorker } from "../worker.js";
-import { createSidebarEntry, removeSidebarEntry } from "../sidebar.js";
+import { createSidebarEntry, getSidebarEntry, removeSidebarEntry } from "../sidebar.js";
 import { stopPlayer } from "../player/player.js";
 import { sortTracks } from "./playlist.sorting.js";
-import { createPlaylistEntry } from "./playlist.entries.js";
+import { createPlaylistEntry, enableSyncBtn, disableSyncBtn } from "./playlist.entries.js";
 
 function updateTracks(pl) {
     playlist.setPlaybackOrder(pl, getSetting("shuffle"));
@@ -62,14 +62,14 @@ function updateCurrentTrack(pl) {
     }
 }
 
-function addTracksToPlaylist(pl, tracks, showPlaylist = isRouteActive("manage")) {
+function addTracksToPlaylist(pl, tracks, showPlaylist = isRouteActive("home")) {
     pl.tracks = pl.tracks.concat(tracks);
 
     if (!pl.initialized) {
         initPlaylist(pl);
     }
     else {
-        dispatchCustomEvent("playlist-status-update", { id: pl.id });
+        hideStatusIndicator(pl.id);
         updateTracks(pl);
         updateCurrentTrack(pl);
 
@@ -80,9 +80,6 @@ function addTracksToPlaylist(pl, tracks, showPlaylist = isRouteActive("manage"))
 
     if (showPlaylist) {
         toggleRoute(`playlist/${pl.id}`);
-    }
-    else {
-        dispatchCustomEvent("track-length-change");
     }
     postMessageToWorker({
         action: "put",
@@ -127,11 +124,28 @@ function createNewPlaylistForm(id, containerElement, handleSubmit) {
     element.addEventListener("submit", handleSubmit);
 }
 
+function showStatusIndicator(id) {
+    const entry = getSidebarEntry(id);
+
+    addSpinner(entry, "sidebar-entry-spinner");
+    disableSyncBtn(id);
+}
+
+function hideStatusIndicator(id) {
+    const entry = getSidebarEntry(id);
+    const element = entry.querySelector(".sidebar-entry-spinner");
+
+    removeElement(element);
+    enableSyncBtn(id);
+}
+
 export {
     initPlaylist,
     removePlaylist,
     updateCurrentTrack,
     addTracksToPlaylist,
     onNewPlaylistFormSubmit,
-    createNewPlaylistForm
+    createNewPlaylistForm,
+    showStatusIndicator,
+    hideStatusIndicator
 };

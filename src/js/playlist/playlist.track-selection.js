@@ -4,8 +4,7 @@ import {
     removeElements,
     removeElementClass,
     getElementByAttr,
-    isOutsideElement,
-    dispatchCustomEvent
+    isOutsideElement
 } from "../utils.js";
 import {
     getPlaylistById,
@@ -426,7 +425,6 @@ function removeSelectedTracks() {
     updateCurrentTrackIndex(id, selectedTrackIndexes);
     removeElement(getElementById("js-move-to-panel-container"));
     updatePlaylistDuration(pl);
-    dispatchCustomEvent("track-length-change");
 }
 
 export {

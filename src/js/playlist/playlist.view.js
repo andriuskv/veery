@@ -4,7 +4,6 @@ import { postMessageToWorker } from "../worker.js";
 import { getPlayerState } from "../player/player.js";
 import { togglePlayPauseBtn } from "../player/player.controls.js";
 import { getPlaylistById, getCurrentTrack, updatePlaylist } from "./playlist.js";
-import { enableSyncBtn, disableSyncBtn } from "./playlist.entries.js";
 import { enableTrackSelection } from "./playlist.track-selection.js";
 
 function getPlaylistElement(id) {
@@ -32,7 +31,6 @@ function getTrackPlayPauseBtn(track) {
     return element.querySelector(".btn");
 }
 
-
 function createListItem(item) {
     return `
         <li class="list-item track" data-index="${item.index}" tabindex="0">
@@ -55,6 +53,7 @@ function createListItem(item) {
 function createList(id, items) {
     return `
         <ul class="list-view-header">
+            <li class="list-item-first-col list-view-header-item">#</li>
             <li class="list-item-col list-view-header-item">Title</li>
             <li class="list-item-col list-view-header-item">Artist</li>
             <li class="list-item-col list-view-header-item">Album</li>
@@ -76,7 +75,7 @@ function createGridItem(item) {
     return `
         <li class="grid-item track" data-index="${item.index}" tabindex="0">
             <div class="grid-item-first-col">
-                <img src="${thumbnail}" class="grid-item-thumbnail" alt="">
+                <img src="${thumbnail}" class="artwork grid-item-thumbnail" alt="">
                 <button class="btn btn-icon track-play-pause-btn grid-item-play-pause-btn" data-btn="play" title="Play">
                     <svg viewBox="0 0 24 24">
                         <use class="js-icon" href="#play"></use>
@@ -204,57 +203,6 @@ function changePlaylistType(type, pl) {
     enableTrackSelection(pl.id);
     togglePlaylistTypeBtn(type);
 }
-
-window.addEventListener("track-length-change", () => {
-    const id = getVisiblePlaylistId();
-
-    if (!id) {
-        return;
-    }
-    const elementId = "js-playlist-info-container";
-    const element = getElementById(elementId);
-
-    if (element) {
-        removeElement(element);
-    }
-    const { duration, tracks } = getPlaylistById(id);
-    const hours = Math.floor(duration / 3600);
-    const minutes = Math.ceil(duration / 60 % 60);
-    const info = `${tracks.length} tracks, ${hours} hr ${minutes} min`;
-
-    getElementById("js-playlist-tab-footer").insertAdjacentHTML("afterbegin", `
-        <div id="${elementId}">${info}</div>
-    `);
-});
-
-window.addEventListener("playlist-status-update", ({ detail: { id, type } }) => {
-    const elementId = "js-playlist-status-container";
-
-    if (!type) {
-        const element = getElementById(elementId);
-
-        if (element) {
-            removeElement(element);
-        }
-        enableSyncBtn(id);
-        return;
-    }
-    let status = "";
-
-    if (type === "sync") {
-        status = "Synchronizing";
-    }
-    else if (type === "update") {
-        status = "Updating";
-    }
-    getElementById("js-playlist-tab-footer").insertAdjacentHTML("beforeend", `
-        <div id="${elementId}" class="playlist-status-container" data-id="${id}">
-            <img src="./assets/images/ring-alt.svg" alt="">
-            <span>${status}</span>
-        </div>
-    `);
-    disableSyncBtn(id);
-});
 
 window.addEventListener("resize", ({ target }) => {
     const id = getVisiblePlaylistId();

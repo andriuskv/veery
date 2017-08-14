@@ -119,8 +119,8 @@ function setElementIconAndTitle(element, { id, title }) {
     element.setAttribute("title", title);
 }
 
-function addSpinner(element) {
-    element.insertAdjacentHTML("beforeend", `<img src="./assets/images/ring-alt.svg" alt="">`);
+function addSpinner(element, classList = "") {
+    element.insertAdjacentHTML("beforeend", `<img src="./assets/images/ring-alt.svg" class="${classList}" alt="">`);
 }
 
 function enableBtn(element) {

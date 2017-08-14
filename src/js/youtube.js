@@ -1,7 +1,8 @@
 /* global gapi */
 
-import { formatTime, dispatchCustomEvent } from "./utils.js";
+import { formatTime } from "./utils.js";
 import { addImportedPlaylist, showNotice } from "./playlist/playlist.import.js";
+import { showStatusIndicator, hideStatusIndicator } from "./playlist/playlist.manage.js";
 import { getPlaylistById } from "./playlist/playlist.js";
 
 function showYoutubeNotice(notice) {
@@ -89,8 +90,7 @@ function handleError(error, id) {
     else if (code === 404) {
         showYoutubeNotice("Playlist was not found");
     }
-    dispatchCustomEvent("playlist-status-update", { id });
-
+    hideStatusIndicator(id);
     throw new Error(error.message);
 }
 
@@ -138,14 +138,14 @@ async function addVideo(id, type) {
     }
 
     if (pl) {
-        dispatchCustomEvent("playlist-status-update", { type, id: playlistId });
+        showStatusIndicator(playlistId);
     }
     const { items } = await fetchYoutube("videos", "snippet", "id", id);
     const latestIndex = pl && pl.tracks.length || 0;
 
     if (!items.length) {
         showYoutubeNotice("Video was not found");
-        dispatchCustomEvent("playlist-status-update", { id: playlistId });
+        hideStatusIndicator(playlistId);
         return;
     }
     addImportedPlaylist({
@@ -165,7 +165,7 @@ async function addPlaylist(url, id, type) {
     }
 
     if (pl) {
-        dispatchCustomEvent("playlist-status-update", { type, id });
+        showStatusIndicator(id);
     }
     const timeStamp = new Date().getTime();
     const tracks = await fetchPlaylistItems(id, timeStamp);
