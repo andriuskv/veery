@@ -22,7 +22,6 @@ const elapsedTime = (function() {
     let timeout = 0;
 
     function stop() {
-        console.log("elapsedTime.stop");
         clearTimeout(timeout);
     }
 
@@ -43,7 +42,6 @@ const elapsedTime = (function() {
             timeout = setTimeout(update, 1000 - diff, track, startTime, elapsed);
         }
         else {
-            console.log("dispatchCustomEvent", track.currentTime, track.duration);
             dispatchCustomEvent("track-end");
         }
     }

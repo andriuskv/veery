@@ -1,5 +1,5 @@
 .player-controls {
-    z-index: 2;
+    z-index: 4;
     position: absolute;
     right: 0;
     bottom: 0;
@@ -59,6 +59,7 @@
     svg {
         width: 16px;
         height: 16px;
+        filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.4));
     }
 }
 
@@ -253,9 +254,11 @@
 
 .control-btn {
     margin-right: 4px;
+    border: 1px solid transparent;
 
     &.active {
-        background-color: $color2;
+        background-color: $color3;
+        border-color: $color2;
     }
 }
 

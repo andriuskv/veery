@@ -141,16 +141,17 @@
     display: flex;
     flex-grow: 1;
     margin-top: 4px;
+    border: 1px solid $color2;
 
     .input,
     .btn {
-        background-color: $color2;
+        background-color: $color3;
     }
 
     .input {
         flex-grow: 1;
         width: 50%;
-        margin-right: 2px;
+         border-right: 1px solid $color2;
     }
 
     & + .import-option-btns {
@@ -174,18 +175,15 @@
 .pl-entry-form {
     flex-grow: 1;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    input {
-        background-color: $color2;
-    }
 }
 
 .pl-entry-title {
     flex-grow: 1;
+    border: 1px solid $color2;
+    background-color: $color3;
 
     &:read-only {
+        border-color: transparent;
         background-color: transparent;
         pointer-events: none;
     }
@@ -193,6 +191,7 @@
 
 .pl-entry-btn {
     margin-left: 2px;
+    border: 1px solid transparent;
 
     &:disabled {
         color: transparentize($base-text-color, 0.6);
@@ -200,7 +199,8 @@
     }
 
     &.active {
-        background-color: $color2;
+        border-color: $color2;
+        background-color: $color3;
     }
 }
 
