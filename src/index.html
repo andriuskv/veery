@@ -73,7 +73,7 @@
     <div class="player">
         <div id="js-sidebar-container" class="sidebar-container hidden">
             <div id="js-sidebar" class="sidebar">
-                <header class="sidebar-header">Veery</header>
+                <header class="sidebar-header"><h1>Veery</h1></header>
                 <nav class="sidebar-nav">
                     <button id="js-sidebar-entry-home" class="btn btn-icon sidebar-btn sidebar-home-btn" data-item="btn" data-hash="home">
                         <svg viewBox="0 0 24 24">
@@ -95,9 +95,11 @@
         </div>
         <div class="main">
             <div id="js-tab-header" class="tab-header">
-                <div class="sidebar-toggle-btn-container">
-                    <button class="btn sidebar-toggle-btn" data-item="sidebar-toggle" title="Show sidebar"></button>
-                </div>
+                <button class="btn btn-icon" data-item="sidebar-toggle" title="Show sidebar">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z" />
+                    </svg>
+                </button>
             </div>
             <div id="js-tab-container" class="tab-container">
                 <div id="js-tab-home" class="tab home-tab">

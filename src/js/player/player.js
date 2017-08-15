@@ -375,7 +375,6 @@ window.addEventListener("track-start", ({ detail: startTime }) => {
 });
 
 window.addEventListener("track-end", () => {
-    console.log("track-end");
     if (getSetting("once")) {
         stopPlayer();
         return;
