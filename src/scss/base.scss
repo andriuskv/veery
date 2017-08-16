@@ -46,6 +46,10 @@ svg {
     background: transparent;
 }
 
+:focus:not(.focus-ring) {
+    outline-width: 0;
+}
+
 .yt-player-container {
     z-index: 4;
     position: absolute;
@@ -80,21 +84,12 @@ svg {
     }
 }
 
-%focus-styles {
-    outline: 1px solid darken($brand-color, 32%);
-    outline-offset: 0;
-}
-
 %default-input-styles {
     padding: 4px 6px;
     border: none;
     background-color: $color1;
     font-size: 14px;
     color: $base-text-color;
-
-    &:focus {
-        @extend %focus-styles;
-    }
 }
 
 .input {
