@@ -153,11 +153,11 @@ function playTrack(track, volume, startTime) {
     }
 }
 
-function stopTrack() {
+function stopTrack(track) {
     if (!initialized) {
         return;
     }
-    hidePlayPauseBtnSpinner();
+    hidePlayPauseBtnSpinner(track);
     ytPlayer.stopVideo();
 }
 

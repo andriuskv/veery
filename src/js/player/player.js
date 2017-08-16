@@ -133,7 +133,7 @@ function playNewTrack(track, startTime) {
     setCurrentTrack(track);
     beforeTrackStart(track);
 
-    if (!startTime) {
+    if (typeof startTime === "undefined") {
         showPlayPauseBtnSpinner(track);
         togglePlayPauseBtns(track, isPaused);
     }
@@ -219,7 +219,7 @@ function stopTrack(track) {
         nPlayer.stopTrack(track);
     }
     else if (track.player === "youtube") {
-        ytPlayer.stopTrack();
+        ytPlayer.stopTrack(track);
     }
 }
 
