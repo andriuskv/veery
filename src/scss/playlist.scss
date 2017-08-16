@@ -1,16 +1,12 @@
 .track {
-    &:hover, &:focus, &:focus-within, &.playing {
+    &:hover, &:focus-within, &.playing {
         .track-play-pause-btn {
             display: flex;
         }
     }
 
-    &:hover, &:focus, &:focus-within {
+    &:hover, &:focus-within {
         background-color: $color3;
-    }
-
-    &:focus {
-        @extend %focus-styles;
     }
 
     &.playing {
@@ -40,10 +36,6 @@
      background-color: transparent;
      color: inherit;
      transform: translate(-50%, -50%);
-
-     &:focus {
-         display: flex;
-     }
  }
 
 .selected-area {

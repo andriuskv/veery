@@ -168,10 +168,6 @@
     &:active .slider-thumb {
         background-color: #aaa;
     }
-
-    &:focus {
-        @extend %focus-styles;
-    }
 }
 
 .slider-inner {

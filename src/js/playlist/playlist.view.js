@@ -74,7 +74,7 @@ function createGridItem(item) {
     }
     return `
         <li class="grid-item track" data-index="${item.index}" tabindex="0">
-            <div class="grid-item-first-col">
+            <div class="grid-item-first-col" tabindex="-1">
                 <img src="${thumbnail}" class="artwork grid-item-thumbnail" alt="">
                 <button class="btn btn-icon track-play-pause-btn grid-item-play-pause-btn" data-btn="play" title="Play">
                     <svg viewBox="0 0 24 24">
