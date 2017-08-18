@@ -11,6 +11,7 @@ body {
 body {
     background-color: $color2;
     font-family: sans-serif;
+    font-size: 14px;
     scrollbar-face-color: transparent;
     scrollbar-track-color: $color1;
 }
@@ -27,6 +28,7 @@ ul {
 }
 
 svg {
+    box-sizing: content-box;
     width: 20px;
     height: 20px;
     stroke-width: 0;
@@ -149,7 +151,6 @@ svg {
 .play-message-body {
     margin-top: 0;
     margin-bottom: 0;
-    font-size: 14px;
 }
 
 .main {

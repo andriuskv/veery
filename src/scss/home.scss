@@ -1,0 +1,284 @@
+.home-tab {
+    overflow-y: auto;
+    align-content: flex-start;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 8px;
+
+    &.active {
+        display: flex;
+    }
+}
+
+.home-tab-section-title {
+    padding: 8px;
+    margin-top: 0;
+    margin-bottom: 8px;
+    border-bottom: 1px solid $color1;
+    font-size: 20px;
+    font-weight: normal;
+}
+
+.import-option-container,
+.pl-entry-container {
+    width: 100%;
+    padding-bottom: 8px;
+    border: 1px solid $color1;
+    background-color: $color3;
+}
+
+.import-option-container {
+    max-width: 360px;
+}
+
+.option-mask {
+    z-index: 3;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: transparentize($color3, 0.2);
+    text-align: center;
+
+    img {
+        width: 24px;
+    }
+}
+
+.mask-message {
+    margin-left: 6px;
+}
+
+.import-option {
+    position: relative;
+}
+
+.import-option-btn {
+    justify-content: flex-start;
+    width: 100%;
+    padding: 8px;
+
+    &:hover {
+        background-color: $color1;
+        color: $base-text-color;
+
+        &.active {
+            color: $brand-color;
+        }
+    }
+}
+
+.import-option-icon {
+    margin-right: 8px;
+}
+
+.import-option-btns {
+    position: absolute;
+    top: 6px;
+    right: 4px;
+    display: none;
+}
+
+.google-sign-in-or-out-btn {
+    position: relative;
+
+    &:disabled {
+        color: transparentize($base-text-color, 0.6);
+
+        img {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: scale-down;
+        }
+    }
+}
+
+.info-panel-container {
+    position: relative;
+    margin-left: 4px;
+}
+
+.import-info-btn {
+    color: $alt-text-color;
+}
+
+.info-panel {
+    top: 30px;
+    left: 0;
+    width: 320px;
+
+    @include popup-arrow {
+        top: -4px;
+        left: 8px;
+        border-bottom: 4px solid $color1;
+        filter: drop-shadow(0 -1px 1px $color2);
+    }
+}
+
+.info-panel-title {
+    margin-top: 0;
+    margin-bottom: 4px;
+}
+
+.info-panel-content-item:not(:last-of-type) {
+    margin-bottom: 2px;
+}
+
+.import-form {
+    display: flex;
+    flex-grow: 1;
+    margin: 8px 8px 0 8px;
+    border: 1px solid $color2;
+
+    .input,
+    .btn {
+        background-color: $color1;
+    }
+
+    .input {
+        flex-grow: 1;
+        width: 50%;
+        border-right: 1px solid $color2;
+    }
+
+    & + .import-option-btns {
+        display: flex;
+    }
+}
+
+.file-picker {
+    display: none;
+}
+
+.pl-entry-container {
+    max-width: 600px;
+    margin-left: 8px;
+}
+
+.pl-entry {
+    margin-left: 8px;
+    margin-right: 8px;
+
+    &:not(:last-of-type) {
+        margin-bottom: 8px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid $color1;
+    }
+}
+
+.pl-entry-input-container {
+    position: relative;
+    flex-grow: 1;
+    display: flex;
+    width: 100%;
+
+    &:hover {
+        .pl-entry-input {
+            border: 1px solid $color2;
+            background-color: $color1;
+        }
+
+        .pl-entry-input-icon {
+            display: flex;
+        }
+    }
+}
+
+.pl-entry-input {
+    flex-grow: 1;
+    padding-right: 24px;
+    border: 1px solid transparent;
+    background-color: transparent;
+
+    &:focus {
+        border: 1px solid $color2;
+        background-color: $color1;
+
+        & + .pl-entry-input-icon {
+            display: flex;
+        }
+    }
+}
+
+.pl-entry-input-icon {
+    @include center-vertically;
+
+    right: 4px;
+    display: none;
+    fill: $alt-text-color;
+}
+
+.pl-entry-btn {
+    color: $alt-text-color;
+
+    &:hover {
+        color: $base-text-color;
+    }
+
+    &:disabled {
+        color: transparentize($base-text-color, 0.6);
+        cursor: default;
+    }
+}
+
+.pl-entry-content {
+    display: flex;
+    padding-top: 4px;
+    padding-left: 4px;
+}
+
+.pl-entry-stats {
+    display: flex;
+    align-items: center;
+    margin-right: auto;
+    color: $alt-text-color;
+    font-size: 13px;
+}
+
+.pl-entry-stats-item {
+    display: flex;
+    align-items: center;
+    height: 20px;
+
+    &:not(:last-child) {
+        padding-right: 8px;
+        margin-right: 8px;
+        border-right: 1px solid $color1;
+    }
+}
+
+@media (max-width: 960px) {
+    .home-tab {
+        padding-top: 40px;
+
+        &.active {
+            display: block;
+        }
+    }
+
+    .import-option-container,
+    .pl-entry-container {
+        margin: 0 auto;
+        max-width: 500px;
+    }
+
+    .pl-entry-container {
+        margin-top: 8px;
+    }
+
+    .info-panel {
+        right: 0;
+        left: auto;
+
+        &::before {
+            left: auto;
+            right: 8px;
+        }
+    }
+}

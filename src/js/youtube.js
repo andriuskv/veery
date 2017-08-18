@@ -123,10 +123,13 @@ async function parseVideos(videos, latestIndex) {
     return parseItems(items, "youtube", timeStamp, latestIndex);
 }
 
-async function getPlaylistTitle(id) {
-    const { items } = await fetchYoutube("playlists", "snippet", "id", id);
+async function getPlaylistTitleAndStatus(id) {
+    const { items } = await fetchYoutube("playlists", "snippet,status", "id", id);
 
-    return items.length ? items[0].snippet.title: "";
+    return {
+        title: items[0].snippet.title,
+        status: items[0].status.privacyStatus
+    };
 }
 
 async function addVideo(id, type) {
@@ -169,7 +172,7 @@ async function addPlaylist(url, id, type) {
     }
     const timeStamp = new Date().getTime();
     const tracks = await fetchPlaylistItems(id, timeStamp);
-    const title = await getPlaylistTitle(id);
+    const { title, status } = await getPlaylistTitleAndStatus(id);
 
     addImportedPlaylist({
         url,
@@ -177,7 +180,8 @@ async function addPlaylist(url, id, type) {
         id,
         tracks,
         player: "youtube",
-        type: "grid"
+        type: "grid",
+        isPrivate: status === "private"
     }, type);
 }
 

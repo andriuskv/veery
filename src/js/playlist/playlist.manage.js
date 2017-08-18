@@ -23,7 +23,7 @@ function initPlaylist(pl) {
     pl.initialized = true;
     addRoute(`playlist/${pl.id}`);
     createSidebarEntry(pl.title, pl.id);
-    createPlaylistEntry(pl.title, pl.id, pl.url);
+    createPlaylistEntry(pl);
     updateTracks(pl);
 }
 

@@ -185,7 +185,7 @@ function handleClick({ currentTarget, target }) {
 
         if (!isPaused) {
             ytPlayer.pauseVideo();
-            updatePlayerState(!isPaused, getCurrentTrack());
+            updatePlayerState(!isPaused, track);
         }
         window.open(href, "_blank");
     }

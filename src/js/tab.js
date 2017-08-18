@@ -3,6 +3,7 @@ import { removeElementClass, getElementById, getElementByAttr } from "./utils.js
 import { getSidebarEntry } from "./sidebar.js";
 import { togglePanel } from "./panels.js";
 import { getPlaylistById } from "./playlist/playlist.js";
+import { updatePlaylistStats } from "./playlist/playlist.entries.js";
 import { enableTrackSelection } from "./playlist/playlist.track-selection.js";
 import { setSortOptions, createSortPanel, changePlaylistOrder } from "./playlist/playlist.sorting.js";
 import { createMoveToPanel } from "./playlist/playlist.move-to.js";
@@ -103,6 +104,7 @@ window.addEventListener("route-change", ({ detail: { isPlaylistTab, tabId } }) =
         getElementById("js-tab-container").classList.remove("active");
     }
     else {
+        updatePlaylistStats();
         getElementById("js-tab-container").classList.add("active");
         getElementById("js-tab-playlist-container").classList.remove("active");
     }
