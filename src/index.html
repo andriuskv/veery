@@ -67,7 +67,11 @@
             <path d="M10,16.5V7.5L16,12M20,4.4C19.4,4.2 15.7,4 12,4C8.3,4 4.6,4.19 4,4.38C2.44,4.9 2,8.4 2,12C2,15.59 2.44,19.1 4,19.61C4.6,19.81 8.3,20 12,20C15.7,20 19.4,19.81 20,19.61C21.56,19.1 22,15.59 22,12C22,8.4 21.56,4.91 20,4.4Z">
         </symbol>
         <symbol id="plus" viewBox="0 0 24 24">
-            <path d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z" />
+            <path d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z">
+        </symbol>
+        <symbol id="lock" viewBox="0 0 24 24">
+            <title>Private</title>
+            <path d="M12,17A2,2 0 0,0 14,15C14,13.89 13.1,13 12,13A2,2 0 0,0 10,15A2,2 0 0,0 12,17M18,8A2,2 0 0,1 20,10V20A2,2 0 0,1 18,22H6A2,2 0 0,1 4,20V10C4,8.89 4.9,8 6,8H7V6A5,5 0 0,1 12,1A5,5 0 0,1 17,6V8H18M12,3A3,3 0 0,0 9,6V8H15V6A3,3 0 0,0 12,3Z">
         </symbol>
     </svg>
     <div class="player">
@@ -82,7 +86,7 @@
                         <span>Home</span>
                     </button>
                     <div class="sidebar-section-title">
-                        <span>Playlists</span>
+                        <span>PLAYLISTS</span>
                         <button class="btn btn-icon sidebar-form-toggle-btn" data-item="btn" title="Toggle playlist form">
                             <svg viewBox="0 0 24 24">
                                 <use href="#plus"></use>
@@ -104,30 +108,30 @@
             <div id="js-tab-container" class="tab-container">
                 <div id="js-tab-home" class="tab home-tab">
                     <div class="import-option-container">
-                        <h3 class="home-tab-section-title">Import</h3>
-                        <ul id="js-import-options" class="import-options">
+                        <h3 class="home-tab-section-title">Import options</h3>
+                        <ul id="js-import-options">
                             <li class="import-option">
-                                <button class="btn import-option-btn" data-item="local" data-type="file">
+                                <button class="btn btn-icon import-option-btn" data-item="local" data-type="file">
                                     <svg viewBox="0 0 24 24" class="import-option-icon">
                                         <path d="M13,9H18.5L13,3.5V9M6,2H14L20,8V20A2,2 0 0,
                                             118,22H6C4.89,22 4,21.1 4,20V4C4,2.89 4.89,2 6,2M9,
                                             16A2,2 0 0,0 7,18A2,2 0 0,0 9,20A2,2 0 0,0 11,
                                             18V13H14V11H10V16.27C9.71,16.1 9.36,16 9,16Z">
                                     </svg>
-                                    <span class="import-option-title">Add files</span>
+                                    <span>Add files</span>
                                 </button>
                             </li>
                             <li class="import-option">
-                                <button class="btn import-option-btn" data-item="local" data-type="folder">
+                                <button class="btn btn-icon import-option-btn" data-item="local" data-type="folder">
                                     <svg viewBox="0 0 24 24" class="import-option-icon">
                                         <path d="M10,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,
                                             20H20A2,2 0 0,0 22,18V8C22,6.89 21.1,6 20,6H12L10,4Z">
                                     </svg>
-                                    <span class="import-option-title">Add folder</span>
+                                    <span>Add folder</span>
                                 </button>
                             </li>
                             <li class="import-option">
-                                <button class="btn import-option-btn" data-item="dropbox">
+                                <button class="btn btn-icon import-option-btn" data-item="dropbox">
                                     <svg viewBox="0 0 24 24" class="import-option-icon">
                                         <path d="M12,14.56L16.35,18.16L18.2,16.95V18.3L12,
                                             22L5.82,18.3V16.95L7.68,18.16L12,14.56M7.68,2.5L12,
@@ -136,15 +140,15 @@
                                             6.5L7.68,2.5M12,13.68L18.13,9.94L12,6.19L5.87,9.94L12,
                                             13.68Z">
                                     </svg>
-                                    <span class="import-option-title">Dropbox chooser</span>
+                                    <span>Dropbox chooser</span>
                                 </button>
                             </li>
                             <li class="import-option">
-                                <button class="btn import-option-btn" data-item="youtube">
+                                <button class="btn btn-icon import-option-btn" data-item="youtube">
                                     <svg viewBox="0 0 24 24" class="import-option-icon">
                                         <use href="#youtube"></use>
                                     </svg>
-                                    <span class="import-option-title">YouTube</span>
+                                    <span>YouTube</span>
                                 </button>
                                 <div class="import-option-btns">
                                     <button class="btn btn-icon google-sign-in-or-out-btn"

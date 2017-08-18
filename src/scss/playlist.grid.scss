@@ -63,7 +63,6 @@
     @include text-truncate;
 
     margin-top: 6px;
-    font-size: 14px;
 }
 
 .grid-item-artist {
@@ -76,5 +75,4 @@
 .grid-item-duration {
     margin: 6px 4px 0 4px;
     color: $alt-text-color;
-    font-size: 14px;
 }
