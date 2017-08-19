@@ -11,6 +11,8 @@
 }
 
 .move-to-list {
+    overflow-y: auto;
+    max-height: 200px;
     padding-top: 8px;
     padding-bottom: 8px;
     margin-bottom: 8px;
@@ -19,6 +21,10 @@
 
     &.hidden {
         display: none;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: $color3;
     }
 }
 

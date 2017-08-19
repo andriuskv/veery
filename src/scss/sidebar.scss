@@ -30,10 +30,6 @@
 
 .sidebar {
     user-select: none;
-    flex-grow: 0;
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
     width: 200px;
     height: 100%;
     background-color: $color3;
@@ -53,19 +49,16 @@
     background-size: contain;
     background-repeat: no-repeat;
     text-indent: -9999px;
-}
 
-.main-title {
-    margin-top: 0;
-    margin-bottom: 0;
-    color: $base-text-color;
-    font-size: 24px;
-    cursor: default;
+    h1 {
+        margin-top: 0;
+        margin-bottom: 0;
+    }
 }
 
 .sidebar-nav {
-    flex-basis: 50%;
-    flex-grow: 1;
+    height: calc(100% - 80px);
+    padding-top: 8px;
     display: flex;
     flex-direction: column;
 }
@@ -73,7 +66,6 @@
 .sidebar-home-btn {
     flex-shrink: 0;
     align-items: flex-end;
-    margin-top: 8px;
 
     svg {
         margin-right: 4px;
@@ -84,6 +76,8 @@
     position: relative;
     padding-top: 16px;
     padding-bottom: 16px;
+    margin-top: 8px;
+    border-top: 1px solid $color1;
     color: $alt-text-color;
     font-size: 13px;
     text-align: center;

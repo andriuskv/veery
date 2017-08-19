@@ -63,7 +63,7 @@ function disableSyncBtn(id) {
 }
 
 function updatePlaylistStats() {
-    const container = getContainer();
+    const container = getElementById("js-pl-entries");
 
     if (!container) {
         return;
