@@ -10,7 +10,7 @@ body {
 
 body {
     background-color: $color2;
-    font-family: sans-serif;
+    font-family: $font-family;
     font-size: 14px;
     scrollbar-face-color: transparent;
     scrollbar-track-color: $color1;
@@ -92,6 +92,7 @@ svg {
     background-color: $color1;
     font-size: 14px;
     color: $base-text-color;
+    font-family: $font-family;
 }
 
 .input {
