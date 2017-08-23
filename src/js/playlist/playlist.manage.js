@@ -31,8 +31,9 @@ function removePlaylist(id) {
     const { rendered, _id } = playlist.getPlaylistById(id);
 
     if (playlist.isPlaylistActive(id)) {
-        stopPlayer();
+        stopPlayer(playlist.getCurrentTrack());
     }
+
     if (rendered) {
         removePlaylistTab(id);
     }

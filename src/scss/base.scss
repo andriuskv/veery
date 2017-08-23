@@ -139,12 +139,16 @@ svg {
 }
 
 .player-message {
+    overflow: hidden;
     bottom: 4px;
     right: 14px;
-    padding: 8px 16px;
+    max-width: 300px;
+    padding: 16px;
 }
 
 .play-message-title {
+    @include text-truncate;
+
     margin-top: 0;
     margin-bottom: 4px;
 }

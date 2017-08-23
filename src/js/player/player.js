@@ -223,8 +223,7 @@ function stopTrack(track) {
     }
 }
 
-function stopPlayer() {
-    const track = getCurrentTrack();
+function stopPlayer(track) {
     const element = getElementById("js-yt-player-container");
 
     if (track) {
@@ -375,14 +374,16 @@ window.addEventListener("track-start", ({ detail: startTime }) => {
 });
 
 window.addEventListener("track-end", () => {
+    const track = getCurrentTrack();
+
     if (getSetting("once")) {
-        stopPlayer();
+        stopPlayer(track);
         return;
     }
     storedTrack.remove();
 
     if (getSetting("repeat")) {
-        playNewTrack(getCurrentTrack());
+        playNewTrack(track);
         return;
     }
     playNextTrack();

@@ -64,9 +64,11 @@ function onError(error) {
     console.log(error);
 
     if (error.data >= 100) {
-        stopPlayer();
+        const track = getCurrentTrack();
+
+        stopPlayer(track);
         showPlayerMessage({
-            title: "Cannot play this track",
+            title: `Cannot play ${track.name}`,
             body: "It is either removed or marked as private"
         });
     }
