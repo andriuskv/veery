@@ -27,10 +27,6 @@ function capitalize(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-function replaceElement(newElement, oldElement) {
-    oldElement.parentElement.replaceChild(newElement, oldElement);
-}
-
 function removeElement(element) {
     element.parentElement.removeChild(element);
 }
@@ -138,7 +134,6 @@ export {
     capitalize,
     getElementById,
     getElementByAttr,
-    replaceElement,
     removeElement,
     removeElements,
     removeElementClass,
