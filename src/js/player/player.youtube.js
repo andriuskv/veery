@@ -21,7 +21,7 @@ function onPlayerStateChange({ data: state }) {
     const latestState = isPaused ? PAUSED: PLAYING;
     const track = getCurrentTrack();
 
-    if (document.activeElement === iframe) {
+    if (document.activeElement === iframe && (state === PLAYING || state === PAUSED)) {
         iframe.blur();
 
         if (latestState === PAUSED) {
