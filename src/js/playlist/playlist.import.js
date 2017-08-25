@@ -29,25 +29,19 @@ function isNewImportOption(option) {
     return importOption !== option;
 }
 
-function getElementsByAttr(attr) {
-    return Array.from(document.querySelectorAll(`[${attr}]`));
-}
-
 function createImportOptionMask(option, message = "") {
-    const elements = getElementsByAttr(`data-item=${option}`);
+    const element = document.querySelector(`[data-option=${option}]`);
 
-    elements.forEach(element => {
-        element.insertAdjacentHTML("afterend", `
-            <div class="option-mask" data-mask-id=${option}>
-                <img src="./assets/images/ring-alt.svg" alt="">
-                <span class="mask-message">${message}</span>
-            </div>
-        `);
-    });
+    element.insertAdjacentHTML("beforeend", `
+        <div class="option-mask" data-mask-id=${option}>
+            <img src="./assets/images/ring-alt.svg" alt="">
+            <span class="mask-message">${message}</span>
+        </div>
+    `);
 }
 
 function getMaskElements(option) {
-    return getElementsByAttr(`data-mask-id=${option}`);
+    return Array.from(document.querySelectorAll(`[data-mask-id=${option}]`));
 }
 
 function removeImportOptionMask(option) {
@@ -187,17 +181,16 @@ function createFileInput() {
     return input;
 }
 
-function showFilePicker(element) {
-    const type = element.getAttribute("data-type");
+function showFilePicker(item) {
     const filePicker = getElementById("js-file-picker") || createFileInput();
 
-    if (type === "file") {
+    if (item === "file") {
         filePicker.removeAttribute("webkitdirectory");
         filePicker.removeAttribute("directory");
         filePicker.removeAttribute("allowdirs");
         filePicker.setAttribute("multiple", "");
     }
-    else if (type === "folder") {
+    else if (item === "folder") {
         filePicker.removeAttribute("multiple");
         filePicker.setAttribute("webkitdirectory", "");
         filePicker.setAttribute("directory", "");
@@ -224,8 +217,8 @@ function createYouTubeInfoPanel(id, { element }) {
         <div id="${id}" class="panel info-panel">
             <p class="info-panel-title">Accepted formats:</p>
             <ul>
-                <li class="info-panel-content-item">https://www.youtube.com/playlist?list={playlistId}</li>
-                <li class="info-panel-content-item">https://www.youtube.com/watch?v={videoId}</li>
+                <li class="info-panel-content-item">youtube.com/playlist?list={playlistId}</li>
+                <li class="info-panel-content-item">youtube.com/watch?v={videoId}</li>
             </ul>
         </div>
     `);
@@ -289,62 +282,63 @@ async function initGoogleAuth() {
     }
 }
 
-importOptions.addEventListener("mouseover", function onMouveover({ currentTarget, target }) {
-    const element = getElementByAttr("data-item", target);
+function handleYouTubeOptionClick({ attrValue, elementRef }) {
+    if (attrValue === "form-toggle") {
+        const option = "youtube";
 
-    if (!element) {
+        if (isNewImportOption(option)) {
+            elementRef.classList.add("active");
+            createImportForm(elementRef, option);
+            setImportOption(option);
+
+            if (!googleAuthInitialized) {
+                initGoogleAuth();
+            }
+        }
+        else {
+            setImportOption();
+            removeImportForm();
+        }
+    }
+    else if (attrValue === "google-sign-in-or-out") {
+        handleGoogleAuthClick(elementRef);
+    }
+    else if (attrValue === "youtube-info") {
+        togglePanel(`js-${attrValue}-panel`, createYouTubeInfoPanel, { element: elementRef });
+    }
+}
+
+importOptions.addEventListener("mouseover", function onMouveover({ currentTarget, target }) {
+    const element = getElementByAttr("data-option", target);
+
+    if (!element || element.attrValue !== "dropbox") {
         return;
     }
-
-    if (element.attrValue === "dropbox") {
-        currentTarget.removeEventListener("mouseover", onMouveover);
-        scriptLoader.load({
-            src: "https://www.dropbox.com/static/api/2/dropins.js",
-            id: "dropboxjs",
-            "data-app-key": process.env.DROPBOX_API_KEY
-        });
-    }
+    currentTarget.removeEventListener("mouseover", onMouveover);
+    scriptLoader.load({
+        src: "https://www.dropbox.com/static/api/2/dropins.js",
+        id: "dropboxjs",
+        "data-app-key": process.env.DROPBOX_API_KEY
+    });
 });
 
 importOptions.addEventListener("click", ({ target }) => {
+    const optionElement = getElementByAttr("data-option", target);
     const element = getElementByAttr("data-item", target);
 
-    if (!element) {
+    if (!optionElement || !element) {
         return;
     }
-    const { attrValue, elementRef } = element;
+    const option = optionElement.attrValue;
 
-    if (attrValue === "google-sign-in-or-out") {
-        handleGoogleAuthClick(elementRef);
-        return;
+    if (option === "local") {
+        showFilePicker(element.attrValue);
     }
-
-    if (attrValue === "youtube-info") {
-        togglePanel(`js-${attrValue}-panel`, createYouTubeInfoPanel, {
-            element: elementRef
-        });
-        return;
-    }
-
-    removeImportForm();
-
-    if (attrValue === "local") {
-        showFilePicker(elementRef);
-    }
-    else if (attrValue === "dropbox") {
+    else if (option === "dropbox") {
         showDropboxChooser();
     }
-    else if (isNewImportOption(attrValue)) {
-        elementRef.classList.add("active");
-        createImportForm(elementRef, attrValue);
-        setImportOption(attrValue);
-
-        if (attrValue === "youtube" && !googleAuthInitialized) {
-            initGoogleAuth();
-        }
-    }
-    else {
-        setImportOption();
+    else if (option === "youtube") {
+        handleYouTubeOptionClick(element);
     }
 });
 
