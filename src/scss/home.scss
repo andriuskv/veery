@@ -11,12 +11,13 @@
 }
 
 .home-tab-section-title {
-    padding: 8px;
+    padding: 12px 8px;
     margin-top: 0;
     margin-bottom: 8px;
     border-bottom: 1px solid $color1;
     font-size: 20px;
     font-weight: normal;
+    color: $alt-text-color;
 }
 
 .import-option-container,
@@ -42,7 +43,6 @@
     justify-content: center;
     align-items: center;
     background-color: transparentize($color3, 0.2);
-    text-align: center;
 
     img {
         width: 24px;
@@ -57,10 +57,18 @@
     position: relative;
 }
 
+.import-option-local {
+    display: flex;
+
+    .import-option-btn:first-of-type {
+        border-right: 1px solid $color1;
+    }
+}
+
 .import-option-btn {
     justify-content: flex-start;
     width: 100%;
-    padding: 8px;
+    padding: 12px 8px;
 
     &:hover {
         background-color: $color1;
@@ -78,7 +86,7 @@
 
 .import-option-btns {
     position: absolute;
-    top: 6px;
+    top: 10px;
     right: 4px;
     display: none;
 }
@@ -111,7 +119,7 @@
 .info-panel {
     top: 30px;
     left: 0;
-    width: 320px;
+    width: 260px;
 
     @include popup-arrow {
         top: -4px;
@@ -230,7 +238,7 @@
 .pl-entry-content {
     display: flex;
     padding-top: 4px;
-    padding-left: 4px;
+    padding-left: 6px;
 }
 
 .pl-entry-stats {

@@ -120,28 +120,22 @@
                     <div class="import-option-container">
                         <h3 class="home-tab-section-title">Import options</h3>
                         <ul id="js-import-options">
-                            <li class="import-option">
-                                <button class="btn btn-icon import-option-btn" data-item="local" data-type="file">
+                            <li class="import-option import-option-local" data-option="local">
+                                <button class="btn btn-icon import-option-btn" data-item="file">
                                     <svg viewBox="0 0 24 24" class="import-option-icon">
-                                        <path d="M13,9H18.5L13,3.5V9M6,2H14L20,8V20A2,2 0 0,
-                                            118,22H6C4.89,22 4,21.1 4,20V4C4,2.89 4.89,2 6,2M9,
-                                            16A2,2 0 0,0 7,18A2,2 0 0,0 9,20A2,2 0 0,0 11,
-                                            18V13H14V11H10V16.27C9.71,16.1 9.36,16 9,16Z">
+                                        <path d="M13,9H18.5L13,3.5V9M6,2H14L20,8V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V4C4,2.89 4.89,2 6,2M11,15V12H9V15H6V17H9V20H11V17H14V15H11Z">
                                     </svg>
-                                    <span>Add files</span>
+                                    <span>Files</span>
+                                </button>
+                                <button class="btn btn-icon import-option-btn" data-item="folder">
+                                    <svg viewBox="0 0 24 24" class="import-option-icon">
+                                        <path d="M10,4L12,6H20A2,2 0 0,1 22,8V18A2,2 0 0,1 20,20H4C2.89,20 2,19.1 2,18V6C2,4.89 2.89,4 4,4H10M15,9V12H12V14H15V17H17V14H20V12H17V9H15Z">
+                                    </svg>
+                                    <span>Folder</span>
                                 </button>
                             </li>
-                            <li class="import-option">
-                                <button class="btn btn-icon import-option-btn" data-item="local" data-type="folder">
-                                    <svg viewBox="0 0 24 24" class="import-option-icon">
-                                        <path d="M10,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,
-                                            20H20A2,2 0 0,0 22,18V8C22,6.89 21.1,6 20,6H12L10,4Z">
-                                    </svg>
-                                    <span>Add folder</span>
-                                </button>
-                            </li>
-                            <li class="import-option">
-                                <button class="btn btn-icon import-option-btn" data-item="dropbox">
+                            <li class="import-option" data-option="dropbox">
+                                <button class="btn btn-icon import-option-btn" data-item="chooser">
                                     <svg viewBox="0 0 24 24" class="import-option-icon">
                                         <path d="M12,14.56L16.35,18.16L18.2,16.95V18.3L12,
                                             22L5.82,18.3V16.95L7.68,18.16L12,14.56M7.68,2.5L12,
@@ -150,11 +144,11 @@
                                             6.5L7.68,2.5M12,13.68L18.13,9.94L12,6.19L5.87,9.94L12,
                                             13.68Z">
                                     </svg>
-                                    <span>Dropbox chooser</span>
+                                    <span>Dropbox</span>
                                 </button>
                             </li>
-                            <li class="import-option">
-                                <button class="btn btn-icon import-option-btn" data-item="youtube">
+                            <li class="import-option" data-option="youtube">
+                                <button class="btn btn-icon import-option-btn" data-item="form-toggle">
                                     <svg viewBox="0 0 24 24" class="import-option-icon">
                                         <use href="#youtube"></use>
                                     </svg>

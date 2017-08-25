@@ -14,7 +14,7 @@ function createContainer(id) {
     h3.classList.add("home-tab-section-title");
     ul.classList.add("pl-entries");
 
-    h3.textContent = "Playlist entries";
+    h3.textContent = "Playlists";
     ul.id = id;
     ul.addEventListener("click", handleContainerClick);
     ul.addEventListener("focus", handleContainerFocus, true);
