@@ -11,10 +11,12 @@
     user-select: none;
     background-color: $color1;
     box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.1);
+    color: $base-text-color;
 
     @include breakpoint-small {
         z-index: 4;
         flex-wrap: wrap;
+        align-items: flex-start;
         padding: 4px;
     }
 }
@@ -71,7 +73,6 @@
     height: 100%;
     padding-left: 8px;
     padding-right: 8px;
-    color: $base-text-color;
     white-space: nowrap;
     overflow: hidden;
 }
@@ -79,7 +80,7 @@
 .track-title {
     @include text-truncate;
 
-    margin-bottom: 4px;
+    margin-bottom: 2px;
 }
 
 .track-artist {
@@ -98,26 +99,19 @@
         flex-grow: 1;
         flex-direction: row;
         align-items: center;
-        height: 46px;
+        height: 36px;
+        margin-top: auto;
     }
 }
 
 .main-control-btns {
     display: flex;
     justify-content: center;
-    margin-top: 8px;
-
-    @include breakpoint-small {
-        margin-top: 0;
-    }
+    align-items: center;
 }
 
 .main-control-btn {
     padding: 0;
-
-    &:not(:last-of-type) {
-        margin-right: 4px;
-    }
 
     svg {
         width: 32px;
@@ -132,24 +126,48 @@
     }
 }
 
+.play-pause-btn {
+    margin-right: 8px;
+    margin-left: 8px;
+
+    svg {
+        width: 40px;
+        height: 40px;
+    }
+
+    @include breakpoint-small {
+        margin-right: 4px;
+        margin-left: 4px;
+
+        svg {
+            width: 36px;
+            height: 36px;
+        }
+    }
+}
+
 .track-slider-panel {
     display: flex;
     align-items: center;
     flex-grow: 1;
-    height: 24px;
 }
 
 .track-time {
-    margin-left: 8px;
+    flex-shrink: 0;
+    min-width: 32px;
     margin-right: 8px;
-    color: $base-text-color;
+    margin-left: 8px;
     font-size: 12px;
+
+    &:first-of-type {
+        text-align: right;
+    }
 }
 
 .control-slider-container {
     position: relative;
-    height: 100%;
     width: 100%;
+    height: 24px;
 }
 
 .control-slider {
@@ -243,7 +261,10 @@
     width: 30%;
 
     @include breakpoint-small {
+        align-items: center;
         width: auto;
+        height: 36px;
+        margin-top: auto;
     }
 }
 
@@ -264,7 +285,6 @@
 
 .volume-slider-container {
     width: 100px;
-    margin-left: 4px;
     margin-right: 8px;
 }
 
