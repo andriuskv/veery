@@ -8,6 +8,10 @@
     &.active {
         display: flex;
     }
+
+    @include breakpoint-small {
+        padding-top: 40px;
+    }
 }
 
 .home-tab-section-title {
@@ -262,12 +266,8 @@
 }
 
 @media (max-width: 960px) {
-    .home-tab {
-        padding-top: 40px;
-
-        &.active {
-            display: block;
-        }
+    .home-tab.active {
+        display: block;
     }
 
     .import-option-container,
