@@ -11,10 +11,7 @@ import { createPlaylistEntry, enableSyncBtn, disableSyncBtn } from "./playlist.e
 
 function updateTracks(pl) {
     playlist.setPlaybackOrder(pl, getSetting("shuffle"));
-
-    if (pl.sortedBy) {
-        sortTracks(pl.tracks, pl.sortedBy, pl.order);
-    }
+    sortTracks(pl.tracks, pl.sortedBy, pl.order);
     pl.tracks = playlist.resetTrackIndexes(pl.tracks);
     playlist.updatePlaylistDuration(pl);
 }
@@ -64,6 +61,8 @@ function updateCurrentTrack(pl) {
 }
 
 function addTracksToPlaylist(pl, tracks, showPlaylist = isRouteActive("home")) {
+    tracks = setPrimaryTackIndexes(tracks, pl.lastTrackIndex);
+    pl.lastTrackIndex = tracks[tracks.length - 1].primaryIndex + 1;
     pl.tracks = pl.tracks.concat(tracks);
 
     if (!pl.initialized) {
@@ -85,6 +84,13 @@ function addTracksToPlaylist(pl, tracks, showPlaylist = isRouteActive("home")) {
     postMessageToWorker({
         action: "put",
         playlist: pl
+    });
+}
+
+function setPrimaryTackIndexes(tracks, lastIndex = 0) {
+    return tracks.map((track, index) => {
+        track.primaryIndex = lastIndex + index;
+        return track;
     });
 }
 
@@ -136,7 +142,9 @@ function hideStatusIndicator(id) {
     const entry = getSidebarEntry(id);
     const element = entry.querySelector(".sidebar-entry-spinner");
 
-    removeElement(element);
+    if (element) {
+        removeElement(element);
+    }
     enableSyncBtn(id);
 }
 

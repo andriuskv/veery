@@ -11,13 +11,17 @@ function setSortBtnText(text) {
     getElementById("js-sort-toggle").textContent = capitalize(text);
 }
 
-function toggleOrderBtn(order = 1) {
+function toggleOrderBtn(order) {
     const icon = getElementById("js-order-toggle").querySelector(".js-icon");
 
     icon.setAttribute("href", `#${order === 1 ? "down" : "up"}-arrow`);
 }
 
 function getSortingValue(sortBy, track) {
+    if (sortBy === "index") {
+        return track.initialIndex;
+    }
+
     if (sortBy === "duration") {
         return track.durationInSeconds;
     }
@@ -73,12 +77,12 @@ function changePlaylistSorting(pl, sortBy) {
 }
 
 function setSortOptions({ sortedBy, order }) {
-    setSortBtnText(sortedBy || "sorting");
+    setSortBtnText(sortedBy);
     toggleOrderBtn(order);
 }
 
 function getSortOtions(sortedBy) {
-    return ["name", "title", "artist", "album", "duration", "age"].map(option => {
+    return ["index", "name", "title", "artist", "album", "duration", "age"].map(option => {
         const activeClass = option === sortedBy ? " active" : "";
 
         return `
@@ -114,8 +118,10 @@ function selectSortOption({ currentTarget, target }) {
     if (sortBy === pl.sortedBy) {
         return;
     }
-    setSortBtnText(sortBy);
-    toggleOrderBtn();
+    setSortOptions({
+        sortedBy: sortBy,
+        order: 1
+    });
     changePlaylistSorting(pl, sortBy);
 }
 
