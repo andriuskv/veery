@@ -8,7 +8,7 @@ function getTrackBlob(link) {
     return fetch(link).then(response => response.blob());
 }
 
-async function parseTracks(tracks, id, timeStamp, parsedTracks = []) {
+async function parseTracks(tracks, id, parsedTracks = []) {
     const track = tracks[parsedTracks.length];
     const audioTrack = await getTrackBlob(track.audioTrack.link);
     const durationInSeconds = await getTrackDuration(audioTrack);
@@ -24,12 +24,11 @@ async function parseTracks(tracks, id, timeStamp, parsedTracks = []) {
         duration: formatTime(durationInSeconds),
         thumbnail: "assets/images/album-art-placeholder.png",
         player: "native",
-        playlistId: id,
-        createdAt: timeStamp
+        playlistId: id
     });
 
     if (parsedTracks.length !== tracks.length) {
-        return await parseTracks(tracks, id, timeStamp, parsedTracks);
+        return await parseTracks(tracks, id, parsedTracks);
     }
     return parsedTracks;
 }

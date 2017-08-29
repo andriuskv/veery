@@ -65,7 +65,7 @@ function filterInvalidItems(items) {
     });
 }
 
-function parseItems(items, id, timeStamp) {
+function parseItems(items, id) {
     return items.map(track => ({
         id: track.snippet.resourceId.videoId,
         durationInSeconds: track.durationInSeconds,
@@ -76,8 +76,7 @@ function parseItems(items, id, timeStamp) {
         album: "",
         thumbnail: track.snippet.thumbnails.medium.url,
         player: "youtube",
-        playlistId: id,
-        createdAt: timeStamp
+        playlistId: id
     }));
 }
 
@@ -94,7 +93,7 @@ function handleError(error, id) {
     throw new Error(error.message);
 }
 
-async function fetchPlaylistItems(id, timeStamp, token) {
+async function fetchPlaylistItems(id, token) {
     const data = await fetchYoutube("playlistItems", "snippet", "playlistId", id, token);
 
     if (data.error) {
@@ -102,10 +101,10 @@ async function fetchPlaylistItems(id, timeStamp, token) {
     }
     const validItems = filterInvalidItems(data.items);
     const items = await getVideoDuration(validItems);
-    const tracks = parseItems(items, id, timeStamp);
+    const tracks = parseItems(items, id);
 
     if (data.nextPageToken) {
-        const nextPageItems = await fetchPlaylistItems(id, timeStamp, data.nextPageToken);
+        const nextPageItems = await fetchPlaylistItems(id, data.nextPageToken);
 
         return tracks.concat(nextPageItems);
     }
@@ -113,14 +112,13 @@ async function fetchPlaylistItems(id, timeStamp, token) {
 }
 
 function parseVideos(videos, latestIndex) {
-    const timeStamp = new Date().getTime();
     const items = filterInvalidItems(videos).map(item => {
         item.snippet.resourceId = { videoId: item.id };
         item.durationInSeconds = parseDuration(item.contentDetails.duration) - 1;
         return item;
     });
 
-    return parseItems(items, "youtube", timeStamp, latestIndex);
+    return parseItems(items, "youtube", latestIndex);
 }
 
 async function getPlaylistTitleAndStatus(id) {
@@ -170,8 +168,7 @@ async function addPlaylist(url, id, type) {
     if (pl) {
         showStatusIndicator(id);
     }
-    const timeStamp = new Date().getTime();
-    const tracks = await fetchPlaylistItems(id, timeStamp);
+    const tracks = await fetchPlaylistItems(id);
     const { title, status } = await getPlaylistTitleAndStatus(id);
 
     addImportedPlaylist({

@@ -61,7 +61,7 @@ async function getTrackMetadata(track) {
     return data;
 }
 
-async function parseTracks(tracks, id, timeStamp, parsedTracks = []) {
+async function parseTracks(tracks, id, parsedTracks = []) {
     const { audioTrack, name } = tracks[parsedTracks.length];
     const { artist, title, album, duration, picture } = await getTrackMetadata(audioTrack);
 
@@ -75,12 +75,11 @@ async function parseTracks(tracks, id, timeStamp, parsedTracks = []) {
         durationInSeconds: duration,
         duration: formatTime(duration),
         player: "native",
-        playlistId: id,
-        createdAt: timeStamp
+        playlistId: id
     });
 
     if (parsedTracks.length !== tracks.length) {
-        return await parseTracks(tracks, id, timeStamp, parsedTracks);
+        return await parseTracks(tracks, id, parsedTracks);
     }
     return parsedTracks;
 }
@@ -103,8 +102,7 @@ async function addTracks(importOption, pl, newTracks, parseTracks) {
 
     try {
         await scriptLoader.load({ src: "libs/metadata-audio-parser.min.js" });
-        const timeStamp = new Date().getTime();
-        const parsedTracks = await parseTracks(tracks, pl.id, timeStamp);
+        const parsedTracks = await parseTracks(tracks, pl.id);
 
         addTracksToPlaylist(pl, parsedTracks);
         removeImportOptionMask(importOption);
