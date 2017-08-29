@@ -28,8 +28,8 @@ function getPlaylistByPropValue(prop, value) {
 
 function createPlaylist(pl) {
     const defaultProperties = {
-        sortedBy: "",
-        order: 0,
+        sortedBy: "index",
+        order: 1,
         shuffled: false,
         tracks: [],
         playbackIndex: 0,
