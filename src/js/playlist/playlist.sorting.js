@@ -19,15 +19,11 @@ function toggleOrderBtn(order) {
 
 function getSortingValue(sortBy, track) {
     if (sortBy === "index") {
-        return track.initialIndex;
+        return track.primaryIndex;
     }
 
     if (sortBy === "duration") {
         return track.durationInSeconds;
-    }
-
-    if (sortBy === "age") {
-        return track.createdAt;
     }
     return track[sortBy].toLowerCase();
 }
@@ -82,7 +78,7 @@ function setSortOptions({ sortedBy, order }) {
 }
 
 function getSortOtions(sortedBy) {
-    return ["index", "name", "title", "artist", "album", "duration", "age"].map(option => {
+    return ["index", "name", "title", "artist", "album", "duration"].map(option => {
         const activeClass = option === sortedBy ? " active" : "";
 
         return `
