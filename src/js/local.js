@@ -88,7 +88,7 @@ async function addTracks(importOption, pl, newTracks, parseTracks) {
     createImportOptionMask(importOption, "Adding");
 
     if (!newTracks.length) {
-        showNotice(importOption, "No valid audio files found");
+        showNotice(importOption, "No valid audio file found");
         hideStatusIndicator(pl.id);
         return;
     }
