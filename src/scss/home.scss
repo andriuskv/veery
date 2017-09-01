@@ -46,7 +46,9 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 0 10%;
     background-color: transparentize($color3, 0.2);
+    text-align: center;
 
     img {
         width: 24px;

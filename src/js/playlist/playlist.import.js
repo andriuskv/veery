@@ -2,7 +2,6 @@
 
 import {
     removeElement,
-    removeElements,
     removeElementClass,
     getElementById,
     getElementByAttr,
@@ -30,9 +29,7 @@ function isNewImportOption(option) {
 }
 
 function createImportOptionMask(option, message = "") {
-    const element = document.querySelector(`[data-option=${option}]`);
-
-    element.insertAdjacentHTML("beforeend", `
+    document.querySelector(`[data-option=${option}]`).insertAdjacentHTML("beforeend", `
         <div class="option-mask" data-mask-id=${option}>
             <img src="./assets/images/ring-alt.svg" alt="">
             <span class="mask-message">${message}</span>
@@ -40,26 +37,18 @@ function createImportOptionMask(option, message = "") {
     `);
 }
 
-function getMaskElements(option) {
-    return Array.from(document.querySelectorAll(`[data-mask-id=${option}]`));
+function getMaskElement(option) {
+    return document.querySelector(`[data-mask-id=${option}]`);
 }
 
 function removeImportOptionMask(option) {
-    if (option) {
-        const elements = getMaskElements(option);
-
-        removeElements(elements);
-    }
+    removeElement(getMaskElement(option));
 }
 
 function showNotice(option, message) {
-    const elements = getMaskElements(option);
-
-    elements.forEach(element => {
-        element.textContent = message;
-    });
-
-    setTimeout(removeElements, 3200, elements);
+    const element = getMaskElement(option);
+    element.textContent = message;
+    setTimeout(removeElement, 3200, element);
 }
 
 function importPlaylist(option, { url, type }) {
