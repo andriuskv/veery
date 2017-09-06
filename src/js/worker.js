@@ -2,6 +2,7 @@ import { toggleCurrentRoute } from "./router.js";
 import { updatePlaylist, createPlaylist } from "./playlist/playlist.js";
 import { initPlaylist } from "./playlist/playlist.manage.js";
 import { storedTrack } from "./player/player.js";
+import { createMediaContainer } from "./player/player.now-playing.js";
 
 const worker = new Worker("./ww.js");
 
@@ -10,6 +11,7 @@ worker.onmessage = function({ data: { action, payload } }) {
         Object.keys(payload).forEach(id => {
             initPlaylist(createPlaylist(payload[id]));
         });
+        createMediaContainer();
         toggleCurrentRoute();
         storedTrack.initTrack();
     }

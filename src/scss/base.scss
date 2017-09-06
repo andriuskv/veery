@@ -52,7 +52,7 @@ svg {
     outline-width: 0;
 }
 
-.yt-player-container {
+.media-container {
     z-index: 4;
     position: absolute;
     top: 0;
@@ -62,18 +62,15 @@ svg {
     display: none;
     width: 100%;
     height: 100%;
+    backdrop-filter: blur(2px);
+    background-color: transparentize($color2, 0.2);
 
     &.visible {
         display: block;
     }
 }
 
-.yt-player {
-    width: 100%;
-    height: 100%;
-}
-
-.yt-player-btns {
+.media-btn-container {
     z-index: 1;
     position: absolute;
     top: 4px;
@@ -83,6 +80,29 @@ svg {
 
     .btn-icon {
         background-color: transparent;
+
+         &.hidden {
+            display: none;
+        }
+    }
+}
+
+.media-image {
+    width: 100%;
+    height: 100%;
+    object-fit: scale-down;
+
+    &.hidden {
+        display: none;
+    }
+}
+
+.yt-player {
+    width: 100%;
+    height: 100%;
+
+    &.hidden {
+        display: none;
     }
 }
 

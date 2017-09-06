@@ -21,7 +21,7 @@ import {
     getTrack,
     getNextTrack
 } from "../playlist/playlist.js";
-import { removeElementClass, getElementById, getElementByAttr } from "../utils.js";
+import { removeElementClass, getElementById, getElementByAttr, getImage } from "../utils.js";
 import { getVisiblePlaylistId } from "../tab.js";
 import { setSetting, getSetting, removeSetting } from "../settings.js";
 import { showActiveIcon, removeActiveIcon } from "../sidebar.js";
@@ -95,11 +95,30 @@ function updatePlayerState(state, track) {
     togglePlayPauseBtns(track, isPaused);
 }
 
+function updateTrackMedia(track) {
+    const ytPlayer = getElementById("js-yt-player");
+    const ytPlayerWatch = getElementById("js-yt-player-watch");
+    const image = getElementById("js-media-image");
+
+    if (track.player === "youtube") {
+        ytPlayer.classList.remove("hidden");
+        ytPlayerWatch.classList.remove("hidden");
+        image.classList.add("hidden");
+    }
+    else {
+        ytPlayer.classList.add("hidden");
+        ytPlayerWatch.classList.add("hidden");
+        image.classList.remove("hidden");
+        image.src = getImage(track.thumbnail);
+    }
+}
+
 function beforeTrackStart(track) {
     const pl = getPlaylistById(track.playlistId);
 
     showNowPlaying(track);
     showTrackDuration(track.duration, track.durationInSeconds);
+    updateTrackMedia(track);
 
     if (pl.rendered && track.index !== -1) {
         showTrack(pl.id, track.index, { scrollToTrack });
@@ -224,7 +243,7 @@ function stopTrack(track) {
 }
 
 function stopPlayer(track) {
-    const element = getElementById("js-yt-player-container");
+    const element = getElementById("js-media-container");
 
     if (track) {
         stopTrack(track);
