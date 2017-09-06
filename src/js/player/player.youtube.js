@@ -16,7 +16,7 @@ let args = null;
 window.onYouTubeIframeAPIReady = initPlayer;
 
 function onPlayerStateChange({ data: state }) {
-    const iframe = getElementById("yt-player");
+    const iframe = getElementById("js-yt-player");
     const isPaused = getPlayerState();
     const latestState = isPaused ? PAUSED: PLAYING;
     const track = getCurrentTrack();
