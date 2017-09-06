@@ -10,22 +10,6 @@ function getPlaylistById(id) {
     return playlists[id];
 }
 
-function getPlaylistByPropValue(prop, value) {
-    const ids = Object.keys(playlists);
-
-    for (let i = 0; i < ids.length; i += 1) {
-        const playlist = playlists[ids[i]];
-        const foundProp = Object.keys(playlist).find(localProp => {
-            return localProp === prop && playlist[localProp] === value;
-        });
-
-        if (foundProp) {
-            return playlist;
-        }
-    }
-    return null;
-}
-
 function createPlaylist(pl) {
     const defaultProperties = {
         sortedBy: "index",
@@ -168,7 +152,6 @@ function resetTrackIndexes(tracks) {
 export {
     setPlaylistAsActive,
     getPlaylistById,
-    getPlaylistByPropValue,
     removePlaylist,
     getAllPlaylists,
     createPlaylist,

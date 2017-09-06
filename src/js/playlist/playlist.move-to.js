@@ -1,7 +1,8 @@
-import { getElementById, getElementByAttr, removeElement } from "./../utils.js";
+import { getElementById, getElementByAttr } from "./../utils.js";
 import { getVisiblePlaylistId } from "./../tab.js";
+import { removePanel } from "./../panels.js";
 import { getPlaylistById, getAllPlaylists, findTrack } from "./playlist.js";
-import { getSelectedTrackElements, getSelectedTrackIndexes } from "./playlist.track-selection.js";
+import { getSelectedElements, getElementIndexes } from "./playlist.track-selection.js";
 import { onNewPlaylistFormSubmit, createNewPlaylistForm, addTracksToPlaylist } from "./playlist.manage.js";
 
 function showMoveToBtn() {
@@ -35,12 +36,12 @@ function showForm({ currentTarget }) {
 }
 
 function moveTracks(playlistId) {
-    const elements = getSelectedTrackElements();
-    const trackIndexes = getSelectedTrackIndexes(elements);
+    const elements = getSelectedElements();
+    const indexes = getElementIndexes(elements);
     const { tracks } = getPlaylistById(getVisiblePlaylistId());
     const pl = getPlaylistById(playlistId);
     const selectedTracks = tracks
-        .filter(track => trackIndexes.includes(track.index) && !findTrack(playlistId, track.name))
+        .filter(track => indexes.includes(track.index) && !findTrack(playlistId, track.name))
         .map(track => Object.assign({}, track, { playlistId }));
 
     addTracksToPlaylist(pl, selectedTracks, true);
@@ -54,7 +55,7 @@ function onListClick({ target }) {
     }
     moveTracks(element.attrValue);
     getElementById("js-move-to-list").removeEventListener("click", onListClick);
-    removeElement(getElementById("js-move-to-panel-container"));
+    removePanel();
 }
 
 function createPlaylistList(playlistId) {

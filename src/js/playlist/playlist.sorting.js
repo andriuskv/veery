@@ -93,9 +93,10 @@ function getSortOtions(sortedBy) {
 
 function createSortPanel(id, { sortedBy }) {
     const sortOptions = getSortOtions(sortedBy);
-    const sortPanelElement = `<ul id="${id}" class="panel sort-panel">${sortOptions}</ul>`;
 
-    getElementById("js-sort-panel-container").insertAdjacentHTML("beforeend", sortPanelElement);
+    getElementById("js-sort-panel-container").insertAdjacentHTML("beforeend", `
+        <ul id="${id}" class="panel sort-panel">${sortOptions}</ul>
+    `);
     getElementById(id).addEventListener("click", selectSortOption);
 }
 
