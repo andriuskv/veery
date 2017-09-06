@@ -164,7 +164,7 @@ function selectTrackElements(elements, area, ctrlKey) {
     });
 }
 
-function adjustMousePosition(pos, max) {
+function normalizeMousePosition(pos, max) {
     if (pos > max) {
         return max;
     }
@@ -227,8 +227,8 @@ function onMousemove(event) {
     const mouseYRelatedToViewport = event.clientY - playlistElementRect.top;
     const x = event.clientX - playlistElementRect.left;
     const y = playlistElement.scrollTop + mouseYRelatedToViewport;
-    mousePos.x = adjustMousePosition(x, maxWidth);
-    mousePos.y = adjustMousePosition(y, maxScrollHeight);
+    mousePos.x = normalizeMousePosition(x, maxWidth);
+    mousePos.y = normalizeMousePosition(y, maxScrollHeight);
 
     event.preventDefault();
 
@@ -265,14 +265,11 @@ function onMouseup({ target, ctrlKey }) {
     }
 
     if (selectionElement) {
-        const elements = getSelectedTrackElements();
+        const elements = getSelectedElements();
 
         resetSelection();
 
         if (elements.length) {
-
-            // Move focus to first selected element
-            elements[0].focus();
             showMoveToBtn();
             window.addEventListener("keypress", onKeypress);
             window.addEventListener("click", onClick);
@@ -343,18 +340,31 @@ function onKeypress(event) {
     window.removeEventListener("keypress", onKeypress);
 }
 
-function getSelectedTrackElements() {
+function getSelectedElements() {
     return Array.from(document.querySelectorAll(".track.selected"));
 }
 
-function getSelectedTrackIndexes(elements) {
+function getElementIndexes(elements) {
     return elements.map(element => parseInt(element.getAttribute("data-index"), 10));
 }
 
-function removeSelectedPlaylistTracks(tracks, selectedTrackIndexes) {
-    const filteredTracks = tracks.filter(track => !selectedTrackIndexes.includes(track.index));
+function separatePlaylistTracks(tracks, indexes) {
+    const tracksToKeep = [];
+    const tracksToRemove = [];
 
-    return resetTrackIndexes(filteredTracks);
+    tracks.forEach(track => {
+        if (indexes.includes(track.index)) {
+            tracksToRemove.push(track);
+        }
+        else {
+            tracksToKeep.push(track);
+        }
+    });
+
+    return {
+        tracksToRemove,
+        tracksToKeep: resetTrackIndexes(tracksToKeep)
+    };
 }
 
 function resetListElementIndexes(elements, startIndex) {
@@ -402,18 +412,16 @@ function updateCurrentTrackIndex(playlistId, selectedTrackIndexes) {
 
 function removeSelectedTracks() {
     const id = getVisiblePlaylistId();
-    const selectedElements = getSelectedTrackElements();
+    const elements = getSelectedElements();
     const pl = getPlaylistById(id);
-    const selectedTrackIndexes = getSelectedTrackIndexes(selectedElements);
-    const tracksToRemove = pl.tracks.filter(track => selectedTrackIndexes.includes(track.index));
-    const tracks = removeSelectedPlaylistTracks(pl.tracks, selectedTrackIndexes);
-    const playbackOrder = getPlaybackOrder(tracks, getSetting("shuffle"));
+    const indexes = getElementIndexes(elements);
+    const { tracksToKeep, tracksToRemove } = separatePlaylistTracks(pl.tracks, indexes);
 
-    removeElements(selectedElements);
-    resetPlaylistElementIndexes(id, pl.type, selectedTrackIndexes);
+    removeElements(elements);
+    resetPlaylistElementIndexes(id, pl.type, indexes);
     updatePlaylist(id, {
-        playbackOrder,
-        tracks
+        playbackOrder: getPlaybackOrder(tracksToKeep, getSetting("shuffle")),
+        tracks: tracksToKeep
     });
     postMessageToWorker({
         action: "remove-tracks",
@@ -422,13 +430,13 @@ function removeSelectedTracks() {
             tracks: tracksToRemove
         }
     });
-    updateCurrentTrackIndex(id, selectedTrackIndexes);
+    updateCurrentTrackIndex(id, indexes);
     removeElement(getElementById("js-move-to-panel-container"));
     updatePlaylistDuration(pl);
 }
 
 export {
     enableTrackSelection,
-    getSelectedTrackElements,
-    getSelectedTrackIndexes
+    getSelectedElements,
+    getElementIndexes
 };

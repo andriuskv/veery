@@ -95,16 +95,8 @@ function setPrimaryTackIndexes(tracks, lastIndex = 0) {
 }
 
 function onNewPlaylistFormSubmit(event) {
-    const form = event.target;
-    const title = form.title.value.trim();
-
-    event.preventDefault();
-
-    if (!title) {
-        return;
-    }
     const pl = playlist.createPlaylist({
-        title,
+        title: event.target.title.value,
         id: Math.random().toString(36).slice(2),
         type: "grid"
     });
@@ -114,7 +106,8 @@ function onNewPlaylistFormSubmit(event) {
         action: "put",
         playlist: pl
     });
-    form.reset();
+    event.preventDefault();
+    event.target.reset();
 }
 
 function createNewPlaylistForm(id, containerElement, handleSubmit) {
