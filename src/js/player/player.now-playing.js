@@ -22,6 +22,32 @@ function indentText(element, width, maxWidth, x = 0) {
     });
 }
 
+function createMediaContainer() {
+    document.querySelector(".player").insertAdjacentHTML("afterbegin", `
+        <div id="js-media-container" class="media-container">
+            <div class="media-btn-container">
+                <button id="js-yt-player-watch" class="btn btn-icon hidden" title="Watch on YouTube">
+                    <svg viewBox="0 0 24 24">
+                        <use href="#youtube"></use>
+                    </svg>
+                </button>
+                <button id="js-media-close-btn" class="btn btn-icon" data-item="close" title="Close">
+                    <svg viewBox="0 0 24 24">
+                        <use href="#close"></use>
+                    </svg>
+                </button>
+            </div>
+            <div id="js-yt-player" class="yt-player hidden"></div>
+            <img src="" id="js-media-image" class="media-image hidden" alt="">
+        </div>
+    `);
+    getElementById("js-media-close-btn").addEventListener("click", hideMedia);
+}
+
+function hideMedia() {
+    getElementById("js-media-container").classList.remove("visible");
+}
+
 function handleMousemove({ currentTarget, target }) {
     if (currentTarget === target) {
         return;
@@ -52,17 +78,13 @@ function handleMouseleave({ currentTarget }) {
     }
 }
 
-
 function handleClickOnArt({ target }) {
     const element = getElementByAttr("data-button", target);
 
     if (!element) {
         return;
     }
-
-    if (element.attrValue === "youtube") {
-        getElementById("js-yt-player-container").classList.toggle("visible");
-    }
+    getElementById("js-media-container").classList.toggle("visible");
 }
 
 function renderNowPlaying(track) {
@@ -71,13 +93,11 @@ function renderNowPlaying(track) {
     const nowPlayingView = `
         <div id="js-now-playing-art-container" class="now-playing-art-container">
             <div class="now-playing-art-button-container">
-                ${track.player === "youtube" ? `
-                    <button class="btn btn-icon" title="Toggle YouTube player" data-button="youtube">
-                        <svg viewBox="0 0 24 24">
-                            <use href="#expand"></use>
-                        </svg>
-                    </button>
-                ` : ""}
+                <button class="btn btn-icon" title="Expand" data-button="expand">
+                    <svg viewBox="0 0 24 24">
+                        <use href="#expand"></use>
+                    </svg>
+                </button>
             </div>
             <img src=${getImage(track.thumbnail)} class="artwork" alt="">
         </div>
@@ -116,5 +136,6 @@ function showNowPlaying(track) {
 
 export {
     showNowPlaying,
-    removeNowPlaying
+    removeNowPlaying,
+    createMediaContainer
 };

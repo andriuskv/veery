@@ -1,6 +1,6 @@
 /* global YT */
 
-import { scriptLoader, getElementById, dispatchCustomEvent, getElementByAttr } from "../utils.js";
+import { scriptLoader, getElementById, dispatchCustomEvent } from "../utils.js";
 import { storedTrack, getPlayerState, updatePlayerState, stopPlayer, showPlayerMessage } from "./player.js";
 import { elapsedTime, showPlayPauseBtnSpinner, hidePlayPauseBtnSpinner } from "./player.controls.js";
 import { getCurrentTrack } from "../playlist/playlist.js";
@@ -74,33 +74,9 @@ function onError(error) {
     }
 }
 
-function createPlayerContainer() {
-    const id = "js-yt-player-container";
-    const content = `
-        <div id="${id}" class="yt-player-container">
-            <div class="yt-player-btns">
-                <button class="btn btn-icon" data-item="watch" title="Watch on YouTube">
-                    <svg viewBox="0 0 24 24">
-                        <use href="#youtube"></use>
-                    </svg>
-                </button>
-                <button class="btn btn-icon" data-item="close" title="Close YouTube player">
-                    <svg viewBox="0 0 24 24">
-                        <use href="#close"></use>
-                    </svg>
-                </button>
-            </div>
-            <div id="yt-player" class="yt-player"></div>
-        </div>
-    `;
-
-    document.querySelector(".player").insertAdjacentHTML("afterbegin", content);
-    getElementById(id).addEventListener("click", handleClick);
-}
-
 function initPlayer() {
-    createPlayerContainer();
-    ytPlayer = new YT.Player("yt-player", {
+    getElementById("js-yt-player-watch").addEventListener("click", handleClick);
+    ytPlayer = new YT.Player("js-yt-player", {
         playerVars: {
             autoplay: 0,
             disablekb: 1,
@@ -171,29 +147,17 @@ function seekTo(currentTime) {
     ytPlayer.seekTo(currentTime, true);
 }
 
-function handleClick({ currentTarget, target }) {
-    const element = getElementByAttr("data-item", target);
+function handleClick() {
+    const isPaused = getPlayerState();
+    const track = getCurrentTrack();
+    const { currentTime } = storedTrack.get();
+    const href = `https://www.youtube.com/watch?time_continue=${currentTime}&v=${track.id}`;
 
-    if (!element) {
-        return;
+    if (!isPaused) {
+        ytPlayer.pauseVideo();
+        updatePlayerState(!isPaused, track);
     }
-    const { attrValue } = element;
-
-    if (attrValue === "watch") {
-        const isPaused = getPlayerState();
-        const track = getCurrentTrack();
-        const { currentTime } = storedTrack.get();
-        const href = `https://www.youtube.com/watch?time_continue=${currentTime}&v=${track.id}`;
-
-        if (!isPaused) {
-            ytPlayer.pauseVideo();
-            updatePlayerState(!isPaused, track);
-        }
-        window.open(href, "_blank");
-    }
-    else if (attrValue === "close") {
-        currentTarget.classList.remove("visible");
-    }
+    window.open(href, "_blank");
 }
 
 export {
