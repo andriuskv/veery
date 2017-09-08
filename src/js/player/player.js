@@ -1,6 +1,6 @@
 import {
     updateTrackSlider,
-    updateVolumeSliderThumb,
+    updateVolumeSlider,
     showTrackDuration,
     togglePlayPauseBtn,
     elapsedTime,
@@ -44,10 +44,8 @@ const storedTrack = (function() {
         localStorage.setItem("track", JSON.stringify(track));
     }
 
-    function updateSavedTrack(newTrack) {
-        const track = Object.assign(getTrack(), newTrack);
-
-        saveTrack(track);
+    function updateTrack(track) {
+        saveTrack(Object.assign(getTrack(), track));
     }
 
     function removeTrack() {
@@ -67,16 +65,16 @@ const storedTrack = (function() {
             return;
         }
         playNewTrack(track, storedTrack.currentTime);
-        updateTrackSlider(storedTrack.currentTime);
+        updateTrackSlider(track, storedTrack.currentTime);
 
         isPaused = true;
     }
 
     return {
-        get: getTrack,
-        remove: removeTrack,
+        getTrack,
+        removeTrack,
         saveTrack,
-        updateSavedTrack,
+        updateTrack,
         initTrack
     };
 })();
@@ -257,7 +255,7 @@ function stopPlayer(track) {
 
 function resetPlayer(track) {
     isPaused = true;
-    storedTrack.remove();
+    storedTrack.removeTrack();
     showTrackDuration();
     removeNowPlaying();
     setCurrentTrack();
@@ -328,7 +326,7 @@ function mutePlayer(muted) {
     }
     setSetting("mute", muted);
     setSetting("volume", newVolume);
-    updateVolumeSliderThumb(newVolume);
+    updateVolumeSlider(newVolume);
 
     if (track) {
         setVolume(track, newVolume);
@@ -387,7 +385,8 @@ window.addEventListener("track-start", ({ detail: startTime }) => {
     });
     elapsedTime.start({
         currentTime: Math.floor(startTime),
-        duration: track.durationInSeconds
+        durationInSeconds: track.durationInSeconds,
+        duration: track.duration
     });
     hidePlayPauseBtnSpinner(track);
 });
@@ -399,7 +398,7 @@ window.addEventListener("track-end", () => {
         stopPlayer(track);
         return;
     }
-    storedTrack.remove();
+    storedTrack.removeTrack();
 
     if (getSetting("repeat")) {
         playNewTrack(track);
