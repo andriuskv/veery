@@ -30,13 +30,13 @@ const elapsedTime = (function() {
         const diff = ideal - elapsed;
 
         if (!seeking) {
-            updateTrackSlider(track.currentTime);
+            updateTrackSlider(track, track.currentTime);
         }
-        storedTrack.updateSavedTrack({
+        storedTrack.updateTrack({
             currentTime: track.currentTime
         });
 
-        if (track.currentTime <= track.duration) {
+        if (track.currentTime <= track.durationInSeconds) {
             track.currentTime += 1;
             elapsed += 1000;
             timeout = setTimeout(update, 1000 - diff, track, startTime, elapsed);
@@ -127,10 +127,6 @@ function getPosInPercentage(slider, pageX) {
     return percentage;
 }
 
-function getTrackCurrentTime(pageX) {
-    return getPosInPercentage("track", pageX);
-}
-
 function resetTrackSlider() {
     elapsedTime.stop();
     updateTrackSlider();
@@ -148,7 +144,7 @@ function onVolumeSliderMousemove({ pageX }) {
     const volume = percentage / 100;
     const track = getCurrentTrack();
 
-    updateVolumeSliderThumb(volume);
+    updateVolumeSlider(volume);
     setSetting("volume", volume);
     updateVolumeSliderLabel(percentage);
 
@@ -160,15 +156,15 @@ function onVolumeSliderMousemove({ pageX }) {
 function onVolumeSliderMouseup() {
     window.removeEventListener("mousemove", onVolumeSliderMousemove);
     window.removeEventListener("mouseup", onVolumeSliderMouseup);
+    volumeSlider.addEventListener("mousemove", onLocalVolumeSliderMousemove);
 }
 
 function updateSliderThumb(slider, percentage = 0) {
     getElementById(`js-${slider}-slider-thumb`).style.left = `${percentage}%`;
 }
 
-function updateTrackSlider(currentTime = 0) {
+function updateTrackSlider(track, currentTime = 0) {
     const formatedCurrentTime = formatTime(currentTime);
-    const track = getCurrentTrack();
     const durationInSeconds = track ? track.durationInSeconds : 1;
     const duration = track ? track.duration : formatedCurrentTime;
     const percentage = currentTime / durationInSeconds * 100;
@@ -181,7 +177,7 @@ function updateTrackSlider(currentTime = 0) {
     trackSlider.setAttribute("aria-valuetext", `${formatedCurrentTime} of ${duration}`);
 }
 
-function updateVolumeSliderThumb(volume) {
+function updateVolumeSlider(volume) {
     const percentage = volume * 100;
 
     updateSliderThumb("volume", percentage);
@@ -194,31 +190,55 @@ function showTrackDuration(duration = "0:00", durationInSeconds = 0) {
     trackSlider.setAttribute("aria-valuemax", durationInSeconds);
 }
 
-function onTrackSliderMousemove({ pageX }) {
-    const { durationInSeconds } = getCurrentTrack();
-    const percentage = getTrackCurrentTime(pageX);
-    const currentTime = Math.floor(durationInSeconds * percentage / 100);
+function getCurrentTime(offset, duration) {
+    const percent = getPosInPercentage("track", offset);
+
+    return {
+        percent,
+        currentTime: Math.floor(duration * percent / 100)
+    };
+}
+
+function updateTrackSliderLabel(percent, currentTime) {
     const label = getElementById("js-track-slider-label");
 
-    updateTrackSlider(currentTime);
-    label.style.left = `${percentage}%`;
+    label.style.left = `${percent}%`;
     label.textContent = formatTime(currentTime);
+}
+
+function onTrackSliderMousemove({ pageX }) {
+    const track = getCurrentTrack();
+    const { percent, currentTime } = getCurrentTime(pageX, track.durationInSeconds);
+
+    updateTrackSlider(track, currentTime);
+    updateTrackSliderLabel(percent, currentTime);
+}
+
+function onLocalTrackSliderMousemove({ pageX }) {
+    const track = getCurrentTrack();
+
+    if (!track) {
+        return;
+    }
+    const { percent, currentTime } = getCurrentTime(pageX, track.durationInSeconds);
+
+    updateTrackSliderLabel(percent, currentTime);
 }
 
 function onTrackSliderMouseup({ pageX }) {
     const track = getCurrentTrack();
-
     seeking = false;
 
     if (track) {
-        const percentage = getTrackCurrentTime(pageX);
-        const currentTime = Math.floor(track.durationInSeconds * percentage / 100);
+        const { currentTime } = getCurrentTime(pageX, track.durationInSeconds);
 
-        updateTrackSlider(currentTime);
+        updateTrackSlider(track, currentTime);
         seekTo(track, currentTime);
+        storedTrack.updateTrack({ currentTime });
     }
     window.removeEventListener("mousemove", onTrackSliderMousemove);
     window.removeEventListener("mouseup", onTrackSliderMouseup);
+    trackSlider.addEventListener("mousemove", onLocalTrackSliderMousemove);
 }
 
 function updateSetting({ attrValue, elementRef }) {
@@ -250,6 +270,10 @@ function unmutePlayer() {
     }
 }
 
+function onLocalVolumeSliderMousemove({ pageX }) {
+    updateVolumeSliderLabel(getPosInPercentage("volume", pageX));
+}
+
 trackSlider.addEventListener("mousedown", event => {
     if (event.which !== 1 || !getCurrentTrack()) {
         return;
@@ -257,16 +281,14 @@ trackSlider.addEventListener("mousedown", event => {
     seeking = true;
 
     onTrackSliderMousemove(event);
+    trackSlider.removeEventListener("mousemove", onLocalTrackSliderMousemove);
     window.addEventListener("mousemove", onTrackSliderMousemove);
     window.addEventListener("mouseup", onTrackSliderMouseup);
 });
 
-trackSlider.addEventListener("mousemove", event => {
+trackSlider.addEventListener("mousemove", onLocalTrackSliderMousemove);
 
-    // If left mouse button is pressed down let global mousemove handler handle the event
-    if ("buttons" in event && event.buttons) {
-        return;
-    }
+trackSlider.addEventListener("mouseenter", () => {
     const track = getCurrentTrack();
     const label = getElementById("js-track-slider-label");
 
@@ -274,12 +296,7 @@ trackSlider.addEventListener("mousemove", event => {
         label.classList.add("hidden");
         return;
     }
-    const percentage = getTrackCurrentTime(event.pageX);
-    const currentTime = Math.floor(track.durationInSeconds * percentage / 100);
-
     label.classList.remove("hidden");
-    label.style.left = `${percentage}%`;
-    label.textContent = formatTime(currentTime);
 });
 
 trackSlider.addEventListener("keydown", ({ which }) => {
@@ -289,8 +306,7 @@ trackSlider.addEventListener("keydown", ({ which }) => {
         return;
     }
     const duration = track.durationInSeconds;
-    const percentage = parseFloat(getElementById(`js-track-slider-thumb`).style.left);
-    let currentTime = Math.round(duration * percentage / 100);
+    let { currentTime } = storedTrack.getTrack();
 
     if (which === 38 || which === 39) {
         currentTime += 5;
@@ -306,8 +322,9 @@ trackSlider.addEventListener("keydown", ({ which }) => {
             currentTime = 0;
         }
     }
-    updateTrackSlider(currentTime);
+    updateTrackSlider(track, currentTime);
     seekTo(track, currentTime);
+    storedTrack.updateTrack({ currentTime });
 });
 
 volumeSlider.addEventListener("mousedown", event => {
@@ -316,20 +333,12 @@ volumeSlider.addEventListener("mousedown", event => {
     }
     unmutePlayer();
     onVolumeSliderMousemove(event);
+    volumeSlider.removeEventListener("mousemove", onLocalVolumeSliderMousemove);
     window.addEventListener("mousemove", onVolumeSliderMousemove);
     window.addEventListener("mouseup", onVolumeSliderMouseup);
 });
 
-volumeSlider.addEventListener("mousemove", event => {
-
-    // If left mouse button is pressed down let global mousemove handler handle the event
-    if ("buttons" in event && event.buttons) {
-        return;
-    }
-    const percentage = getPosInPercentage("volume", event.pageX);
-
-    updateVolumeSliderLabel(percentage);
-});
+volumeSlider.addEventListener("mousemove", onLocalVolumeSliderMousemove);
 
 volumeSlider.addEventListener("keydown", ({ which }) => {
     let volume = getSetting("volume");
@@ -357,7 +366,7 @@ volumeSlider.addEventListener("keydown", ({ which }) => {
     }
     const track = getCurrentTrack();
 
-    updateVolumeSliderThumb(volume);
+    updateVolumeSlider(volume);
     setSetting("volume", volume);
 
     if (track) {
@@ -391,7 +400,7 @@ controlsElement.addEventListener("keyup", ({ which, target }) => {
 });
 
 (function() {
-    updateVolumeSliderThumb(getSetting("volume"));
+    updateVolumeSlider(getSetting("volume"));
 
     Array.from(document.querySelectorAll(".control-btn")).forEach(element => {
         const item = element.getAttribute("data-item");
@@ -414,7 +423,7 @@ export {
     hidePlayPauseBtnSpinner,
     togglePlayPauseBtn,
     updateTrackSlider,
-    updateVolumeSliderThumb,
+    updateVolumeSlider,
     showTrackDuration,
     resetTrackSlider
 };

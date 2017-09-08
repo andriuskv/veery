@@ -150,7 +150,7 @@ function seekTo(currentTime) {
 function handleClick() {
     const isPaused = getPlayerState();
     const track = getCurrentTrack();
-    const { currentTime } = storedTrack.get();
+    const { currentTime } = storedTrack.getTrack();
     const href = `https://www.youtube.com/watch?time_continue=${currentTime}&v=${track.id}`;
 
     if (!isPaused) {
