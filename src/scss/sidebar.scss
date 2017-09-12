@@ -11,8 +11,7 @@
         top: 0;
         left: 0;
         width: 100%;
-        backdrop-filter: blur(1px);
-        background-color: transparentize($color2, 0.4);
+        background-color: transparentize($color2, 0.2);
         opacity: 1;
         transition: opacity 0.2s;
         will-change: opacity;
