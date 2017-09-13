@@ -132,6 +132,12 @@ function resetTrackSlider() {
     updateTrackSlider();
 }
 
+function updateVolume(volume) {
+    setSetting("volume", volume);
+    updateVolumeSlider(volume);
+    setVolume(volume);
+}
+
 function updateVolumeSliderLabel(percentage) {
     const label = getElementById("js-volume-slider-label");
 
@@ -142,15 +148,21 @@ function updateVolumeSliderLabel(percentage) {
 function onVolumeSliderMousemove({ pageX }) {
     const percentage = getPosInPercentage("volume", pageX);
     const volume = percentage / 100;
-    const track = getCurrentTrack();
 
-    updateVolumeSlider(volume);
-    setSetting("volume", volume);
+    if (volume === getSetting("volume")) {
+        return;
+    }
     updateVolumeSliderLabel(percentage);
 
-    if (track) {
-        setVolume(track, volume);
+    if (!volume) {
+        updateSetting({
+            attrValue: "mute",
+            elementRef: getElementById("js-volume-btn")
+        });
+        return;
     }
+    unmutePlayer();
+    updateVolume(volume);
 }
 
 function onVolumeSliderMouseup() {
@@ -242,18 +254,18 @@ function onTrackSliderMouseup({ pageX }) {
 }
 
 function updateSetting({ attrValue, elementRef }) {
-    const setting = !getSetting(attrValue);
+    const value = !getSetting(attrValue);
 
     elementRef.classList.toggle("active");
-    elementRef.setAttribute("aria-checked", setting);
-    setSetting(attrValue, setting);
+    elementRef.setAttribute("aria-checked", value);
+    setSetting(attrValue, value);
 
     if (attrValue === "shuffle") {
-        toggleShuffle(setting);
+        toggleShuffle(value);
     }
     else if (attrValue === "mute") {
-        mutePlayer(setting);
-        toggleVolumeBtn(elementRef, setting);
+        mutePlayer(value);
+        toggleVolumeBtn(elementRef, value);
     }
 }
 
@@ -331,7 +343,6 @@ volumeSlider.addEventListener("mousedown", event => {
     if (event.which !== 1) {
         return;
     }
-    unmutePlayer();
     onVolumeSliderMousemove(event);
     volumeSlider.removeEventListener("mousemove", onLocalVolumeSliderMousemove);
     window.addEventListener("mousemove", onVolumeSliderMousemove);
@@ -364,14 +375,7 @@ volumeSlider.addEventListener("keydown", ({ which }) => {
             return;
         }
     }
-    const track = getCurrentTrack();
-
-    updateVolumeSlider(volume);
-    setSetting("volume", volume);
-
-    if (track) {
-        setVolume(track, volume);
-    }
+    updateVolume(volume);
 });
 
 getElementById("js-main-controls").addEventListener("click", ({ target }) => {
@@ -423,7 +427,7 @@ export {
     hidePlayPauseBtnSpinner,
     togglePlayPauseBtn,
     updateTrackSlider,
-    updateVolumeSlider,
+    updateVolume,
     showTrackDuration,
     resetTrackSlider
 };
