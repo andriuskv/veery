@@ -1,6 +1,6 @@
 import {
+    updateVolume,
     updateTrackSlider,
-    updateVolumeSlider,
     showTrackDuration,
     togglePlayPauseBtn,
     elapsedTime,
@@ -292,7 +292,9 @@ function toggleShuffle(shuffle) {
     }
 }
 
-function setVolume(track, volume) {
+function setVolume(volume) {
+    const track = getCurrentTrack() || {};
+
     if (track.player === "native") {
         nPlayer.setVolume(volume, track.audio);
     }
@@ -313,24 +315,15 @@ function seekTo(track, currentTime) {
 }
 
 function mutePlayer(muted) {
-    const track = getCurrentTrack();
-    const newVolume = muted ? 0 : getSetting("volumeBeforeMute");
+    const volume = muted ? 0 : getSetting("volumeBeforeMute");
 
     if (muted) {
-        const volume = getSetting("volume");
-
-        setSetting("volumeBeforeMute", volume);
+        setSetting("volumeBeforeMute", getSetting("volume"));
     }
     else {
         removeSetting("volumeBeforeMute");
     }
-    setSetting("mute", muted);
-    setSetting("volume", newVolume);
-    updateVolumeSlider(newVolume);
-
-    if (track) {
-        setVolume(track, newVolume);
-    }
+    updateVolume(volume);
 }
 
 function getPlayerMessageCb(title, body) {
