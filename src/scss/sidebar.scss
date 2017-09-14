@@ -12,16 +12,16 @@
         left: 0;
         width: 100%;
         background-color: transparentize($color2, 0.2);
-        opacity: 1;
-        transition: opacity 0.2s;
-        will-change: opacity;
+        transition: 0.1s opacity, 0.1s visibility;
 
         &.hidden {
             opacity: 0;
             visibility: hidden;
+            transition-delay: 0.05s;
 
             .sidebar {
-                left: -210px;
+                transform: translateX(-210px);
+                transition-delay: 0s;
             }
         }
     }
@@ -35,10 +35,9 @@
     box-shadow: 1px 0 4px rgba(0, 0, 0, 0.1);
 
     @include breakpoint-small {
-        position: relative;
-        left: 0;
-        transition: left 0.2s;
-        will-change: left;
+        transform: translateX(0);
+        transition: 0.1s transform;
+        transition-delay: 0.05s;
     }
 }
 
