@@ -16,10 +16,14 @@ let args = null;
 window.onYouTubeIframeAPIReady = initPlayer;
 
 function onPlayerStateChange({ data: state }) {
+    const track = getCurrentTrack();
+
+    if (track.player !== "youtube") {
+        return;
+    }
     const iframe = getElementById("js-yt-player");
     const isPaused = getPlayerState();
-    const latestState = isPaused ? PAUSED: PLAYING;
-    const track = getCurrentTrack();
+    const latestState = isPaused ? PAUSED : PLAYING;
 
     if (document.activeElement === iframe && (state === PLAYING || state === PAUSED)) {
         iframe.blur();
@@ -75,7 +79,6 @@ function onError(error) {
 }
 
 function initPlayer() {
-    getElementById("js-yt-player-watch").addEventListener("click", handleClick);
     ytPlayer = new YT.Player("js-yt-player", {
         playerVars: {
             autoplay: 0,
@@ -147,7 +150,7 @@ function seekTo(currentTime) {
     ytPlayer.seekTo(currentTime, true);
 }
 
-function handleClick() {
+function watchOnYoutube() {
     const isPaused = getPlayerState();
     const track = getCurrentTrack();
     const { currentTime } = storedTrack.getTrack();
@@ -165,5 +168,6 @@ export {
     stopTrack,
     togglePlaying,
     seekTo,
-    setVolume
+    setVolume,
+    watchOnYoutube
 };

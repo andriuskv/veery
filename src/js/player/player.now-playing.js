@@ -1,4 +1,7 @@
 import { getElementById, getElementByAttr, getImage } from "../utils.js";
+import { togglePlaying } from "./player.js";
+import { watchOnYoutube } from "./player.youtube.js";
+import { getCurrentTrack } from "../playlist/playlist.js";
 
 let animationId = 0;
 let timeoutId = 0;
@@ -26,26 +29,41 @@ function createMediaContainer() {
     document.querySelector(".player").insertAdjacentHTML("afterbegin", `
         <div id="js-media-container" class="media-container">
             <div class="media-btn-container">
-                <button id="js-yt-player-watch" class="btn btn-icon hidden" title="Watch on YouTube">
+                <button id="js-yt-player-watch" class="btn btn-icon hidden" data-item="yt-watch" title="Watch on YouTube">
                     <svg viewBox="0 0 24 24">
                         <use href="#youtube"></use>
                     </svg>
                 </button>
-                <button id="js-media-close-btn" class="btn btn-icon" data-item="close" title="Close">
+                <button class="btn btn-icon" data-item="close" title="Close">
                     <svg viewBox="0 0 24 24">
                         <use href="#close"></use>
                     </svg>
                 </button>
             </div>
             <div id="js-yt-player" class="yt-player hidden"></div>
-            <img src="" id="js-media-image" class="media-image hidden" alt="">
+            <img src="" id="js-media-image" class="media-image hidden" data-item="image" alt="">
         </div>
     `);
-    getElementById("js-media-close-btn").addEventListener("click", hideMedia);
+    getElementById("js-media-container").addEventListener("click", handleClickOnMedia);
 }
 
-function hideMedia() {
-    getElementById("js-media-container").classList.remove("visible");
+function handleClickOnMedia({ currentTarget, target }) {
+    const element = getElementByAttr("data-item", target);
+
+    if (!element) {
+        return;
+    }
+    const { attrValue } = element;
+
+    if (attrValue === "image") {
+        togglePlaying(getCurrentTrack());
+    }
+    else if (attrValue === "yt-watch") {
+        watchOnYoutube();
+    }
+    else if (attrValue === "close") {
+        currentTarget.classList.remove("visible");
+    }
 }
 
 function handleMousemove({ currentTarget, target }) {
