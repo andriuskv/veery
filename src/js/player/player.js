@@ -246,10 +246,7 @@ function stopPlayer(track) {
     if (track) {
         stopTrack(track);
     }
-
-    if (element && element.classList.contains("visible")) {
-        element.classList.remove("visible");
-    }
+    element.classList.remove("visible");
     resetPlayer(track);
 }
 

@@ -270,11 +270,10 @@
 
 .control-btn {
     margin-right: 4px;
-    border: 1px solid transparent;
 
     &.active {
         background-color: $color3;
-        border-color: $color2;
+        box-shadow: inset 1px 1px 1px 0 $color2;
     }
 }
 
