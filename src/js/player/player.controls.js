@@ -403,6 +403,10 @@ controlsElement.addEventListener("keyup", ({ which, target }) => {
     }
 });
 
+getElementById("js-control-toggle-btn").addEventListener("click", () => {
+    controlsElement.classList.toggle("visible");
+});
+
 (function() {
     updateVolumeSlider(getSetting("volume"));
 

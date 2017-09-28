@@ -2,7 +2,8 @@
     user-select: none;
     position: relative;
     display: flex;
-    width: 124px;
+    flex-shrink: 0;
+    width: 120px;
     box-shadow: 0 0 0 1px $color2;
     background-color: $color1;
 }
