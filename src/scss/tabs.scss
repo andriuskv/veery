@@ -7,6 +7,10 @@
     @include breakpoint-small {
         display: block;
     }
+
+    @include breakpoint-smallest {
+        padding: 4px;
+    }
 }
 
 .tab-container {
@@ -33,6 +37,10 @@
 
 .playlist-tabs {
     height: calc(100% - 40px);
+
+    @include breakpoint-smallest {
+        height: calc(100% - 32px);
+    }
 }
 
 .playlist-tab-header {
@@ -43,12 +51,21 @@
     padding: 8px;
     background-color: $color3;
     box-shadow: 3px 1px 4px rgba(0, 0, 0, 0.1);
+
+    @include breakpoint-smallest {
+        padding: 4px;
+    }
 }
 
 .playlist-tab-header-item {
     margin-right: 8px;
     padding-right: 8px;
     border-right: 1px solid $color1;
+
+    @include breakpoint-smallest {
+        margin-right: 4px;
+        padding-right: 4px;
+    }
 }
 
 .filter-input-container {
@@ -71,7 +88,11 @@
     box-shadow: 0 0 0 1px $color2;
 
     &.active {
-        width: 184px;
+        width: 180px;
+
+        @include breakpoint-smallest {
+            width: 154px;
+        }
     }
 }
 
