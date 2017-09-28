@@ -332,6 +332,10 @@
 .volume-slider-container {
     width: 100px;
     margin-right: 8px;
+
+    @include breakpoint-smallest {
+        margin-right: 0;
+    }
 }
 
 .volume-slider-thumb {

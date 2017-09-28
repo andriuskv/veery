@@ -95,9 +95,13 @@ function getStatusIcon() {
 }
 
 function parsePlaylistDuration(duration) {
-    const hours = Math.floor(duration / 3600);
-    const minutes = Math.ceil(duration / 60 % 60);
+    let hours = Math.floor(duration / 3600);
+    let minutes = Math.ceil(duration / 60 % 60);
 
+    if (minutes === 60) {
+        minutes = 0;
+        hours += 1;
+    }
     return `${hours} hr ${minutes} min`;
 }
 
