@@ -6,12 +6,12 @@ import { togglePlayPauseBtn } from "../player/player.controls.js";
 import { getPlaylistById, getCurrentTrack, updatePlaylist } from "./playlist.js";
 import { enableTrackSelection } from "./playlist.track-selection.js";
 
-function getPlaylistElement(id) {
-    return getElementById(`js-${id}`);
+function getPlaylistParentElement(id) {
+    return getElementById(`js-tab-${id}`);
 }
 
 function getPlaylistTrackElements(id) {
-    const { children } = getPlaylistElement(id);
+    const { children } = getElementById(`js-${id}`);
 
     return children;
 }
@@ -103,10 +103,17 @@ function createPlaylist({ id, type, tracks }) {
     return createGrid(id, createItems(tracks, createGridItem));
 }
 
-function createPlaylistTab(pl) {
-    const playlist = createPlaylist(pl);
+function getPlaylistTemplate(pl) {
+    if (!pl.tracks.length) {
+        return `<p class="playlist-message">This playlist is empty</p>`;
+    }
+    return createPlaylist(pl);
+}
 
-    return `<div id="js-tab-${pl.id}" class="tab">${playlist}</div>`;
+function createPlaylistTab(pl) {
+    const template = getPlaylistTemplate(pl);
+
+    return `<div id="js-tab-${pl.id}" class="tab">${template}</div>`;
 }
 
 function showCurrentTrack(id) {
@@ -132,16 +139,14 @@ function renderPlaylist(pl) {
 }
 
 function updatePlaylistView(pl) {
-    const { parentElement } = getPlaylistElement(pl.id);
+    const element = getPlaylistParentElement(pl.id);
 
-    parentElement.innerHTML = createPlaylist(pl);
+    element.innerHTML = getPlaylistTemplate(pl);
     showCurrentTrack(pl.id);
 }
 
 function removePlaylistTab(id) {
-    const { parentElement } = getPlaylistElement(id);
-
-    removeElement(parentElement);
+    removeElement(getPlaylistParentElement(id));
 }
 
 function scrollToTrackElement(element, id) {
@@ -200,7 +205,7 @@ function changePlaylistType(type, pl) {
         }
     });
     updatePlaylistView(pl);
-    enableTrackSelection(pl.id);
+    enableTrackSelection(pl);
     togglePlaylistTypeBtn(type);
 }
 
@@ -217,7 +222,7 @@ window.addEventListener("resize", ({ target }) => {
 });
 
 export {
-    getPlaylistElement,
+    getPlaylistParentElement,
     getPlaylistTrackElements,
     getTrackPlayPauseBtn,
     removePlaylistTab,

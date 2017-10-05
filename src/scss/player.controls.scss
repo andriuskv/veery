@@ -70,7 +70,7 @@
         width: 16px;
         height: 16px;
 
-        @include breakpoint-smallest {
+        @include breakpoint-small {
             width: 28px;
             height: 28px;
         }
