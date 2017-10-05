@@ -49,7 +49,7 @@ function toggleToPlaylistTab(id) {
         togglePlaylistTypeBtn(pl.type);
     }
     setSortOptions(pl);
-    enableTrackSelection(pl.id);
+    enableTrackSelection(pl);
     resetFilteredPlaylist();
     updatePlaylistStatus(pl.id);
 }

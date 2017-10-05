@@ -22,7 +22,7 @@ import { getSetting } from "../settings.js";
 import { getVisiblePlaylistId } from "../tab.js";
 import { postMessageToWorker } from "../worker.js";
 import { showMoveToBtn } from "./playlist.move-to.js";
-import { getPlaylistElement, getPlaylistTrackElements } from "./playlist.view.js";
+import { getPlaylistParentElement, getPlaylistTrackElements, updatePlaylistView } from "./playlist.view.js";
 
 const startingPoint = {};
 const mousePos = {};
@@ -37,11 +37,15 @@ let intervalId = 0;
 let animationId = 0;
 let allowClick = false;
 
-function enableTrackSelection(id) {
+function enableTrackSelection(pl) {
     if (playlistElement) {
         playlistElement.removeEventListener("mousedown", onMousedown);
     }
-    playlistElement = getPlaylistElement(`tab-${id}`);
+
+    if (!pl.tracks.length) {
+        return;
+    }
+    playlistElement = getPlaylistParentElement(pl.id);
     playlistElement.addEventListener("mousedown", onMousedown);
 }
 
@@ -433,6 +437,11 @@ function removeSelectedTracks() {
     updateCurrentTrackIndex(id, indexes);
     removeElement(getElementById("js-move-to-panel-container"));
     updatePlaylistDuration(pl);
+
+    if (!tracksToKeep.length) {
+        enableTrackSelection(pl);
+        updatePlaylistView(pl);
+    }
 }
 
 export {

@@ -40,6 +40,10 @@ function toggleFilterInputCleanBtn(inputValue) {
 
 function filterPlaylist(id, query = "") {
     const { tracks } = getPlaylistById(id);
+
+    if (!tracks.length) {
+        return;
+    }
     const elements = getPlaylistTrackElements(id);
 
     filteredPlaylistId = query ? id : "";

@@ -44,3 +44,13 @@
     border: 1px solid $brand-color;
     background-color: transparentize($brand-color, 0.8);
 }
+
+.playlist-message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    min-width: 300px;
+    transform: translate(-50%, -50%);
+    font-size: 28px;
+    text-align: center;
+}
