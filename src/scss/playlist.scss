@@ -33,7 +33,6 @@
      display: none;
      border: 2px solid currentColor;
      border-radius: 50%;
-     background-color: transparent;
      color: inherit;
      transform: translate(-50%, -50%);
  }
@@ -43,6 +42,17 @@
     position: absolute;
     border: 1px solid $brand-color;
     background-color: transparentize($brand-color, 0.8);
+
+    & ~ .playlist-view .track:not(.playing):hover  {
+        .track-play-pause-btn {
+            display: none;
+
+        }
+
+        .list-item-index {
+            display: block;
+        }
+    }
 }
 
 .playlist-message {
@@ -50,6 +60,7 @@
     top: 50%;
     left: 50%;
     min-width: 300px;
+    margin: 0;
     transform: translate(-50%, -50%);
     font-size: 28px;
     text-align: center;
