@@ -59,7 +59,7 @@ function createList(id, items) {
             <li class="list-item-col list-view-header-item">Album</li>
             <li class="list-item-col list-view-header-item">Duration</li>
         </ul>
-        <ul id="js-${id}" class="list-view">${items}</ul>
+        <ul id="js-${id}" class="playlist-view list-view">${items}</ul>
     `;
 }
 
@@ -89,7 +89,7 @@ function createGridItem(item) {
 }
 
 function createGrid(id, items) {
-    return `<ul id="js-${id}" class="grid-view">${items}</ul>`;
+    return `<ul id="js-${id}" class="playlist-view grid-view">${items}</ul>`;
 }
 
 function createItems(tracks, cb) {

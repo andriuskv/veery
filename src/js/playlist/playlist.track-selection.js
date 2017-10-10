@@ -240,6 +240,9 @@ function onMousemove(event) {
         trackElements = getTrackElements();
         selectionElement = initSelectionArea(playlistElement);
 
+        // Remove focus from initial selected element
+        document.activeElement.blur();
+
         if (!event.ctrlKey) {
             trackElements.forEach(element => element.ref.classList.remove("selected"));
         }
@@ -274,6 +277,11 @@ function onMouseup({ target, ctrlKey }) {
         resetSelection();
 
         if (elements.length) {
+            const element = getElementByAttr("data-index", target);
+
+            if (element) {
+                element.elementRef.focus();
+            }
             showMoveToBtn();
             window.addEventListener("keypress", onKeypress);
             window.addEventListener("click", onClick);
