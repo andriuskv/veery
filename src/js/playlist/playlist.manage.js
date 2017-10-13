@@ -61,9 +61,11 @@ function updateCurrentTrack(pl) {
 }
 
 function addTracksToPlaylist(pl, tracks, showPlaylist = isRouteActive("home")) {
-    tracks = setPrimaryTackIndexes(tracks, pl.lastTrackIndex);
-    pl.lastTrackIndex = tracks[tracks.length - 1].primaryIndex + 1;
-    pl.tracks = pl.tracks.concat(tracks);
+    if (tracks.length) {
+        tracks = setPrimaryTackIndexes(tracks, pl.lastTrackIndex);
+        pl.lastTrackIndex = tracks[tracks.length - 1].primaryIndex + 1;
+        pl.tracks = pl.tracks.concat(tracks);
+    }
 
     if (!pl.initialized) {
         initPlaylist(pl);
