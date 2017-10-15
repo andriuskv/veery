@@ -3,7 +3,7 @@ import { editSidebarEntry } from "../sidebar.js";
 import { postMessageToWorker } from "../worker.js";
 import { getPlaylistById, updatePlaylist } from "./playlist.js";
 import { removePlaylist } from "./playlist.manage.js";
-import { importPlaylist, createImportOptionMask, initGoogleAuth } from "./playlist.import.js";
+import { importPlaylist, disableImportOption, initGoogleAuth } from "./playlist.import.js";
 
 function createContainer(id) {
     const div = document.createElement("div");
@@ -153,7 +153,7 @@ async function syncPlaylist(id) {
         await initGoogleAuth();
         enableSyncBtn(id);
     }
-    createImportOptionMask(player, "Synchronizing");
+    disableImportOption(player, "Synchronizing");
     importPlaylist(player, {
         url,
         type: "sync"

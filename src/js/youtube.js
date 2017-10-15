@@ -1,12 +1,12 @@
 /* global gapi */
 
 import { formatTime } from "./utils.js";
-import { addImportedPlaylist, showNotice } from "./playlist/playlist.import.js";
+import { addImportedPlaylist, showErrorMessage } from "./playlist/playlist.import.js";
 import { showStatusIndicator, hideStatusIndicator } from "./playlist/playlist.manage.js";
 import { getPlaylistById } from "./playlist/playlist.js";
 
-function showYoutubeNotice(notice) {
-    showNotice("youtube", notice);
+function showMessage(message) {
+    showErrorMessage("youtube", message);
 }
 
 function parseDuration(duration) {
@@ -84,10 +84,10 @@ function handleError(error, id) {
     const code = error.code;
 
     if (code === 403) {
-        showYoutubeNotice("You need to be sign in if you want to import private playlist");
+        showMessage("You need to be sign in if you want to import private playlist");
     }
     else if (code === 404) {
-        showYoutubeNotice("Playlist was not found");
+        showMessage("Playlist was not found");
     }
     hideStatusIndicator(id);
     throw new Error(error.message);
@@ -145,7 +145,7 @@ async function addVideo(id, type) {
     const latestIndex = pl && pl.tracks.length || 0;
 
     if (!items.length) {
-        showYoutubeNotice("Video was not found");
+        showMessage("Video was not found");
         hideStatusIndicator(playlistId);
         return;
     }
@@ -219,10 +219,10 @@ function fetchYoutubeItem(url, type) {
     }
 
     if (!playlistId) {
-        showYoutubeNotice("Invalid url");
+        showMessage("Invalid url");
     }
     else if (playlistId === "WL") {
-        showYoutubeNotice("Importing Watch Later playlist is not allowed");
+        showMessage("Importing Watch Later playlist is not allowed");
     }
     else {
         addPlaylist(url, playlistId, type);
