@@ -4,7 +4,7 @@ import parseFlacMetadata from "../libs/parseFlacMetadata.js";
 import { scriptLoader, formatTime } from "./utils.js";
 import { getPlaylistById, createPlaylist } from "./playlist/playlist.js";
 import { addTracksToPlaylist, showStatusIndicator, hideStatusIndicator } from "./playlist/playlist.manage.js";
-import { createImportOptionMask, removeImportOptionMask, showNotice } from "./playlist/playlist.import.js";
+import { disableImportOption, removeMaskElement, showErrorMessage } from "./playlist/playlist.import.js";
 
 function getTrackDuration(track) {
     return new Promise(resolve => {
@@ -84,28 +84,34 @@ async function parseTracks(tracks, id, parsedTracks = []) {
     return parsedTracks;
 }
 
-async function addTracks(importOption, pl, newTracks, parseTracks) {
-    createImportOptionMask(importOption, "Adding");
+function updateStatus(importOption, message, { initialized, id }) {
+    showErrorMessage(importOption, message);
 
-    if (!newTracks.length) {
-        showNotice(importOption, "No valid audio file found");
-        hideStatusIndicator(pl.id);
+    if (initialized) {
+        hideStatusIndicator(id);
+    }
+}
+
+async function addTracks(importOption, pl, files, parseTracks) {
+    disableImportOption(importOption, "Adding");
+
+    if (!files.length) {
+        updateStatus(importOption, "No valid audio file found", pl);
         return;
     }
-    const tracks = filterDuplicateTracks(newTracks, pl.tracks);
+    const newTracks = filterDuplicateTracks(files, pl.tracks);
 
-    if (!tracks.length) {
-        showNotice(importOption, "Tracks already exist");
-        hideStatusIndicator(pl.id);
+    if (!newTracks.length) {
+        updateStatus(importOption, "Tracks already exist", pl);
         return;
     }
 
     try {
         await scriptLoader.load({ src: "libs/metadata-audio-parser.min.js" });
-        const parsedTracks = await parseTracks(tracks, pl.id);
+        const parsedTracks = await parseTracks(newTracks, pl.id);
 
         addTracksToPlaylist(pl, parsedTracks);
-        removeImportOptionMask(importOption);
+        removeMaskElement(importOption);
     }
     catch (error) {
         console.log(error);
@@ -114,12 +120,12 @@ async function addTracks(importOption, pl, newTracks, parseTracks) {
 }
 
 function selectLocalFiles(files) {
-    const supportedTracks = filterUnsupportedFiles(files);
+    const supportedFiles = filterUnsupportedFiles(files);
     const id = "local-files";
     let pl = getPlaylistById(id);
 
-    if (pl) {
-        showStatusIndicator(pl.id);
+    if (pl && pl.initialized) {
+        showStatusIndicator(id);
     }
     else {
         pl = createPlaylist({
@@ -129,7 +135,7 @@ function selectLocalFiles(files) {
             player: "native"
         });
     }
-    addTracks("local", pl, supportedTracks, parseTracks);
+    addTracks("local", pl, supportedFiles, parseTracks);
 }
 
 export {

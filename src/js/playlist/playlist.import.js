@@ -28,25 +28,35 @@ function isNewImportOption(option) {
     return importOption !== option;
 }
 
-function createImportOptionMask(option, message = "") {
-    document.querySelector(`[data-option=${option}]`).insertAdjacentHTML("beforeend", `
-        <div class="option-mask" data-mask-id=${option}>
-            <img src="./assets/images/ring-alt.svg" alt="">
-            <span class="mask-message">${message}</span>
-        </div>
-    `);
+function createMaskElement(option) {
+    const div = document.createElement("div");
+
+    div.classList.add("option-mask");
+    div.setAttribute("data-mask-id", option);
+    document.querySelector(`[data-option=${option}]`).appendChild(div);
+    return div;
 }
 
 function getMaskElement(option) {
     return document.querySelector(`[data-mask-id=${option}]`);
 }
 
-function removeImportOptionMask(option) {
+function removeMaskElement(option) {
     removeElement(getMaskElement(option));
 }
 
-function showNotice(option, message) {
-    const element = getMaskElement(option);
+function disableImportOption(option, action) {
+    const element = getMaskElement(option) || createMaskElement(option);
+
+    element.insertAdjacentHTML("beforeend", `
+        <img src="./assets/images/ring-alt.svg" alt="">
+        <span class="mask-message">${action}</span>
+    `);
+}
+
+function showErrorMessage(option, message) {
+    const element = getMaskElement(option) || createMaskElement(option);
+
     element.textContent = message;
     setTimeout(removeElement, 3200, element);
 }
@@ -122,7 +132,7 @@ async function addImportedPlaylist(playlist, type = "new") {
     addTracksToPlaylist(pl, newTracks);
     setImportOption();
     removeImportForm();
-    removeImportOptionMask(playlist.player);
+    removeMaskElement(playlist.player);
 }
 
 function createImportForm(container, item) {
@@ -194,7 +204,7 @@ function handleImportFormSubmit(event) {
     if (url) {
         const option = event.target.getAttribute("data-for");
 
-        createImportOptionMask(option, "Importing");
+        disableImportOption(option, "Importing");
         importPlaylist(option, { url });
         event.target.reset();
     }
@@ -334,8 +344,8 @@ importOptions.addEventListener("click", ({ target }) => {
 export {
     importPlaylist,
     addImportedPlaylist,
-    showNotice,
-    createImportOptionMask,
-    removeImportOptionMask,
+    showErrorMessage,
+    disableImportOption,
+    removeMaskElement,
     initGoogleAuth
 };
