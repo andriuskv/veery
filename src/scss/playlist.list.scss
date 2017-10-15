@@ -21,24 +21,18 @@
 
 .list-item {
     display: flex;
-    align-items: center;
-    height: 33px;
-    padding: 2px 4px;
+    height: 32px;
+    padding: 4px;
     color: $base-text-color;
+    background-color: $color2;
     cursor: default;
     user-select: none;
 
     &:not(:last-of-type) {
-        border-bottom: 1px solid $color1;
+        margin-bottom: 1px;
 
-        &.selected {
-            border-bottom-color: $color2;
-        }
-    }
-
-    &:hover, &:focus, &:focus-within, &.playing {
-        .list-item-index {
-            display: none;
+        &:not(.selected) {
+            box-shadow: 0 1px 0 0 $color1;
         }
     }
 }
@@ -47,11 +41,12 @@
     @include text-truncate;
 
     flex: 1 1 25%;
-    padding-right: 4px;
+    margin-right: 4px;
+    line-height: 1.714;
 
     &:last-of-type {
         flex: 0 0 70px;
-        padding-right: 0;
+        margin-right: 0;
     }
 }
 
@@ -62,9 +57,14 @@
     align-items: center;
     justify-content: center;
     margin-right: 4px;
+    background-color: inherit;
 }
 
 .list-item-index {
     color: $alt-text-color;
     font-size: 12px;
+}
+
+.list-item-play-pause-btn {
+    background-color: inherit;
 }
