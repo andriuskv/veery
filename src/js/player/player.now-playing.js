@@ -29,11 +29,11 @@ function createMediaContainer() {
     document.querySelector(".player").insertAdjacentHTML("afterbegin", `
         <div id="js-media-container" class="media-container">
             <div class="media-btn-container">
-                <button id="js-yt-player-watch" class="btn btn-icon hidden" data-item="yt-watch" title="Watch on YouTube">
+                <a id="js-yt-player-watch" class="btn btn-icon hidden" data-item="yt-watch" title="Watch on YouTube" target="_blank">
                     <svg viewBox="0 0 24 24">
                         <use href="#youtube"></use>
                     </svg>
-                </button>
+                </a>
                 <button class="btn btn-icon" data-item="close" title="Close">
                     <svg viewBox="0 0 24 24">
                         <use href="#close"></use>
@@ -53,13 +53,14 @@ function handleClickOnMedia({ currentTarget, target }) {
     if (!element) {
         return;
     }
-    const { attrValue } = element;
+    const { attrValue, elementRef } = element;
+    const track = getCurrentTrack();
 
     if (attrValue === "image") {
-        togglePlaying(getCurrentTrack());
+        togglePlaying(track);
     }
     else if (attrValue === "yt-watch") {
-        watchOnYoutube();
+        watchOnYoutube(elementRef, track);
     }
     else if (attrValue === "close") {
         currentTarget.classList.remove("visible");

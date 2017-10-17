@@ -150,17 +150,15 @@ function seekTo(currentTime) {
     ytPlayer.seekTo(currentTime, true);
 }
 
-function watchOnYoutube() {
+function watchOnYoutube(element, track) {
     const isPaused = getPlayerState();
-    const track = getCurrentTrack();
     const { currentTime } = storedTrack.getTrack();
-    const href = `https://www.youtube.com/watch?time_continue=${currentTime}&v=${track.id}`;
 
     if (!isPaused) {
         ytPlayer.pauseVideo();
         updatePlayerState(!isPaused, track);
     }
-    window.open(href, "_blank");
+    element.setAttribute("href", `https://www.youtube.com/watch?v=${track.id}&time_continue=${currentTime}`);
 }
 
 export {

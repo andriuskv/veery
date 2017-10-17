@@ -102,6 +102,7 @@ function updateTrackMedia(track) {
         ytPlayer.classList.remove("hidden");
         ytPlayerWatch.classList.remove("hidden");
         image.classList.add("hidden");
+        ytPlayerWatch.setAttribute("href", `https://www.youtube.com/watch?v=${track.id}`);
     }
     else {
         ytPlayer.classList.add("hidden");
