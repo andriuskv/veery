@@ -18,7 +18,7 @@ window.onYouTubeIframeAPIReady = initPlayer;
 function onPlayerStateChange({ data: state }) {
     const track = getCurrentTrack();
 
-    if (track.player !== "youtube") {
+    if (!track || track.player !== "youtube") {
         return;
     }
     const iframe = getElementById("js-yt-player");
