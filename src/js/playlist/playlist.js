@@ -124,10 +124,10 @@ function setPlaybackOrder({ id, tracks }, shuffle) {
     resetPlaybackIndex();
 }
 
-function getNextTrackIndex({ playbackIndex, playbackOrder }, direction = 0) {
+function getNextTrackIndex({ playbackIndex, playbackOrder }, direction) {
     playbackIndex += direction;
 
-    if (playbackIndex >= playbackOrder.length) {
+    if (!direction || playbackIndex >= playbackOrder.length) {
         playbackIndex = 0;
     }
     else if (playbackIndex === -1) {
