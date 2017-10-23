@@ -242,12 +242,9 @@ function stopTrack(track) {
 }
 
 function stopPlayer(track) {
-    const element = getElementById("js-media-container");
-
     if (track) {
         stopTrack(track);
     }
-    element.classList.remove("visible");
     resetPlayer(track);
 }
 
@@ -260,6 +257,7 @@ function resetPlayer(track) {
     setPlaylistAsActive();
     removeActiveIcon();
     removeElementClass("track", "playing");
+    getElementById("js-media-container").classList.remove("visible");
 
     if (track) {
         resetTrackSlider();
