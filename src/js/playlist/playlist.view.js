@@ -165,7 +165,7 @@ function scrollToTrackElement(element, id) {
 function showTrack(id, index, { scrollToTrack } = {}) {
     const element = getPlaylistElementAtIndex(id, index);
 
-    removeElementClass("track", "playing");
+    removeElementClass(".track.playing", "playing");
     element.classList.add("playing");
 
     if (scrollToTrack) {
