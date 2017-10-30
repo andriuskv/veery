@@ -109,14 +109,12 @@ function getImage(image = "assets/images/album-art-placeholder.png") {
 }
 
 function setElementIconAndTitle(element, { id, title }) {
-    const icon = element.querySelector(".js-icon");
-
-    icon.setAttribute("href", `#${id}`);
     element.setAttribute("title", title);
+    element.querySelector(".js-icon").setAttribute("href", `#${id}`);
 }
 
-function addSpinner(element, classList = "") {
-    element.insertAdjacentHTML("beforeend", `<img src="./assets/images/ring-alt.svg" class="${classList}" alt="">`);
+function addSpinner(element, id = "", classList = "") {
+    element.insertAdjacentHTML("beforeend", `<img src="./assets/images/ring-alt.svg" id=${id} class="${classList}" alt="">`);
 }
 
 function enableBtn(element) {

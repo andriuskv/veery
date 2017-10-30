@@ -60,28 +60,28 @@ function showPlayPauseBtnSpinner(track) {
     if (isSpinnerActive) {
         return;
     }
-    const element = getElementById("js-play-btn");
-    const btn = getTrackPlayPauseBtn(track);
+    const element = getTrackPlayPauseBtn(track);
+    const spinnerId = "play-pause-btn-spinner";
     isSpinnerActive = true;
 
-    if (btn) {
-        addSpinner(btn);
+    if (element) {
+        addSpinner(element, `js-track-${spinnerId}`);
     }
-    addSpinner(element);
+    addSpinner(getElementById("js-play-btn"), `js-${spinnerId}`);
 }
 
-function hidePlayPauseBtnSpinner(track) {
+function hidePlayPauseBtnSpinner() {
     if (!isSpinnerActive) {
         return;
     }
-    const element = getElementById("js-play-btn");
-    const btn = getTrackPlayPauseBtn(track);
+    const spinnerId = "play-pause-btn-spinner";
+    const element = getElementById(`js-track-${spinnerId}`);
     isSpinnerActive = false;
 
-    if (btn) {
-        removeElement(btn.lastElementChild);
+    if (element) {
+        removeElement(element);
     }
-    removeElement(element.lastElementChild);
+    removeElement(getElementById(`js-${spinnerId}`));
 }
 
 function togglePlayPauseBtn(element, state) {

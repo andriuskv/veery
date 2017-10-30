@@ -129,13 +129,12 @@ function createNewPlaylistForm(id, containerElement, handleSubmit) {
 function showStatusIndicator(id) {
     const entry = getSidebarEntry(id);
 
-    addSpinner(entry, "sidebar-entry-spinner");
+    addSpinner(entry, `js-${id}-sidebar-spinner`, "sidebar-entry-spinner");
     disableSyncBtn(id);
 }
 
 function hideStatusIndicator(id) {
-    const entry = getSidebarEntry(id);
-    const element = entry.querySelector(".sidebar-entry-spinner");
+    const element = getElementById(`js-${id}-sidebar-spinner`);
 
     if (element) {
         removeElement(element);

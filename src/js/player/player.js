@@ -237,7 +237,7 @@ function stopTrack(track) {
         nPlayer.stopTrack(track);
     }
     else if (track.player === "youtube") {
-        ytPlayer.stopTrack(track);
+        ytPlayer.stopTrack();
     }
 }
 
@@ -261,7 +261,7 @@ function resetPlayer(track) {
 
     if (track) {
         resetTrackSlider();
-        hidePlayPauseBtnSpinner(track);
+        hidePlayPauseBtnSpinner();
         togglePlayPauseBtns(track, isPaused);
     }
 }
@@ -377,7 +377,7 @@ window.addEventListener("track-start", ({ detail: startTime }) => {
         durationInSeconds: track.durationInSeconds,
         duration: track.duration
     });
-    hidePlayPauseBtnSpinner(track);
+    hidePlayPauseBtnSpinner();
 });
 
 window.addEventListener("track-end", () => {
