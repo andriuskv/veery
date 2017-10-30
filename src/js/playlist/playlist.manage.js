@@ -53,7 +53,7 @@ function updateCurrentTrack(pl) {
             index = track.index;
         }
         else {
-            removeElementClass("track", "playing");
+            removeElementClass(".track.playing", "playing");
         }
         playlist.updateCurrentTrack({ index });
         playlist.setPlaybackIndex(index);

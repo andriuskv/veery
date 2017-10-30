@@ -94,8 +94,8 @@ getElementById("js-playlist-tab-header").addEventListener("click", ({ target }) 
 window.addEventListener("route-change", ({ detail: { isPlaylistTab, tabId } }) => {
     const entry = getSidebarEntry(tabId);
 
-    removeElementClass("sidebar-btn", "active");
-    removeElementClass("tab", "active");
+    removeElementClass(".sidebar-btn.active", "active");
+    removeElementClass(".tab.active", "active");
     setVisiblePlaylistId(isPlaylistTab ? tabId: "");
 
     if (isPlaylistTab) {

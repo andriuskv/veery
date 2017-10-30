@@ -35,12 +35,12 @@ function removeElements(elements) {
     elements.forEach(removeElement);
 }
 
-function removeElementClass(className, classToRemove) {
-    const elements = Array.from(document.querySelectorAll(`.${className}.${classToRemove}`));
+function removeElementClass(selector, classToRemove) {
+    const element = document.querySelector(selector);
 
-    elements.forEach(element => {
+    if (element) {
         element.classList.remove(classToRemove);
-    });
+    }
 }
 
 function getElementById(id) {

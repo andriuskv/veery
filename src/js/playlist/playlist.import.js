@@ -158,7 +158,7 @@ function removeImportForm() {
     if (form) {
         form.removeEventListener("submit", handleImportFormSubmit);
         removeElement(form);
-        removeElementClass("import-option-btn", "active");
+        removeElementClass(".import-option-btn.active", "active");
     }
 }
 

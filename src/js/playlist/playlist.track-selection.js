@@ -2,7 +2,6 @@ import {
     getElementById,
     removeElement,
     removeElements,
-    removeElementClass,
     getElementByAttr,
     isOutsideElement
 } from "../utils.js";
@@ -119,10 +118,18 @@ function updateSelectedArea(mousePos, startingPoint, areaStyle) {
     areaStyle.height = `${height}px`;
 }
 
+function removeSelectedElementClass() {
+    const elements = Array.from(document.querySelectorAll(".track.selected"));
+
+    elements.forEach(element => {
+        element.classList.remove("selected");
+    });
+}
+
 function deselectTrackElements() {
     const element = getElementById("js-move-to-panel-container");
 
-    removeElementClass("track", "selected");
+    removeSelectedElementClass();
     window.removeEventListener("keypress", onKeypress);
 
     if (element) {
@@ -132,7 +139,7 @@ function deselectTrackElements() {
 
 function selectTrackElement(element, selectMultiple) {
     if (!selectMultiple) {
-        removeElementClass("track", "selected");
+        removeSelectedElementClass();
     }
     element.classList.toggle("selected");
 

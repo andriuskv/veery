@@ -256,7 +256,7 @@ function resetPlayer(track) {
     setCurrentTrack();
     setPlaylistAsActive();
     removeActiveIcon();
-    removeElementClass("track", "playing");
+    removeElementClass(".track.playing", "playing");
     getElementById("js-media-container").classList.remove("visible");
 
     if (track) {
