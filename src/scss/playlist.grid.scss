@@ -43,6 +43,9 @@
 .grid-item-play-pause-btn {
     background-color: transparentize($color2, 0.2);
     box-shadow: 0 0 0 24px transparentize($color2, 0.2);
+    animation-name: appear;
+    animation-duration: 0.2s;
+    animation-fill-mode: forwards;
 
     svg {
         width: 28px;
