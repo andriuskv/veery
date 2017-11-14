@@ -70,6 +70,9 @@
     justify-content: center;
     align-items: center;
     background-color: transparentize($color2, 0.2);
+    animation-name: appear;
+    animation-duration: 0.2s;
+    animation-fill-mode: forwards;
 
     svg {
         width: 28px;
@@ -274,7 +277,7 @@
     bottom: 28px;
     display: none;
     min-width: 40px;
-    padding: 4px;
+    padding: 4px 8px;
     font-size: 13px;
     text-align: center;
     transform: translateX(-50%);
