@@ -20,11 +20,8 @@
 
 .home-tab-section-title {
     padding: 12px 8px;
-    margin-top: 0;
-    margin-bottom: 8px;
     border-bottom: 1px solid $color1;
     font-size: 20px;
-    font-weight: normal;
     color: $alt-text-color;
 }
 
@@ -140,8 +137,7 @@
 }
 
 .info-panel-title {
-    margin-top: 0;
-    margin-bottom: 4px;
+    font-size: 16px;
 }
 
 .info-panel-content-item:not(:last-of-type) {
@@ -246,6 +242,7 @@
 }
 
 .pl-entry-content {
+    position: relative;
     display: flex;
     padding-top: 4px;
     padding-left: 6px;
@@ -268,6 +265,24 @@
         padding-right: 8px;
         margin-right: 8px;
         border-right: 1px solid $color1;
+    }
+}
+
+.pl-entry-panel {
+    top: 30px;
+    right: 0;
+    min-width: 200px;
+}
+
+.pl-entry-panel-title {
+    font-size: 16px;
+}
+
+.pl-entry-setting {
+    display: flex;
+
+    .checkbox {
+        margin-right: 8px;
     }
 }
 

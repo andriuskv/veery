@@ -2,8 +2,8 @@ const playlists = {};
 let activePlaylistId = "";
 let currentTrack = null;
 
-function getAllPlaylists() {
-    return playlists;
+function getPlaylistArray() {
+    return Object.keys(playlists).map(id => playlists[id]);
 }
 
 function getPlaylistById(id) {
@@ -153,7 +153,7 @@ export {
     setPlaylistAsActive,
     getPlaylistById,
     removePlaylist,
-    getAllPlaylists,
+    getPlaylistArray,
     createPlaylist,
     updatePlaylist,
     updatePlaylistDuration,

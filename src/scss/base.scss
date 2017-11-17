@@ -17,6 +17,12 @@ body {
     scrollbar-track-color: $color1;
 }
 
+h2, h3 {
+    margin-top: 0;
+    margin-bottom: 8px;
+    font-weight: normal;
+}
+
 a {
     text-decoration: none;
 }
@@ -154,6 +160,25 @@ svg {
         height: 100%;
         transform: translate(-50%, -50%);
         object-fit: scale-down;
+    }
+}
+
+.checkbox::after {
+    content: "";
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    background-color: $color2;
+    color: $brand-color;
+}
+
+.checkbox-input {
+    display: none;
+
+    &:checked + .checkbox::after {
+        content: "\2713";
     }
 }
 

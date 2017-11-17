@@ -15,7 +15,7 @@
   "dependencies": {
     "babel-polyfill": "^6.26.0",
     "whatwg-fetch": "^2.0.3",
-    "wicg-focus-ring": "^2.0.2"
+    "wicg-focus-ring": "^3.0.0"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.6",

@@ -1,7 +1,7 @@
 import { getElementById, getElementByAttr } from "./../utils.js";
 import { getVisiblePlaylistId } from "./../tab.js";
 import { removePanel } from "./../panels.js";
-import { getPlaylistById, getAllPlaylists, findTrack } from "./playlist.js";
+import { getPlaylistById, getPlaylistArray, findTrack } from "./playlist.js";
 import { getSelectedElements, getElementIndexes } from "./playlist.track-selection.js";
 import { onNewPlaylistFormSubmit, createNewPlaylistForm, addTracksToPlaylist } from "./playlist.manage.js";
 
@@ -59,19 +59,13 @@ function onListClick({ target }) {
 }
 
 function createPlaylistList(playlistId) {
-    const playlists = getAllPlaylists();
-
-    return Object.keys(playlists)
-        .filter(id => id !== playlistId)
-        .map(id => {
-            const { title } = playlists[id];
-
-            return `
-                <li data-item="${id}">
-                    <button class="btn move-to-list-item-btn">${title}</button>
-                </li>
-            `;
-        }).join("");
+    return getPlaylistArray()
+        .filter(pl => pl.id !== playlistId)
+        .map(({ id, title }) => `
+            <li data-item="${id}">
+                <button class="btn move-to-list-item-btn">${title}</button>
+            </li>
+        `).join("");
 }
 
 function createMoveToPanel(panelId, { playlistId }) {
@@ -80,7 +74,7 @@ function createMoveToPanel(panelId, { playlistId }) {
 
     getElementById("js-move-to-panel-container").insertAdjacentHTML("beforeend", `
         <div id="${panelId}" class="panel move-to-panel">
-            <h2 class="move-to-panel-title">Move to</h2>
+            <h3 class="move-to-panel-title">Move to</h3>
             <ul id="js-move-to-list" class="move-to-list ${className}">${listContent}</ul>
             <button id="js-move-to-new-pl-btn" class="btn btn-icon move-to-new-pl-btn">
                 <svg viewBox="0 0 24 24">

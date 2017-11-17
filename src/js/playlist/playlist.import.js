@@ -42,16 +42,20 @@ function getMaskElement(option) {
 }
 
 function removeMaskElement(option) {
-    removeElement(getMaskElement(option));
+    const element = getMaskElement(option);
+
+    if (element) {
+        removeElement(element);
+    }
 }
 
 function disableImportOption(option, action) {
     const element = getMaskElement(option) || createMaskElement(option);
 
-    element.insertAdjacentHTML("beforeend", `
+    element.innerHTML = `
         <img src="./assets/images/ring-alt.svg" alt="">
         <span class="mask-message">${action}</span>
-    `);
+    `;
 }
 
 function showErrorMessage(option, message) {
@@ -214,7 +218,7 @@ function handleImportFormSubmit(event) {
 function createYouTubeInfoPanel(id, { element }) {
     element.insertAdjacentHTML("afterend", `
         <div id="${id}" class="panel info-panel">
-            <p class="info-panel-title">Accepted formats:</p>
+            <h3 class="info-panel-title">Accepted formats</h3>
             <ul>
                 <li class="info-panel-content-item">youtube.com/playlist?list={playlistId}</li>
                 <li class="info-panel-content-item">youtube.com/watch?v={videoId}</li>
@@ -249,6 +253,10 @@ function handleGoogleAuthClick(element) {
             console.log(error);
         });
     }
+}
+
+function isGoogleAuthInited() {
+    return googleAuthInitialized;
 }
 
 async function initGoogleAuth() {
@@ -347,5 +355,6 @@ export {
     showErrorMessage,
     disableImportOption,
     removeMaskElement,
+    isGoogleAuthInited,
     initGoogleAuth
 };
