@@ -1,6 +1,7 @@
 import { toggleCurrentRoute } from "./router.js";
 import { updatePlaylist, createPlaylist } from "./playlist/playlist.js";
 import { initPlaylist } from "./playlist/playlist.manage.js";
+import { syncPlaylists } from "./playlist/playlist.entries.js";
 import { storedTrack } from "./player/player.js";
 import { createMediaContainer } from "./player/player.now-playing.js";
 
@@ -8,9 +9,10 @@ const worker = new Worker("./ww.js");
 
 worker.onmessage = function({ data: { action, payload } }) {
     if (action === "init") {
-        Object.keys(payload).forEach(id => {
-            initPlaylist(createPlaylist(payload[id]));
+        payload.forEach(pl => {
+            initPlaylist(createPlaylist(pl));
         });
+        syncPlaylists(payload.filter(pl => pl.syncOnInit));
         createMediaContainer();
         toggleCurrentRoute();
         storedTrack.initTrack();

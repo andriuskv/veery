@@ -1,19 +1,18 @@
 import * as playlist from "./playlist.js";
 import { getElementById, removeElementClass, removeElement, addSpinner } from "../utils.js";
 import { removePlaylistTab, updatePlaylistView } from "./playlist.view.js";
-import { isRouteActive, addRoute, toggleRoute } from "../router.js";
+import { addRoute, toggleRoute } from "../router.js";
 import { getSetting } from "../settings.js";
 import { postMessageToWorker } from "../worker.js";
 import { createSidebarEntry, getSidebarEntry, removeSidebarEntry } from "../sidebar.js";
 import { stopPlayer } from "../player/player.js";
 import { sortTracks } from "./playlist.sorting.js";
-import { createPlaylistEntry, enableSyncBtn, disableSyncBtn } from "./playlist.entries.js";
+import { createPlaylistEntry, enableSyncBtn, disableSyncBtn, updatePlaylistStats } from "./playlist.entries.js";
 
 function updateTracks(pl) {
     playlist.setPlaybackOrder(pl, getSetting("shuffle"));
     sortTracks(pl.tracks, pl.sortedBy, pl.order);
     pl.tracks = playlist.resetTrackIndexes(pl.tracks);
-    playlist.updatePlaylistDuration(pl);
 }
 
 function initPlaylist(pl) {
@@ -24,9 +23,7 @@ function initPlaylist(pl) {
     updateTracks(pl);
 }
 
-function removePlaylist(id) {
-    const { rendered, _id } = playlist.getPlaylistById(id);
-
+function removePlaylist({ id, rendered, _id }) {
     if (playlist.isPlaylistActive(id)) {
         stopPlayer(playlist.getCurrentTrack());
     }
@@ -60,11 +57,13 @@ function updateCurrentTrack(pl) {
     }
 }
 
-function addTracksToPlaylist(pl, tracks, showPlaylist = isRouteActive("home")) {
+function addTracksToPlaylist(pl, tracks, showPlaylist) {
     if (tracks.length) {
         tracks = setPrimaryTackIndexes(tracks, pl.lastTrackIndex);
         pl.lastTrackIndex = tracks[tracks.length - 1].primaryIndex + 1;
         pl.tracks = pl.tracks.concat(tracks);
+        playlist.updatePlaylistDuration(pl);
+        updatePlaylistStats();
     }
 
     if (!pl.initialized) {

@@ -1,25 +1,26 @@
 import { removeElement, getElementById, getElementByAttr, enableBtn, disableBtn } from "../utils.js";
 import { editSidebarEntry } from "../sidebar.js";
 import { postMessageToWorker } from "../worker.js";
+import { togglePanel } from "../panels.js";
 import { getPlaylistById, updatePlaylist } from "./playlist.js";
 import { removePlaylist } from "./playlist.manage.js";
-import { importPlaylist, disableImportOption, initGoogleAuth } from "./playlist.import.js";
+import { importPlaylist, disableImportOption, isGoogleAuthInited, initGoogleAuth } from "./playlist.import.js";
 
 function createContainer(id) {
     const div = document.createElement("div");
-    const h3 = document.createElement("h3");
+    const h2 = document.createElement("h2");
     const ul = document.createElement("ul");
 
     div.classList.add("pl-entry-container");
-    h3.classList.add("home-tab-section-title");
+    h2.classList.add("home-tab-section-title");
     ul.classList.add("pl-entries");
 
-    h3.textContent = "Playlists";
+    h2.textContent = "Playlists";
     ul.id = id;
     ul.addEventListener("click", handleContainerClick);
     ul.addEventListener("focus", handleContainerFocus, true);
 
-    div.appendChild(h3);
+    div.appendChild(h2);
     div.appendChild(ul);
     getElementById("js-tab-home").appendChild(div);
     return ul;
@@ -86,6 +87,16 @@ function getSyncBtnTemplate() {
     `;
 }
 
+function getSettingsBtnTemplate() {
+    return `
+        <button class="btn btn-icon pl-entry-btn" data-action="settings" title="Settings">
+            <svg viewBox="0 0 24 24">
+                <use href="#settings">
+            </svg>
+        </button>
+    `;
+}
+
 function getStatusIcon() {
     return `
         <svg viewBox="0 0 24 24" class="pl-entry-stats-item">
@@ -107,7 +118,8 @@ function parsePlaylistDuration(duration) {
 
 function createPlaylistEntry(pl) {
     const container = getContainer();
-    const btn = pl.url ? getSyncBtnTemplate() : "";
+    const settingsBtn = pl.url ? getSettingsBtnTemplate() : "";
+    const syncBtn = pl.url ? getSyncBtnTemplate() : "";
     const icon = pl.isPrivate ? getStatusIcon() : "";
 
     container.insertAdjacentHTML("beforeend", `
@@ -124,7 +136,8 @@ function createPlaylistEntry(pl) {
                     <span class="pl-entry-stats-item track-count">${pl.tracks.length} tracks</span>
                     <span class="pl-entry-stats-item playlist-duration">${parsePlaylistDuration(pl.duration)}</span>
                 </div>
-                ${btn}
+                ${syncBtn}
+                ${settingsBtn}
                 <button class="btn btn-icon pl-entry-btn" data-action="remove" title="Remove playlist">
                     <svg viewBox="0 0 24 24">
                         <use href="#trash">
@@ -133,6 +146,21 @@ function createPlaylistEntry(pl) {
             </div>
         </li>
     `);
+}
+
+function createSettingsPanel(id, { element, pl }) {
+    element.insertAdjacentHTML("afterend", `
+        <div id="${id}" class="panel pl-entry-panel">
+            <h3 class="pl-entry-panel-title">Playlist settings</h3>
+            <label class="pl-entry-setting">
+                <input type="checkbox" class="checkbox-input" ${pl.syncOnInit ? "checked" : ""}>
+                <div class="checkbox"></div>
+                <span>Synchronize playlist on startup</span>
+            </label>
+        </div>
+    `);
+
+    getElementById(id).addEventListener("change", handleSettingChange);
 }
 
 function removePlaylistEntry(entryElement) {
@@ -145,18 +173,27 @@ function removePlaylistEntry(entryElement) {
     }
 }
 
-async function syncPlaylist(id) {
-    const { url, player } = getPlaylistById(id);
-
-    if (player === "youtube") {
-        disableSyncBtn(id);
-        await initGoogleAuth();
-        enableSyncBtn(id);
+async function syncPlaylists(playlists) {
+    if (!playlists.length) {
+        return;
     }
-    disableImportOption(player, "Synchronizing");
-    importPlaylist(player, {
-        url,
-        type: "sync"
+
+    if (!isGoogleAuthInited()) {
+        playlists.forEach(pl => {
+            disableSyncBtn(pl.id);
+        });
+        await initGoogleAuth();
+        playlists.forEach(pl => {
+            enableSyncBtn(pl.id);
+        });
+    }
+    disableImportOption("youtube", "Synchronizing");
+
+    playlists.forEach(({ player, url }) => {
+        importPlaylist(player, {
+            url,
+            type: "sync"
+        });
     });
 }
 
@@ -192,25 +229,31 @@ function blurEntryInput({ currentTarget, which }) {
     }
 }
 
-function handleContainerClick(event) {
-    const entry = getElementByAttr("data-entry-id", event.target);
-    const element = getElementByAttr("data-action", event.target);
+function handleContainerClick({ target }) {
+    const entry = getElementByAttr("data-entry-id", target);
+    const element = getElementByAttr("data-action", target);
 
     if (!entry || !element || element.elementRef.disabled) {
         return;
     }
-    const playlistId = entry.attrValue;
-    const action = element.attrValue;
+    const { attrValue, elementRef } = element;
+    const pl = getPlaylistById(entry.attrValue);
 
-    if (action === "remove") {
-        removePlaylist(playlistId);
+    if (attrValue === "remove") {
+        removePlaylist(pl);
         removePlaylistEntry(entry.elementRef);
     }
-    else if (action === "sync") {
-        syncPlaylist(playlistId);
+    else if (attrValue === "sync") {
+        syncPlaylists([pl]);
     }
-    else if (action === "edit") {
-        element.elementRef.querySelector(".input").focus();
+    else if (attrValue === "settings") {
+        togglePanel("js-pl-entry-panel", createSettingsPanel, {
+            element: elementRef,
+            pl
+        });
+    }
+    else if (attrValue === "edit") {
+        elementRef.querySelector(".input").focus();
     }
 }
 
@@ -223,9 +266,25 @@ function handleContainerFocus({ target }) {
     }
 }
 
+function handleSettingChange(event) {
+    const entry = getElementByAttr("data-entry-id", event.target);
+    const pl = getPlaylistById(entry.attrValue);
+
+    pl.syncOnInit = event.target.checked;
+
+    postMessageToWorker({
+        action: "change-sync",
+        playlist: {
+            _id: pl._id,
+            syncOnInit: pl.syncOnInit
+        }
+    });
+}
+
 export {
     createPlaylistEntry,
     enableSyncBtn,
     disableSyncBtn,
-    updatePlaylistStats
+    updatePlaylistStats,
+    syncPlaylists
 };
