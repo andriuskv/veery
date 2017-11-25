@@ -1,5 +1,5 @@
 import { removeElement, getElementById, getElementByAttr, enableBtn, disableBtn } from "../utils.js";
-import { editSidebarEntry } from "../sidebar.js";
+import { editSidebarEntryTitle } from "../sidebar.js";
 import { postMessageToWorker } from "../worker.js";
 import { togglePanel } from "../panels.js";
 import { getPlaylistById, updatePlaylist } from "./playlist.js";
@@ -211,7 +211,7 @@ function editPlaylistTitle({ currentTarget }) {
     }
 
     if (newTitle !== title) {
-        editSidebarEntry(playlistId, newTitle);
+        editSidebarEntryTitle(playlistId, newTitle);
         updatePlaylist(playlistId, { title: newTitle });
         postMessageToWorker({
             action: "change-title",

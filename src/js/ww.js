@@ -60,6 +60,11 @@ self.onmessage = function({ data: { action, playlist } }) {
             ref.value.syncOnInit = playlist.syncOnInit;
         });
     }
+    else if (action === "update-playlist-duration") {
+        updatePlaylist(playlist._id, (value, ref) => {
+            ref.value.duration = playlist.duration;
+        });
+    }
     else if (action === "remove-tracks") {
         updatePlaylist(playlist._id, (value, ref) => {
             ref.value.tracks = ref.value.tracks.filter(track => {

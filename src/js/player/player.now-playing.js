@@ -79,7 +79,7 @@ function handleMousemove({ currentTarget, target }) {
         return;
     }
     const width = target.scrollWidth;
-    const maxWidth = target.parentElement.offsetWidth - 16;
+    const maxWidth = target.parentElement.offsetWidth - 8;
 
     if (width > maxWidth) {
         animationTarget = target;

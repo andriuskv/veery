@@ -1,5 +1,4 @@
 import { removeElement, getElementById, getElementByAttr, isOutsideElement } from "./utils.js";
-import { toggleRoute, isRouteActive } from "./router.js";
 import { createNewPlaylistForm, onNewPlaylistFormSubmit } from "./playlist/playlist.manage.js";
 
 function getSidebarEntry(id) {
@@ -8,31 +7,25 @@ function getSidebarEntry(id) {
 
 function createSidebarEntry(title, id) {
     getElementById("js-sidebar-entries").insertAdjacentHTML("beforeend", `
-        <li>
-            <button id="js-sidebar-entry-${id}" class="btn sidebar-btn" data-item="btn" data-hash="playlist/${id}">
-                <span>${title}</span>
-            </button>
+        <li id="js-sidebar-entry-${id}" class="sidebar-entry">
+            <a href="/#/playlist/${id}" class="sidebar-link" data-link>
+                <span class="js-sidebar-entry-title">${title}</span>
+            </a>
         </li>
     `);
 }
 
-function editSidebarEntry(id, title) {
-    const entry = getSidebarEntry(id);
-
-    entry.firstElementChild.textContent = title;
+function editSidebarEntryTitle(id, title) {
+    getSidebarEntry(id).querySelector(".js-sidebar-entry-title").textContent = title;
 }
 
 function removeSidebarEntry(id) {
-    const entry = getSidebarEntry(id);
-
-    removeElement(entry);
+    removeElement(getSidebarEntry(id));
 }
 
 function showActiveIcon(id) {
-    const entry = getSidebarEntry(id);
-
     removeActiveIcon();
-    entry.insertAdjacentHTML("beforeend", `
+    getSidebarEntry(id).insertAdjacentHTML("beforeend", `
         <svg viewBox="0 0 24 24" id="js-active-playlist-icon" class="active-playlist-icon">
             <use href="#volume"></use>
         </svg>
@@ -40,10 +33,10 @@ function showActiveIcon(id) {
 }
 
 function removeActiveIcon() {
-    const activeIcon = getElementById("js-active-playlist-icon");
+    const element = getElementById("js-active-playlist-icon");
 
-    if (activeIcon) {
-        removeElement(activeIcon);
+    if (element) {
+        removeElement(element);
     }
 }
 
@@ -58,30 +51,22 @@ function toggleSidebarForm(btn) {
 }
 
 getElementById("js-sidebar-container").addEventListener("click", ({ currentTarget, target }) => {
-    if (isOutsideElement(target, currentTarget.firstElementChild)) {
+    const linkElement = getElementByAttr("data-link", target, currentTarget);
+
+    if (linkElement || isOutsideElement(target, currentTarget.firstElementChild)) {
         currentTarget.classList.add("hidden");
         return;
     }
-    const element = getElementByAttr("data-item", target);
+    const element = getElementByAttr("data-btn", target, currentTarget);
 
     if (element) {
-        const hash = element.elementRef.getAttribute("data-hash");
-
-        if (!hash) {
-            toggleSidebarForm(element.elementRef);
-            return;
-        }
-        currentTarget.classList.add("hidden");
-
-        if (!isRouteActive(hash)) {
-            toggleRoute(hash);
-        }
+        toggleSidebarForm(element.elementRef);
     }
 });
 
 export {
     createSidebarEntry,
-    editSidebarEntry,
+    editSidebarEntryTitle,
     removeSidebarEntry,
     getSidebarEntry,
     showActiveIcon,

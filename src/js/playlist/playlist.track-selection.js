@@ -449,9 +449,15 @@ function removeSelectedTracks() {
             tracks: tracksToRemove
         }
     });
+    postMessageToWorker({
+        action: "update-playlist-duration",
+        playlist: {
+            _id: pl._id,
+            duration: updatePlaylistDuration(pl)
+        }
+    });
     updateCurrentTrackIndex(id, indexes);
     removeElement(getElementById("js-move-to-panel-container"));
-    updatePlaylistDuration(pl);
 
     if (!tracksToKeep.length) {
         enableTrackSelection(pl);
