@@ -17,7 +17,8 @@ function createPlaylist(pl) {
         shuffled: false,
         tracks: [],
         playbackIndex: 0,
-        playbackOrder: []
+        playbackOrder: [],
+        duration: 0
     };
     const defaultState = {
         rendered: false,
@@ -41,6 +42,8 @@ function updatePlaylistDuration(pl) {
         total += track.durationInSeconds;
         return total;
     }, 0);
+
+    return pl.duration;
 }
 
 function setPlaylistAsActive(id = "") {

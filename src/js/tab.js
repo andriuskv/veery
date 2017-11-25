@@ -19,21 +19,6 @@ function getVisiblePlaylistId() {
     return visiblePlaylistId;
 }
 
-function updatePlaylistStatus(playlistId) {
-    const element = getElementById("js-playlist-status-container");
-
-    if (element) {
-        const id = element.getAttribute("data-id");
-
-        if (id === playlistId) {
-            element.classList.add("visible");
-        }
-        else {
-            element.classList.remove("visible");
-        }
-    }
-}
-
 function toggleToPlaylistTab(id) {
     const isSmallestBreakpoint = window.innerWidth <= 540;
     const pl = getPlaylistById(id);
@@ -51,19 +36,18 @@ function toggleToPlaylistTab(id) {
     setSortOptions(pl);
     enableTrackSelection(pl);
     resetFilteredPlaylist();
-    updatePlaylistStatus(pl.id);
 }
 
-getElementById("js-tab-header").addEventListener("click", ({ target }) => {
-    const element = getElementByAttr("data-item", target);
+getElementById("js-tab-header").addEventListener("click", ({ currentTarget, target }) => {
+    const element = getElementByAttr("data-item", target, currentTarget);
 
     if (element && element.attrValue === "sidebar-toggle") {
         getElementById("js-sidebar-container").classList.remove("hidden");
     }
 });
 
-getElementById("js-playlist-tab-header").addEventListener("click", ({ target }) => {
-    const element = getElementByAttr("data-item", target);
+getElementById("js-playlist-tab-header").addEventListener("click", ({ currentTarget, target }) => {
+    const element = getElementByAttr("data-item", target, currentTarget);
 
     if (!element) {
         return;
@@ -92,9 +76,7 @@ getElementById("js-playlist-tab-header").addEventListener("click", ({ target }) 
 });
 
 window.addEventListener("route-change", ({ detail: { isPlaylistTab, tabId } }) => {
-    const entry = getSidebarEntry(tabId);
-
-    removeElementClass(".sidebar-btn.active", "active");
+    removeElementClass(".sidebar-entry.active", "active");
     removeElementClass(".tab.active", "active");
     setVisiblePlaylistId(isPlaylistTab ? tabId: "");
 
@@ -109,7 +91,7 @@ window.addEventListener("route-change", ({ detail: { isPlaylistTab, tabId } }) =
         getElementById("js-tab-playlist-container").classList.remove("active");
     }
     getElementById(`js-tab-${tabId}`).classList.add("active");
-    entry.classList.add("active");
+    getSidebarEntry(tabId).classList.add("active");
 });
 
 export {

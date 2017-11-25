@@ -47,14 +47,12 @@ function getElementById(id) {
     return document.getElementById(id);
 }
 
-function getElementByAttr(attr, element) {
-    while (element) {
-        const attrValue = element.getAttribute(attr);
-
-        if (attrValue) {
+function getElementByAttr(attr, element, endElement = null) {
+    while (element && element !== endElement) {
+        if (element.hasAttribute(attr)) {
             return {
                 elementRef: element,
-                attrValue
+                attrValue: element.getAttribute(attr)
             };
         }
         element = element.parentElement;
@@ -104,7 +102,7 @@ function dispatchCustomEvent(eventName, data) {
     window.dispatchEvent(event);
 }
 
-function getImage(image = "assets/images/album-art-placeholder.png") {
+function getImage(image) {
     return typeof image === "object" ? URL.createObjectURL(image) : image;
 }
 
