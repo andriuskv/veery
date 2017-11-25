@@ -94,15 +94,17 @@
             <div id="js-sidebar" class="sidebar">
                 <header class="sidebar-header"><h1>Veery</h1></header>
                 <nav class="sidebar-nav">
-                    <button id="js-sidebar-entry-home" class="btn btn-icon sidebar-btn sidebar-home-btn" data-item="btn" data-hash="home">
-                        <svg viewBox="0 0 24 24">
-                            <path d="M10,20V14H14V20H19V12H22L12,3L2,12H5V20H10Z" />
-                        </svg>
-                        <span>Home</span>
-                    </button>
+                    <div id="js-sidebar-entry-home" class="sidebar-entry">
+                        <a href="/#/home" class="sidebar-link sidebar-home-link" data-link>
+                            <svg viewBox="0 0 24 24">
+                                <path d="M10,20V14H14V20H19V12H22L12,3L2,12H5V20H10Z" />
+                            </svg>
+                            <span>Home</span>
+                        </a>
+                    </div>
                     <div class="sidebar-section-title">
                         <span>PLAYLISTS</span>
-                        <button class="btn btn-icon sidebar-form-toggle-btn" data-item="btn" title="Toggle playlist form">
+                        <button class="btn btn-icon sidebar-form-toggle-btn" data-btn title="Toggle playlist form">
                             <svg viewBox="0 0 24 24">
                                 <use href="#plus"></use>
                             </svg>
