@@ -2,9 +2,10 @@ import { removeElement, getElementById, getElementByAttr, enableBtn, disableBtn 
 import { editSidebarEntryTitle } from "../sidebar.js";
 import { postMessageToWorker } from "../worker.js";
 import { togglePanel } from "../panels.js";
+import { isGoogleAuthInited, initGoogleAuth } from "../google-auth.js";
 import { getPlaylistById, updatePlaylist } from "./playlist.js";
 import { removePlaylist } from "./playlist.manage.js";
-import { importPlaylist, disableImportOption, isGoogleAuthInited, initGoogleAuth } from "./playlist.import.js";
+import { importPlaylist, disableImportOption } from "./playlist.import.js";
 
 function createContainer(id) {
     const div = document.createElement("div");

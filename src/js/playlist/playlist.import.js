@@ -1,15 +1,12 @@
-/* global gapi */
-
 import {
     removeElement,
     removeElementClass,
     getElementById,
     getElementByAttr,
-    scriptLoader,
-    enableBtn,
-    disableBtn
+    scriptLoader
 } from "./../utils.js";
 import { togglePanel } from "../panels.js";
+import { isGoogleAuthInited, changeGoogleAuthState, initGoogleAuth } from "../google-auth.js";
 import { getPlaylistById, createPlaylist } from "./playlist.js";
 import { addTracksToPlaylist } from "./playlist.manage.js";
 import { showDropboxChooser } from "../dropbox.js";
@@ -17,7 +14,6 @@ import { selectLocalFiles } from "../local.js";
 import { fetchYoutubeItem } from "../youtube.js";
 
 const importOptions = getElementById("js-import-options");
-let googleAuthInitialized = false;
 let importOption = "";
 
 function setImportOption(option = "") {
@@ -227,68 +223,6 @@ function createYouTubeInfoPanel(id, { element }) {
     `);
 }
 
-function handleGoogleAuthClick(element) {
-    if (element.disabled) {
-        return;
-    }
-    const instance = gapi.auth2.getAuthInstance();
-
-    disableBtn(element);
-
-    if (instance.isSignedIn.get()) {
-        instance.signOut().then(() => {
-            element.firstElementChild.textContent = "Sign In";
-            enableBtn(element);
-        }, error => {
-            enableBtn(element);
-            console.log(error);
-        });
-    }
-    else {
-        instance.signIn().then(() => {
-            element.firstElementChild.textContent = "Sign Out";
-            enableBtn(element);
-        }, error => {
-            enableBtn(element);
-            console.log(error);
-        });
-    }
-}
-
-function isGoogleAuthInited() {
-    return googleAuthInitialized;
-}
-
-async function initGoogleAuth() {
-    if (googleAuthInitialized) {
-        return;
-    }
-    const element = document.querySelector(".google-sign-in-or-out-btn");
-    googleAuthInitialized = true;
-
-    try {
-        disableBtn(element);
-
-        await scriptLoader.load({ src: "https://apis.google.com/js/api.js" });
-        await new Promise(resolve => gapi.load('client:auth2', resolve));
-        await gapi.client.init({
-            apiKey: process.env.YOUTUBE_API_KEY,
-            clientId: "293076144560-r5cear7rprgo094u6ibcd6nl3bbg18te.apps.googleusercontent.com",
-            discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest"],
-            scope: "https://www.googleapis.com/auth/youtube.force-ssl"
-        });
-
-        enableBtn(element);
-
-        if (gapi.auth2.getAuthInstance().isSignedIn.get()) {
-            element.firstElementChild.textContent = "Sign Out";
-        }
-    }
-    catch (e) {
-        console.log(e);
-    }
-}
-
 function handleYouTubeOptionClick({ attrValue, elementRef }) {
     if (attrValue === "form-toggle") {
         const option = "youtube";
@@ -298,7 +232,7 @@ function handleYouTubeOptionClick({ attrValue, elementRef }) {
             createImportForm(elementRef, option);
             setImportOption(option);
 
-            if (!googleAuthInitialized) {
+            if (!isGoogleAuthInited()) {
                 initGoogleAuth();
             }
         }
@@ -308,7 +242,7 @@ function handleYouTubeOptionClick({ attrValue, elementRef }) {
         }
     }
     else if (attrValue === "google-sign-in-or-out") {
-        handleGoogleAuthClick(elementRef);
+        changeGoogleAuthState(elementRef);
     }
     else if (attrValue === "youtube-info") {
         togglePanel(`js-${attrValue}-panel`, createYouTubeInfoPanel, { element: elementRef });
@@ -354,7 +288,5 @@ export {
     addImportedPlaylist,
     showErrorMessage,
     disableImportOption,
-    removeMaskElement,
-    isGoogleAuthInited,
-    initGoogleAuth
+    removeMaskElement
 };
