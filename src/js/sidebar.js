@@ -8,7 +8,7 @@ function getSidebarEntry(id) {
 function createSidebarEntry(title, id) {
     getElementById("js-sidebar-entries").insertAdjacentHTML("beforeend", `
         <li id="js-sidebar-entry-${id}" class="sidebar-entry">
-            <a href="/#/playlist/${id}" class="sidebar-link" data-link>
+            <a href="./#/playlist/${id}" class="sidebar-link" data-link>
                 <span class="js-sidebar-entry-title">${title}</span>
             </a>
         </li>
