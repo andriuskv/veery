@@ -53,11 +53,11 @@ function createListItem(item) {
 function createList(id, items) {
     return `
         <ul class="list-view-header">
-            <li class="list-item-first-col list-view-header-item">#</li>
-            <li class="list-item-col list-view-header-item">Title</li>
-            <li class="list-item-col list-view-header-item">Artist</li>
-            <li class="list-item-col list-view-header-item">Album</li>
-            <li class="list-item-col list-view-header-item">Duration</li>
+            <li class="list-item-first-col">#</li>
+            <li class="list-item-col">Title</li>
+            <li class="list-item-col">Artist</li>
+            <li class="list-item-col">Album</li>
+            <li class="list-item-col">Duration</li>
         </ul>
         <ul id="js-${id}" class="playlist-view list-view">${items}</ul>
     `;

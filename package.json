@@ -18,26 +18,26 @@
     "wicg-focus-ring": "^3.0.2"
   },
   "devDependencies": {
-    "autoprefixer": "^7.1.6",
+    "autoprefixer": "^7.2.3",
     "babel-core": "^6.26.0",
-    "babel-eslint": "^8.0.2",
+    "babel-eslint": "^8.0.3",
     "babel-loader": "^7.1.2",
     "babel-preset-env": "^1.6.1",
     "css-loader": "^0.28.7",
     "css-mqpacker": "^6.0.1",
     "cssnano": "^3.10.0",
-    "eslint": "^4.12.0",
+    "eslint": "^4.13.1",
     "extract-text-webpack-plugin": "^3.0.2",
     "html-webpack-plugin": "^2.30.1",
     "live-server": "^1.2.0",
     "node-sass": "^4.7.2",
     "postcss-loader": "^2.0.9",
     "sass-loader": "^6.0.6",
-    "style-loader": "^0.19.0",
-    "webpack": "^3.8.1"
+    "style-loader": "^0.19.1",
+    "webpack": "^3.10.0"
   },
   "browserslist": [
     "last 1 versions",
-    "IE >= 11"
+    "> 1%"
   ]
 }

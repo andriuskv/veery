@@ -193,7 +193,7 @@
 
     &:hover {
         .pl-entry-input {
-            border: 1px solid $color2;
+            border-color: $color2;
             background-color: $color1;
         }
 
@@ -208,9 +208,10 @@
     padding-right: 24px;
     border: 1px solid transparent;
     background-color: transparent;
+    transition: background-color 0.1s, border-color 0.1s;
 
     &:focus {
-        border: 1px solid $color2;
+        border-color: $color2;
         background-color: $color1;
 
         & + .pl-entry-input-icon {

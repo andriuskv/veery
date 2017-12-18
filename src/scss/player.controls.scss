@@ -325,11 +325,6 @@
 
 .control-btn {
     margin-right: 4px;
-
-    &.active {
-        background-color: $color3;
-        box-shadow: inset 1px 1px 1px 0 $color2;
-    }
 }
 
 .volume-controls {

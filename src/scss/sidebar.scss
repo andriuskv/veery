@@ -98,6 +98,7 @@
 
 .sidebar-entry {
     position: relative;
+    background-color: $color3;
     color: $base-text-color;
     transition: background-color 0.1s;
 
@@ -109,7 +110,7 @@
         background-color: $color1;
 
         .active-playlist-icon {
-            box-shadow: -2px 0 4px 0 $color1;
+            box-shadow: -2px 0 4px 2px $color1;
         }
     }
 }
@@ -117,8 +118,6 @@
 .sidebar-link {
     @include text-truncate;
 
-    z-index: 2;
-    position: relative;
     display: block;
     padding: 12px 8px;
     color: inherit;
@@ -140,7 +139,7 @@
     @include center-vertically;
 
     right: 8px;
-    box-shadow: -2px 0 4px 0 $color3;
+    box-shadow: -2px 0 4px 2px $color3;
     background-color: inherit;
     fill: $base-text-color;
     transition: box-shadow 0.1s;
