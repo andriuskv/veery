@@ -247,9 +247,10 @@
             <div class="track-slider-panel">
                 <div id="js-track-current" class="track-time">0:00</div>
                 <div class="control-slider-container">
-                    <div id="js-track-slider" role="slider" aria-label="Seek slider" aria-valuemin="0" class="control-slider" tabindex="0">
+                    <div id="js-track-slider" class="control-slider" role="slider" aria-label="Seek slider" aria-valuemin="0" tabindex="0">
                         <div class="slider-inner">
-                            <div id="js-track-slider-thumb" class="slider-thumb track-slider-thumb"></div>
+                            <div id="js-track-slider-elapsed" class="slider-elapsed"></div>
+                            <div id="js-track-slider-thumb" class="slider-thumb"></div>
                         </div>
                     </div>
                     <div id="js-track-slider-label" class="panel slider-label">0%</div>
@@ -283,9 +284,10 @@
                     </svg>
                 </div>
                 <div class="control-slider-container volume-slider-container">
-                    <div id="js-volume-slider" role="slider" aria-valuemin="0" aria-valuemax="100" class="control-slider volume-slider" tabindex="0">
-                        <div class="slider-inner volume-slider-inner">
-                            <div id="js-volume-slider-thumb" class="slider-thumb volume-slider-thumb"></div>
+                    <div id="js-volume-slider" class="control-slider visible" role="slider" aria-valuemin="0" aria-valuemax="100" tabindex="0">
+                        <div class="slider-inner">
+                            <div id="js-volume-slider-elapsed" class="slider-elapsed"></div>
+                            <div id="js-volume-slider-thumb" class="slider-thumb"></div>
                         </div>
                     </div>
                     <div id="js-volume-slider-label" class="panel slider-label">0%</div>
