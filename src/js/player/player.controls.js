@@ -116,7 +116,8 @@ function toggleVolumeBtn(element, state) {
 
 function getPosInPercentage(slider, pageX) {
     const { left, width } = getElementById(`js-${slider}-slider`).getBoundingClientRect();
-    let percentage = (pageX - left) / width * 100;
+    const thumbWidth = 12;
+    let percentage = (pageX - left - thumbWidth / 2) / (width - thumbWidth) * 100;
 
     if (percentage < 0) {
         percentage = 0;
@@ -171,35 +172,47 @@ function onVolumeSliderMouseup() {
     volumeSlider.addEventListener("mousemove", onLocalVolumeSliderMousemove);
 }
 
-function updateSliderThumb(slider, percentage = 0) {
-    getElementById(`js-${slider}-slider-thumb`).style.left = `${percentage}%`;
+function updateSlider(slider, value) {
+    getElementById(`js-${slider}-slider-thumb`).style.left = `${value * 100}%`;
+    getElementById(`js-${slider}-slider-elapsed`).style.transform = `scaleX(${value})`;
 }
 
 function updateTrackSlider(track, currentTime = 0) {
     const formatedCurrentTime = formatTime(currentTime);
     const durationInSeconds = track ? track.durationInSeconds : 1;
     const duration = track ? track.duration : formatedCurrentTime;
-    const percentage = currentTime / durationInSeconds * 100;
 
     if (!seeking) {
         getElementById("js-track-current").textContent = formatedCurrentTime;
     }
-    updateSliderThumb("track", percentage);
+    updateSlider("track", currentTime / durationInSeconds);
     trackSlider.setAttribute("aria-valuenow", currentTime);
     trackSlider.setAttribute("aria-valuetext", `${formatedCurrentTime} of ${duration}`);
 }
 
 function updateVolumeSlider(volume) {
-    const percentage = volume * 100;
+    const percentage = Math.round(volume * 100);
 
-    updateSliderThumb("volume", percentage);
+    updateSlider("volume", volume);
     volumeSlider.setAttribute("aria-valuenow", percentage);
-    volumeSlider.setAttribute("aria-valuetext", `${Math.round(percentage)}% volume`);
+    volumeSlider.setAttribute("aria-valuetext", `${percentage}% volume`);
+}
+
+function onLocalVolumeSliderMousemove({ pageX }) {
+    updateVolumeSliderLabel(getPosInPercentage("volume", pageX));
 }
 
 function showTrackDuration(duration = "0:00", durationInSeconds = 0) {
     getElementById("js-track-duration").textContent = duration;
     trackSlider.setAttribute("aria-valuemax", durationInSeconds);
+}
+
+function showTrackSlider() {
+    trackSlider.classList.add("visible");
+}
+
+function hideTrackSlider() {
+    trackSlider.classList.remove("visible");
 }
 
 function getCurrentTime(offset, duration) {
@@ -282,10 +295,6 @@ function unmutePlayer() {
     }
 }
 
-function onLocalVolumeSliderMousemove({ pageX }) {
-    updateVolumeSliderLabel(getPosInPercentage("volume", pageX));
-}
-
 trackSlider.addEventListener("mousedown", event => {
     if (event.which !== 1 || !getCurrentTrack()) {
         return;
@@ -299,17 +308,6 @@ trackSlider.addEventListener("mousedown", event => {
 });
 
 trackSlider.addEventListener("mousemove", onLocalTrackSliderMousemove);
-
-trackSlider.addEventListener("mouseenter", () => {
-    const track = getCurrentTrack();
-    const label = getElementById("js-track-slider-label");
-
-    if (!track) {
-        label.classList.add("hidden");
-        return;
-    }
-    label.classList.remove("hidden");
-});
 
 trackSlider.addEventListener("keydown", ({ which }) => {
     const track = getCurrentTrack();
@@ -433,5 +431,7 @@ export {
     updateTrackSlider,
     updateVolume,
     showTrackDuration,
-    resetTrackSlider
+    resetTrackSlider,
+    showTrackSlider,
+    hideTrackSlider
 };

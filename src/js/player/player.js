@@ -6,7 +6,9 @@ import {
     elapsedTime,
     resetTrackSlider,
     showPlayPauseBtnSpinner,
-    hidePlayPauseBtnSpinner
+    hidePlayPauseBtnSpinner,
+    showTrackSlider,
+    hideTrackSlider
 } from "./player.controls.js";
 import {
     getPlaylistById,
@@ -117,6 +119,7 @@ function beforeTrackStart(track) {
 
     showNowPlaying(track);
     showTrackDuration(track.duration, track.durationInSeconds);
+    showTrackSlider();
     updateTrackMedia(track);
 
     if (pl.rendered && track.index !== -1) {
@@ -252,6 +255,7 @@ function resetPlayer(track) {
     isPaused = true;
     storedTrack.removeTrack();
     showTrackDuration();
+    hideTrackSlider();
     removeNowPlaying();
     setCurrentTrack();
     setPlaylistAsActive();

@@ -184,8 +184,8 @@
 .track-time {
     flex-shrink: 0;
     min-width: 32px;
-    margin-right: 8px;
-    margin-left: 8px;
+    margin-right: 4px;
+    margin-left: 4px;
     font-size: 12px;
 
     &:first-of-type {
@@ -195,8 +195,6 @@
     @include breakpoint-smallest {
         order: 1;
         min-width: auto;
-        margin-right: 0;
-        margin-left: 0;
 
         &:last-of-type {
             margin-left: auto;
@@ -211,65 +209,54 @@
 }
 
 .control-slider {
-    overflow: hidden;
     width: 100%;
     height: 100%;
-    cursor: pointer;
+    padding-left: 6px;
+    padding-right: 6px;
 
-    &:hover, &:active {
-        & + .slider-label:not(.hidden) {
-            display: block;
+    &.visible {
+        cursor: pointer;
+
+        &:hover, &:active {
+            & + .slider-label, .slider-thumb {
+                display: block;
+            }
         }
-    }
 
-    &:active .slider-thumb {
-        background-color: #aaa;
+        &:active .slider-thumb {
+            background-color: $alt-text-color;
+        }
     }
 }
 
 .slider-inner {
     position: relative;
-    width: calc(100% - 12px);
+    top: 50%;
+    width: 100%;
+    height: 4px;
+    background-color: $color2;
+    transform: translateY(-50%);
+}
+
+.slider-elapsed {
     height: 100%;
+    background-color: $brand-color;
+    transform: scaleX(0);
+    transform-origin: left;
+    will-change: transform;
 }
 
 .slider-thumb {
     position: absolute;
-    top: calc(50% - 6px);
+    top: 50%;
+    display: none;
     width: 12px;
     height: 12px;
-    border: 3px solid #ddd;
+    border: 3px solid $base-text-color;
     border-radius: 50%;
-    background-color: #ddd;
+    background-color: $base-text-color;
+    transform: translate(-50%, -50%);
     will-change: left;
-
-    &::before, &::after {
-        content: "";
-        position: absolute;
-        top: 50%;
-        display: block;
-        height: 4px;
-        margin-top: -2px;
-    }
-
-    &::before {
-        background-color: $brand-color;
-    }
-
-    &::after {
-        left: 9px;
-        background-color: $color2;
-    }
-}
-
-.track-slider-thumb {
-    &::before, &::after {
-        width: 100vw;
-    }
-
-    &::before {
-        left: calc(-100vw - 3px);
-    }
 }
 
 .slider-label {
@@ -282,10 +269,6 @@
     text-align: center;
     transform: translateX(-50%);
     will-change: left;
-
-    &.hidden {
-        display: none;
-    }
 
     @include popup-arrow {
         bottom: -4px;
@@ -329,26 +312,10 @@
 
 .volume-controls {
     display: flex;
-    align-items: center;
 }
 
 .volume-slider-container {
     width: 100px;
-    margin-right: 8px;
-
-    @include breakpoint-smallest {
-        margin-right: 0;
-    }
-}
-
-.volume-slider-thumb {
-    &::before, &::after {
-        width: 100px;
-    }
-
-    &::before {
-        left: -103px;
-    }
 }
 
 .control-toggle-btn {
