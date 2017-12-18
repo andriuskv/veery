@@ -8,15 +8,13 @@ function getSidebarEntry(id) {
 function createSidebarEntry(title, id) {
     getElementById("js-sidebar-entries").insertAdjacentHTML("beforeend", `
         <li id="js-sidebar-entry-${id}" class="sidebar-entry">
-            <a href="./#/playlist/${id}" class="sidebar-link" data-link>
-                <span class="js-sidebar-entry-title">${title}</span>
-            </a>
+            <a href="./#/playlist/${id}" class="sidebar-link" data-link>${title}</a>
         </li>
     `);
 }
 
 function editSidebarEntryTitle(id, title) {
-    getSidebarEntry(id).querySelector(".js-sidebar-entry-title").textContent = title;
+    getSidebarEntry(id).querySelector(".sidebar-link").textContent = title;
 }
 
 function removeSidebarEntry(id) {

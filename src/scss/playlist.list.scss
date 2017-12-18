@@ -3,16 +3,11 @@
     position: sticky;
     top: 0;
     display: flex;
-    align-items: center;
-    height: 30px;
+    height: 32px;
     padding: 4px 8px;
     background-color: $color2;
-    user-select: none;
-}
-
-.list-view-header-item {
-    font-size: 16px;
     color: $alt-text-color;
+    user-select: none;
 }
 
 .list-view {
