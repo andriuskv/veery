@@ -138,7 +138,7 @@ function togglePlayPauseBtns(track, isPaused) {
 
 function togglePlaying(track) {
     if (track.player === "native") {
-        nPlayer.togglePlaying(isPaused, track.audio);
+        nPlayer.togglePlaying(isPaused);
     }
     else if (track.player === "youtube") {
         ytPlayer.togglePlaying(isPaused);
@@ -189,8 +189,8 @@ function play(source, sourceValue, id = getActivePlaylistId()) {
 
     if (currentTrack) {
         resetTrackSlider();
-        togglePlayPauseBtns(currentTrack, true);
-        stopTrack(currentTrack);
+        toggleTrackPlayPauseBtn(currentTrack, true);
+        stopTrack(currentTrack.player);
     }
 
     if (pl.shuffled !== shuffle) {
@@ -202,14 +202,14 @@ function play(source, sourceValue, id = getActivePlaylistId()) {
     }
     else if (source === "direction") {
         track = getNextTrack(pl, sourceValue);
+
+        if (!track) {
+
+            // If playlist is empty reset player
+            resetPlayer(currentTrack);
+            return;
+        }
         scrollToTrack = true;
-    }
-
-    if (!track) {
-
-        // If playlist is empty reset player
-        resetPlayer(currentTrack);
-        return;
     }
     playNewTrack(track);
 }
@@ -235,18 +235,18 @@ function playTrackFromElement({ target }) {
     }
 }
 
-function stopTrack(track) {
-    if (track.player === "native") {
-        nPlayer.stopTrack(track);
+function stopTrack(player) {
+    if (player === "native") {
+        nPlayer.stopTrack();
     }
-    else if (track.player === "youtube") {
+    else if (player === "youtube") {
         ytPlayer.stopTrack();
     }
 }
 
 function stopPlayer(track) {
     if (track) {
-        stopTrack(track);
+        stopTrack(track.player);
     }
     resetPlayer(track);
 }
@@ -296,20 +296,20 @@ function setVolume(volume) {
     const track = getCurrentTrack() || {};
 
     if (track.player === "native") {
-        nPlayer.setVolume(volume, track.audio);
+        nPlayer.setVolume(volume);
     }
     else if (track.player === "youtube") {
         ytPlayer.setVolume(volume);
     }
 }
 
-function seekTo(track, currentTime) {
+function seekTo(player, currentTime) {
     elapsedTime.stop();
 
-    if (track.player === "native") {
-        nPlayer.seekTo(currentTime, track.audio);
+    if (player === "native") {
+        nPlayer.seekTo(currentTime);
     }
-    else if (track.player === "youtube") {
+    else if (player === "youtube") {
         ytPlayer.seekTo(currentTime);
     }
 }

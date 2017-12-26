@@ -21,6 +21,7 @@ module.exports = function(env = {}) {
 
     if (env.prod) {
         plugins.push(
+            new webpack.optimize.ModuleConcatenationPlugin(),
             new webpack.optimize.UglifyJsPlugin({
                 compress: {
                     warnings: false,
