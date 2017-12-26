@@ -258,7 +258,7 @@ function onTrackSliderMouseup({ pageX }) {
         const { currentTime } = getCurrentTime(pageX, track.durationInSeconds);
 
         updateTrackSlider(track, currentTime);
-        seekTo(track, currentTime);
+        seekTo(track.player, currentTime);
         storedTrack.updateTrack({ currentTime });
     }
     window.removeEventListener("mousemove", onTrackSliderMousemove);
@@ -333,7 +333,7 @@ trackSlider.addEventListener("keydown", ({ which }) => {
         }
     }
     updateTrackSlider(track, currentTime);
-    seekTo(track, currentTime);
+    seekTo(track.player, currentTime);
     storedTrack.updateTrack({ currentTime });
 });
 
