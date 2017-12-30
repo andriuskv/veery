@@ -1,6 +1,7 @@
 /* global parse_audio_metadata */
 
 import parseFlacMetadata from "../libs/parseFlacMetadata.js";
+import parseOggOpusMetadata from "../libs/parseOggOpusMetadata.js";
 import { scriptLoader, formatTime } from "./utils.js";
 import { getPlaylistById, createPlaylist } from "./playlist/playlist.js";
 import { addTracksToPlaylist, showStatusIndicator, hideStatusIndicator } from "./playlist/playlist.manage.js";
@@ -47,17 +48,18 @@ function filterDuplicateTracks(tracks, existingTracks) {
 }
 
 async function getTrackMetadata(track) {
+    if (track.type === "audio/flac") {
+        return parseFlacMetadata(track);
+    }
+    else if (track.type === "audio/ogg") {
+        return parseOggOpusMetadata(track);
+    }
     let data = {};
 
-    if (track.type === "audio/flac") {
-        data = await parseFlacMetadata(track);
-    }
-    else {
-        [data, data.duration] = await Promise.all([
-            new Promise(resolve => { parse_audio_metadata(track, resolve); }),
-            getTrackDuration(track)
-        ]);
-    }
+    [data, data.duration] = await Promise.all([
+        new Promise(resolve => { parse_audio_metadata(track, resolve); }),
+        getTrackDuration(track)
+    ]);
     return data;
 }
 
