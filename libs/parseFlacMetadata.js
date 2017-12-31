@@ -11,21 +11,28 @@ function getTagLenght(bytes) {
 }
 
 function parseVorbisCommentBlock(bytes, tags) {
-    let isFirst = true;
+    let step = 0;
+    const decoder = new TextDecoder("utf-8");
+    const vendorStringLength = getTagLenght(bytes.slice(step, step + 4));
+    step += 4;
 
-    while (bytes.length) {
-        let length = getTagLenght(bytes);
+    // Jump over vendor string
+    step += vendorStringLength;
 
-        if (isFirst) {
-            length += 4;
-            isFirst = false;
-        }
-        else {
-            const tag = String.fromCharCode(...bytes.slice(4, length + 4));
-            const [name, value] = tag.split("=");
-            tags[name.toLowerCase()] = value;
-        }
-        bytes = bytes.slice(length + 4);
+    let userCommentCount = getTagLenght(bytes.slice(step, step + 4));
+    step += 4;
+
+    while (userCommentCount) {
+        const userCommentLength = getTagLenght(bytes.slice(step, step + 4));
+        step += 4;
+
+        const userComment = decoder.decode(bytes.slice(step, step + userCommentLength));
+        const [name, value] = userComment.split("=");
+        tags[name.toLowerCase()] = value;
+
+        // Jump over user comment
+        step += userCommentLength;
+        userCommentCount -= 1;
     }
     return tags;
 }
@@ -88,8 +95,7 @@ function parseBlocks(blob, buffer, size, step, tags) {
                 const fileReader = new FileReader();
 
                 fileReader.onloadend = function(event) {
-                    parseBlocks(slicedBlob, event.target.result, size, 0, tags)
-                    .then(resolve);
+                    parseBlocks(slicedBlob, event.target.result, size, 0, tags).then(resolve);
                 };
                 fileReader.readAsArrayBuffer(slicedBlob);
             });
