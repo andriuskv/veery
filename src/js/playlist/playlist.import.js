@@ -3,7 +3,9 @@ import {
     removeElementClass,
     getElementById,
     getElementByAttr,
-    scriptLoader
+    scriptLoader,
+    enableBtn,
+    disableBtn
 } from "./../utils.js";
 import { togglePanel } from "../panels.js";
 import { isGoogleAuthInited, changeGoogleAuthState, initGoogleAuth } from "../google-auth.js";
@@ -24,41 +26,29 @@ function isNewImportOption(option) {
     return importOption !== option;
 }
 
-function createMaskElement(option) {
-    const div = document.createElement("div");
+function disableImportOption(option) {
+    const { children } = document.querySelector(`[data-option=${option}]`);
 
-    div.classList.add("option-mask");
-    div.setAttribute("data-mask-id", option);
-    document.querySelector(`[data-option=${option}]`).appendChild(div);
-    return div;
+    Array.from(children).forEach(element => {
+        if (element.hasAttribute("data-item")) {
+            disableBtn(element, "", "import-option-spinner");
+        }
+    });
 }
 
-function getMaskElement(option) {
-    return document.querySelector(`[data-mask-id=${option}]`);
+function enableImportOption(option) {
+    const { children } = document.querySelector(`[data-option=${option}]`);
+
+    Array.from(children).forEach(element => {
+        if (element.hasAttribute("data-item")) {
+            enableBtn(element);
+        }
+    });
 }
 
-function removeMaskElement(option) {
-    const element = getMaskElement(option);
-
-    if (element) {
-        removeElement(element);
-    }
-}
-
-function disableImportOption(option, action) {
-    const element = getMaskElement(option) || createMaskElement(option);
-
-    element.innerHTML = `
-        <img src="./assets/images/ring-alt.svg" alt="">
-        <span class="mask-message">${action}</span>
-    `;
-}
-
-function showErrorMessage(option, message) {
-    const element = getMaskElement(option) || createMaskElement(option);
-
-    element.textContent = message;
-    setTimeout(removeElement, 3200, element);
+function resetImportOption() {
+    setImportOption();
+    removeImportForm();
 }
 
 function importPlaylist(option, { url, type }) {
@@ -132,7 +122,7 @@ async function addImportedPlaylist(playlist, type = "new") {
     addTracksToPlaylist(pl, newTracks);
     setImportOption();
     removeImportForm();
-    removeMaskElement(playlist.player);
+    enableImportOption(playlist.player);
 }
 
 function createImportForm(container, item) {
@@ -204,9 +194,9 @@ function handleImportFormSubmit(event) {
     if (url) {
         const option = event.target.getAttribute("data-for");
 
-        disableImportOption(option, "Importing");
+        resetImportOption();
+        disableImportOption(option);
         importPlaylist(option, { url });
-        event.target.reset();
     }
     event.preventDefault();
 }
@@ -237,8 +227,7 @@ function handleYouTubeOptionClick({ attrValue, elementRef }) {
             }
         }
         else {
-            setImportOption();
-            removeImportForm();
+            resetImportOption();
         }
     }
     else if (attrValue === "google-sign-in-or-out") {
@@ -263,22 +252,21 @@ importOptions.addEventListener("mouseover", function onMouveover({ currentTarget
     });
 });
 
-importOptions.addEventListener("click", ({ target }) => {
-    const optionElement = getElementByAttr("data-option", target);
-    const element = getElementByAttr("data-item", target);
+importOptions.addEventListener("click", ({ currenTarget, target }) => {
+    const element = getElementByAttr("data-item", target, currenTarget);
 
-    if (!optionElement || !element) {
+    if (!element || element.elementRef.disabled) {
         return;
     }
-    const option = optionElement.attrValue;
+    const { attrValue } = getElementByAttr("data-option", target, currenTarget);
 
-    if (option === "local") {
+    if (attrValue === "local") {
         showFilePicker(element.attrValue);
     }
-    else if (option === "dropbox") {
+    else if (attrValue === "dropbox") {
         showDropboxChooser();
     }
-    else if (option === "youtube") {
+    else if (attrValue === "youtube") {
         handleYouTubeOptionClick(element);
     }
 });
@@ -286,7 +274,7 @@ importOptions.addEventListener("click", ({ target }) => {
 export {
     importPlaylist,
     addImportedPlaylist,
-    showErrorMessage,
     disableImportOption,
-    removeMaskElement
+    enableImportOption,
+    resetImportOption
 };

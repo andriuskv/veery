@@ -143,6 +143,20 @@ svg {
     &:hover {
         cursor: pointer;
     }
+
+    &:disabled {
+        color: transparentize($base-text-color, 0.6);
+        cursor: not-allowed;
+
+        &:hover {
+            background-color: transparent;
+            color: transparentize($base-text-color, 0.6);
+
+            &.active {
+                color: transparentize($base-text-color, 0.6);
+            }
+        }
+    }
 }
 
 .btn-icon {
@@ -152,15 +166,12 @@ svg {
     align-items: center;
     padding: 2px;
     background-color: transparent;
+}
 
-    img {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        height: 100%;
-        transform: translate(-50%, -50%);
-        object-fit: scale-down;
-    }
+.spinner {
+    @include center-absolutely;
+
+    height: 100%;
 }
 
 .checkbox::after {
@@ -194,8 +205,8 @@ svg {
 
 .player-message {
     overflow: hidden;
-    bottom: 4px;
-    right: 14px;
+    bottom: 8px;
+    right: 8px;
     max-width: 300px;
     padding: 16px;
 }
@@ -205,11 +216,17 @@ svg {
 
     margin-top: 0;
     margin-bottom: 4px;
+    font-size: 16px;
+
+    &::first-letter {
+        text-transform: uppercase;
+    }
 }
 
 .play-message-body {
     margin-top: 0;
     margin-bottom: 0;
+    word-wrap: break-word;
 }
 
 .main {
@@ -233,10 +250,9 @@ svg {
 }
 
 .artwork {
-    position: absolute;
+    @include center-horizontally;
+
     top: 0;
-    left: 50%;
-    transform: translateX(-50%);
     height: 100%;
 }
 

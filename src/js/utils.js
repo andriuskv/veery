@@ -111,8 +111,10 @@ function setElementIconAndTitle(element, { id, title }) {
     element.querySelector(".js-icon").setAttribute("href", `#${id}`);
 }
 
-function addSpinner(element, id = "", classList = "") {
-    element.insertAdjacentHTML("beforeend", `<img src="./assets/images/ring-alt.svg" id=${id} class="${classList}" alt="">`);
+function addSpinner(element, id = "", classList = "spinner") {
+    element.insertAdjacentHTML("beforeend", `
+        <img src="./assets/images/ring-alt.svg" id="${id}" class="${classList}" alt="">
+    `);
 }
 
 function enableBtn(element) {
@@ -120,9 +122,9 @@ function enableBtn(element) {
     removeElement(element.lastElementChild);
 }
 
-function disableBtn(element) {
+function disableBtn(element, id, classList) {
     element.disabled = true;
-    addSpinner(element);
+    addSpinner(element, id, classList);
 }
 
 export {
