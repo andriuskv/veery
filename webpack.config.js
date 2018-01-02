@@ -98,7 +98,8 @@ module.exports = function(env = {}) {
                             targets: {
                                 browsers: ["last 1 versions", "> 1%"]
                             }
-                        }]]
+                        }]],
+                        plugins: ["@babel/plugin-syntax-dynamic-import"]
                     }
                 }
             ]
