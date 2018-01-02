@@ -68,6 +68,10 @@ function addTracksToPlaylist(pl, tracks, showPlaylist) {
 
     if (!pl.initialized) {
         initPlaylist(pl);
+        postMessageToWorker({
+            action: "add",
+            playlist: pl
+        });
     }
     else {
         hideStatusIndicator(pl.id);
@@ -77,15 +81,25 @@ function addTracksToPlaylist(pl, tracks, showPlaylist) {
         if (pl.rendered) {
             updatePlaylistView(pl);
         }
+        postMessageToWorker({
+            action: "add-tracks",
+            playlist: {
+                _id: pl._id,
+                tracks
+            }
+        });
+        postMessageToWorker({
+            action: "update-playlist-duration",
+            playlist: {
+                _id: pl._id,
+                duration: pl.duration
+            }
+        });
     }
 
     if (showPlaylist) {
         toggleRoute(`playlist/${pl.id}`);
     }
-    postMessageToWorker({
-        action: "put",
-        playlist: pl
-    });
 }
 
 function setPrimaryTackIndexes(tracks, lastIndex = 0) {
@@ -104,7 +118,7 @@ function onNewPlaylistFormSubmit(event) {
 
     initPlaylist(pl);
     postMessageToWorker({
-        action: "put",
+        action: "add",
         playlist: pl
     });
     event.preventDefault();
