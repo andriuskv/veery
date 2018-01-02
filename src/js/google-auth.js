@@ -40,7 +40,7 @@ async function initGoogleAuth() {
     if (initialized) {
         return;
     }
-    const element = document.querySelector(".google-sign-in-or-out-btn");
+    const element = document.querySelector(".js-google-sign-in-or-out-btn");
     initialized = true;
 
     disableBtn(element);

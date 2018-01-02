@@ -1,12 +1,17 @@
 /* global gapi */
 
 import { formatTime } from "./utils.js";
-import { addImportedPlaylist, showErrorMessage } from "./playlist/playlist.import.js";
+import { addImportedPlaylist, enableImportOption } from "./playlist/playlist.import.js";
 import { showStatusIndicator, hideStatusIndicator } from "./playlist/playlist.manage.js";
 import { getPlaylistById } from "./playlist/playlist.js";
+import { showPlayerMessage } from "./player/player.js";
 
 function showMessage(message) {
-    showErrorMessage("youtube", message);
+    showPlayerMessage({
+        title: "YouTube",
+        body: message
+    });
+    enableImportOption("youtube");
 }
 
 function parseDuration(duration) {

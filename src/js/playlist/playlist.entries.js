@@ -5,7 +5,7 @@ import { togglePanel } from "../panels.js";
 import { isGoogleAuthInited, initGoogleAuth } from "../google-auth.js";
 import { getPlaylistById, updatePlaylist } from "./playlist.js";
 import { removePlaylist } from "./playlist.manage.js";
-import { importPlaylist, disableImportOption } from "./playlist.import.js";
+import { importPlaylist, disableImportOption, resetImportOption } from "./playlist.import.js";
 
 function createContainer(id) {
     const div = document.createElement("div");
@@ -188,7 +188,8 @@ async function syncPlaylists(playlists) {
             enableSyncBtn(pl.id);
         });
     }
-    disableImportOption("youtube", "Synchronizing");
+    resetImportOption();
+    disableImportOption("youtube");
 
     playlists.forEach(({ player, url }) => {
         importPlaylist(player, {

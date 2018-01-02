@@ -5,7 +5,8 @@ import parseOggOpusMetadata from "../libs/parseOggOpusMetadata.js";
 import { scriptLoader, formatTime } from "./utils.js";
 import { getPlaylistById, createPlaylist } from "./playlist/playlist.js";
 import { addTracksToPlaylist, showStatusIndicator, hideStatusIndicator } from "./playlist/playlist.manage.js";
-import { disableImportOption, removeMaskElement, showErrorMessage } from "./playlist/playlist.import.js";
+import { disableImportOption, enableImportOption } from "./playlist/playlist.import.js";
+import { showPlayerMessage } from "./player/player.js";
 
 function getTrackDuration(track) {
     return new Promise(resolve => {
@@ -87,7 +88,11 @@ async function parseTracks(tracks, id, parsedTracks = []) {
 }
 
 function updateStatus(importOption, message, { initialized, id }) {
-    showErrorMessage(importOption, message);
+    showPlayerMessage({
+        title: `${importOption} files`,
+        body: message
+    });
+    enableImportOption(importOption);
 
     if (initialized) {
         hideStatusIndicator(id);
@@ -95,7 +100,7 @@ function updateStatus(importOption, message, { initialized, id }) {
 }
 
 async function addTracks(importOption, pl, files, parseTracks) {
-    disableImportOption(importOption, "Adding");
+    disableImportOption(importOption);
 
     if (!files.length) {
         updateStatus(importOption, "No valid audio file found", pl);
@@ -104,7 +109,7 @@ async function addTracks(importOption, pl, files, parseTracks) {
     const newTracks = filterDuplicateTracks(files, pl.tracks);
 
     if (!newTracks.length) {
-        updateStatus(importOption, "Tracks already exist", pl);
+        updateStatus(importOption, `Track${files.length > 1 ? "s" : ""} already exist`, pl);
         return;
     }
 
@@ -113,11 +118,13 @@ async function addTracks(importOption, pl, files, parseTracks) {
         const parsedTracks = await parseTracks(newTracks, pl.id);
 
         addTracksToPlaylist(pl, parsedTracks);
-        removeMaskElement(importOption);
     }
     catch (error) {
         console.log(error);
         hideStatusIndicator(pl.id);
+    }
+    finally {
+        enableImportOption(importOption);
     }
 }
 
