@@ -3,7 +3,6 @@ import {
     removeElementClass,
     getElementById,
     getElementByAttr,
-    scriptLoader,
     enableBtn,
     disableBtn
 } from "./../utils.js";
@@ -237,20 +236,6 @@ function handleYouTubeOptionClick({ attrValue, elementRef }) {
         togglePanel(`js-${attrValue}-panel`, createYouTubeInfoPanel, { element: elementRef });
     }
 }
-
-importOptions.addEventListener("mouseover", function onMouveover({ currentTarget, target }) {
-    const element = getElementByAttr("data-option", target);
-
-    if (!element || element.attrValue !== "dropbox") {
-        return;
-    }
-    currentTarget.removeEventListener("mouseover", onMouveover);
-    scriptLoader.load({
-        src: "https://www.dropbox.com/static/api/2/dropins.js",
-        id: "dropboxjs",
-        "data-app-key": process.env.DROPBOX_API_KEY
-    });
-});
 
 importOptions.addEventListener("click", ({ currenTarget, target }) => {
     const element = getElementByAttr("data-item", target, currenTarget);

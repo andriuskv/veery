@@ -1,6 +1,6 @@
 /* global Dropbox */
 
-import { formatTime } from "./utils.js";
+import { scriptLoader, formatTime } from "./utils.js";
 import { getTrackDuration, addTracks } from "./local.js";
 import { getPlaylistById, createPlaylist } from "./playlist/playlist.js";
 
@@ -33,17 +33,23 @@ async function parseTracks(tracks, id, parsedTracks = []) {
     return parsedTracks;
 }
 
-function showDropboxChooser() {
+async function showDropboxChooser() {
+    await scriptLoader.load({
+        src: "https://www.dropbox.com/static/api/2/dropins.js",
+        id: "dropboxjs",
+        "data-app-key": process.env.DROPBOX_API_KEY
+    });
     Dropbox.choose({
         success(files) {
-            const pl = getPlaylistById("dropbox") || createPlaylist({
-                id: "dropbox",
+            const id = "dropbox";
+            const pl = getPlaylistById(id) || createPlaylist({
+                id,
                 title: "Dropbox",
                 type: "grid",
                 player: "native"
             });
 
-            addTracks("dropbox", pl, files, parseTracks);
+            addTracks(id, pl, files, parseTracks);
         },
         linkType: "direct",
         multiselect: true,
