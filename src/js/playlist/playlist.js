@@ -3,7 +3,7 @@ let activePlaylistId = "";
 let currentTrack = null;
 
 function getPlaylistArray() {
-    return Object.keys(playlists).map(id => playlists[id]);
+    return Object.keys(playlists).map(getPlaylistById);
 }
 
 function getPlaylistById(id) {
@@ -25,6 +25,9 @@ function createPlaylist(pl) {
         initialized: false
     };
 
+    if (pl.tracks) {
+        pl.duration = getPlaylistDuration(pl.tracks);
+    }
     playlists[pl.id] = Object.assign(defaultProperties, pl, defaultState);
     return playlists[pl.id];
 }
@@ -37,13 +40,11 @@ function removePlaylist(id) {
     delete playlists[id];
 }
 
-function updatePlaylistDuration(pl) {
-    pl.duration = pl.tracks.reduce((total, track) => {
+function getPlaylistDuration(tracks) {
+    return tracks.reduce((total, track) => {
         total += track.durationInSeconds;
         return total;
     }, 0);
-
-    return pl.duration;
 }
 
 function setPlaylistAsActive(id = "") {
@@ -159,7 +160,7 @@ export {
     getPlaylistArray,
     createPlaylist,
     updatePlaylist,
-    updatePlaylistDuration,
+    getPlaylistDuration,
     isPlaylistActive,
     getActivePlaylist,
     getActivePlaylistId,
