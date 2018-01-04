@@ -8,7 +8,7 @@ import {
 import {
     getPlaylistById,
     updatePlaylist,
-    updatePlaylistDuration,
+    getPlaylistDuration,
     isPlaylistActive,
     getCurrentTrack,
     updateCurrentTrack,
@@ -440,20 +440,14 @@ function removeSelectedTracks() {
     resetPlaylistElementIndexes(id, pl.type, indexes);
     updatePlaylist(id, {
         playbackOrder: getPlaybackOrder(tracksToKeep, getSetting("shuffle")),
-        tracks: tracksToKeep
+        tracks: tracksToKeep,
+        duration: getPlaylistDuration(tracksToKeep)
     });
     postMessageToWorker({
         action: "remove-tracks",
         playlist: {
             _id: pl._id,
             tracks: tracksToRemove
-        }
-    });
-    postMessageToWorker({
-        action: "update-playlist-duration",
-        playlist: {
-            _id: pl._id,
-            duration: updatePlaylistDuration(pl)
         }
     });
     updateCurrentTrackIndex(id, indexes);

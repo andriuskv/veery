@@ -368,18 +368,13 @@ tabContainer.addEventListener("click", ({ target }) => {
 });
 
 window.addEventListener("track-start", ({ detail: startTime }) => {
-    const track = getCurrentTrack();
+    const { playlistId, name, durationInSeconds } = getCurrentTrack();
 
-    showActiveIcon(track.playlistId);
-    storedTrack.saveTrack({
-        playlistId: track.playlistId,
-        name: track.name,
-        player: track.player
-    });
+    showActiveIcon(playlistId);
+    storedTrack.saveTrack({ playlistId, name });
     elapsedTime.start({
         currentTime: Math.floor(startTime),
-        durationInSeconds: track.durationInSeconds,
-        duration: track.duration
+        durationInSeconds
     });
     hidePlayPauseBtnSpinner();
 });

@@ -62,7 +62,8 @@ function addTracksToPlaylist(pl, tracks, showPlaylist) {
         tracks = setPrimaryTackIndexes(tracks, pl.lastTrackIndex);
         pl.lastTrackIndex = tracks[tracks.length - 1].primaryIndex + 1;
         pl.tracks = pl.tracks.concat(tracks);
-        playlist.updatePlaylistDuration(pl);
+        pl.duration = playlist.getPlaylistDuration(pl.tracks);
+
         updatePlaylistStats();
     }
 
@@ -86,13 +87,6 @@ function addTracksToPlaylist(pl, tracks, showPlaylist) {
             playlist: {
                 _id: pl._id,
                 tracks
-            }
-        });
-        postMessageToWorker({
-            action: "update-playlist-duration",
-            playlist: {
-                _id: pl._id,
-                duration: pl.duration
             }
         });
     }
