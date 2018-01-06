@@ -6,11 +6,11 @@
     }
 
     &:hover, &:focus-within {
-        background-color: $color3;
+        background-color: $background-color-dark;
     }
 
     &.playing {
-        color: $brand-color;
+        color: $color-accent;
     }
 
     &.hidden {
@@ -18,28 +18,28 @@
     }
 
     &.selected {
-        background-color: $color1;
+        background-color: $background-color-light;
 
         &:hover {
-            background-color: $color1;
+            background-color: $background-color-light;
         }
      }
  }
 
- .track-play-pause-btn {
-     @include center-absolutely;
+.track-play-pause-btn {
+    @include center-absolutely;
 
-     display: none;
-     border: 2px solid currentColor;
-     border-radius: 50%;
-     color: inherit;
+    display: none;
+    border: 2px solid currentColor;
+    border-radius: 50%;
+    color: inherit;
  }
 
 .selected-area {
     z-index: 1;
     position: absolute;
-    border: 1px solid $brand-color;
-    background-color: transparentize($brand-color, 0.8);
+    border: 1px solid $color-accent;
+    background-color: transparentize($color-accent, 0.8);
 
     & ~ .playlist-view .track:not(.playing):hover  {
         .track-play-pause-btn {

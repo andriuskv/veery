@@ -3,14 +3,18 @@
     position: relative;
     display: flex;
     flex-shrink: 0;
-    width: 120px;
-    box-shadow: 0 0 0 1px $color2;
-    background-color: $color1;
+    width: 128px;
+    box-shadow: $box-shadow-light;
 }
 
 .sort-panel-toggle-btn {
     flex-grow: 1;
-    border-right: 1px solid $color2;
+    background-color: $background-color-darkest;
+}
+
+.sort-panel-order-btn {
+    padding: 2px 4px;
+    background-color: $background-color-light;
 }
 
 .sort-panel {
@@ -22,14 +26,15 @@
 
 .sort-option-btn {
     width: 100%;
-    padding: 8px 6px;
+    padding: 8px 10px;
+    background-color: $background-color-lightest;
 
     &:hover {
-        background-color: $color3;
-        color: $base-text-color;
+        background-color: $background-color-light;
+        color: $color-text;
 
         &.active {
-            color: $brand-color;
+            color: $color-accent;
         }
     }
 }
