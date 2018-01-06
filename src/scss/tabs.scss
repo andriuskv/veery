@@ -7,10 +7,6 @@
     @include breakpoint-small {
         display: block;
     }
-
-    @include breakpoint-smallest {
-        padding: 4px;
-    }
 }
 
 .tab-container {
@@ -27,7 +23,7 @@
     position: relative;
     display: none;
     height: 100%;
-    color: $base-text-color;
+    color: $color-text;
     overflow-y: auto;
 
     &.active {
@@ -37,10 +33,6 @@
 
 .playlist-tabs {
     height: calc(100% - 40px);
-
-    @include breakpoint-smallest {
-        height: calc(100% - 32px);
-    }
 }
 
 .playlist-tab-header {
@@ -49,50 +41,58 @@
     display: flex;
     justify-content: flex-end;
     padding: 8px;
-    background-color: $color3;
+    background-color: $background-color-dark;
     box-shadow: 5px 1px 4px rgba(0, 0, 0, 0.1);
 
     @include breakpoint-smallest {
-        padding: 4px;
+        padding-left: 40px;
     }
 }
 
 .playlist-tab-header-item {
     margin-right: 8px;
     padding-right: 8px;
-    border-right: 1px solid $color1;
+    border-right: $border-light;
 
     @include breakpoint-smallest {
         margin-right: 4px;
         padding-right: 4px;
+        border-right: none;
     }
 }
 
 .filter-input-container {
     position: relative;
+
+    @include breakpoint-smallest {
+        width: 100%;
+    }
 }
 
 .filter-input-icon {
     @include center-vertically;
 
-    left: 2px;
-    fill: $alt-text-color;
+    left: 4px;
+    fill: $color-text-dark;
 }
 
 .filter-input {
     user-select: none;
-    width: 100px;
-    padding-left: 24px;
-    padding-right: 24px;
+    width: 80px;
+    padding-left: 26px;
     transition: 0.2s width;
-    box-shadow: 0 0 0 1px $color2;
+    box-shadow: $box-shadow-light;
+    will-change: width;
 
     &.active {
         width: 180px;
 
         @include breakpoint-smallest {
-            width: 154px;
+            width: 100%;
         }
+    }
+    @include breakpoint-smallest {
+        width: 100%;
     }
 }
 
@@ -102,6 +102,7 @@
     right: 10px;
     display: none;
     padding: 0;
+    background-color: $background-color-darkest;
 
     &.visible {
         display: flex;

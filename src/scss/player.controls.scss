@@ -9,9 +9,9 @@
     height: 80px;
     padding: 8px;
     user-select: none;
-    background-color: $color1;
+    background-color: $background-color-light;
     box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.1);
-    color: $base-text-color;
+    color: $color-text;
 
     @include breakpoint-small {
         z-index: 4;
@@ -47,7 +47,6 @@
     position: relative;
     width: 64px;
     height: 64px;
-    box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
 
     &:hover .now-playing-art-button-container {
         display: flex;
@@ -69,7 +68,7 @@
     display: none;
     justify-content: center;
     align-items: center;
-    background-color: transparentize($color2, 0.2);
+    background-color: $background-color-dark-80;
     animation-name: appear;
     animation-duration: 0.2s;
     animation-fill-mode: forwards;
@@ -99,14 +98,12 @@
 
 .track-title {
     @include text-truncate;
-
-    margin-bottom: 2px;
 }
 
 .track-artist {
     @include text-truncate;
 
-    font-size: 12px;
+    font-size: 13px;
 }
 
 .main-controls {
@@ -224,7 +221,7 @@
         }
 
         &:active .slider-thumb {
-            background-color: $alt-text-color;
+            background-color: $color-text-dark;
         }
     }
 }
@@ -234,13 +231,13 @@
     top: 50%;
     width: 100%;
     height: 4px;
-    background-color: $color2;
+    background-color: $background-color-darkest;
     transform: translateY(-50%);
 }
 
 .slider-elapsed {
     height: 100%;
-    background-color: $brand-color;
+    background-color: $color-accent;
     transform: scaleX(0);
     transform-origin: left;
     will-change: transform;
@@ -252,9 +249,9 @@
     display: none;
     width: 12px;
     height: 12px;
-    border: 3px solid $base-text-color;
+    border: 3px solid $color-text;
     border-radius: 50%;
-    background-color: $base-text-color;
+    background-color: $color-text;
     transform: translate(-50%, -50%);
     will-change: left;
 }
@@ -273,7 +270,7 @@
     @include popup-arrow {
         bottom: -4px;
         left: 50%;
-        border-top: 4px solid $color1;
+        border-top: 4px solid $background-color-lightest;
         transform: translateX(-50%);
     }
 }
@@ -297,7 +294,7 @@
         display: none;
         height: auto;
         padding: 4px;
-        background-color: $color1;
+        background-color: $background-color-lightest;
         box-shadow: 0 0 1px rgba(0, 0, 0, 0.4);
 
         &.visible {

@@ -12,25 +12,21 @@
     @include breakpoint-small {
         padding-top: 40px;
     }
-
-    @include breakpoint-smallest {
-        padding-top: 32px;
-    }
 }
 
 .home-tab-section-title {
     padding: 12px 8px;
-    border-bottom: 1px solid $color1;
+    border-bottom: $border-light;
     font-size: 20px;
-    color: $alt-text-color;
+    color: $color-text-dark;
 }
 
 .import-option-container,
 .pl-entry-container {
     width: 100%;
     padding-bottom: 8px;
-    border: 1px solid $color1;
-    background-color: $color3;
+    border: $border-light;
+    background-color: $background-color-dark;
 }
 
 .import-option-container {
@@ -45,26 +41,28 @@
     display: flex;
 
     .import-option-btn:first-of-type {
-        border-right: 1px solid $color1;
+        border-right: $border-light;
     }
 }
 
 .import-option-btn {
     justify-content: flex-start;
     width: 100%;
-    padding: 12px 8px;
+    padding: 10px 8px;
 
     &:hover {
-        background-color: $color1;
-        color: $base-text-color;
+        background-color: $background-color-light;
+        color: $color-text;
 
         &.active {
-            color: $brand-color;
+            color: $color-accent;
         }
     }
 }
 
 .import-option-icon {
+    width: 24px;
+    height: 24px;
     margin-right: 8px;
 }
 
@@ -86,23 +84,17 @@
 }
 
 .import-info-btn {
-    color: $alt-text-color;
+    color: $color-text-dark;
 }
 
 .info-panel {
-    top: 30px;
-    left: 0;
-    width: 260px;
-
-    @include popup-arrow {
-        top: -4px;
-        left: 8px;
-        border-bottom: 4px solid $color1;
-        filter: drop-shadow(0 -1px 1px $color2);
-    }
+    top: 26px;
+    right: 0;
+    width: 268px;
 }
 
-.info-panel-title {
+.info-panel-title,
+.pl-entry-panel-title {
     font-size: 16px;
 }
 
@@ -114,17 +106,11 @@
     display: flex;
     flex-grow: 1;
     margin: 8px 8px 0 8px;
-    border: 1px solid $color2;
-
-    .input,
-    .btn {
-        background-color: $color1;
-    }
+    box-shadow: $box-shadow-light;
 
     .input {
         flex-grow: 1;
         width: 50%;
-        border-right: 1px solid $color2;
     }
 
     & + .import-option-btns {
@@ -148,7 +134,7 @@
     &:not(:last-of-type) {
         margin-bottom: 8px;
         padding-bottom: 8px;
-        border-bottom: 1px solid $color1;
+        border-bottom: $border-light;
     }
 }
 
@@ -160,8 +146,8 @@
 
     &:hover {
         .pl-entry-input {
-            border-color: $color2;
-            background-color: $color1;
+            box-shadow: $box-shadow-light;
+            background-color: $background-color-darkest;
         }
 
         .pl-entry-input-icon {
@@ -173,13 +159,12 @@
 .pl-entry-input {
     flex-grow: 1;
     padding-right: 24px;
-    border: 1px solid transparent;
     background-color: transparent;
-    transition: background-color 0.1s, border-color 0.1s;
+    transition: background-color 0.1s, box-shadow 0.1s;
 
     &:focus {
-        border-color: $color2;
-        background-color: $color1;
+        background-color: $background-color-darkest;
+        box-shadow: $box-shadow-light;
 
         & + .pl-entry-input-icon {
             display: flex;
@@ -192,14 +177,14 @@
 
     right: 4px;
     display: none;
-    fill: $alt-text-color;
+    fill: $color-text-dark;
 }
 
 .pl-entry-btn {
-    color: $alt-text-color;
+    color: $color-text-dark;
 
     &:hover {
-        color: $base-text-color;
+        color: $color-text;
     }
 }
 
@@ -214,7 +199,7 @@
     display: flex;
     align-items: center;
     margin-right: auto;
-    color: $alt-text-color;
+    color: $color-text-dark;
     font-size: 13px;
 }
 
@@ -226,7 +211,7 @@
     &:not(:last-child) {
         padding-right: 8px;
         margin-right: 8px;
-        border-right: 1px solid $color1;
+        border-right: $border-light;
     }
 }
 
@@ -234,10 +219,6 @@
     top: 30px;
     right: 0;
     min-width: 200px;
-}
-
-.pl-entry-panel-title {
-    font-size: 16px;
 }
 
 .pl-entry-setting {
@@ -261,15 +242,5 @@
 
     .pl-entry-container {
         margin-top: 8px;
-    }
-
-    .info-panel {
-        right: 0;
-        left: auto;
-
-        &::before {
-            left: auto;
-            right: 8px;
-        }
     }
 }

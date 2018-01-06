@@ -9,12 +9,12 @@ body {
 }
 
 body {
-    background-color: $color2;
+    background-color: $background-color-darkest;
     -webkit-font-smoothing: antialiased;
     font-family: $font-family;
     font-size: 14px;
     scrollbar-face-color: transparent;
-    scrollbar-track-color: $color1;
+    scrollbar-track-color: $background-color-light;
 }
 
 h2, h3 {
@@ -48,7 +48,7 @@ svg {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: $color1;
+    background-color: $background-color-light;
 }
 
 ::-webkit-scrollbar-track {
@@ -69,7 +69,7 @@ svg {
     display: none;
     width: 100%;
     height: 100%;
-    background-color: $color3;
+    background-color: $background-color-dark;
 
     &.visible {
         display: block;
@@ -82,14 +82,9 @@ svg {
     top: 4px;
     right: 4px;
     display: flex;
-    padding: 4px;
 
-    .btn-icon {
-        background-color: transparent;
-
-         &.hidden {
-            display: none;
-        }
+    .btn-icon.hidden {
+        display: none;
     }
 }
 
@@ -113,31 +108,28 @@ svg {
 }
 
 %default-input-styles {
-    padding: 4px 6px;
+    padding: 4px 8px;
     border: none;
-    background-color: $color1;
     font-size: 14px;
-    color: $base-text-color;
+    color: $color-text;
     font-family: $font-family;
 }
 
 .input {
     @extend %default-input-styles;
 
-    padding-top: 2px;
-    padding-bottom: 2px;
-    height: 24px;
-    line-height: 24px;
+    background-color: $background-color-darkest;
 }
 
 .btn {
     @extend %default-input-styles;
 
+    background-color: $background-color-light;
     transition: color 0.1s, background-color 0.1s;
 
     &:hover,
     &.active {
-        color: $brand-color;
+        color: $color-accent;
     }
 
     &:hover {
@@ -145,15 +137,15 @@ svg {
     }
 
     &:disabled {
-        color: transparentize($base-text-color, 0.6);
+        color: $color-text-40;
         cursor: not-allowed;
 
         &:hover {
             background-color: transparent;
-            color: transparentize($base-text-color, 0.6);
+            color: $color-text-40;
 
             &.active {
-                color: transparentize($base-text-color, 0.6);
+                color: $color-text-40;
             }
         }
     }
@@ -181,8 +173,8 @@ svg {
     justify-content: center;
     width: 16px;
     height: 16px;
-    background-color: $color2;
-    color: $brand-color;
+    background-color: $background-color-darkest;
+    color: $color-accent;
 }
 
 .checkbox-input {
@@ -245,8 +237,8 @@ svg {
     position: absolute;
     padding: 8px;
     filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.4));
-    background-color: $color1;
-    color: $base-text-color;
+    background-color: $background-color-lightest;
+    color: $color-text;
 }
 
 .artwork {

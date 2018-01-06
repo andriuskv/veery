@@ -1,7 +1,16 @@
-$brand-color: #5BC0EB;
-$base-text-color: #f4f4f4;
-$alt-text-color: #888;
-$color1: #404552;
-$color2: #2f343f;
-$color3: #353945;
-$font-family: "Roboto", sans-serif;
+$color-accent: #5BC0EB;
+
+$color-text: #f4f4f4;
+$color-text-dark: #888;
+$color-text-40: transparentize($color-text, 0.6);
+
+$font-family: sans-serif;
+
+$background-color-lightest: #484d5b;
+$background-color-light: #404552;
+$background-color-dark: #353945;
+$background-color-darkest: #2f343f;
+$background-color-dark-80: transparentize($background-color-dark, 0.2);
+
+$border-light: 1px solid $background-color-light;
+$box-shadow-light: 0 0 0 1px $background-color-light;

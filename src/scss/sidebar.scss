@@ -11,7 +11,7 @@
         top: 0;
         left: 0;
         width: 100%;
-        background-color: transparentize($color2, 0.2);
+        background-color: transparentize($background-color-darkest, 0.2);
         transition: 0.1s opacity, 0.1s visibility;
 
         &.hidden {
@@ -31,7 +31,7 @@
     user-select: none;
     width: 200px;
     height: 100%;
-    background-color: $color3;
+    background-color: $background-color-dark;
     box-shadow: 1px 0 4px rgba(0, 0, 0, 0.1);
 
     @include breakpoint-small {
@@ -66,8 +66,8 @@
     padding-top: 16px;
     padding-bottom: 16px;
     margin-top: 8px;
-    border-top: 1px solid $color1;
-    color: $alt-text-color;
+    border-top: $border-light;
+    color: $color-text-dark;
     font-size: 13px;
     text-align: center;
 }
@@ -81,13 +81,12 @@
 .sidebar-form {
     flex-shrink: 0;
     display: flex;
-    margin: 0 4px 8px 4px;
-    border: 1px solid $color2;
+    margin: 0 8px 8px 8px;
+    box-shadow: $box-shadow-light;
 
     .input {
         flex-grow: 1;
         width: 50%;
-        border-right: 1px solid $color2;
     }
 }
 
@@ -98,19 +97,19 @@
 
 .sidebar-entry {
     position: relative;
-    background-color: $color3;
-    color: $base-text-color;
+    background-color: $background-color-dark;
+    color: $color-text;
     transition: background-color 0.1s;
 
     &.active {
-        color: $brand-color;
+        color: $color-accent;
     }
 
     &:hover {
-        background-color: $color1;
+        background-color: $background-color-light;
 
         .active-playlist-icon {
-            box-shadow: -2px 0 4px 2px $color1;
+            box-shadow: -2px 0 4px 2px $background-color-light;
         }
     }
 }
@@ -139,9 +138,9 @@
     @include center-vertically;
 
     right: 8px;
-    box-shadow: -2px 0 4px 2px $color3;
+    box-shadow: -2px 0 4px 2px $background-color-dark;
     background-color: inherit;
-    fill: $base-text-color;
+    fill: $color-text;
     transition: box-shadow 0.1s;
 }
 
