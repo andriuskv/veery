@@ -78,14 +78,11 @@ function parseBlocks(blob, buffer, size, step, tags) {
 
     while (!isLast) {
         const blockHeader = getBytes(buffer, step, 4);
+        const blockLength = getBlockLength(blockHeader);
         const firstByte = blockHeader[0];
         const blockType = firstByte & 0x7F;
-        isLast = (firstByte & 0x80) === 0x80;
 
-        if (isLast) {
-            break;
-        }
-        const blockLength = getBlockLength(blockHeader);
+        isLast = (firstByte & 0x80) === 0x80;
         step += 4;
 
         if (step + blockLength > size) {
