@@ -63,8 +63,6 @@ function addTracksToPlaylist(pl, tracks, showPlaylist) {
         pl.lastTrackIndex = tracks[tracks.length - 1].primaryIndex + 1;
         pl.tracks = pl.tracks.concat(tracks);
         pl.duration = playlist.getPlaylistDuration(pl.tracks);
-
-        updatePlaylistStats();
     }
 
     if (!pl.initialized) {
@@ -94,6 +92,19 @@ function addTracksToPlaylist(pl, tracks, showPlaylist) {
     if (showPlaylist) {
         toggleRoute(`playlist/${pl.id}`);
     }
+    updatePlaylistStats();
+}
+
+function clearPlaylistTracks(pl) {
+    postMessageToWorker({
+        action: "remove-tracks",
+        playlist: {
+            _id: pl._id,
+            tracks: pl.tracks
+        }
+    });
+    pl.tracks.length = 0;
+    pl.duration = 0;
 }
 
 function setPrimaryTackIndexes(tracks, lastIndex = 0) {
@@ -154,6 +165,7 @@ export {
     removePlaylist,
     updateCurrentTrack,
     addTracksToPlaylist,
+    clearPlaylistTracks,
     onNewPlaylistFormSubmit,
     createNewPlaylistForm,
     showStatusIndicator,

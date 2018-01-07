@@ -9,12 +9,11 @@ import {
 import { togglePanel } from "../panels.js";
 import { isGoogleAuthInited, changeGoogleAuthState, initGoogleAuth } from "../google-auth.js";
 import { getPlaylistById, createPlaylist } from "./playlist.js";
-import { addTracksToPlaylist } from "./playlist.manage.js";
+import { addTracksToPlaylist, clearPlaylistTracks } from "./playlist.manage.js";
 import { showDropboxChooser } from "../dropbox.js";
 import { selectLocalFiles } from "../local.js";
 import { fetchYoutubeItem } from "../youtube.js";
 
-const importOptions = getElementById("js-import-options");
 let importOption = "";
 
 function setImportOption(option = "") {
@@ -106,8 +105,9 @@ async function addImportedPlaylist(playlist, type = "new") {
     }
     else if (type === "sync") {
         pl = getPlaylistById(playlist.id);
-        pl.tracks.length = 0;
         tracks = tempTracks;
+
+        clearPlaylistTracks(pl);
     }
     else if (type === "update") {
         pl = getPlaylistById(playlist.id);
@@ -119,8 +119,7 @@ async function addImportedPlaylist(playlist, type = "new") {
     const newTracks = await replaceInvalidImages(tracks);
 
     addTracksToPlaylist(pl, newTracks);
-    setImportOption();
-    removeImportForm();
+    resetImportOption();
     enableImportOption(playlist.player);
 }
 
@@ -237,7 +236,7 @@ function handleYouTubeOptionClick({ attrValue, elementRef }) {
     }
 }
 
-importOptions.addEventListener("click", ({ currenTarget, target }) => {
+getElementById("js-import-options").addEventListener("click", ({ currenTarget, target }) => {
     const element = getElementByAttr("data-item", target, currenTarget);
 
     if (!element || element.elementRef.disabled) {

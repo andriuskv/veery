@@ -119,7 +119,10 @@ function addSpinner(element, id = "", classList = "spinner") {
 
 function enableBtn(element) {
     element.disabled = false;
-    removeElement(element.lastElementChild);
+
+    if (element.lastElementChild.tagName === "IMG") {
+        removeElement(element.lastElementChild);
+    }
 }
 
 function disableBtn(element, id, classList) {
