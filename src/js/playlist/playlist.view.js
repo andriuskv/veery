@@ -11,9 +11,7 @@ function getPlaylistParentElement(id) {
 }
 
 function getPlaylistTrackElements(id) {
-    const { children } = getElementById(`js-${id}`);
-
-    return children;
+    return getElementById(`js-${id}`).children;
 }
 
 function getPlaylistElementAtIndex(id, index) {
