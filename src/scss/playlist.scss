@@ -40,11 +40,15 @@
     position: absolute;
     border: 1px solid $color-accent;
     background-color: transparentize($color-accent, 0.8);
+    will-change: top, left, width, height;
 
-    & ~ .playlist-view .track:not(.playing):hover  {
-        .track-play-pause-btn {
+    & ~ .playlist-view .track:hover {
+        &:not(.selected) {
+            background-color: transparent;
+        }
+
+        &:not(.playing) .track-play-pause-btn {
             display: none;
-
         }
     }
 }

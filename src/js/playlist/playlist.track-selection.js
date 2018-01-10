@@ -25,34 +25,42 @@ import { getPlaylistParentElement, getPlaylistTrackElements, updatePlaylistView 
 
 const startingPoint = {};
 const mousePos = {};
-let selectedArea = {};
 let playlistElement = null;
 let playlistElementRect = null;
-let trackElements = [];
-let maxScrollHeight = 0;
-let maxWidth = 0;
 let selectionElement = null;
+let selectionArea = {};
+let trackElements = [];
 let intervalId = 0;
-let animationId = 0;
 let allowClick = false;
+let updating = false;
 
-function enableTrackSelection(pl) {
+function enableTrackSelection({ id, tracks }) {
     if (playlistElement) {
         playlistElement.removeEventListener("mousedown", onMousedown);
     }
 
-    if (!pl.tracks.length) {
+    if (!tracks.length) {
         return;
     }
-    playlistElement = getPlaylistParentElement(pl.id);
+    playlistElement = getPlaylistParentElement(id);
     playlistElement.addEventListener("mousedown", onMousedown);
 }
 
-function initSelectionArea(parent) {
+function getPlaylistElementRect(element) {
+    return {
+        top: element.offsetTop,
+        left: element.offsetLeft,
+        width: element.clientWidth, // clientWidth excludes scrollbar width
+        height: element.offsetHeight,
+        scrollHeight: element.scrollHeight
+    };
+}
+
+function initSelectionArea(parent, startingPoint) {
     const element = document.createElement("div");
 
-    selectedArea.top = startingPoint.y;
-    selectedArea.left = startingPoint.x;
+    selectionArea.top = startingPoint.y;
+    selectionArea.left = startingPoint.x;
     element.setAttribute("id", "js-selected-area");
     element.setAttribute("class", "selected-area");
     element.style.top = `${startingPoint.y}px`;
@@ -64,27 +72,22 @@ function initSelectionArea(parent) {
 
 function getTrackElements() {
     const elements = getPlaylistTrackElements(getVisiblePlaylistId());
-    const parentRect = playlistElementRect;
-    const scrollTop = playlistElement.scrollTop;
 
     return Array.from(elements).map(element => {
-        const rect = element.getBoundingClientRect();
-        const top = scrollTop + rect.top - parentRect.top;
-        const left = rect.left - parentRect.left;
-        const right = left + rect.width;
-        const bottom = top + rect.height;
+        const top = element.offsetTop;
+        const left = element.offsetLeft;
 
         return {
             ref: element,
             top,
-            right,
-            bottom,
-            left
+            left,
+            right: left + element.offsetWidth,
+            bottom: top + element.offsetHeight
         };
     });
 }
 
-function updateSelectedArea(mousePos, startingPoint, areaStyle) {
+function updateSelectionArea(mousePos, startingPoint, area, areaStyle) {
     let width = mousePos.x - startingPoint.x;
     let height = mousePos.y - startingPoint.y;
 
@@ -92,11 +95,11 @@ function updateSelectedArea(mousePos, startingPoint, areaStyle) {
         const left = startingPoint.x + width;
 
         width *= -1;
-        selectedArea.left = left;
+        area.left = left;
         areaStyle.left = `${left}px`;
     }
-    else if (selectedArea.left !== startingPoint.x) {
-        selectedArea.left = startingPoint.x;
+    else if (area.left !== startingPoint.x) {
+        area.left = startingPoint.x;
         areaStyle.left = `${startingPoint.x}px`;
     }
 
@@ -104,22 +107,21 @@ function updateSelectedArea(mousePos, startingPoint, areaStyle) {
         const top = startingPoint.y + height;
 
         height *= -1;
-        selectedArea.top = top;
+        area.top = top;
         areaStyle.top = `${top}px`;
     }
-    else if (selectedArea.top !== startingPoint.y) {
-        selectedArea.top = startingPoint.y;
+    else if (area.top !== startingPoint.y) {
+        area.top = startingPoint.y;
         areaStyle.top = `${startingPoint.y}px`;
     }
-
-    selectedArea.right = selectedArea.left + width;
-    selectedArea.bottom = selectedArea.top + height;
+    area.right = area.left + width;
+    area.bottom = area.top + height;
     areaStyle.width = `${width}px`;
     areaStyle.height = `${height}px`;
 }
 
 function removeSelectedElementClass() {
-    const elements = Array.from(document.querySelectorAll(".track.selected"));
+    const elements = getSelectedElements();
 
     elements.forEach(element => {
         element.classList.remove("selected");
@@ -146,14 +148,18 @@ function selectTrackElement(element, selectMultiple) {
     if (element.classList.contains("selected")) {
         showMoveToBtn();
     }
+    else {
+        element.blur();
+    }
 }
 
 function selectTrackElements(elements, area, ctrlKey) {
-    elements.forEach(element => {
+    for (let i = 0; i < elements.length; i++) {
+        const element = elements[i];
         const elementClassList = element.ref.classList;
 
-        if (area.right > element.left && area.left < element.right
-            && area.bottom > element.top && area.top < element.bottom) {
+        if (area.right > element.left && area.left < element.right &&
+            area.bottom > element.top && area.top < element.bottom) {
             if (ctrlKey && !element.selected && elementClassList.contains("selected")) {
                 elementClassList.remove("selected");
                 element.removed = true;
@@ -172,7 +178,7 @@ function selectTrackElements(elements, area, ctrlKey) {
             elementClassList.add("selected");
             element.removed = false;
         }
-    });
+    }
 }
 
 function normalizeMousePosition(pos, max) {
@@ -198,32 +204,37 @@ function stopScrolling() {
 function resetSelection() {
     removeElement(selectionElement);
     selectionElement = null;
-    selectedArea = {};
+    selectionArea = {};
     trackElements.length = 0;
 }
 
 function update(ctrlKey) {
-    cancelAnimationFrame(animationId);
-    animationId = requestAnimationFrame(() => {
+    updating = true;
+
+    requestAnimationFrame(() => {
         if (selectionElement) {
-            updateSelectedArea(mousePos, startingPoint, selectionElement.style);
+            updateSelectionArea(mousePos, startingPoint, selectionArea, selectionElement.style);
         }
-        selectTrackElements(trackElements, selectedArea, ctrlKey);
+        selectTrackElements(trackElements, selectionArea, ctrlKey);
+        updating = false;
     });
 }
 
-function scrollDown(ctrlKey) {
+function scrollDown(ctrlKey, playlistElement, { scrollHeight, height }) {
     playlistElement.scrollTop += 36;
-    mousePos.y = playlistElement.scrollTop + playlistElementRect.height;
+    mousePos.y = playlistElement.scrollTop + height;
 
-    if (mousePos.y >= maxScrollHeight) {
-        mousePos.y = maxScrollHeight;
+    if (mousePos.y >= scrollHeight) {
+        mousePos.y = scrollHeight;
         stopScrolling();
     }
-    update(ctrlKey);
+
+    if (!updating) {
+        update(ctrlKey);
+    }
 }
 
-function scrollUp(ctrlKey) {
+function scrollUp(ctrlKey, playlistElement) {
     playlistElement.scrollTop -= 36;
     mousePos.y = playlistElement.scrollTop;
 
@@ -231,43 +242,54 @@ function scrollUp(ctrlKey) {
         mousePos.y = 0;
         stopScrolling();
     }
-    update(ctrlKey);
+
+    if (!updating) {
+        update(ctrlKey);
+    }
 }
 
 function onMousemove(event) {
-    const mouseYRelatedToViewport = event.clientY - playlistElementRect.top;
-    const x = event.clientX - playlistElementRect.left;
-    const y = playlistElement.scrollTop + mouseYRelatedToViewport;
-    mousePos.x = normalizeMousePosition(x, maxWidth);
-    mousePos.y = normalizeMousePosition(y, maxScrollHeight);
+    const { top, left, width, height, scrollHeight } = playlistElementRect;
+    const mouseYRelatedToPage = event.clientY - top;
+
+    mousePos.x = normalizeMousePosition(event.clientX - left, width);
+    mousePos.y = normalizeMousePosition(playlistElement.scrollTop + mouseYRelatedToPage, scrollHeight);
 
     event.preventDefault();
 
     if (!selectionElement && isAboveThreshold(mousePos, startingPoint)) {
         trackElements = getTrackElements();
-        selectionElement = initSelectionArea(playlistElement);
+        selectionElement = initSelectionArea(playlistElement, startingPoint);
 
         // Remove focus from initial selected element
         document.activeElement.blur();
 
         if (!event.ctrlKey) {
-            trackElements.forEach(element => element.ref.classList.remove("selected"));
+            removeSelectedElementClass();
         }
         return;
     }
 
-    if (!intervalId && mouseYRelatedToViewport > playlistElementRect.height && mousePos.y < maxScrollHeight) {
-        intervalId = setInterval(scrollDown, 40, event.ctrlKey);
-        return;
+    if (!updating) {
+        update(event.ctrlKey);
     }
-    else if (!intervalId && mouseYRelatedToViewport < 0 && mousePos.y > 0) {
-        intervalId = setInterval(scrollUp, 40, event.ctrlKey);
-        return;
-    }
-    update(event.ctrlKey);
 
-    if (intervalId && mouseYRelatedToViewport > 0 && mouseYRelatedToViewport < playlistElementRect.height) {
+    if (intervalId && mouseYRelatedToPage > 0 && mouseYRelatedToPage < height) {
         stopScrolling();
+    }
+    else if (!intervalId) {
+        let scrollDirection = null;
+
+        if (mouseYRelatedToPage > height && mousePos.y < scrollHeight) {
+            scrollDirection = scrollDown;
+        }
+        else if (mouseYRelatedToPage < 0 && mousePos.y > 0) {
+            scrollDirection = scrollUp;
+        }
+        else {
+            return;
+        }
+        intervalId = setInterval(scrollDirection, 40, event.ctrlKey, playlistElement, playlistElementRect);
     }
 }
 
@@ -286,7 +308,7 @@ function onMouseup({ target, ctrlKey }) {
         if (elements.length) {
             const element = getElementByAttr("data-index", target);
 
-            if (element) {
+            if (element && element.elementRef.classList.contains("selected")) {
                 element.elementRef.focus();
             }
             showMoveToBtn();
@@ -302,7 +324,7 @@ function onMouseup({ target, ctrlKey }) {
             window.addEventListener("keypress", onKeypress);
             window.addEventListener("click", onClick);
         }
-        else {
+        else if (!ctrlKey) {
             deselectTrackElements();
             window.removeEventListener("click", onClick);
         }
@@ -326,24 +348,21 @@ function onClick({ target }) {
     }
 }
 
-function onMousedown(event) {
-    if (event.which !== 1) {
+function onMousedown({ currentTarget, target, which, clientX, clientY }) {
+    if (which !== 1) {
         return;
     }
-    const element = getElementByAttr("data-btn", event.target);
 
-    if (element) {
+    if (getElementByAttr("data-btn", target)) {
         deselectTrackElements();
         return;
     }
-    playlistElementRect = playlistElement.getBoundingClientRect();
-    maxScrollHeight = playlistElement.scrollHeight;
-    maxWidth = playlistElement.clientWidth;
-    startingPoint.x = event.clientX - playlistElementRect.left;
-    startingPoint.y = playlistElement.scrollTop + event.clientY - playlistElementRect.top;
+    playlistElementRect = getPlaylistElementRect(currentTarget);
+    startingPoint.x = clientX - playlistElementRect.left;
+    startingPoint.y = currentTarget.scrollTop + clientY - playlistElementRect.top;
 
     // Don't add event listeners if clicked on scrollbar
-    if (startingPoint.x < maxWidth) {
+    if (startingPoint.x < playlistElementRect.width) {
         window.addEventListener("mousemove", onMousemove);
         window.addEventListener("mouseup", onMouseup);
     }
@@ -360,7 +379,7 @@ function onKeypress(event) {
 }
 
 function getSelectedElements() {
-    return Array.from(document.querySelectorAll(".track.selected"));
+    return Array.from(playlistElement.querySelectorAll(".track.selected"));
 }
 
 function getElementIndexes(elements) {
@@ -387,27 +406,27 @@ function separatePlaylistTracks(tracks, indexes) {
 }
 
 function resetListElementIndexes(elements, startIndex) {
-    Array.from(elements).slice(startIndex).forEach((element, index) => {
+    elements.forEach((element, index) => {
         element.setAttribute("data-index", startIndex + index);
         element.querySelector(".list-item-index").textContent = startIndex + index + 1;
     });
 }
 
 function resetGridElementIndexes(elements, startIndex) {
-    Array.from(elements).slice(startIndex).forEach((element, index) => {
+    elements.forEach((element, index) => {
         element.setAttribute("data-index", startIndex + index);
     });
 }
 
 function resetPlaylistElementIndexes(id, type, selectedTrackIndexes) {
-    const smallestIndex = Math.min(...selectedTrackIndexes);
-    const elements = getPlaylistTrackElements(id);
+    const startIndex = Math.min(...selectedTrackIndexes);
+    const elements = Array.from(getPlaylistTrackElements(id)).slice(startIndex);
 
     if (type === "list") {
-        resetListElementIndexes(elements, smallestIndex);
+        resetListElementIndexes(elements, startIndex);
     }
     else {
-        resetGridElementIndexes(elements, smallestIndex);
+        resetGridElementIndexes(elements, startIndex);
     }
 }
 
@@ -430,15 +449,14 @@ function updateCurrentTrackIndex(playlistId, selectedTrackIndexes) {
 }
 
 function removeSelectedTracks() {
-    const id = getVisiblePlaylistId();
     const elements = getSelectedElements();
-    const pl = getPlaylistById(id);
+    const pl = getPlaylistById(getVisiblePlaylistId());
     const indexes = getElementIndexes(elements);
     const { tracksToKeep, tracksToRemove } = separatePlaylistTracks(pl.tracks, indexes);
 
     removeElements(elements);
-    resetPlaylistElementIndexes(id, pl.type, indexes);
-    updatePlaylist(id, {
+    resetPlaylistElementIndexes(pl.id, pl.type, indexes);
+    updatePlaylist(pl.id, {
         playbackOrder: getPlaybackOrder(tracksToKeep, getSetting("shuffle")),
         tracks: tracksToKeep,
         duration: getPlaylistDuration(tracksToKeep)
@@ -450,7 +468,7 @@ function removeSelectedTracks() {
             tracks: tracksToRemove
         }
     });
-    updateCurrentTrackIndex(id, indexes);
+    updateCurrentTrackIndex(pl.id, indexes);
     removeElement(getElementById("js-move-to-panel-container"));
 
     if (!tracksToKeep.length) {
