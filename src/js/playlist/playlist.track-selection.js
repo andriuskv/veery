@@ -20,7 +20,7 @@ import {
 import { getSetting } from "../settings.js";
 import { getVisiblePlaylistId } from "../tab.js";
 import { postMessageToWorker } from "../worker.js";
-import { showMoveToBtn } from "./playlist.move-to.js";
+import { createMoveToContainer, removeMoveToContainer } from "./playlist.move-to.js";
 import { getPlaylistParentElement, getPlaylistTrackElements, updatePlaylistView } from "./playlist.view.js";
 
 const startingPoint = {};
@@ -31,8 +31,8 @@ let selectionElement = null;
 let selectionArea = {};
 let trackElements = [];
 let intervalId = 0;
-let allowClick = false;
 let updating = false;
+let isMoveToVisible = false;
 
 function enableTrackSelection({ id, tracks }) {
     if (playlistElement) {
@@ -129,13 +129,27 @@ function removeSelectedElementClass() {
 }
 
 function deselectTrackElements() {
-    const element = getElementById("js-move-to-panel-container");
-
     removeSelectedElementClass();
-    window.removeEventListener("keypress", onKeypress);
+    hideMoveTo();
+}
 
-    if (element) {
-        removeElement(element);
+function showMoveTo() {
+    if (!isMoveToVisible) {
+        isMoveToVisible = true;
+
+        createMoveToContainer();
+        addClickHandler();
+        window.addEventListener("keypress", onKeypress);
+    }
+}
+
+function hideMoveTo() {
+    if (isMoveToVisible) {
+        isMoveToVisible = false;
+
+        removeMoveToContainer();
+        window.removeEventListener("click", onClick);
+        window.removeEventListener("keypress", onKeypress);
     }
 }
 
@@ -146,10 +160,16 @@ function selectTrackElement(element, selectMultiple) {
     element.classList.toggle("selected");
 
     if (element.classList.contains("selected")) {
-        showMoveToBtn();
+        showMoveTo();
     }
     else {
+        const elements = getSelectedElements();
+
         element.blur();
+
+        if (!elements.length) {
+            hideMoveTo();
+        }
     }
 }
 
@@ -267,6 +287,7 @@ function onMousemove(event) {
         if (!event.ctrlKey) {
             removeSelectedElementClass();
         }
+        hideMoveTo();
         return;
     }
 
@@ -294,8 +315,6 @@ function onMousemove(event) {
 }
 
 function onMouseup({ target, ctrlKey }) {
-    allowClick = false;
-
     if (intervalId) {
         stopScrolling();
     }
@@ -306,45 +325,39 @@ function onMouseup({ target, ctrlKey }) {
         resetSelection();
 
         if (elements.length) {
-            const element = getElementByAttr("data-index", target);
-
-            if (element && element.elementRef.classList.contains("selected")) {
-                element.elementRef.focus();
-            }
-            showMoveToBtn();
-            window.addEventListener("keypress", onKeypress);
-            window.addEventListener("click", onClick);
+            showMoveTo();
+        }
+        else {
+            hideMoveTo();
         }
     }
     else {
-        const element = getElementByAttr("data-index", target);
+        const element = getElementByAttr("data-index", target, playlistElement);
 
         if (element) {
             selectTrackElement(element.elementRef, ctrlKey);
-            window.addEventListener("keypress", onKeypress);
-            window.addEventListener("click", onClick);
         }
         else if (!ctrlKey) {
             deselectTrackElements();
-            window.removeEventListener("click", onClick);
         }
     }
-    setTimeout(() => {
-        allowClick = true;
-    }, 0);
     window.removeEventListener("mousemove", onMousemove);
     window.removeEventListener("mouseup", onMouseup);
 }
 
+function addClickHandler() {
+
+    // Use setTimeout to skip first click
+    setTimeout(() => {
+        window.addEventListener("click", onClick);
+    }, 0);
+}
+
 function onClick({ target }) {
-    if (!allowClick) {
-        return;
-    }
     const element = getElementById("js-move-to-panel-container");
 
     if (!element || isOutsideElement(target, playlistElement) && isOutsideElement(target, element)) {
         deselectTrackElements();
-        window.removeEventListener("click", onClick);
     }
 }
 
@@ -368,14 +381,11 @@ function onMousedown({ currentTarget, target, which, clientX, clientY }) {
     }
 }
 
-function onKeypress(event) {
-    const key = event.key === "Delete" || event.keyCode === 127;
-
-    if (!key) {
-        return;
+function onKeypress({ key, keyCode }) {
+    if (key === "Delete" || keyCode === 127) {
+        removeSelectedTracks();
+        hideMoveTo();
     }
-    removeSelectedTracks();
-    window.removeEventListener("keypress", onKeypress);
 }
 
 function getSelectedElements() {
@@ -469,7 +479,6 @@ function removeSelectedTracks() {
         }
     });
     updateCurrentTrackIndex(pl.id, indexes);
-    removeElement(getElementById("js-move-to-panel-container"));
 
     if (!tracksToKeep.length) {
         enableTrackSelection(pl);

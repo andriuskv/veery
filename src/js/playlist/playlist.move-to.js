@@ -1,11 +1,11 @@
-import { getElementById, getElementByAttr } from "./../utils.js";
+import { getElementById, getElementByAttr, removeElement } from "./../utils.js";
 import { getVisiblePlaylistId } from "./../tab.js";
 import { removePanel } from "./../panels.js";
 import { getPlaylistById, getPlaylistArray, findTrack } from "./playlist.js";
 import { getSelectedElements, getElementIndexes } from "./playlist.track-selection.js";
 import { onNewPlaylistFormSubmit, createNewPlaylistForm, addTracksToPlaylist } from "./playlist.manage.js";
 
-function showMoveToBtn() {
+function createMoveToContainer() {
     const panelContainerId = "js-move-to-panel-container";
 
     if (getElementById(panelContainerId)) {
@@ -20,6 +20,21 @@ function showMoveToBtn() {
             </button>
         </div>
     `);
+}
+
+function removeMoveToContainer() {
+    const element = getElementById("js-move-to-panel-container");
+
+    if (!element) {
+        return;
+    }
+    const listElement = getElementById("js-move-to-list");
+
+    if (listElement) {
+        listElement.removeEventListener("click", onListClick);
+        getElementById("js-move-to-new-pl-btn").removeEventListener("click", showForm);
+    }
+    removeElement(getElementById("js-move-to-panel-container"));
 }
 
 function handleSubmit(event) {
@@ -47,14 +62,15 @@ function moveTracks(playlistId) {
     addTracksToPlaylist(pl, selectedTracks, true);
 }
 
-function onListClick({ target }) {
-    const element = getElementByAttr("data-item", target);
+function onListClick({ currentTarget, target }) {
+    const element = getElementByAttr("data-item", target, currentTarget);
 
     if (!element) {
         return;
     }
     moveTracks(element.attrValue);
-    getElementById("js-move-to-list").removeEventListener("click", onListClick);
+    currentTarget.removeEventListener("click", onListClick);
+    getElementById("js-move-to-new-pl-btn").addEventListener("click", showForm);
     removePanel();
 }
 
@@ -85,10 +101,11 @@ function createMoveToPanel(panelId, { playlistId }) {
         </div>
     `);
     getElementById("js-move-to-list").addEventListener("click", onListClick);
-    getElementById("js-move-to-new-pl-btn").addEventListener("click", showForm, { once: true });
+    getElementById("js-move-to-new-pl-btn").addEventListener("click", showForm);
 }
 
 export {
-    showMoveToBtn,
+    createMoveToContainer,
+    removeMoveToContainer,
     createMoveToPanel
 };
