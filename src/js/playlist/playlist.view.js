@@ -1,4 +1,4 @@
-import { getElementById, removeElement, removeElementClass, getImage } from "../utils.js";
+import { getElementById, removeElement, removeElementClass, getImage, insertHTMLString } from "../utils.js";
 import { getVisiblePlaylistId } from "../tab.js";
 import { postMessageToWorker } from "../worker.js";
 import { getPlayerState } from "../player/player.js";
@@ -132,7 +132,7 @@ function renderPlaylist(pl) {
     const container = getElementById("js-playlist-tabs");
     pl.rendered = true;
 
-    container.insertAdjacentHTML("beforeend", tab);
+    insertHTMLString(container, "beforeend", tab);
     showCurrentTrack(pl.id);
 }
 

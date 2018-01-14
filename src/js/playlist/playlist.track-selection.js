@@ -1,5 +1,4 @@
 import {
-    getElementById,
     removeElement,
     removeElements,
     getElementByAttr,
@@ -148,7 +147,7 @@ function hideMoveTo() {
         isMoveToVisible = false;
 
         removeMoveToContainer();
-        window.removeEventListener("click", onClick);
+        window.removeEventListener("click", onClick, true);
         window.removeEventListener("keypress", onKeypress);
     }
 }
@@ -349,14 +348,14 @@ function addClickHandler() {
 
     // Use setTimeout to skip first click
     setTimeout(() => {
-        window.addEventListener("click", onClick);
+        window.addEventListener("click", onClick, true);
     }, 0);
 }
 
 function onClick({ target }) {
-    const element = getElementById("js-move-to-panel-container");
+    const element = getElementByAttr("data-move-to", target);
 
-    if (!element || isOutsideElement(target, playlistElement) && isOutsideElement(target, element)) {
+    if (!element && isOutsideElement(target, playlistElement)) {
         deselectTrackElements();
     }
 }
@@ -489,5 +488,6 @@ function removeSelectedTracks() {
 export {
     enableTrackSelection,
     getSelectedElements,
-    getElementIndexes
+    getElementIndexes,
+    deselectTrackElements
 };

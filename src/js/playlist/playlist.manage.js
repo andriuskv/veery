@@ -1,5 +1,5 @@
 import * as playlist from "./playlist.js";
-import { getElementById, removeElementClass, removeElement, addSpinner } from "../utils.js";
+import { getElementById, removeElementClass, removeElement, addSpinner, insertHTMLString } from "../utils.js";
 import { removePlaylistTab, updatePlaylistView } from "./playlist.view.js";
 import { addRoute, toggleRoute } from "../router.js";
 import { getSetting } from "../settings.js";
@@ -130,18 +130,18 @@ function onNewPlaylistFormSubmit(event) {
     event.target.reset();
 }
 
-function createNewPlaylistForm(id, containerElement, handleSubmit) {
-    containerElement.insertAdjacentHTML("afterend", `
+function createNewPlaylistForm(id, element, insertPoint, handleSubmit) {
+    insertHTMLString(element, insertPoint, `
         <form id="js-${id}-form" class="${id}-form">
             <input type="text" name="title" class="input" autocomplete="off" placeholder="Playlist title" required>
             <button class="btn">Create</button>
         </form>
     `);
 
-    const element = getElementById(`js-${id}-form`);
+    const form = getElementById(`js-${id}-form`);
 
-    element.querySelector(".input").focus();
-    element.addEventListener("submit", handleSubmit);
+    form.querySelector(".input").focus();
+    form.addEventListener("submit", handleSubmit);
 }
 
 function showStatusIndicator(id) {

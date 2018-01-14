@@ -1,18 +1,15 @@
-import { getElementById, getElementByAttr, removeElement } from "./../utils.js";
+import { getElementById, getElementByAttr, removeElement, insertHTMLString } from "./../utils.js";
 import { getVisiblePlaylistId } from "./../tab.js";
 import { removePanel } from "./../panels.js";
 import { getPlaylistById, getPlaylistArray, findTrack } from "./playlist.js";
-import { getSelectedElements, getElementIndexes } from "./playlist.track-selection.js";
+import { getSelectedElements, getElementIndexes, deselectTrackElements } from "./playlist.track-selection.js";
 import { onNewPlaylistFormSubmit, createNewPlaylistForm, addTracksToPlaylist } from "./playlist.manage.js";
 
 function createMoveToContainer() {
-    const panelContainerId = "js-move-to-panel-container";
+    const id = "js-move-to-panel-container";
 
-    if (getElementById(panelContainerId)) {
-        return;
-    }
-    getElementById("js-playlist-type-btns").insertAdjacentHTML("beforebegin", `
-        <div id="${panelContainerId}" class="playlist-tab-header-item">
+    insertHTMLString(getElementById("js-playlist-type-btns"), "beforebegin", `
+        <div id="${id}" class="playlist-tab-header-item" data-move-to>
             <button class="btn btn-icon" data-item="move-to" title="Move to">
                 <svg viewBox="0 0 24 24">
                     <path d="M2,16H10V14H2M18,14V10H16V14H12V16H16V20H18V16H22V14M14,6H2V8H14M14,10H2V12H14V10Z" />
@@ -20,39 +17,52 @@ function createMoveToContainer() {
             </button>
         </div>
     `);
+    getElementById(id).addEventListener("click", handleClick);
 }
 
 function removeMoveToContainer() {
     const element = getElementById("js-move-to-panel-container");
 
+    element.removeEventListener("click", handleClick);
+    removeElement(element);
+}
+
+function handleClick({ currentTarget, target }) {
+    const element = getElementByAttr("data-panel-item", target, currentTarget);
+
     if (!element) {
         return;
     }
-    const listElement = getElementById("js-move-to-list");
+    const { attrValue, elementRef } = element;
 
-    if (listElement) {
-        listElement.removeEventListener("click", onListClick);
-        getElementById("js-move-to-new-pl-btn").removeEventListener("click", showForm);
+    if (attrValue === "btn") {
+        createNewPlaylistForm("move-to", elementRef.parentElement, "beforeend", handleSubmit);
+        removeElement(elementRef);
     }
-    removeElement(getElementById("js-move-to-panel-container"));
+    else {
+        currentTarget.removeEventListener("click", handleClick);
+        moveTracks(attrValue);
+        removePanel();
+        deselectTrackElements();
+    }
 }
 
 function handleSubmit(event) {
     const element = getElementById("js-move-to-list");
+    const id = getVisiblePlaylistId();
 
     onNewPlaylistFormSubmit(event);
-    element.classList.remove("hidden");
-    element.innerHTML = createPlaylistList(getVisiblePlaylistId());
-}
 
-function showForm({ currentTarget }) {
-    createNewPlaylistForm("move-to", currentTarget, handleSubmit);
-    currentTarget.classList.add("hidden");
+    if (element) {
+        element.innerHTML = getPlaylistItems(id);
+    }
+    else {
+        insertHTMLString(event.target, "beforebegin", getPlaylistList(id));
+    }
 }
 
 function moveTracks(playlistId) {
-    const elements = getSelectedElements();
-    const indexes = getElementIndexes(elements);
+    const indexes = getElementIndexes(getSelectedElements());
     const { tracks } = getPlaylistById(getVisiblePlaylistId());
     const pl = getPlaylistById(playlistId);
     const selectedTracks = tracks
@@ -62,37 +72,31 @@ function moveTracks(playlistId) {
     addTracksToPlaylist(pl, selectedTracks, true);
 }
 
-function onListClick({ currentTarget, target }) {
-    const element = getElementByAttr("data-item", target, currentTarget);
-
-    if (!element) {
-        return;
-    }
-    moveTracks(element.attrValue);
-    currentTarget.removeEventListener("click", onListClick);
-    getElementById("js-move-to-new-pl-btn").addEventListener("click", showForm);
-    removePanel();
+function getPlaylistItems(id) {
+    return getPlaylistArray().reduce((str, pl) => {
+        if (pl.id !== id) {
+            str += `
+                <li data-panel-item="${pl.id}">
+                    <button class="btn move-to-list-item-btn">${pl.title}</button>
+                </li>
+            `;
+        }
+        return str;
+    }, "");
 }
 
-function createPlaylistList(playlistId) {
-    return getPlaylistArray()
-        .filter(pl => pl.id !== playlistId)
-        .map(({ id, title }) => `
-            <li data-item="${id}">
-                <button class="btn move-to-list-item-btn">${title}</button>
-            </li>
-        `).join("");
+function getPlaylistList(playlistId) {
+    const items = getPlaylistItems(playlistId);
+
+    return items ? `<ul id="js-move-to-list" class="move-to-list">${items}</ul>` : "";
 }
 
 function createMoveToPanel(panelId, { playlistId }) {
-    const listContent = createPlaylistList(playlistId);
-    const className = !listContent ? "hidden" : "";
-
-    getElementById("js-move-to-panel-container").insertAdjacentHTML("beforeend", `
+    insertHTMLString(getElementById("js-move-to-panel-container"), "beforeend", `
         <div id="${panelId}" class="panel move-to-panel">
             <h3 class="move-to-panel-title">Move to</h3>
-            <ul id="js-move-to-list" class="move-to-list ${className}">${listContent}</ul>
-            <button id="js-move-to-new-pl-btn" class="btn btn-icon move-to-new-pl-btn">
+            ${getPlaylistList(playlistId)}
+            <button class="btn btn-icon move-to-new-pl-btn" data-panel-item="btn">
                 <svg viewBox="0 0 24 24">
                     <use href="#plus"></use>
                 </svg>
@@ -100,8 +104,6 @@ function createMoveToPanel(panelId, { playlistId }) {
             </button>
         </div>
     `);
-    getElementById("js-move-to-list").addEventListener("click", onListClick);
-    getElementById("js-move-to-new-pl-btn").addEventListener("click", showForm);
 }
 
 export {

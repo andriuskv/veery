@@ -1,4 +1,4 @@
-import { removeElement, getElementById, getElementByAttr, enableBtn, disableBtn } from "../utils.js";
+import { removeElement, getElementById, getElementByAttr, enableBtn, disableBtn, insertHTMLString } from "../utils.js";
 import { editSidebarEntryTitle } from "../sidebar.js";
 import { postMessageToWorker } from "../worker.js";
 import { togglePanel } from "../panels.js";
@@ -118,12 +118,7 @@ function parsePlaylistDuration(duration) {
 }
 
 function createPlaylistEntry(pl) {
-    const container = getContainer();
-    const settingsBtn = pl.url ? getSettingsBtnTemplate() : "";
-    const syncBtn = pl.url ? getSyncBtnTemplate() : "";
-    const icon = pl.isPrivate ? getStatusIcon() : "";
-
-    container.insertAdjacentHTML("beforeend", `
+    insertHTMLString(getContainer(), "beforeend", `
         <li class="pl-entry" data-entry-id=${pl.id}>
             <div class="pl-entry-input-container" data-action="edit">
                 <input type="text" class="input pl-entry-input" value="${pl.title}">
@@ -133,12 +128,12 @@ function createPlaylistEntry(pl) {
             </div>
             <div class="pl-entry-content">
                 <div class="pl-entry-stats">
-                    ${icon}
+                    ${pl.isPrivate ? getStatusIcon() : ""}
                     <span class="pl-entry-stats-item track-count">${pl.tracks.length} tracks</span>
                     <span class="pl-entry-stats-item playlist-duration">${parsePlaylistDuration(pl.duration)}</span>
                 </div>
-                ${syncBtn}
-                ${settingsBtn}
+                ${pl.url ? getSyncBtnTemplate() : ""}
+                ${pl.url ? getSettingsBtnTemplate() : ""}
                 <button class="btn btn-icon pl-entry-btn" data-action="remove" title="Remove playlist">
                     <svg viewBox="0 0 24 24">
                         <use href="#trash">
@@ -150,7 +145,7 @@ function createPlaylistEntry(pl) {
 }
 
 function createSettingsPanel(id, { element, pl }) {
-    element.insertAdjacentHTML("afterend", `
+    insertHTMLString(element, "afterend", `
         <div id="${id}" class="panel pl-entry-panel">
             <h3 class="pl-entry-panel-title">Playlist settings</h3>
             <label class="pl-entry-setting">
@@ -160,7 +155,6 @@ function createSettingsPanel(id, { element, pl }) {
             </label>
         </div>
     `);
-
     getElementById(id).addEventListener("change", handleSettingChange);
 }
 

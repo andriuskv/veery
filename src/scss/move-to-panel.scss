@@ -20,10 +20,6 @@
     border-top: $border-light;
     border-bottom: $border-light;
 
-    &.hidden {
-        display: none;
-    }
-
     &::-webkit-scrollbar-thumb {
         background: $background-color-light;
     }
@@ -49,10 +45,6 @@
 
 .move-to-new-pl-btn {
     padding: 6px;
-
-    &.hidden {
-        display: none;
-    }
 
     svg {
         margin-right: 4px;
