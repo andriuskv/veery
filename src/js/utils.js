@@ -59,6 +59,10 @@ function getElementByAttr(attr, element, endElement = null) {
     }
 }
 
+function insertHTMLString(element, insertPoint, string) {
+    element.insertAdjacentHTML(insertPoint, string);
+}
+
 function isOutsideElement(element, targetElement) {
     return targetElement ? !targetElement.contains(element) : false;
 }
@@ -112,7 +116,7 @@ function setElementIconAndTitle(element, { id, title }) {
 }
 
 function addSpinner(element, id = "", classList = "spinner") {
-    element.insertAdjacentHTML("beforeend", `
+    insertHTMLString(element, "beforeend", `
         <img src="./assets/images/ring-alt.svg" id="${id}" class="${classList}" alt="">
     `);
 }
@@ -133,13 +137,14 @@ function disableBtn(element, id, classList) {
 export {
     scriptLoader,
     capitalize,
-    getElementById,
-    getElementByAttr,
     removeElement,
     removeElements,
     removeElementClass,
-    formatTime,
+    getElementById,
+    getElementByAttr,
+    insertHTMLString,
     isOutsideElement,
+    formatTime,
     dispatchCustomEvent,
     getImage,
     setElementIconAndTitle,

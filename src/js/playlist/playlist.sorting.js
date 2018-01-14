@@ -1,4 +1,4 @@
-import { capitalize, getElementById } from "./../utils.js";
+import { capitalize, getElementById, insertHTMLString } from "./../utils.js";
 import { getVisiblePlaylistId } from "./../tab.js";
 import { removePanel } from "./../panels.js";
 import { postMessageToWorker } from "../worker.js";
@@ -92,10 +92,8 @@ function getSortOtions(sortedBy) {
 }
 
 function createSortPanel(id, { sortedBy }) {
-    const sortOptions = getSortOtions(sortedBy);
-
-    getElementById("js-sort-panel-container").insertAdjacentHTML("beforeend", `
-        <ul id="${id}" class="panel sort-panel">${sortOptions}</ul>
+    insertHTMLString(getElementById("js-sort-panel-container"), "beforeend", `
+        <ul id="${id}" class="panel sort-panel">${getSortOtions(sortedBy)}</ul>
     `);
     getElementById(id).addEventListener("click", selectSortOption);
 }

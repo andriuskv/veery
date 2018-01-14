@@ -23,7 +23,7 @@ import {
     getTrack,
     getNextTrack
 } from "../playlist/playlist.js";
-import { removeElementClass, getElementById, getElementByAttr, getImage } from "../utils.js";
+import { removeElementClass, getElementById, getElementByAttr, getImage, insertHTMLString } from "../utils.js";
 import { getVisiblePlaylistId } from "../tab.js";
 import { setSetting, getSetting, removeSetting } from "../settings.js";
 import { showActiveIcon, removeActiveIcon } from "../sidebar.js";
@@ -328,7 +328,7 @@ function mutePlayer(muted) {
 
 function getPlayerMessageCb(title, body) {
     return (id, { element }) => {
-        element.insertAdjacentHTML("beforeend", `
+        insertHTMLString(element, "beforeend", `
             <div id="${id}" class="panel player-message">
                 <p class="play-message-title">${title}</p>
                 <p class="play-message-body">${body}</p>

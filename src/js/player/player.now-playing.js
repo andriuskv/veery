@@ -1,4 +1,4 @@
-import { getElementById, getElementByAttr, getImage } from "../utils.js";
+import { getElementById, getElementByAttr, getImage, insertHTMLString } from "../utils.js";
 import { togglePlaying } from "./player.js";
 import { watchOnYoutube } from "./player.youtube.js";
 import { getCurrentTrack } from "../playlist/playlist.js";
@@ -26,7 +26,7 @@ function indentText(element, width, maxWidth, x = 0) {
 }
 
 function createMediaContainer() {
-    document.querySelector(".player").insertAdjacentHTML("afterbegin", `
+    insertHTMLString(document.querySelector(".player"), "afterbegin", `
         <div id="js-media-container" class="media-container">
             <div class="media-btn-container">
                 <a id="js-yt-player-watch" class="btn btn-icon hidden" data-item="yt-watch" title="Watch on YouTube" target="_blank">
@@ -109,7 +109,8 @@ function handleClickOnArt({ target }) {
 function renderNowPlaying(track) {
     const trackArtist = track.artist && track.title ? track.artist : track.name;
     const trackTitle = trackArtist !== track.name ? `<div class="track-title">${track.title}</div>` : "";
-    const nowPlayingView = `
+
+    insertHTMLString(getElementById("js-now-playing"), "beforeend", `
         <div id="js-now-playing-art-container" class="now-playing-art-container">
             <div class="now-playing-art-button-container">
                 <button class="btn btn-icon" title="Expand" data-button="expand">
@@ -124,9 +125,7 @@ function renderNowPlaying(track) {
             ${trackTitle}
             <div class="track-artist">${trackArtist}</div>
         </div>
-    `;
-
-    getElementById("js-now-playing").insertAdjacentHTML("beforeend", nowPlayingView);
+    `);
     getElementById("js-track-name").addEventListener("mousemove", handleMousemove);
     getElementById("js-now-playing-art-container").addEventListener("click", handleClickOnArt);
 }

@@ -1,4 +1,4 @@
-import { removeElement, getElementById, getElementByAttr, isOutsideElement } from "./utils.js";
+import { removeElement, getElementById, getElementByAttr, isOutsideElement, insertHTMLString } from "./utils.js";
 import { createNewPlaylistForm, onNewPlaylistFormSubmit } from "./playlist/playlist.manage.js";
 
 function getSidebarEntry(id) {
@@ -6,7 +6,7 @@ function getSidebarEntry(id) {
 }
 
 function createSidebarEntry(title, id) {
-    getElementById("js-sidebar-entries").insertAdjacentHTML("beforeend", `
+    insertHTMLString(getElementById("js-sidebar-entries"), "beforeend", `
         <li id="js-sidebar-entry-${id}" class="sidebar-entry">
             <a href="./#/playlist/${id}" class="sidebar-link" data-link>${title}</a>
         </li>
@@ -23,7 +23,7 @@ function removeSidebarEntry(id) {
 
 function showActiveIcon(id) {
     removeActiveIcon();
-    getSidebarEntry(id).insertAdjacentHTML("beforeend", `
+    insertHTMLString(getSidebarEntry(id), "beforeend", `
         <svg viewBox="0 0 24 24" id="js-active-playlist-icon" class="active-playlist-icon">
             <use href="#volume"></use>
         </svg>
@@ -45,7 +45,7 @@ function toggleSidebarForm(btn) {
         removeElement(element);
         return;
     }
-    createNewPlaylistForm("sidebar", btn.parentElement, onNewPlaylistFormSubmit);
+    createNewPlaylistForm("sidebar", btn.parentElement, "afterend", onNewPlaylistFormSubmit);
 }
 
 getElementById("js-sidebar-container").addEventListener("click", ({ currentTarget, target }) => {
