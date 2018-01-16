@@ -48,7 +48,7 @@
     width: 64px;
     height: 64px;
 
-    &:hover .now-playing-art-button-container {
+    &:hover .expand-media-btn {
         display: flex;
     }
 
@@ -58,16 +58,14 @@
     }
 }
 
-.now-playing-art-button-container {
+.expand-media-btn {
     z-index: 1;
     position: absolute;
     top: 0;
-    right: 0;
     left: 0;
-    bottom: 0;
     display: none;
-    justify-content: center;
-    align-items: center;
+    width: 100%;
+    height: 100%;
     background-color: $background-color-dark-80;
     animation-name: appear;
     animation-duration: 0.2s;

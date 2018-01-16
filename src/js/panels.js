@@ -1,4 +1,4 @@
-import { getElementById, removeElement, isOutsideElement } from "./utils.js";
+import { removeElement, isOutsideElement } from "./utils.js";
 
 let visiblePanel = null;
 
@@ -12,7 +12,7 @@ function createPanel(id, panelCreationCallback, params) {
     panelCreationCallback(id, params);
     visiblePanel = {
         id,
-        element: getElementById(id),
+        element: document.getElementById(id),
         removeOnClick: params.removeOnClick,
         initiator: params.element
     };

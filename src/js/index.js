@@ -1,5 +1,3 @@
-import "babel-polyfill";
-import "whatwg-fetch";
 import "wicg-focus-ring";
 
 import "../scss/index.scss";

@@ -1,16 +1,16 @@
-const webpack = require("webpack");
 const path = require("path");
+const { DefinePlugin, optimize } = require("webpack");
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
+const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = function(env = {}) {
     const plugins = [
         new ExtractTextPlugin("main.css"),
         new HtmlWebpackPlugin({
-            template: "./src/index.html",
-            excludeChunks: ["ww"]
+            template: "./src/index.html"
         }),
-        new webpack.DefinePlugin({
+        new DefinePlugin({
             "process.env": {
                 YOUTUBE_API_KEY: JSON.stringify(process.env.YOUTUBE_API_KEY),
                 SOUNDCLOUD_API_KEY: JSON.stringify(process.env.SOUNDCLOUD_API_KEY),
@@ -21,22 +21,10 @@ module.exports = function(env = {}) {
 
     if (env.prod) {
         plugins.push(
-            new webpack.optimize.ModuleConcatenationPlugin(),
-            new webpack.optimize.UglifyJsPlugin({
-                compress: {
-                    warnings: false,
-                    unused: true,
-                    dead_code: true,
-                    screw_ie8: true,
-                    unsafe: true,
-                    conditionals: true,
-                    comparisons: true,
-                    sequences: true,
-                    evaluate: true,
-                    drop_console: true
-                },
-                output: {
-                    comments: false
+            new optimize.ModuleConcatenationPlugin(),
+            new UglifyJsPlugin({
+                uglifyOptions: {
+                    ecma: 8
                 }
             })
         );
@@ -44,8 +32,7 @@ module.exports = function(env = {}) {
 
     return {
         entry: {
-            main: "./src/js/index.js",
-            ww: "./src/js/ww.js"
+            main: "./src/js/index.js"
         },
         output: {
             path: path.resolve(__dirname, "./dist"),
@@ -92,12 +79,11 @@ module.exports = function(env = {}) {
                     loader: "babel-loader",
                     exclude: /node_modules/,
                     options: {
-                        presets: [["env", {
+                        presets: [["@babel/preset-env", {
                             modules: false,
-                            useBuiltIns: true,
-                            targets: {
-                                browsers: ["last 1 versions", "> 1%"]
-                            }
+                            shippedProposals: true,
+                            loose: true,
+                            useBuiltIns: "usage"
                         }]],
                         plugins: ["@babel/plugin-syntax-dynamic-import"]
                     }

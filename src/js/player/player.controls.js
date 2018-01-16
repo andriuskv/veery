@@ -1,5 +1,4 @@
 import {
-    getElementById,
     getElementByAttr,
     formatTime,
     dispatchCustomEvent,
@@ -12,9 +11,9 @@ import { getCurrentTrack } from "../playlist/playlist.js";
 import { getTrackPlayPauseBtn } from "../playlist/playlist.view.js";
 import { storedTrack, toggleShuffle, setVolume, seekTo, mutePlayer, onControlButtonClick } from "./player.js";
 
-const volumeSlider = getElementById("js-volume-slider");
-const trackSlider = getElementById("js-track-slider");
-const controlsElement = getElementById("js-controls");
+const volumeSlider = document.getElementById("js-volume-slider");
+const trackSlider = document.getElementById("js-track-slider");
+const controlsElement = document.getElementById("js-controls");
 let seeking = false;
 let isSpinnerActive = false;
 
@@ -67,7 +66,7 @@ function showPlayPauseBtnSpinner(track) {
     if (element) {
         addSpinner(element, `js-track-${spinnerId}`);
     }
-    addSpinner(getElementById("js-play-btn"), `js-${spinnerId}`);
+    addSpinner(document.getElementById("js-play-btn"), `js-${spinnerId}`);
 }
 
 function hidePlayPauseBtnSpinner() {
@@ -75,13 +74,13 @@ function hidePlayPauseBtnSpinner() {
         return;
     }
     const spinnerId = "play-pause-btn-spinner";
-    const element = getElementById(`js-track-${spinnerId}`);
+    const element = document.getElementById(`js-track-${spinnerId}`);
     isSpinnerActive = false;
 
     if (element) {
         removeElement(element);
     }
-    removeElement(getElementById(`js-${spinnerId}`));
+    removeElement(document.getElementById(`js-${spinnerId}`));
 }
 
 function togglePlayPauseBtn(element, state) {
@@ -115,7 +114,8 @@ function toggleVolumeBtn(element, state) {
 }
 
 function getPosInPercentage(slider, pageX) {
-    const { left, width } = getElementById(`js-${slider}-slider`).getBoundingClientRect();
+    const element = document.getElementById(`js-${slider}-slider`);
+    const { left, width } = element.getBoundingClientRect();
     const thumbWidth = 12;
     let percentage = (pageX - left - thumbWidth / 2) / (width - thumbWidth) * 100;
 
@@ -140,7 +140,7 @@ function updateVolume(volume) {
 }
 
 function updateVolumeSliderLabel(percentage) {
-    const label = getElementById("js-volume-slider-label");
+    const label = document.getElementById("js-volume-slider-label");
 
     label.textContent = `${Math.floor(percentage)}%`;
     label.style.left = `${percentage}%`;
@@ -158,7 +158,7 @@ function onVolumeSliderMousemove({ pageX }) {
     if (!volume) {
         updateSetting({
             attrValue: "mute",
-            elementRef: getElementById("js-volume-btn")
+            elementRef: document.getElementById("js-volume-btn")
         });
         return;
     }
@@ -173,8 +173,8 @@ function onVolumeSliderMouseup() {
 }
 
 function updateSlider(slider, value) {
-    getElementById(`js-${slider}-slider-thumb`).style.left = `${value * 100}%`;
-    getElementById(`js-${slider}-slider-elapsed`).style.transform = `scaleX(${value})`;
+    document.getElementById(`js-${slider}-slider-thumb`).style.left = `${value * 100}%`;
+    document.getElementById(`js-${slider}-slider-elapsed`).style.transform = `scaleX(${value})`;
 }
 
 function updateTrackSlider(track, currentTime = 0) {
@@ -183,7 +183,7 @@ function updateTrackSlider(track, currentTime = 0) {
     const duration = track ? track.duration : formatedCurrentTime;
 
     if (!seeking) {
-        getElementById("js-track-current").textContent = formatedCurrentTime;
+        document.getElementById("js-track-current").textContent = formatedCurrentTime;
     }
     updateSlider("track", currentTime / durationInSeconds);
     trackSlider.setAttribute("aria-valuenow", currentTime);
@@ -203,7 +203,7 @@ function onLocalVolumeSliderMousemove({ pageX }) {
 }
 
 function showTrackDuration(duration = "0:00", durationInSeconds = 0) {
-    getElementById("js-track-duration").textContent = duration;
+    document.getElementById("js-track-duration").textContent = duration;
     trackSlider.setAttribute("aria-valuemax", durationInSeconds);
 }
 
@@ -225,7 +225,7 @@ function getCurrentTime(offset, duration) {
 }
 
 function updateTrackSliderLabel(percent, currentTime) {
-    const label = getElementById("js-track-slider-label");
+    const label = document.getElementById("js-track-slider-label");
 
     label.style.left = `${percent}%`;
     label.textContent = formatTime(currentTime);
@@ -286,7 +286,7 @@ function unmutePlayer() {
     const muted = getSetting("mute");
 
     if (muted) {
-        const element = getElementById("js-volume-btn");
+        const element = document.getElementById("js-volume-btn");
 
         removeSetting("volumeBeforeMute");
         setSetting("mute", !muted);
@@ -368,7 +368,7 @@ volumeSlider.addEventListener("keydown", ({ which }) => {
 
             updateSetting({
                 attrValue: "mute",
-                elementRef: getElementById("js-volume-btn")
+                elementRef: document.getElementById("js-volume-btn")
             });
             return;
         }
@@ -376,7 +376,7 @@ volumeSlider.addEventListener("keydown", ({ which }) => {
     updateVolume(volume);
 });
 
-getElementById("js-main-controls").addEventListener("click", ({ target }) => {
+document.getElementById("js-main-controls").addEventListener("click", ({ target }) => {
     const element = getElementByAttr("data-item", target);
 
     if (element) {
@@ -401,7 +401,7 @@ controlsElement.addEventListener("keyup", ({ which, target }) => {
     }
 });
 
-getElementById("js-control-toggle-btn").addEventListener("click", () => {
+document.getElementById("js-control-toggle-btn").addEventListener("click", () => {
     controlsElement.classList.toggle("visible");
 });
 

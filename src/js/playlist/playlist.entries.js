@@ -1,4 +1,4 @@
-import { removeElement, getElementById, getElementByAttr, enableBtn, disableBtn, insertHTMLString } from "../utils.js";
+import { removeElement, getElementByAttr, enableBtn, disableBtn } from "../utils.js";
 import { editSidebarEntryTitle } from "../sidebar.js";
 import { postMessageToWorker } from "../worker.js";
 import { togglePanel } from "../panels.js";
@@ -23,7 +23,7 @@ function createContainer(id) {
 
     div.appendChild(h2);
     div.appendChild(ul);
-    getElementById("js-tab-home").appendChild(div);
+    document.getElementById("js-tab-home").appendChild(div);
     return ul;
 }
 
@@ -36,14 +36,14 @@ function removeContainer(container) {
 function getContainer() {
     const id = "js-pl-entries";
 
-    return getElementById(id) || createContainer(id);
+    return document.getElementById(id) || createContainer(id);
 }
 
 function getSyncBtn(id) {
     const entry = document.querySelector(`[data-entry-id="${id}"]`);
 
     if (entry) {
-        return entry.querySelector(`[data-action="sync"]`);
+        return entry.querySelector("[data-action='sync']");
     }
     return null;
 }
@@ -65,7 +65,7 @@ function disableSyncBtn(id) {
 }
 
 function updatePlaylistStats() {
-    const container = getElementById("js-pl-entries");
+    const container = document.getElementById("js-pl-entries");
 
     if (!container) {
         return;
@@ -118,7 +118,9 @@ function parsePlaylistDuration(duration) {
 }
 
 function createPlaylistEntry(pl) {
-    insertHTMLString(getContainer(), "beforeend", `
+    const element = getContainer();
+
+    element.insertAdjacentHTML("beforeend", `
         <li class="pl-entry" data-entry-id=${pl.id}>
             <div class="pl-entry-input-container" data-action="edit">
                 <input type="text" class="input pl-entry-input" value="${pl.title}">
@@ -145,7 +147,7 @@ function createPlaylistEntry(pl) {
 }
 
 function createSettingsPanel(id, { element, pl }) {
-    insertHTMLString(element, "afterend", `
+    element.insertAdjacentHTML("afterend", `
         <div id="${id}" class="panel pl-entry-panel">
             <h3 class="pl-entry-panel-title">Playlist settings</h3>
             <label class="pl-entry-setting">
@@ -155,7 +157,7 @@ function createSettingsPanel(id, { element, pl }) {
             </label>
         </div>
     `);
-    getElementById(id).addEventListener("change", handleSettingChange);
+    document.getElementById(id).addEventListener("change", handleSettingChange);
 }
 
 function removePlaylistEntry(entryElement) {

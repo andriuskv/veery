@@ -1,5 +1,5 @@
 import * as playlist from "./playlist.js";
-import { getElementById, removeElementClass, removeElement, addSpinner, insertHTMLString } from "../utils.js";
+import { removeElementClass, removeElement, addSpinner } from "../utils.js";
 import { removePlaylistTab, updatePlaylistView } from "./playlist.view.js";
 import { addRoute, toggleRoute } from "../router.js";
 import { getSetting } from "../settings.js";
@@ -131,16 +131,16 @@ function onNewPlaylistFormSubmit(event) {
 }
 
 function createNewPlaylistForm(id, element, insertPoint, handleSubmit) {
-    insertHTMLString(element, insertPoint, `
+    element.insertAdjacentHTML(insertPoint, `
         <form id="js-${id}-form" class="${id}-form">
             <input type="text" name="title" class="input" autocomplete="off" placeholder="Playlist title" required>
             <button class="btn">Create</button>
         </form>
     `);
 
-    const form = getElementById(`js-${id}-form`);
+    const form = document.getElementById(`js-${id}-form`);
 
-    form.querySelector(".input").focus();
+    form.elements["title"].focus();
     form.addEventListener("submit", handleSubmit);
 }
 
@@ -152,7 +152,7 @@ function showStatusIndicator(id) {
 }
 
 function hideStatusIndicator(id) {
-    const element = getElementById(`js-${id}-sidebar-spinner`);
+    const element = document.getElementById(`js-${id}-sidebar-spinner`);
 
     if (element) {
         removeElement(element);

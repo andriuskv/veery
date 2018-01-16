@@ -5,7 +5,6 @@ import {
     isOutsideElement
 } from "../utils.js";
 import {
-    getPlaylistById,
     updatePlaylist,
     getPlaylistDuration,
     isPlaylistActive,
@@ -17,10 +16,10 @@ import {
     setPlaybackIndex
 } from "./playlist.js";
 import { getSetting } from "../settings.js";
-import { getVisiblePlaylistId } from "../tab.js";
+import { getVisiblePlaylistId, getVisiblePlaylist, getTab } from "../tab.js";
 import { postMessageToWorker } from "../worker.js";
 import { createMoveToContainer, removeMoveToContainer } from "./playlist.move-to.js";
-import { getPlaylistParentElement, getPlaylistTrackElements, updatePlaylistView } from "./playlist.view.js";
+import { getPlaylistTrackElements, updatePlaylistView } from "./playlist.view.js";
 
 const startingPoint = {};
 const mousePos = {};
@@ -41,7 +40,7 @@ function enableTrackSelection({ id, tracks }) {
     if (!tracks.length) {
         return;
     }
-    playlistElement = getPlaylistParentElement(id);
+    playlistElement = getTab(id);
     playlistElement.addEventListener("mousedown", onMousedown);
 }
 
@@ -459,7 +458,7 @@ function updateCurrentTrackIndex(playlistId, selectedTrackIndexes) {
 
 function removeSelectedTracks() {
     const elements = getSelectedElements();
-    const pl = getPlaylistById(getVisiblePlaylistId());
+    const pl = getVisiblePlaylist();
     const indexes = getElementIndexes(elements);
     const { tracksToKeep, tracksToRemove } = separatePlaylistTracks(pl.tracks, indexes);
 
