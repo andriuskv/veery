@@ -5,7 +5,7 @@ import { syncPlaylists } from "./playlist/playlist.entries.js";
 import { storedTrack } from "./player/player.js";
 import { createMediaContainer } from "./player/player.now-playing.js";
 
-const worker = new Worker("./../ww.js");
+const worker = new Worker("./ww.js");
 
 worker.onmessage = function({ data: { action, payload } }) {
     if (action === "init") {
