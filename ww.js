@@ -1,1 +1,79 @@
-!function(t){function n(r){if(e[r])return e[r].exports;var i=e[r]={i:r,l:!1,exports:{}};return t[r].call(i.exports,i,i.exports,n),i.l=!0,i.exports}var e={};n.m=t,n.c=e,n.d=function(t,e,r){n.o(t,e)||Object.defineProperty(t,e,{configurable:!1,enumerable:!0,get:r})},n.n=function(t){var e=t&&t.__esModule?function(){return t.default}:function(){return t};return n.d(e,"a",e),e},n.o=function(t,n){return Object.prototype.hasOwnProperty.call(t,n)},n.p="",n(n.s=207)}({207:function(t,n){function e(t){return c.playlists.where("_id").equals(t)}function r(t){c.playlists.put(t).then(function(){postMessage({action:"update",payload:{_id:t._id,id:t.id}})})}function i(t,n){e(t).modify(function(t,e){e.value.tracks=e.value.tracks.concat(n)})}function a(t,n){e(t).modify(function(t,e){e.value.tracks=e.value.tracks.filter(function(t){var e=!0,r=!1,i=void 0;try{for(var a,o=n[Symbol.iterator]();!(e=(a=o.next()).done);e=!0){if(a.value.name===t.name)return!1}}catch(t){r=!0,i=t}finally{try{!e&&o.return&&o.return()}finally{if(r)throw i}}return!0})})}function o(t,n){e(t).modify(function(t,e){Object.keys(n).forEach(function(t){e.value[t]=n[t]})})}importScripts("./libs/dexie.min.js");var c=new Dexie("playlists");c.version(1).stores({playlists:"++_id"}),c.playlists.toArray().then(function(t){postMessage({action:"init",payload:t})}),self.onmessage=function(t){var n=t.data,s=n.action,u=n.playlist;c.transaction("rw",c.playlists,function(){"add"===s?r(u):"remove"===s?e(u._id).delete():"add-tracks"===s?i(u._id,u.tracks):"remove-tracks"===s?a(u._id,u.tracks):o(u._id,u)}).catch(function(t){})}}});
+/* global Dexie */
+
+importScripts("./libs/dexie.min.js");
+
+const db = new Dexie("playlists");
+
+db.version(1).stores({ playlists: "++_id" });
+
+db.playlists.toArray().then(playlists => {
+    postMessage({
+        action: "init",
+        payload: playlists
+    });
+});
+
+function getPlaylist(id) {
+    return db.playlists.where("_id").equals(id);
+}
+
+function addPlaylist(playlist) {
+    db.playlists.put(playlist).then(() => {
+        postMessage({
+            action: "update",
+            payload: {
+                _id: playlist._id,
+                id: playlist.id
+            }
+        });
+    });
+}
+
+function addTracks(id, tracks) {
+    getPlaylist(id).modify((value, ref) => {
+        ref.value.tracks = ref.value.tracks.concat(tracks);
+    });
+}
+
+function removeTracks(id, tracks) {
+    getPlaylist(id).modify((value, ref) => {
+        ref.value.tracks = ref.value.tracks.filter(track => {
+            for (const localTrack of tracks) {
+                if (localTrack.name === track.name) {
+                    return false;
+                }
+            }
+            return true;
+        });
+    });
+}
+
+function updatePlaylistProps(id, props) {
+    getPlaylist(id).modify((value, ref) => {
+        Object.keys(props).forEach(key => {
+            ref.value[key] = props[key];
+        });
+    });
+}
+
+self.onmessage = function({ data: { action, playlist } }) {
+    db.transaction("rw", db.playlists, () => {
+        if (action === "add") {
+            addPlaylist(playlist);
+        }
+        else if (action === "remove") {
+            getPlaylist(playlist._id).delete();
+        }
+        else if (action === "add-tracks") {
+            addTracks(playlist._id, playlist.tracks);
+        }
+        else if (action === "remove-tracks") {
+            removeTracks(playlist._id, playlist.tracks);
+        }
+        else {
+            updatePlaylistProps(playlist._id, playlist);
+        }
+    }).catch(e => {
+        console.log(e);
+    });
+};
