@@ -1,7 +1,6 @@
 import {
     removeElement,
     removeElementClass,
-    getElementById,
     getElementByAttr,
     enableBtn,
     disableBtn
@@ -14,6 +13,7 @@ import { showDropboxChooser } from "../dropbox.js";
 import { selectLocalFiles } from "../local.js";
 import { fetchYoutubeItem } from "../youtube.js";
 
+const importOptionsElement = document.getElementById("js-import-options");
 let importOption = "";
 
 function setImportOption(option = "") {
@@ -134,14 +134,14 @@ function createImportForm(container, item) {
 
     container.insertAdjacentHTML("afterend", form);
 
-    const element = getElementById(id);
+    const element = document.getElementById(id);
 
     element.elements["url"].focus();
     element.addEventListener("submit", handleImportFormSubmit);
 }
 
 function removeImportForm() {
-    const form = getElementById("js-import-form");
+    const form = document.getElementById("js-import-form");
 
     if (form) {
         form.removeEventListener("submit", handleImportFormSubmit);
@@ -169,7 +169,7 @@ function createFileInput() {
 }
 
 function showFilePicker(item) {
-    const filePicker = getElementById("js-file-picker") || createFileInput();
+    const filePicker = document.getElementById("js-file-picker") || createFileInput();
 
     if (item === "file") {
         filePicker.removeAttribute("webkitdirectory");
@@ -236,7 +236,7 @@ function handleYouTubeOptionClick({ attrValue, elementRef }) {
     }
 }
 
-getElementById("js-import-options").addEventListener("click", ({ currenTarget, target }) => {
+importOptionsElement.addEventListener("click", ({ currenTarget, target }) => {
     const element = getElementByAttr("data-item", target, currenTarget);
 
     if (!element || element.elementRef.disabled) {

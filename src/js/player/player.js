@@ -23,7 +23,7 @@ import {
     getTrack,
     getNextTrack
 } from "../playlist/playlist.js";
-import { removeElementClass, getElementById, getElementByAttr, getImage, insertHTMLString } from "../utils.js";
+import { removeElementClass, getElementByAttr, getImage } from "../utils.js";
 import { getVisiblePlaylistId } from "../tab.js";
 import { setSetting, getSetting, removeSetting } from "../settings.js";
 import { showActiveIcon, removeActiveIcon } from "../sidebar.js";
@@ -33,7 +33,7 @@ import { showNowPlaying, removeNowPlaying } from "./player.now-playing.js";
 import * as nPlayer from "./player.native.js";
 import * as ytPlayer from "./player.youtube.js";
 
-const tabContainer = getElementById("js-playlist-tabs");
+const tabContainer = document.getElementById("js-tab-playlist-container");
 let isPaused = true;
 let scrollToTrack = false;
 
@@ -96,9 +96,9 @@ function updatePlayerState(state, track) {
 }
 
 function updateTrackMedia(track) {
-    const ytPlayer = getElementById("js-yt-player");
-    const ytPlayerWatch = getElementById("js-yt-player-watch");
-    const image = getElementById("js-media-image");
+    const ytPlayer = document.getElementById("js-yt-player");
+    const ytPlayerWatch = document.getElementById("js-yt-player-watch");
+    const image = document.getElementById("js-media-image");
 
     if (track.player === "youtube") {
         ytPlayer.classList.remove("hidden");
@@ -130,7 +130,7 @@ function beforeTrackStart(track) {
 }
 
 function togglePlayPauseBtns(track, isPaused) {
-    const element = getElementById("js-play-btn");
+    const element = document.getElementById("js-play-btn");
 
     togglePlayPauseBtn(element, isPaused);
     toggleTrackPlayPauseBtn(track, isPaused);
@@ -177,7 +177,7 @@ function playTrack() {
     togglePlaying(track);
 }
 
-function play(source, sourceValue, id = getActivePlaylistId()) {
+function play(source, sourceValue, id) {
     const pl = getPlaylistById(id);
     const shuffle = getSetting("shuffle");
     const currentTrack = getCurrentTrack();
@@ -215,20 +215,20 @@ function play(source, sourceValue, id = getActivePlaylistId()) {
 }
 
 function playNextTrack() {
-    play("direction", 1);
+    play("direction", 1, getActivePlaylistId());
 }
 
 function playPreviousTrack() {
-    play("direction", -1);
+    play("direction", -1, getActivePlaylistId());
 }
 
-function playTrackFromElement({ target }) {
-    const playPauseBtn = getElementByAttr("data-btn", target);
+function playTrackFromElement({ currentTarget, target }) {
+    const playPauseBtn = getElementByAttr("data-btn", target, currentTarget);
 
     if (playPauseBtn) {
         return;
     }
-    const element = getElementByAttr("data-index", target);
+    const element = getElementByAttr("data-index", target, currentTarget);
 
     if (element) {
         play("index", element.attrValue, getVisiblePlaylistId());
@@ -261,7 +261,7 @@ function resetPlayer(track) {
     setPlaylistAsActive();
     removeActiveIcon();
     removeElementClass(".track.playing", "playing");
-    getElementById("js-media-container").classList.remove("visible");
+    document.getElementById("js-media-container").classList.remove("visible");
 
     if (track) {
         resetTrackSlider();
@@ -328,7 +328,7 @@ function mutePlayer(muted) {
 
 function getPlayerMessageCb(title, body) {
     return (id, { element }) => {
-        insertHTMLString(element, "beforeend", `
+        element.insertAdjacentHTML("beforeend", `
             <div id="${id}" class="panel player-message">
                 <p class="play-message-title">${title}</p>
                 <p class="play-message-body">${body}</p>
@@ -341,20 +341,20 @@ function showPlayerMessage({ title, body }) {
     const createPlayerMessage = getPlayerMessageCb(title, body);
 
     togglePanel("js-player-message", createPlayerMessage, {
-        element: document.querySelector(".player"),
+        element: document.getElementById("js-player"),
         removeOnClick: true
     });
 }
 
 tabContainer.addEventListener("dblclick", playTrackFromElement);
 
-tabContainer.addEventListener("click", ({ target }) => {
-    const element = getElementByAttr("data-btn", target);
+tabContainer.addEventListener("click", ({ currentTarget, target }) => {
+    const element = getElementByAttr("data-btn", target, currentTarget);
 
     if (!element) {
         return;
     }
-    const { attrValue } = getElementByAttr("data-index", element.elementRef);
+    const { attrValue } = getElementByAttr("data-index", element.elementRef, currentTarget);
     const index = parseInt(attrValue, 10);
     const track = getCurrentTrack();
     const id = getVisiblePlaylistId();

@@ -1,12 +1,16 @@
-import { removeElement, getElementById, getElementByAttr, isOutsideElement, insertHTMLString } from "./utils.js";
+import { removeElement, getElementByAttr, isOutsideElement } from "./utils.js";
 import { createNewPlaylistForm, onNewPlaylistFormSubmit } from "./playlist/playlist.manage.js";
 
+const sidebarContainerElement = document.getElementById("js-sidebar-container");
+
 function getSidebarEntry(id) {
-    return getElementById(`js-sidebar-entry-${id}`);
+    return document.getElementById(`js-sidebar-entry-${id}`);
 }
 
 function createSidebarEntry(title, id) {
-    insertHTMLString(getElementById("js-sidebar-entries"), "beforeend", `
+    const element = document.getElementById("js-sidebar-entries");
+
+    element.insertAdjacentHTML("beforeend", `
         <li id="js-sidebar-entry-${id}" class="sidebar-entry">
             <a href="./#/playlist/${id}" class="sidebar-link" data-link>${title}</a>
         </li>
@@ -22,8 +26,10 @@ function removeSidebarEntry(id) {
 }
 
 function showActiveIcon(id) {
+    const entry = getSidebarEntry(id);
+
     removeActiveIcon();
-    insertHTMLString(getSidebarEntry(id), "beforeend", `
+    entry.insertAdjacentHTML("beforeend", `
         <svg viewBox="0 0 24 24" id="js-active-playlist-icon" class="active-playlist-icon">
             <use href="#volume"></use>
         </svg>
@@ -31,7 +37,7 @@ function showActiveIcon(id) {
 }
 
 function removeActiveIcon() {
-    const element = getElementById("js-active-playlist-icon");
+    const element = document.getElementById("js-active-playlist-icon");
 
     if (element) {
         removeElement(element);
@@ -39,7 +45,7 @@ function removeActiveIcon() {
 }
 
 function toggleSidebarForm(btn) {
-    const element = getElementById("js-sidebar-form");
+    const element = document.getElementById("js-sidebar-form");
 
     if (element) {
         removeElement(element);
@@ -48,7 +54,7 @@ function toggleSidebarForm(btn) {
     createNewPlaylistForm("sidebar", btn.parentElement, "afterend", onNewPlaylistFormSubmit);
 }
 
-getElementById("js-sidebar-container").addEventListener("click", ({ currentTarget, target }) => {
+sidebarContainerElement.addEventListener("click", ({ currentTarget, target }) => {
     const linkElement = getElementByAttr("data-link", target, currentTarget);
 
     if (linkElement || isOutsideElement(target, currentTarget.firstElementChild)) {

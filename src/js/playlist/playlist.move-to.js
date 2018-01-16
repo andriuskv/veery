@@ -1,5 +1,5 @@
-import { getElementById, getElementByAttr, removeElement, insertHTMLString } from "./../utils.js";
-import { getVisiblePlaylistId } from "./../tab.js";
+import { getElementByAttr, removeElement } from "./../utils.js";
+import { getVisiblePlaylistId, getVisiblePlaylist } from "./../tab.js";
 import { removePanel } from "./../panels.js";
 import { getPlaylistById, getPlaylistArray, findTrack } from "./playlist.js";
 import { getSelectedElements, getElementIndexes, deselectTrackElements } from "./playlist.track-selection.js";
@@ -7,8 +7,9 @@ import { onNewPlaylistFormSubmit, createNewPlaylistForm, addTracksToPlaylist } f
 
 function createMoveToContainer() {
     const id = "js-move-to-panel-container";
+    const element = document.getElementById("js-playlist-type-btns");
 
-    insertHTMLString(getElementById("js-playlist-type-btns"), "beforebegin", `
+    element.insertAdjacentHTML("beforebegin", `
         <div id="${id}" class="playlist-tab-header-item" data-move-to>
             <button class="btn btn-icon" data-item="move-to" title="Move to">
                 <svg viewBox="0 0 24 24">
@@ -17,11 +18,11 @@ function createMoveToContainer() {
             </button>
         </div>
     `);
-    getElementById(id).addEventListener("click", handleClick);
+    document.getElementById(id).addEventListener("click", handleClick);
 }
 
 function removeMoveToContainer() {
-    const element = getElementById("js-move-to-panel-container");
+    const element = document.getElementById("js-move-to-panel-container");
 
     element.removeEventListener("click", handleClick);
     removeElement(element);
@@ -48,7 +49,7 @@ function handleClick({ currentTarget, target }) {
 }
 
 function handleSubmit(event) {
-    const element = getElementById("js-move-to-list");
+    const element = document.getElementById("js-move-to-list");
     const id = getVisiblePlaylistId();
 
     onNewPlaylistFormSubmit(event);
@@ -57,13 +58,13 @@ function handleSubmit(event) {
         element.innerHTML = getPlaylistItems(id);
     }
     else {
-        insertHTMLString(event.target, "beforebegin", getPlaylistList(id));
+        event.target.insertAdjacentHTML("beforebegin", getPlaylistList(id));
     }
 }
 
 function moveTracks(playlistId) {
     const indexes = getElementIndexes(getSelectedElements());
-    const { tracks } = getPlaylistById(getVisiblePlaylistId());
+    const { tracks } = getVisiblePlaylist();
     const pl = getPlaylistById(playlistId);
     const selectedTracks = tracks
         .filter(track => indexes.includes(track.index) && !findTrack(playlistId, track.name))
@@ -92,7 +93,9 @@ function getPlaylistList(playlistId) {
 }
 
 function createMoveToPanel(panelId, { playlistId }) {
-    insertHTMLString(getElementById("js-move-to-panel-container"), "beforeend", `
+    const element = document.getElementById("js-move-to-panel-container");
+
+    element.insertAdjacentHTML("beforeend", `
         <div id="${panelId}" class="panel move-to-panel">
             <h3 class="move-to-panel-title">Move to</h3>
             ${getPlaylistList(playlistId)}

@@ -1,5 +1,5 @@
 import { renderPlaylist, changePlaylistType, togglePlaylistTypeBtn } from "./playlist/playlist.view.js";
-import { removeElementClass, getElementById, getElementByAttr } from "./utils.js";
+import { removeElementClass, getElementByAttr } from "./utils.js";
 import { getSidebarEntry } from "./sidebar.js";
 import { togglePanel } from "./panels.js";
 import { getPlaylistById } from "./playlist/playlist.js";
@@ -9,6 +9,8 @@ import { setSortOptions, createSortPanel, changePlaylistOrder } from "./playlist
 import { createMoveToPanel } from "./playlist/playlist.move-to.js";
 import { resetFilteredPlaylist } from "./playlist/playlist.filter.js";
 
+const headerElement = document.getElementById("js-tab-header");
+const playlistHeaderElement = document.getElementById("js-playlist-tab-header");
 let visiblePlaylistId = "";
 
 function setVisiblePlaylistId(id = "") {
@@ -19,15 +21,22 @@ function getVisiblePlaylistId() {
     return visiblePlaylistId;
 }
 
-function toggleToPlaylistTab(id) {
-    const isSmallestBreakpoint = window.innerWidth <= 540;
+function getVisiblePlaylist() {
+    return getPlaylistById(getVisiblePlaylistId());
+}
+
+function getTab(id) {
+    return document.getElementById(`js-tab-${id}`);
+}
+
+function updatePlaylistTab(id) {
     const pl = getPlaylistById(id);
 
     if (!pl.rendered) {
         renderPlaylist(pl);
     }
 
-    if (pl.type === "list" && isSmallestBreakpoint) {
+    if (pl.type === "list" && window.innerWidth <= 540) {
         changePlaylistType("grid", pl);
     }
     else {
@@ -38,21 +47,21 @@ function toggleToPlaylistTab(id) {
     resetFilteredPlaylist();
 }
 
-getElementById("js-tab-header").addEventListener("click", ({ currentTarget, target }) => {
+headerElement.addEventListener("click", ({ currentTarget, target }) => {
     const element = getElementByAttr("data-item", target, currentTarget);
 
     if (element && element.attrValue === "sidebar-toggle") {
-        getElementById("js-sidebar-container").classList.remove("hidden");
+        document.getElementById("js-sidebar-container").classList.remove("hidden");
     }
 });
 
-getElementById("js-playlist-tab-header").addEventListener("click", ({ currentTarget, target }) => {
+playlistHeaderElement.addEventListener("click", ({ currentTarget, target }) => {
     const element = getElementByAttr("data-item", target, currentTarget);
 
     if (!element) {
         return;
     }
-    const pl = getPlaylistById(getVisiblePlaylistId());
+    const pl = getVisiblePlaylist();
     const item = element.attrValue;
 
     if (item === "move-to") {
@@ -76,25 +85,30 @@ getElementById("js-playlist-tab-header").addEventListener("click", ({ currentTar
 });
 
 window.addEventListener("route-change", ({ detail: { isPlaylistTab, tabId } }) => {
+    const containerElement = document.getElementById("js-tab-container");
+    const playlistCointainerElement = document.getElementById("js-tab-playlist-container");
+
     removeElementClass(".sidebar-entry.active", "active");
     removeElementClass(".tab.active", "active");
     setVisiblePlaylistId(isPlaylistTab ? tabId: "");
 
     if (isPlaylistTab) {
-        toggleToPlaylistTab(tabId);
-        getElementById("js-tab-playlist-container").classList.add("active");
-        getElementById("js-tab-container").classList.remove("active");
+        updatePlaylistTab(tabId);
+        playlistCointainerElement.classList.add("active");
+        containerElement.classList.remove("active");
     }
     else {
         updatePlaylistStats();
-        getElementById("js-tab-container").classList.add("active");
-        getElementById("js-tab-playlist-container").classList.remove("active");
+        containerElement.classList.add("active");
+        playlistCointainerElement.classList.remove("active");
     }
-    getElementById(`js-tab-${tabId}`).classList.add("active");
+    getTab(tabId).classList.add("active");
     getSidebarEntry(tabId).classList.add("active");
 });
 
 export {
     setVisiblePlaylistId,
-    getVisiblePlaylistId
+    getVisiblePlaylistId,
+    getVisiblePlaylist,
+    getTab
 };

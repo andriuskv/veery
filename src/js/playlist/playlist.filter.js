@@ -1,9 +1,9 @@
-import { getElementById, getElementByAttr, isOutsideElement } from "../utils.js";
+import { getElementByAttr, isOutsideElement } from "../utils.js";
 import { getVisiblePlaylistId } from "../tab.js";
 import { getPlaylistById } from "./playlist.js";
 import { getPlaylistTrackElements } from "./playlist.view.js";
 
-const filterInput = getElementById("js-filter-input");
+const filterInput = document.getElementById("js-filter-input");
 const filterInputContainer = filterInput.parentElement;
 let timeout = 0;
 let filteredPlaylistId = "";
@@ -28,7 +28,7 @@ function filterTracks(tracks, trackElements, query) {
 }
 
 function toggleFilterInputCleanBtn(inputValue) {
-    const btn = getElementById("js-clear-input-btn");
+    const btn = document.getElementById("js-clear-input-btn");
 
     if (inputValue) {
         btn.classList.add("visible");

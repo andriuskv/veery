@@ -1,4 +1,4 @@
-import { getElementById, getElementByAttr, getImage, insertHTMLString } from "../utils.js";
+import { getElementByAttr, getImage } from "../utils.js";
 import { togglePlaying } from "./player.js";
 import { watchOnYoutube } from "./player.youtube.js";
 import { getCurrentTrack } from "../playlist/playlist.js";
@@ -26,7 +26,9 @@ function indentText(element, width, maxWidth, x = 0) {
 }
 
 function createMediaContainer() {
-    insertHTMLString(document.querySelector(".player"), "afterbegin", `
+    const playerElement = document.getElementById("js-player");
+
+    playerElement.insertAdjacentHTML("afterbegin", `
         <div id="js-media-container" class="media-container">
             <div class="media-btn-container">
                 <a id="js-yt-player-watch" class="btn btn-icon hidden" data-item="yt-watch" title="Watch on YouTube" target="_blank">
@@ -44,7 +46,9 @@ function createMediaContainer() {
             <img src="" id="js-media-image" class="media-image hidden" data-item="image" alt="">
         </div>
     `);
-    getElementById("js-media-container").addEventListener("click", handleClickOnMedia);
+    const mediaElement = document.getElementById("js-media-container");
+
+    mediaElement.addEventListener("click", handleClickOnMedia);
 }
 
 function handleClickOnMedia({ currentTarget, target }) {
@@ -97,28 +101,22 @@ function handleMouseleave({ currentTarget }) {
     }
 }
 
-function handleClickOnArt({ target }) {
-    const element = getElementByAttr("data-button", target);
-
-    if (!element) {
-        return;
-    }
-    getElementById("js-media-container").classList.toggle("visible");
+function toggleMedia() {
+    document.getElementById("js-media-container").classList.toggle("visible");
 }
 
 function renderNowPlaying(track) {
+    const nowPlayingElement = document.getElementById("js-now-playing");
     const trackArtist = track.artist && track.title ? track.artist : track.name;
     const trackTitle = trackArtist !== track.name ? `<div class="track-title">${track.title}</div>` : "";
 
-    insertHTMLString(getElementById("js-now-playing"), "beforeend", `
-        <div id="js-now-playing-art-container" class="now-playing-art-container">
-            <div class="now-playing-art-button-container">
-                <button class="btn btn-icon" title="Expand" data-button="expand">
-                    <svg viewBox="0 0 24 24">
-                        <use href="#expand"></use>
-                    </svg>
-                </button>
-            </div>
+    nowPlayingElement.insertAdjacentHTML("beforeend", `
+        <div class="now-playing-art-container">
+            <button id="js-expand-media-btn" class="btn btn-icon expand-media-btn" title="Expand">
+                <svg viewBox="0 0 24 24">
+                    <use href="#expand"></use>
+                </svg>
+            </button>
             <img src=${getImage(track.thumbnail)} class="artwork" alt="">
         </div>
         <div id="js-track-name" class="track-name">
@@ -126,8 +124,8 @@ function renderNowPlaying(track) {
             <div class="track-artist">${trackArtist}</div>
         </div>
     `);
-    getElementById("js-track-name").addEventListener("mousemove", handleMousemove);
-    getElementById("js-now-playing-art-container").addEventListener("click", handleClickOnArt);
+    document.getElementById("js-track-name").addEventListener("mousemove", handleMousemove);
+    document.getElementById("js-expand-media-btn").addEventListener("click", toggleMedia);
 }
 
 function removeNowPlaying() {
@@ -137,9 +135,9 @@ function removeNowPlaying() {
     isRendered = false;
     document.title = "Veery";
 
-    getElementById("js-track-name").removeEventListener("mousemove", handleMousemove);
-    getElementById("js-now-playing-art-container").removeEventListener("click", handleClickOnArt);
-    getElementById("js-now-playing").innerHTML = "";
+    document.getElementById("js-track-name").removeEventListener("mousemove", handleMousemove);
+    document.getElementById("js-expand-media-btn").removeEventListener("click", toggleMedia);
+    document.getElementById("js-now-playing").innerHTML = "";
 }
 
 function showNowPlaying(track) {

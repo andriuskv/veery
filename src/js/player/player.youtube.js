@@ -1,6 +1,6 @@
 /* global YT */
 
-import { scriptLoader, getElementById, dispatchCustomEvent } from "../utils.js";
+import { scriptLoader, dispatchCustomEvent } from "../utils.js";
 import { storedTrack, getPlayerState, updatePlayerState, stopPlayer, showPlayerMessage } from "./player.js";
 import { elapsedTime, showPlayPauseBtnSpinner, hidePlayPauseBtnSpinner } from "./player.controls.js";
 import { getCurrentTrack } from "../playlist/playlist.js";
@@ -21,7 +21,7 @@ function onPlayerStateChange({ data: state }) {
     if (!track || track.player !== "youtube") {
         return;
     }
-    const iframe = getElementById("js-yt-player");
+    const iframe = document.getElementById("js-yt-player");
     const isPaused = getPlayerState();
     const latestState = isPaused ? PAUSED : PLAYING;
 

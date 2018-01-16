@@ -43,10 +43,6 @@ function removeElementClass(selector, classToRemove) {
     }
 }
 
-function getElementById(id) {
-    return document.getElementById(id);
-}
-
 function getElementByAttr(attr, element, endElement = null) {
     while (element && element !== endElement) {
         if (element.hasAttribute(attr)) {
@@ -57,10 +53,6 @@ function getElementByAttr(attr, element, endElement = null) {
         }
         element = element.parentElement;
     }
-}
-
-function insertHTMLString(element, insertPoint, string) {
-    element.insertAdjacentHTML(insertPoint, string);
 }
 
 function isOutsideElement(element, targetElement) {
@@ -94,15 +86,8 @@ function formatTime(time) {
 }
 
 function dispatchCustomEvent(eventName, data) {
-    let event = null;
+    const event = new CustomEvent(eventName, { detail: data });
 
-    try {
-        event = new CustomEvent(eventName, { detail: data });
-    }
-    catch (error) {
-        event = document.createEvent("CustomEvent");
-        event.initCustomEvent(eventName, true, true, data);
-    }
     window.dispatchEvent(event);
 }
 
@@ -116,7 +101,7 @@ function setElementIconAndTitle(element, { id, title }) {
 }
 
 function addSpinner(element, id = "", classList = "spinner") {
-    insertHTMLString(element, "beforeend", `
+    element.insertAdjacentHTML("beforeend", `
         <img src="./assets/images/ring-alt.svg" id="${id}" class="${classList}" alt="">
     `);
 }
@@ -140,9 +125,7 @@ export {
     removeElement,
     removeElements,
     removeElementClass,
-    getElementById,
     getElementByAttr,
-    insertHTMLString,
     isOutsideElement,
     formatTime,
     dispatchCustomEvent,

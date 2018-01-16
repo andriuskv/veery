@@ -1,17 +1,13 @@
-import { getElementById, removeElement, removeElementClass, getImage, insertHTMLString } from "../utils.js";
-import { getVisiblePlaylistId } from "../tab.js";
+import { removeElement, removeElementClass, getImage } from "../utils.js";
+import { getVisiblePlaylist, getTab } from "../tab.js";
 import { postMessageToWorker } from "../worker.js";
 import { getPlayerState } from "../player/player.js";
 import { togglePlayPauseBtn } from "../player/player.controls.js";
 import { getPlaylistById, getCurrentTrack, updatePlaylist } from "./playlist.js";
 import { enableTrackSelection } from "./playlist.track-selection.js";
 
-function getPlaylistParentElement(id) {
-    return getElementById(`js-tab-${id}`);
-}
-
 function getPlaylistTrackElements(id) {
-    return getElementById(`js-${id}`).children;
+    return document.getElementById(`js-${id}`).children;
 }
 
 function getPlaylistElementAtIndex(id, index) {
@@ -111,7 +107,7 @@ function getPlaylistTemplate(pl) {
 function createPlaylistTab(pl) {
     const template = getPlaylistTemplate(pl);
 
-    return `<div id="js-tab-${pl.id}" class="tab">${template}</div>`;
+    return `<div id="js-tab-${pl.id}" class="tab playlist-tab">${template}</div>`;
 }
 
 function showCurrentTrack(id) {
@@ -129,26 +125,26 @@ function showCurrentTrack(id) {
 
 function renderPlaylist(pl) {
     const tab = createPlaylistTab(pl);
-    const container = getElementById("js-playlist-tabs");
+    const element = document.getElementById("js-tab-playlist-container");
     pl.rendered = true;
 
-    insertHTMLString(container, "beforeend", tab);
+    element.insertAdjacentHTML("beforeend", tab);
     showCurrentTrack(pl.id);
 }
 
 function updatePlaylistView(pl) {
-    const element = getPlaylistParentElement(pl.id);
+    const element = getTab(pl.id);
 
     element.innerHTML = getPlaylistTemplate(pl);
     showCurrentTrack(pl.id);
 }
 
 function removePlaylistTab(id) {
-    removeElement(getPlaylistParentElement(id));
+    removeElement(getTab(id));
 }
 
 function scrollToTrackElement(element, id) {
-    const containerElement = getElementById(`js-tab-${id}`);
+    const containerElement = document.getElementById(`js-tab-${id}`);
     const elementHeight = element.offsetHeight;
     const trackTop = element.offsetTop;
     const containerScrollTop = containerElement.scrollTop;
@@ -180,8 +176,8 @@ function toggleTrackPlayPauseBtn(track, paused) {
 }
 
 function togglePlaylistTypeBtn(type) {
-    const listToggleBtn = getElementById("js-list-toggle-btn");
-    const gridToggleBtn = getElementById("js-grid-toggle-btn");
+    const listToggleBtn = document.getElementById("js-list-toggle-btn");
+    const gridToggleBtn = document.getElementById("js-grid-toggle-btn");
 
     if (type === "list") {
         listToggleBtn.classList.add("active");
@@ -208,19 +204,14 @@ function changePlaylistType(type, pl) {
 }
 
 window.addEventListener("resize", ({ target }) => {
-    const id = getVisiblePlaylistId();
+    const pl = getVisiblePlaylist();
 
-    if (id) {
-        const pl = getPlaylistById(id);
-
-        if (pl.type === "list" && target.innerWidth <= 540) {
-            changePlaylistType("grid", pl);
-        }
+    if (pl && pl.type === "list" && target.innerWidth <= 540) {
+        changePlaylistType("grid", pl);
     }
 });
 
 export {
-    getPlaylistParentElement,
     getPlaylistTrackElements,
     getTrackPlayPauseBtn,
     removePlaylistTab,

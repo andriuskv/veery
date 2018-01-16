@@ -1,43 +1,41 @@
 .grid-view {
-    display: flex;
-    align-content: flex-start;
-    align-items: flex-start;
-    flex-wrap: wrap;
-    padding: 2px;
-}
+    --items-per-row: 1;
 
-.grid-item {
-    flex-basis: 100%;
-    overflow: hidden;
-    display: flex;
-    height: 60px;
-    padding: 2px;
-    margin: 2px;
-    cursor: default;
-    user-select: none;
+    display: grid;
+    grid-gap: 4px;
+    grid-template-columns: repeat(var(--items-per-row), 1fr);
+    padding: 4px;
 
     @media (min-width: 782px) {
-        flex-basis: calc(100% / 2 - 4px);
+        --items-per-row: 2;
     }
 
     @media (min-width: 1086px) {
-        flex-basis: calc(100% / 3 - 4px);
+        --items-per-row: 3;
     }
 
     @media (min-width: 1390px) {
-        flex-basis: calc(100% / 4 - 4px);
+        --items-per-row: 4;
     }
 
     @media (min-width: 1694px) {
-        flex-basis: calc(100% / 5 - 4px);
+        --items-per-row: 5;
     }
+}
+
+.grid-item {
+    overflow: hidden;
+    display: flex;
+    height: 60px;
+    cursor: default;
+    user-select: none;
 }
 
 .grid-item-first-col {
     flex-shrink: 0;
     overflow-x: hidden;
     position: relative;
-    width: 56px;
+    width: 60px;
 }
 
 .grid-item-play-pause-btn {
