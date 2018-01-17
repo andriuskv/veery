@@ -62,38 +62,6 @@ function parsePictureBlock(bytes) {
     return new Blob([getUint8Bytes(bytes, offset, pictureLength)], { type: MIMEType });
 }
 
-function getDuration(buffer, offset, sampleRate) {
-    while (offset < buffer.byteLength) {
-
-        // Jump to header type
-        offset += 5;
-        const [headerType] = getBufferBytes(buffer, offset, 1);
-        offset += 1;
-
-        // 4 = end of stream
-        if (headerType === 4) {
-            const samples = getFieldLenght(getBufferBytes(buffer, offset, 8));
-
-            return Math.floor(samples / sampleRate);
-        }
-
-        // Jump to segment count
-        offset += 20;
-
-        const [segmentCount] = getBufferBytes(buffer, offset, 1);
-        offset += 1;
-
-        const segmentTable = getBufferBytes(buffer, offset, segmentCount);
-        let segmentLength = 0;
-        offset += segmentCount;
-
-        for (let i = 0; i < segmentTable.length; i++) {
-            segmentLength += segmentTable[i];
-        }
-        offset += segmentLength;
-    }
-}
-
 // https://tools.ietf.org/html/rfc7845#section-5.1
 // https://xiph.org/vorbis/doc/Vorbis_I_spec.html#x1-630004.2.2
 function parseIdHeader(bytes) {
@@ -164,53 +132,45 @@ function parsePages(buffer, offset) {
     let segment = new Uint8Array();
 
     while (offset < buffer.byteLength) {
-        let segmentLength = 0;
+
+        // Jump to header type
+        offset += 5;
+        const [headerType] = getBufferBytes(buffer, offset, 1);
+        offset += 1;
+
+        // 4 = end of stream
+        if (headerType === 4) {
+            const samples = getFieldLenght(getBufferBytes(buffer, offset, 8));
+            comments.duration = Math.floor(samples / comments.sampleRate);
+
+            return comments;
+        }
 
         // Jump to segment count
-        offset += 26;
+        offset += 20;
 
         const [segmentCount] = getBufferBytes(buffer, offset, 1);
         offset += 1;
 
         const segmentTable = getBufferBytes(buffer, offset, segmentCount);
+        const finalSegment = segmentTable[segmentTable.length - 1];
+        let segmentLength = 0;
         offset += segmentCount;
 
         for (let i = 0; i < segmentCount; i++) {
             segmentLength += segmentTable[i];
-
-            // end of segment
-            if (segmentLength < 255) {
-                headersToFind -= 1;
-                segment = mergeTypedArrays(segment, getBufferBytes(buffer, offset, segmentLength));
-
-                Object.assign(comments, parseSegment(segment));
-
-                // Jump to next page
-                offset += segmentLength;
-
-                if (!headersToFind) {
-                    comments.duration = getDuration(buffer, offset, comments.sampleRate);
-                    return comments;
-                }
-                segmentLength = 0;
-                segment = new Uint8Array();
-                break;
-            }
         }
 
-        if (segmentLength) {
+        if (headersToFind) {
             segment = mergeTypedArrays(segment, getBufferBytes(buffer, offset, segmentLength));
 
-            // Jump to next page
-            offset += segmentLength;
-
-            // If it's the end of metadata segment
-            if (segmentLength % 255 !== 0 || !segmentTable[segmentTable.length - 1]) {
-                return Object.assign(comments, parseSegment(segment), {
-                    duration: getDuration(buffer, offset, comments.sampleRate)
-                });
+            if (segmentLength % 255 !== 0 || !finalSegment) {
+                headersToFind -= 1;
+                Object.assign(comments, parseSegment(segment));
+                segment = new Uint8Array();
             }
         }
+        offset += segmentLength;
     }
 }
 
