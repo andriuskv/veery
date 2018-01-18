@@ -1,4 +1,4 @@
-import { getElementByAttr, getImage } from "../utils.js";
+import { getElementByAttr } from "../utils.js";
 import { togglePlaying } from "./player.js";
 import { watchOnYoutube } from "./player.youtube.js";
 import { getCurrentTrack } from "../playlist/playlist.js";
@@ -72,10 +72,6 @@ function handleClickOnMedia({ currentTarget, target }) {
 }
 
 function handleMousemove({ currentTarget, target }) {
-    if (currentTarget === target) {
-        return;
-    }
-
     if (animationTarget && target !== animationTarget) {
         resetAnimationTarget();
     }
@@ -83,7 +79,7 @@ function handleMousemove({ currentTarget, target }) {
         return;
     }
     const width = target.scrollWidth;
-    const maxWidth = target.parentElement.offsetWidth - 8;
+    const maxWidth = target.offsetWidth;
 
     if (width > maxWidth) {
         animationTarget = target;
@@ -105,11 +101,16 @@ function toggleMedia() {
     document.getElementById("js-media-container").classList.toggle("visible");
 }
 
-function renderNowPlaying(track) {
+function renderNowPlaying(track, artwork) {
     const nowPlayingElement = document.getElementById("js-now-playing");
-    const trackArtist = track.artist && track.title ? track.artist : track.name;
-    const trackTitle = trackArtist !== track.name ? `<div class="track-title">${track.title}</div>` : "";
+    let trackName = track.name;
 
+    if (track.artist && track.title) {
+        trackName = `
+            <div class="track-title">${track.title}</div>
+            <div class="track-artist"> ${track.artist}</div>
+        `;
+    }
     nowPlayingElement.insertAdjacentHTML("beforeend", `
         <div class="now-playing-art-container">
             <button id="js-expand-media-btn" class="btn btn-icon expand-media-btn" title="Expand">
@@ -117,12 +118,9 @@ function renderNowPlaying(track) {
                     <use href="#expand"></use>
                 </svg>
             </button>
-            <img src=${getImage(track.thumbnail)} class="artwork" alt="">
+            <img src=${artwork} class="artwork" alt="">
         </div>
-        <div id="js-track-name" class="track-name">
-            ${trackTitle}
-            <div class="track-artist">${trackArtist}</div>
-        </div>
+        <div id="js-track-name" class="track-name">${trackName}</div>
     `);
     document.getElementById("js-track-name").addEventListener("mousemove", handleMousemove);
     document.getElementById("js-expand-media-btn").addEventListener("click", toggleMedia);
@@ -140,14 +138,14 @@ function removeNowPlaying() {
     document.getElementById("js-now-playing").innerHTML = "";
 }
 
-function showNowPlaying(track) {
+function showNowPlaying(track, artwork) {
     if (isRendered) {
         removeNowPlaying();
     }
     isRendered = true;
     document.title = track.artist && track.title ? `${track.artist} - ${track.title}` : track.name;
 
-    renderNowPlaying(track);
+    renderNowPlaying(track, artwork);
 }
 
 export {

@@ -36,6 +36,7 @@ import * as ytPlayer from "./player.youtube.js";
 const tabContainer = document.getElementById("js-tab-playlist-container");
 let isPaused = true;
 let scrollToTrack = false;
+let artwork = null;
 
 const storedTrack = (function() {
     function getTrack() {
@@ -95,32 +96,40 @@ function updatePlayerState(state, track) {
     togglePlayPauseBtns(track, isPaused);
 }
 
-function updateTrackMedia(track) {
+function updateTrackMedia(track, artwork) {
     const ytPlayer = document.getElementById("js-yt-player");
     const ytPlayerWatch = document.getElementById("js-yt-player-watch");
-    const image = document.getElementById("js-media-image");
+    const imageElement = document.getElementById("js-media-image");
 
     if (track.player === "youtube") {
         ytPlayer.classList.remove("hidden");
         ytPlayerWatch.classList.remove("hidden");
-        image.classList.add("hidden");
+        imageElement.classList.add("hidden");
         ytPlayerWatch.setAttribute("href", `https://www.youtube.com/watch?v=${track.id}`);
     }
     else {
         ytPlayer.classList.add("hidden");
         ytPlayerWatch.classList.add("hidden");
-        image.classList.remove("hidden");
-        image.src = getImage(track.thumbnail);
+        imageElement.classList.remove("hidden");
+        imageElement.src = artwork;
     }
+}
+
+function showTrackInfo(track) {
+    if (artwork) {
+        URL.revokeObjectURL(artwork);
+    }
+    artwork = getImage(track.thumbnail);
+    showNowPlaying(track, artwork);
+    updateTrackMedia(track, artwork);
 }
 
 function beforeTrackStart(track) {
     const pl = getPlaylistById(track.playlistId);
 
-    showNowPlaying(track);
+    showTrackInfo(track);
     showTrackDuration(track.duration, track.durationInSeconds);
     showTrackSlider();
-    updateTrackMedia(track);
 
     if (pl.rendered && track.index !== -1) {
         showTrack(pl.id, track.index, { scrollToTrack });
@@ -267,6 +276,11 @@ function resetPlayer(track) {
         resetTrackSlider();
         hidePlayPauseBtnSpinner();
         togglePlayPauseBtns(track, isPaused);
+    }
+
+    if (artwork) {
+        URL.revokeObjectURL(artwork);
+        artwork = null;
     }
 }
 
