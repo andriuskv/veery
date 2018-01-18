@@ -28,6 +28,7 @@
 
 .now-playing {
     display: flex;
+    align-items: center;
     width: 30%;
     height: 100%;
 
@@ -47,6 +48,7 @@
     position: relative;
     width: 64px;
     height: 64px;
+    margin-right: 8px;
 
     &:hover .expand-media-btn {
         display: flex;
@@ -55,6 +57,7 @@
     @include breakpoint-small {
         width: 32px;
         height: 32px;
+        margin-right: 4px;
     }
 }
 
@@ -77,31 +80,19 @@
     }
 }
 
+.track-name,
+.track-title,
+.track-artist {
+    @include text-truncate;
+}
+
 .track-name {
     flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    height: 100%;
-    padding-left: 8px;
-    padding-right: 8px;
-    white-space: nowrap;
-    overflow: hidden;
-
-    @include breakpoint-small {
-        padding-left: 4px;
-        padding-right: 4px;
-    }
+    font-size: 13px;
 }
 
 .track-title {
-    @include text-truncate;
-}
-
-.track-artist {
-    @include text-truncate;
-
-    font-size: 13px;
+    font-size: 14px;
 }
 
 .main-controls {
