@@ -53,8 +53,8 @@ svg {
     background: transparent;
 }
 
-:focus:not(.focus-ring) {
-    outline-width: 0;
+.js-focus-visible :focus:not(.focus-visible) {
+  outline: 0;
 }
 
 .media-container {
