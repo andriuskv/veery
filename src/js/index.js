@@ -1,4 +1,4 @@
-import "wicg-focus-ring";
+import "focus-visible";
 
 import "../scss/index.scss";
 
