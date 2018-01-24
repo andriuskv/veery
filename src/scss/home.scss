@@ -8,10 +8,6 @@
     &.active {
         display: flex;
     }
-
-    @include breakpoint-small {
-        padding-top: 40px;
-    }
 }
 
 .home-tab-section-title {

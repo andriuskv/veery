@@ -1,52 +1,41 @@
+.tabs {
+    overflow: hidden;
+}
+
 .tab-header {
-    z-index: 3;
-    position: absolute;
-    display: none;
-    padding: 8px;
-
-    @include breakpoint-small {
-        display: block;
-    }
-}
-
-.tab-container {
-    display: none;
-    height: 100%;
-
-    &.active {
-        display: block;
-    }
-}
-
-.tab {
-    backface-visibility: hidden;
-    position: relative;
-    display: none;
-    height: 100%;
-    color: $color-text;
-    overflow-y: auto;
-
-    &.active {
-        display: block;
-    }
-}
-
-.playlist-tab {
-    height: calc(100% - 40px);
-}
-
-.playlist-tab-header {
     z-index: 2;
     position: relative;
     display: flex;
-    justify-content: flex-end;
+    height: 40px;
     padding: 8px;
-    background-color: $background-color-dark;
-    box-shadow: 5px 1px 4px rgba(0, 0, 0, 0.1);
 
-    @include breakpoint-smallest {
-        padding-left: 40px;
+    &.playlist-tab-active {
+        background-color: $background-color-dark;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+
+        .playlist-tab-header-items {
+            display: flex;
+        }
     }
+}
+
+.sidebar-show-btn {
+    display: none;
+
+    @include breakpoint-small {
+        display: flex;
+    }
+
+    @include breakpoint-smallest  {
+        margin-right: 8px;
+    }
+}
+
+.playlist-tab-header-items {
+    display: none;
+    justify-content: flex-end;
+    flex-grow: 1;
+    margin-left: auto;
 }
 
 .playlist-tab-header-item {
@@ -119,6 +108,19 @@
 
 .list-type-btn {
     margin-right: 4px;
+}
+
+.tab {
+    backface-visibility: hidden;
+    position: relative;
+    display: none;
+    height: calc(100% - 40px);
+    color: $color-text;
+    overflow-y: auto;
+
+    &.active {
+        display: block;
+    }
 }
 
 .tab-title {

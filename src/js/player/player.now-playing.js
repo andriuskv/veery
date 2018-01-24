@@ -2,6 +2,7 @@ import { getElementByAttr } from "../utils.js";
 import { togglePlaying } from "./player.js";
 import { watchOnYoutube } from "./player.youtube.js";
 import { getCurrentTrack } from "../playlist/playlist.js";
+import { getTrackName } from "../playlist/playlist.view.js";
 
 let animationId = 0;
 let timeoutId = 0;
@@ -102,25 +103,16 @@ function toggleMedia() {
 }
 
 function renderNowPlaying(track, artwork) {
-    const nowPlayingElement = document.getElementById("js-now-playing");
-    let trackName = track.name;
-
-    if (track.artist && track.title) {
-        trackName = `
-            <div class="track-title">${track.title}</div>
-            <div class="track-artist"> ${track.artist}</div>
-        `;
-    }
-    nowPlayingElement.insertAdjacentHTML("beforeend", `
-        <div class="now-playing-art-container">
-            <button id="js-expand-media-btn" class="btn btn-icon expand-media-btn" title="Expand">
+    document.getElementById("js-now-playing").insertAdjacentHTML("beforeend", `
+        <div class="artwork-container now-playing-art-container">
+            <button id="js-expand-media-btn" class="btn btn-icon artwork-container-btn" title="Expand">
                 <svg viewBox="0 0 24 24">
                     <use href="#expand"></use>
                 </svg>
             </button>
             <img src=${artwork} class="artwork" alt="">
         </div>
-        <div id="js-track-name" class="track-name">${trackName}</div>
+        ${getTrackName(track, "js-track-name")}
     `);
     document.getElementById("js-track-name").addEventListener("mousemove", handleMousemove);
     document.getElementById("js-expand-media-btn").addEventListener("click", toggleMedia);

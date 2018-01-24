@@ -17,7 +17,7 @@
         ga('send', 'pageview');
     </script>
 </head>
-<body>
+<body id="js-player" class="player">
     <svg style="display:none;">
         <symbol id="play" viewBox="0 0 24 24">
             <path d="M8,5.14V19.14L19,12.14L8,5.14Z">
@@ -88,137 +88,128 @@
             </svg>
         </symbol>
     </svg>
-    <div id="js-player" class="player">
-        <div id="js-sidebar-container" class="sidebar-container hidden">
-            <div id="js-sidebar" class="sidebar">
-                <header class="sidebar-header"><h1>Veery</h1></header>
-                <nav class="sidebar-nav">
-                    <div id="js-sidebar-entry-home" class="sidebar-entry">
-                        <a href="./#/home" class="sidebar-link sidebar-home-link" data-link>
-                            <svg viewBox="0 0 24 24">
-                                <path d="M10,20V14H14V20H19V12H22L12,3L2,12H5V20H10Z" />
-                            </svg>
-                            <span>Home</span>
-                        </a>
-                    </div>
-                    <div class="sidebar-section-title">
-                        <span>PLAYLISTS</span>
-                        <button class="btn btn-icon sidebar-form-toggle-btn" data-btn title="Toggle playlist form">
-                            <svg viewBox="0 0 24 24">
-                                <use href="#plus"></use>
-                            </svg>
-                        </button>
-                    </div>
-                    <ul id="js-sidebar-entries" class="sidebar-entries"></ul>
-                </nav>
+    <div id="js-sidebar-container" class="sidebar-container hidden">
+        <div id="js-sidebar" class="sidebar">
+            <header class="sidebar-header"><h1>Veery</h1></header>
+            <nav class="sidebar-nav">
+                <div id="js-sidebar-entry-home" class="sidebar-entry">
+                    <a href="./#/home" class="sidebar-link sidebar-home-link" data-link>
+                        <svg viewBox="0 0 24 24">
+                            <path d="M10,20V14H14V20H19V12H22L12,3L2,12H5V20H10Z" />
+                        </svg>
+                        <span>Home</span>
+                    </a>
+                </div>
+                <div class="sidebar-section-title">
+                    <span>PLAYLISTS</span>
+                    <button class="btn btn-icon sidebar-form-toggle-btn" data-btn title="Toggle playlist form">
+                        <svg viewBox="0 0 24 24">
+                            <use href="#plus"></use>
+                        </svg>
+                    </button>
+                </div>
+                <ul id="js-sidebar-entries" class="sidebar-entries"></ul>
+            </nav>
+        </div>
+    </div>
+    <div id="js-tabs" class="tabs">
+        <div id="js-tab-header" class="tab-header">
+            <button class="btn btn-icon sidebar-show-btn" data-item="sidebar" title="Show sidebar">
+                <svg viewBox="0 0 24 24">
+                    <path d="M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z" />
+                </svg>
+            </button>
+            <div class="playlist-tab-header-items">
+                <div id="js-playlist-type-btns" class="playlist-tab-header-item playlist-type-btns">
+                    <button id="js-list-toggle-btn" class="btn btn-icon list-type-btn" data-item="list" title="List">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M9,5V9H21V5M9,19H21V15H9M9,14H21V10H9M4,9H8V5H4M4,19H8V15H4M4,14H8V10H4V14Z">
+                        </svg>
+                    </button>
+                    <button id="js-grid-toggle-btn" class="btn btn-icon" data-item="grid" title="Grid">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M3,11H11V3H3M3,21H11V13H3M13,21H21V13H13M13,3V11H21V3">
+                        </svg>
+                    </button>
+                </div>
+                <div class="playlist-tab-header-item filter-input-container">
+                    <svg viewBox="0 0 24 24" class="filter-input-icon" data-filter-item="icon">
+                        <path d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59
+                            14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,
+                            14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,
+                            1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7
+                            12,5 9.5,5Z">
+                    </svg>
+                    <input type="text" id="js-filter-input" class="input filter-input" placeholder="Search">
+                    <button id="js-clear-input-btn" class="btn btn-icon clear-input-btn" data-filter-item="button" title="Clear input">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z">
+                        </svg>
+                    </button>
+                </div>
+                <div id="js-sort-panel-container" class="sort-panel-container">
+                    <button id="js-sort-toggle" class="btn sort-panel-toggle-btn" data-item="sorting">Index</button>
+                    <button id="js-order-toggle" class="btn btn-icon sort-panel-order-btn" title="Ascending/Descending" data-item="order">
+                        <svg viewBox="0 0 24 24">
+                            <use class="js-icon" href="#down-arrow"></use>
+                        </svg>
+                    </button>
+                </div>
             </div>
         </div>
-        <div class="main">
-            <div id="js-tab-header" class="tab-header">
-                <button class="btn btn-icon" data-item="sidebar-toggle" title="Show sidebar">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z" />
-                    </svg>
-                </button>
-            </div>
-            <div id="js-tab-container" class="tab-container">
-                <div id="js-tab-home" class="tab home-tab">
-                    <div class="import-option-container">
-                        <h2 class="home-tab-section-title">Import options</h2>
-                        <ul id="js-import-options">
-                            <li class="import-option import-option-local" data-option="local">
-                                <button class="btn btn-icon import-option-btn" data-item="file">
-                                    <svg viewBox="0 0 24 24" class="import-option-icon">
-                                        <path d="M13,9H18.5L13,3.5V9M6,2H14L20,8V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V4C4,2.89 4.89,2 6,2M11,15V12H9V15H6V17H9V20H11V17H14V15H11Z">
-                                    </svg>
-                                    <span>Files</span>
-                                </button>
-                                <button class="btn btn-icon import-option-btn" data-item="folder">
-                                    <svg viewBox="0 0 24 24" class="import-option-icon">
-                                        <path d="M10,4L12,6H20A2,2 0 0,1 22,8V18A2,2 0 0,1 20,20H4C2.89,20 2,19.1 2,18V6C2,4.89 2.89,4 4,4H10M15,9V12H12V14H15V17H17V14H20V12H17V9H15Z">
-                                    </svg>
-                                    <span>Folder</span>
-                                </button>
-                            </li>
-                            <li class="import-option" data-option="dropbox">
-                                <button class="btn btn-icon import-option-btn" data-item="chooser">
-                                    <svg viewBox="0 0 24 24" class="import-option-icon">
-                                        <path d="M12,14.56L16.35,18.16L18.2,16.95V18.3L12,
-                                            22L5.82,18.3V16.95L7.68,18.16L12,14.56M7.68,2.5L12,
-                                            6.09L16.32,2.5L22.5,6.5L18.23,9.94L22.5,13.36L16.32,
-                                            17.39L12,13.78L7.68,17.39L1.5,13.36L5.77,9.94L1.5,
-                                            6.5L7.68,2.5M12,13.68L18.13,9.94L12,6.19L5.87,9.94L12,
-                                            13.68Z">
-                                    </svg>
-                                    <span>Dropbox</span>
-                                </button>
-                            </li>
-                            <li class="import-option" data-option="youtube">
-                                <button class="btn btn-icon import-option-btn" data-item="form-toggle">
-                                    <svg viewBox="0 0 24 24" class="import-option-icon">
-                                        <use href="#youtube"></use>
-                                    </svg>
-                                    <span>YouTube</span>
-                                </button>
-                                <div class="import-option-btns">
-                                    <button id="js-google-sign-in-or-out-btn" class="btn btn-icon"
-                                        data-item="google-sign-in-or-out">
-                                        <span>Sign In</span>
-                                    </button>
-                                    <div class="info-panel-container">
-                                        <button class="btn btn-icon import-info-btn" data-item="youtube-info">
-                                            <svg viewBox="0 0 24 24">
-                                                <use href="#info"></use>
-                                            </svg>
-                                        </button>
-                                    </div>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div id="js-tab-playlist-container" class="tab-container">
-                <div id="js-playlist-tab-header" class="playlist-tab-header">
-                    <div id="js-playlist-type-btns" class="playlist-tab-header-item playlist-type-btns">
-                        <button id="js-list-toggle-btn" class="btn btn-icon list-type-btn"
-                            data-item="list" title="List">
-                            <svg viewBox="0 0 24 24">
-                                <path d="M9,5V9H21V5M9,19H21V15H9M9,14H21V10H9M4,9H8V5H4M4,19H8V15H4M4,14H8V10H4V14Z">
+        <div id="js-tab-home" class="tab home-tab">
+            <div class="import-option-container">
+                <h2 class="home-tab-section-title">Import options</h2>
+                <ul id="js-import-options">
+                    <li class="import-option import-option-local" data-option="local">
+                        <button class="btn btn-icon import-option-btn" data-item="file">
+                            <svg viewBox="0 0 24 24" class="import-option-icon">
+                                <path d="M13,9H18.5L13,3.5V9M6,2H14L20,8V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V4C4,2.89 4.89,2 6,2M11,15V12H9V15H6V17H9V20H11V17H14V15H11Z">
                             </svg>
+                            <span>Files</span>
                         </button>
-                        <button id="js-grid-toggle-btn" class="btn btn-icon" data-item="grid" title="Grid">
-                            <svg viewBox="0 0 24 24">
-                                <path d="M3,11H11V3H3M3,21H11V13H3M13,21H21V13H13M13,3V11H21V3">
+                        <button class="btn btn-icon import-option-btn" data-item="folder">
+                            <svg viewBox="0 0 24 24" class="import-option-icon">
+                                <path d="M10,4L12,6H20A2,2 0 0,1 22,8V18A2,2 0 0,1 20,20H4C2.89,20 2,19.1 2,18V6C2,4.89 2.89,4 4,4H10M15,9V12H12V14H15V17H17V14H20V12H17V9H15Z">
                             </svg>
+                            <span>Folder</span>
                         </button>
-                    </div>
-                    <div class="playlist-tab-header-item filter-input-container">
-                        <svg viewBox="0 0 24 24" class="filter-input-icon" data-filter-item="icon">
-                            <path d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59
-                                14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,
-                                14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,
-                                1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7
-                                12,5 9.5,5Z">
-                        </svg>
-                        <input type="text" id="js-filter-input" class="input filter-input" placeholder="Search">
-                        <button id="js-clear-input-btn" class="btn btn-icon clear-input-btn" data-filter-item="button" title="Clear input">
-                            <svg viewBox="0 0 24 24">
-                                <path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z">
+                    </li>
+                    <li class="import-option" data-option="dropbox">
+                        <button class="btn btn-icon import-option-btn" data-item="chooser">
+                            <svg viewBox="0 0 24 24" class="import-option-icon">
+                                <path d="M12,14.56L16.35,18.16L18.2,16.95V18.3L12,
+                                    22L5.82,18.3V16.95L7.68,18.16L12,14.56M7.68,2.5L12,
+                                    6.09L16.32,2.5L22.5,6.5L18.23,9.94L22.5,13.36L16.32,
+                                    17.39L12,13.78L7.68,17.39L1.5,13.36L5.77,9.94L1.5,
+                                    6.5L7.68,2.5M12,13.68L18.13,9.94L12,6.19L5.87,9.94L12,
+                                    13.68Z">
                             </svg>
+                            <span>Dropbox</span>
                         </button>
-                    </div>
-                    <div id="js-sort-panel-container" class="sort-panel-container">
-                        <button id="js-sort-toggle" class="btn sort-panel-toggle-btn"
-                            data-item="sorting">Index</button>
-                        <button id="js-order-toggle" class="btn btn-icon sort-panel-order-btn"
-                            title="Ascending/Descending" data-item="order">
-                            <svg viewBox="0 0 24 24">
-                                <use class="js-icon" href="#down-arrow"></use>
+                    </li>
+                    <li class="import-option" data-option="youtube">
+                        <button class="btn btn-icon import-option-btn" data-item="form-toggle">
+                            <svg viewBox="0 0 24 24" class="import-option-icon">
+                                <use href="#youtube"></use>
                             </svg>
-                    </button>
-                    </div>
-                </div>
+                            <span>YouTube</span>
+                        </button>
+                        <div class="import-option-btns">
+                            <button id="js-google-sign-in-or-out-btn" class="btn btn-icon"
+                                data-item="google-sign-in-or-out">
+                                <span>Sign In</span>
+                            </button>
+                            <div class="info-panel-container">
+                                <button class="btn btn-icon import-info-btn" data-item="youtube-info">
+                                    <svg viewBox="0 0 24 24">
+                                        <use href="#info"></use>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>

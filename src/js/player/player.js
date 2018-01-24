@@ -33,7 +33,6 @@ import { showNowPlaying, removeNowPlaying } from "./player.now-playing.js";
 import * as nPlayer from "./player.native.js";
 import * as ytPlayer from "./player.youtube.js";
 
-const tabContainer = document.getElementById("js-tab-playlist-container");
 let isPaused = true;
 let scrollToTrack = false;
 let artwork = null;
@@ -231,16 +230,26 @@ function playPreviousTrack() {
     play("direction", -1, getActivePlaylistId());
 }
 
-function playTrackFromElement({ currentTarget, target }) {
-    const playPauseBtn = getElementByAttr("data-btn", target, currentTarget);
+function playTrackFromElement({ currentTarget, detail, target }) {
 
-    if (playPauseBtn) {
-        return;
+    // Remove "js-" part
+    const id = currentTarget.id.slice(3);
+    const element = getElementByAttr("data-btn", target, currentTarget);
+    const trackElement = getElementByAttr("data-index", target, currentTarget);
+
+    if (detail === 2 && trackElement && !element) {
+        play("index", trackElement.attrValue, id);
     }
-    const element = getElementByAttr("data-index", target, currentTarget);
+    else if (element) {
+        const index = parseInt(trackElement.attrValue, 10);
+        const track = getCurrentTrack();
 
-    if (element) {
-        play("index", element.attrValue, getVisiblePlaylistId());
+        if (!track || track.playlistId !== id || index !== track.index) {
+            play("index", index, id);
+        }
+        else {
+            togglePlaying(track);
+        }
     }
 }
 
@@ -360,27 +369,6 @@ function showPlayerMessage({ title, body }) {
     });
 }
 
-tabContainer.addEventListener("dblclick", playTrackFromElement);
-
-tabContainer.addEventListener("click", ({ currentTarget, target }) => {
-    const element = getElementByAttr("data-btn", target, currentTarget);
-
-    if (!element) {
-        return;
-    }
-    const { attrValue } = getElementByAttr("data-index", element.elementRef, currentTarget);
-    const index = parseInt(attrValue, 10);
-    const track = getCurrentTrack();
-    const id = getVisiblePlaylistId();
-
-    if (!track || track.playlistId !== id || index !== track.index) {
-        play("index", index, id);
-    }
-    else {
-        togglePlaying(track);
-    }
-});
-
 window.addEventListener("track-start", ({ detail: startTime }) => {
     const { playlistId, name, durationInSeconds } = getCurrentTrack();
 
@@ -413,6 +401,7 @@ export {
     getPlayerState,
     updatePlayerState,
     togglePlaying,
+    playTrackFromElement,
     onControlButtonClick,
     stopPlayer,
     toggleShuffle,

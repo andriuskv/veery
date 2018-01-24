@@ -4,7 +4,6 @@
     display: grid;
     grid-gap: 4px;
     grid-template-columns: repeat(var(--items-per-row), 1fr);
-    padding: 4px;
 
     @media (min-width: 782px) {
         --items-per-row: 2;
@@ -25,56 +24,24 @@
 
 .grid-item {
     overflow: hidden;
+    position: relative;
     display: flex;
+    align-items: center;
     height: 60px;
-    cursor: default;
+    padding-left: 68px;
     user-select: none;
 }
 
 .grid-item-first-col {
-    flex-shrink: 0;
-    overflow-x: hidden;
-    position: relative;
+    position: absolute;
+    left: 0;
     width: 60px;
-}
-
-.grid-item-play-pause-btn {
-    background-color: $background-color-dark-80;
-    box-shadow: 0 0 0 24px $background-color-dark-80;
-    animation-name: appear;
-    animation-duration: 0.2s;
-    animation-fill-mode: forwards;
-
-    svg {
-        width: 28px;
-        height: 28px;
-    }
-}
-
-.grid-item-thumbnail {
-    pointer-events: none;
-}
-
-.grid-item-name {
-    overflow: hidden;
-    flex-grow: 1;
-    margin-left: 8px;
-}
-
-.grid-item-title {
-    @include text-truncate;
-
-    margin-top: 6px;
-    padding-bottom: 2px;
-}
-
-.grid-item-artist {
-    @include text-truncate;
-
-    font-size: 13px;
+    height: 100%;
 }
 
 .grid-item-duration {
-    margin: 6px 4px 0 6px;
+    margin-right: 4px;
+    margin-left: 4px;
     color: $color-text-dark;
+    font-size: 13px;
 }
