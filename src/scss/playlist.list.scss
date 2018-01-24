@@ -1,27 +1,24 @@
+.list-view-header,
+.list-item {
+    display: flex;
+    align-items: center;
+    height: 32px;
+    padding: 2px 4px 2px 40px;
+    background-color: $background-color-darkest;
+    user-select: none;
+}
+
 .list-view-header {
     z-index: 1;
     position: sticky;
     top: 0;
-    display: flex;
-    height: 32px;
-    padding: 4px 8px;
-    background-color: $background-color-darkest;
+    margin-left: 4px;
+    margin-right: 4px;
     color: $color-text-dark;
-    user-select: none;
-}
-
-.list-view {
-    padding: 4px;
 }
 
 .list-item {
-    display: flex;
-    height: 32px;
-    padding: 4px;
-    color: $color-text;
-    background-color: $background-color-darkest;
-    cursor: default;
-    user-select: none;
+    position: relative;
 
     &:not(:last-of-type) {
         margin-bottom: 1px;
@@ -31,33 +28,28 @@
         }
     }
 }
-
-.list-item-col {
-    @include text-truncate;
-
-    flex: 1 1 25%;
-    margin-left: 4px;
-    line-height: 1.714;
-
-    &:last-of-type {
-        flex: 0 0 70px;
-    }
-}
-
 .list-item-first-col {
-    position: relative;
-    flex: 0 0 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: inherit;
+    @include center-vertically;
+
+    left: 0;
+    width: 40px;
+    text-align: center;
 }
 
 .list-item-index {
     color: $color-text-dark;
-    font-size: 12px;
+    font-size: 13px;
 }
 
-.list-item-play-pause-btn {
-    background-color: inherit;
+.list-item-col {
+    @include text-truncate;
+
+    flex: 1;
+    padding: 2px 0;
+    margin-right: 4px;
+}
+
+.list-item-last-col {
+    flex: 0 0 62px;
+    text-align: center;
 }

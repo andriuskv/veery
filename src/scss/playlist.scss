@@ -1,7 +1,19 @@
+.playlist-view {
+    padding: 4px;
+}
+
 .track {
     &:hover, &:focus-within, &.playing {
+        .list-item-index {
+            opacity: 0;
+        }
+
         .track-play-pause-btn {
             display: flex;
+        }
+
+        .artwork {
+            opacity: 0.4;
         }
     }
 
@@ -19,10 +31,6 @@
 
     &.selected {
         background-color: $background-color-light;
-
-        &:hover {
-            background-color: $background-color-light;
-        }
      }
  }
 
@@ -47,8 +55,14 @@
             background-color: transparent;
         }
 
-        &:not(.playing) .track-play-pause-btn {
-            display: none;
+        &:not(.playing) {
+            .track-play-pause-btn {
+                display: none;
+            }
+
+            .list-item-index, .artwork {
+                opacity: 1;
+            }
         }
     }
 }

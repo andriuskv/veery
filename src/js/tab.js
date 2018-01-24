@@ -8,9 +8,9 @@ import { enableTrackSelection } from "./playlist/playlist.track-selection.js";
 import { setSortOptions, createSortPanel, changePlaylistOrder } from "./playlist/playlist.sorting.js";
 import { createMoveToPanel } from "./playlist/playlist.move-to.js";
 import { resetFilteredPlaylist } from "./playlist/playlist.filter.js";
+import { playTrackFromElement } from "./player/player.js";
 
 const headerElement = document.getElementById("js-tab-header");
-const playlistHeaderElement = document.getElementById("js-playlist-tab-header");
 let visiblePlaylistId = "";
 
 function setVisiblePlaylistId(id = "") {
@@ -22,7 +22,7 @@ function getVisiblePlaylistId() {
 }
 
 function getVisiblePlaylist() {
-    return getPlaylistById(getVisiblePlaylistId());
+    return getPlaylistById(visiblePlaylistId);
 }
 
 function getTab(id) {
@@ -45,17 +45,13 @@ function updatePlaylistTab(id) {
     setSortOptions(pl);
     enableTrackSelection(pl);
     resetFilteredPlaylist();
+
+    if (pl.tracks.length) {
+        document.getElementById(`js-${id}`).addEventListener("click", playTrackFromElement);
+    }
 }
 
 headerElement.addEventListener("click", ({ currentTarget, target }) => {
-    const element = getElementByAttr("data-item", target, currentTarget);
-
-    if (element && element.attrValue === "sidebar-toggle") {
-        document.getElementById("js-sidebar-container").classList.remove("hidden");
-    }
-});
-
-playlistHeaderElement.addEventListener("click", ({ currentTarget, target }) => {
     const element = getElementByAttr("data-item", target, currentTarget);
 
     if (!element) {
@@ -82,25 +78,30 @@ playlistHeaderElement.addEventListener("click", ({ currentTarget, target }) => {
     else if (item === "order" && pl.sortedBy) {
         changePlaylistOrder(pl);
     }
+    else if (item === "sidebar") {
+        document.getElementById("js-sidebar-container").classList.remove("hidden");
+    }
 });
 
 window.addEventListener("route-change", ({ detail: { isPlaylistTab, tabId } }) => {
-    const containerElement = document.getElementById("js-tab-container");
-    const playlistCointainerElement = document.getElementById("js-tab-playlist-container");
+    const id = visiblePlaylistId;
+    const element = document.getElementById(`js-${id}`);
 
     removeElementClass(".sidebar-entry.active", "active");
     removeElementClass(".tab.active", "active");
     setVisiblePlaylistId(isPlaylistTab ? tabId: "");
 
+    if (element) {
+        element.removeEventListener("click", playTrackFromElement);
+    }
+
     if (isPlaylistTab) {
         updatePlaylistTab(tabId);
-        playlistCointainerElement.classList.add("active");
-        containerElement.classList.remove("active");
+        headerElement.classList.add("playlist-tab-active");
     }
     else {
         updatePlaylistStats();
-        containerElement.classList.add("active");
-        playlistCointainerElement.classList.remove("active");
+        headerElement.classList.remove("playlist-tab-active");
     }
     getTab(tabId).classList.add("active");
     getSidebarEntry(tabId).classList.add("active");

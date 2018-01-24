@@ -30,7 +30,7 @@ function createListItem(item) {
         <li class="list-item track" data-index="${item.index}" tabindex="0">
             <span class="list-item-first-col">
                 <span class="list-item-index">${item.index + 1}</span>
-                <button class="btn btn-icon track-play-pause-btn list-item-play-pause-btn" data-btn="play" title="Play">
+                <button class="btn btn-icon track-play-pause-btn" data-btn="play" title="Play">
                     <svg viewBox="0 0 24 24">
                         <use class="js-icon" href="#play"></use>
                     </svg>
@@ -39,7 +39,7 @@ function createListItem(item) {
             <span class="list-item-col">${item.title}</span>
             <span class="list-item-col">${item.artist}</span>
             <span class="list-item-col">${item.album}</span>
-            <span class="list-item-col">${item.duration}</span>
+            <span class="list-item-last-col">${item.duration}</span>
         </li>
     `;
 }
@@ -51,32 +51,24 @@ function createList(id, items) {
             <li class="list-item-col">Title</li>
             <li class="list-item-col">Artist</li>
             <li class="list-item-col">Album</li>
-            <li class="list-item-col">Duration</li>
+            <li class="list-item-last-col">Duration</li>
         </ul>
-        <ul id="js-${id}" class="playlist-view list-view">${items}</ul>
+        <ul id="js-${id}" class="playlist-view">${items}</ul>
     `;
 }
 
 function createGridItem(item) {
-    const thumbnail = getImage(item.thumbnail);
-    let trackNameTemp = `<div class="grid-item-title">${item.title}</div>`;
-
-    if (item.artist) {
-        trackNameTemp += `
-            <div class="grid-item-artist">${item.artist} ${item.album ? `- ${item.album}` : ""}</div>
-        `;
-    }
     return `
         <li class="grid-item track" data-index="${item.index}" tabindex="0">
-            <div class="grid-item-first-col" tabindex="-1">
-                <img src="${thumbnail}" class="artwork grid-item-thumbnail" alt="">
-                <button class="btn btn-icon track-play-pause-btn grid-item-play-pause-btn" data-btn="play" title="Play">
+            <div class="artwork-container grid-item-first-col" tabindex="-1">
+                <button class="btn btn-icon track-play-pause-btn artwork-container-btn" data-btn="play" title="Play">
                     <svg viewBox="0 0 24 24">
                         <use class="js-icon" href="#play"></use>
                     </svg>
                 </button>
+                <img src="${getImage(item.thumbnail)}" class="artwork" alt="">
             </div>
-            <div class="grid-item-name">${trackNameTemp}</div>
+            ${getTrackName(item)}
             <div class="grid-item-duration">${item.duration}</div>
         </li>
     `;
@@ -107,7 +99,19 @@ function getPlaylistTemplate(pl) {
 function createPlaylistTab(pl) {
     const template = getPlaylistTemplate(pl);
 
-    return `<div id="js-tab-${pl.id}" class="tab playlist-tab">${template}</div>`;
+    return `<div id="js-tab-${pl.id}" class="tab">${template}</div>`;
+}
+
+function getTrackName(track, id = "") {
+    let trackName = track.name;
+
+    if (track.artist && track.title) {
+        trackName = `
+            <div class="track-title">${track.title}</div>
+            <div class="track-artist">${track.artist} ${track.album ? `- ${track.album}` : ""}</div>
+        `;
+    }
+    return `<div id="${id}" class="track-name">${trackName}</div>`;
 }
 
 function showCurrentTrack(id) {
@@ -125,7 +129,7 @@ function showCurrentTrack(id) {
 
 function renderPlaylist(pl) {
     const tab = createPlaylistTab(pl);
-    const element = document.getElementById("js-tab-playlist-container");
+    const element = document.getElementById("js-tabs");
     pl.rendered = true;
 
     element.insertAdjacentHTML("beforeend", tab);
@@ -216,6 +220,7 @@ export {
     getTrackPlayPauseBtn,
     removePlaylistTab,
     updatePlaylistView,
+    getTrackName,
     renderPlaylist,
     showTrack,
     toggleTrackPlayPauseBtn,
