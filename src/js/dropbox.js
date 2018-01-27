@@ -33,12 +33,7 @@ async function parseTracks(tracks, id, parsedTracks = []) {
     return parsedTracks;
 }
 
-async function showDropboxChooser() {
-    await scriptLoader.load({
-        src: "https://www.dropbox.com/static/api/2/dropins.js",
-        id: "dropboxjs",
-        "data-app-key": process.env.DROPBOX_API_KEY
-    });
+function showDropboxChooser() {
     Dropbox.choose({
         success(files) {
             const id = "dropbox";
@@ -56,6 +51,17 @@ async function showDropboxChooser() {
         extensions: ["audio"]
     });
 }
+
+function initDropbox({ currentTarget }) {
+    scriptLoader.load({
+        src: "https://www.dropbox.com/static/api/2/dropins.js",
+        id: "dropboxjs",
+        "data-app-key": process.env.DROPBOX_API_KEY
+    });
+    currentTarget.removeEventListener("mouseenter", initDropbox);
+}
+
+document.getElementById("js-dropbox-option").addEventListener("mouseenter", initDropbox);
 
 export {
     showDropboxChooser
