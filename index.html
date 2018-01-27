@@ -215,37 +215,35 @@
     </div>
     <div class="player-controls">
         <div id="js-now-playing" class="now-playing"></div>
-        <div id="js-main-controls" class="main-controls">
-            <div class="main-control-btns">
-                <button class="btn btn-icon main-control-btn" data-item="previous" title="Previous">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M6,18V6H8V18H6M9.5,12L18,6V18L9.5,12Z">
-                    </svg>
-                </button>
-                <button id="js-play-btn" class="btn btn-icon play-pause-btn" data-item="play" title="Play">
-                    <svg viewBox="0 0 24 24">
-                        <use class="js-icon" href="#play"></use>
-                    </svg>
-                </button>
-                <button class="btn btn-icon main-control-btn" data-item="next" title="Next">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M16,18H18V6H16M6,18L14.5,12L6,6V18Z">
-                    </svg>
-                </button>
-            </div>
-            <div class="track-slider-panel">
-                <div id="js-track-current" class="track-time">0:00</div>
-                <div class="control-slider-container">
-                    <div id="js-track-slider" class="control-slider" role="slider" aria-label="Seek slider" aria-valuemin="0" tabindex="0">
-                        <div class="slider-inner">
-                            <div id="js-track-slider-elapsed" class="slider-elapsed"></div>
-                            <div id="js-track-slider-thumb" class="slider-thumb"></div>
-                        </div>
+        <div class="track-slider-panel">
+            <div id="js-track-current" class="track-time">0:00</div>
+            <div class="control-slider-container track-slider-container">
+                <div id="js-track-slider" class="control-slider" role="slider" aria-label="Seek slider" aria-valuemin="0" tabindex="0">
+                    <div class="slider-inner">
+                        <div id="js-track-slider-elapsed" class="slider-elapsed"></div>
+                        <div id="js-track-slider-thumb" class="slider-thumb"></div>
                     </div>
-                    <div id="js-track-slider-label" class="panel slider-label">0%</div>
                 </div>
-                <div id="js-track-duration" class="track-time">0:00</div>
+                <div id="js-track-slider-label" class="panel slider-label">0%</div>
             </div>
+            <div id="js-track-duration" class="track-time">0:00</div>
+        </div>
+        <div id="js-main-controls" class="main-controls">
+            <button class="btn btn-icon main-control-btn" data-item="previous" title="Previous">
+                <svg viewBox="0 0 24 24">
+                    <path d="M6,18V6H8V18H6M9.5,12L18,6V18L9.5,12Z">
+                </svg>
+            </button>
+            <button id="js-play-btn" class="btn btn-icon play-pause-btn" data-item="play" title="Play">
+                <svg viewBox="0 0 24 24">
+                    <use class="js-icon" href="#play"></use>
+                </svg>
+            </button>
+            <button class="btn btn-icon main-control-btn" data-item="next" title="Next">
+                <svg viewBox="0 0 24 24">
+                    <path d="M16,18H18V6H16M6,18L14.5,12L6,6V18Z">
+                </svg>
+            </button>
         </div>
         <div id="js-controls" class="controls">
             <div role="checkbox" aria-checked="false" class="btn btn-icon control-btn" data-item="repeat" title="Repeat" tabindex="0">
