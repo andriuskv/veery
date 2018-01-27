@@ -54,18 +54,15 @@ function getPlaylistElementRect(element) {
     };
 }
 
-function initSelectionArea(parent, startingPoint) {
-    const element = document.createElement("div");
+function initSelectionArea(parent, { x, y }) {
+    selectionArea.top = y;
+    selectionArea.left = x;
 
-    selectionArea.top = startingPoint.y;
-    selectionArea.left = startingPoint.x;
-    element.setAttribute("id", "js-selected-area");
-    element.setAttribute("class", "selected-area");
-    element.style.top = `${startingPoint.y}px`;
-    element.style.left = `${startingPoint.x}px`;
-    parent.insertBefore(element, parent.firstElementChild);
+    parent.insertAdjacentHTML("afterbegin", `
+        <div class="selection-area" style="top: ${y}px; left: ${x}px"></div>
+    `);
 
-    return element;
+    return parent.firstElementChild;
 }
 
 function getTrackElements() {

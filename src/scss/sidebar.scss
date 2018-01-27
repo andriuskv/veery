@@ -22,8 +22,8 @@
         }
     }
 
-    @include breakpoint-smallest {
-        bottom: 100px;
+    @include breakpoint-small {
+        bottom: 108px;
     }
 }
 

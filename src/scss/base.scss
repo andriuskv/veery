@@ -71,8 +71,8 @@ svg {
         display: block;
     }
 
-    @include breakpoint-smallest {
-        bottom: 100px;
+    @include breakpoint-small {
+        bottom: 108px;
     }
 }
 
@@ -188,20 +188,21 @@ svg {
     grid-template-columns: 200px 1fr;
 
     @include breakpoint-small {
+        grid-template-rows: 1fr 108px;
         grid-template-columns: 1fr;
-    }
-
-    @include breakpoint-smallest {
-        grid-template-rows: 1fr 100px;
     }
 }
 
 .player-message {
     overflow: hidden;
-    bottom: 8px;
+    bottom: 88px;
     right: 8px;
     max-width: 300px;
     padding: 16px;
+
+    @include breakpoint-small {
+        bottom: 116px;
+    }
 }
 
 .play-message-title {
@@ -209,7 +210,6 @@ svg {
 
     margin-top: 0;
     margin-bottom: 4px;
-    font-size: 16px;
 
     &::first-letter {
         text-transform: uppercase;
@@ -220,6 +220,7 @@ svg {
     margin-top: 0;
     margin-bottom: 0;
     word-wrap: break-word;
+    font-size: 13px;
 }
 
 .panel {

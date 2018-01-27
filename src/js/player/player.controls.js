@@ -113,11 +113,9 @@ function toggleVolumeBtn(element, state) {
     setElementIconAndTitle(element, state ? data.on : data.off);
 }
 
-function getPosInPercentage(slider, pageX) {
-    const element = document.getElementById(`js-${slider}-slider`);
-    const { left, width } = element.getBoundingClientRect();
-    const thumbWidth = 12;
-    let percentage = (pageX - left - thumbWidth / 2) / (width - thumbWidth) * 100;
+function getPosInPercentage(slider, x) {
+    const { left, width } = document.getElementById(`js-${slider}-slider`).getBoundingClientRect();
+    let percentage = (x - left) / width * 100;
 
     if (percentage < 0) {
         percentage = 0;
