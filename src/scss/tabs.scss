@@ -5,17 +5,24 @@
 .tab-header {
     z-index: 2;
     position: relative;
-    display: flex;
+    display: none;
     height: 40px;
     padding: 8px;
 
     &.playlist-tab-active {
+        display: flex;
         background-color: $background-color-dark;
         box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
 
         .playlist-tab-header-items {
             display: flex;
         }
+    }
+
+    @include breakpoint-small {
+        display: flex;
+        background-color: $background-color-dark;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
     }
 }
 

@@ -1,17 +1,21 @@
 .home-tab {
-    overflow-y: auto;
-    align-content: flex-start;
     align-items: flex-start;
     justify-content: center;
-    padding: 8px;
+    padding: 16px;
+    height: 100%;
 
     &.active {
         display: flex;
     }
+
+    @include breakpoint-small {
+        padding: 8px;
+        height: calc(100% - 40px);
+    }
 }
 
 .home-tab-section-title {
-    padding: 12px 8px;
+    padding: 8px;
     border-bottom: $border-light;
     font-size: 20px;
     color: $color-text-dark;
@@ -21,12 +25,13 @@
 .pl-entry-container {
     width: 100%;
     padding-bottom: 8px;
-    border: $border-light;
-    background-color: $background-color-dark;
+    border-bottom: $border-light;
 }
 
 .import-option-container {
-    max-width: 360px;
+    max-width: 400px;
+    padding-bottom: 8px;
+    border-bottom: $border-light;
 }
 
 .import-option {
@@ -89,11 +94,6 @@
     width: 268px;
 }
 
-.info-panel-title,
-.pl-entry-panel-title {
-    font-size: 16px;
-}
-
 .info-panel-content-item:not(:last-of-type) {
     margin-bottom: 2px;
 }
@@ -107,6 +107,7 @@
     .input {
         flex-grow: 1;
         width: 50%;
+        background-color: $background-color-dark;
     }
 
     & + .import-option-btns {
@@ -119,8 +120,8 @@
 }
 
 .pl-entry-container {
-    max-width: 600px;
-    margin-left: 8px;
+    max-width: 500px;
+    margin-left: 16px;
 }
 
 .pl-entry {
@@ -142,8 +143,8 @@
 
     &:hover {
         .pl-entry-input {
+            background-color: $background-color-dark;
             box-shadow: $box-shadow-light;
-            background-color: $background-color-darkest;
         }
 
         .pl-entry-input-icon {
@@ -159,7 +160,7 @@
     transition: background-color 0.1s, box-shadow 0.1s;
 
     &:focus {
-        background-color: $background-color-darkest;
+        background-color: $background-color-dark;
         box-shadow: $box-shadow-light;
 
         & + .pl-entry-input-icon {
@@ -225,7 +226,7 @@
     }
 }
 
-@media (max-width: 960px) {
+@media (max-width: 968px) {
     .home-tab.active {
         display: block;
     }
@@ -237,6 +238,6 @@
     }
 
     .pl-entry-container {
-        margin-top: 8px;
+        margin-top: 16px;
     }
 }

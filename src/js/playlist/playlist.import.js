@@ -202,7 +202,7 @@ function handleImportFormSubmit(event) {
 function createYouTubeInfoPanel(id, { element }) {
     element.insertAdjacentHTML("afterend", `
         <div id="${id}" class="panel info-panel">
-            <h3 class="info-panel-title">Accepted formats</h3>
+            <h3 class="panel-title info-panel-title">Accepted formats</h3>
             <ul>
                 <li class="info-panel-content-item">youtube.com/playlist?list={playlistId}</li>
                 <li class="info-panel-content-item">youtube.com/watch?v={videoId}</li>
