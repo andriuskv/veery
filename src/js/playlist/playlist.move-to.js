@@ -97,7 +97,7 @@ function createMoveToPanel(panelId, { playlistId }) {
 
     element.insertAdjacentHTML("beforeend", `
         <div id="${panelId}" class="panel move-to-panel">
-            <h3 class="move-to-panel-title">Move to</h3>
+            <h3 class="panel-title move-to-panel-title">Move to</h3>
             ${getPlaylistList(playlistId)}
             <button class="btn btn-icon move-to-new-pl-btn" data-panel-item="btn">
                 <svg viewBox="0 0 24 24">
