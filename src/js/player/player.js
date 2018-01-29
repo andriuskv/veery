@@ -29,7 +29,7 @@ import { setSetting, getSetting, removeSetting } from "../settings.js";
 import { showActiveIcon, removeActiveIcon } from "../sidebar.js";
 import { togglePanel } from "../panels.js";
 import { showTrack, toggleTrackPlayPauseBtn } from "../playlist/playlist.view.js";
-import { showNowPlaying, removeNowPlaying } from "./player.now-playing.js";
+import { showNowPlaying, resetNowPlaying } from "./player.now-playing.js";
 import * as nPlayer from "./player.native.js";
 import * as ytPlayer from "./player.youtube.js";
 
@@ -274,7 +274,7 @@ function resetPlayer(track) {
     storedTrack.removeTrack();
     showTrackDuration();
     hideTrackSlider();
-    removeNowPlaying();
+    resetNowPlaying();
     setCurrentTrack();
     setPlaylistAsActive();
     removeActiveIcon();
