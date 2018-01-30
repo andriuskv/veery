@@ -41,6 +41,8 @@
 }
 
 .move-to-new-pl-btn {
+    display: flex;
+    align-items: center;
     padding: 6px;
 
     svg {

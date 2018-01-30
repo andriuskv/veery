@@ -22,7 +22,7 @@ function getTrackPlayPauseBtn(track) {
     }
     const element = getPlaylistElementAtIndex(track.playlistId, track.index);
 
-    return element.querySelector(".btn");
+    return element.querySelector(".btn-icon");
 }
 
 function createListItem(item) {
@@ -30,7 +30,7 @@ function createListItem(item) {
         <li class="list-item track" data-index="${item.index}" tabindex="0">
             <span class="list-item-first-col">
                 <span class="list-item-index">${item.index + 1}</span>
-                <button class="btn btn-icon track-play-pause-btn" data-btn="play" title="Play">
+                <button class="btn-icon track-play-pause-btn" data-btn="play" title="Play">
                     <svg viewBox="0 0 24 24">
                         <use class="js-icon" href="#play"></use>
                     </svg>
@@ -61,7 +61,7 @@ function createGridItem(item) {
     return `
         <li class="grid-item track" data-index="${item.index}" tabindex="0">
             <div class="artwork-container grid-item-first-col" tabindex="-1">
-                <button class="btn btn-icon track-play-pause-btn artwork-container-btn" data-btn="play" title="Play">
+                <button class="btn-icon track-play-pause-btn artwork-container-btn" data-btn="play" title="Play">
                     <svg viewBox="0 0 24 24">
                         <use class="js-icon" href="#play"></use>
                     </svg>

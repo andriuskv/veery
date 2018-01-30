@@ -11,7 +11,7 @@ function createMoveToContainer() {
 
     element.insertAdjacentHTML("beforebegin", `
         <div id="${id}" class="playlist-tab-header-item" data-move-to>
-            <button class="btn btn-icon" data-item="move-to" title="Move to">
+            <button class="btn-icon" data-item="move-to" title="Move to">
                 <svg viewBox="0 0 24 24">
                     <path d="M2,16H10V14H2M18,14V10H16V14H12V16H16V20H18V16H22V14M14,6H2V8H14M14,10H2V12H14V10Z" />
                 </svg>
@@ -99,7 +99,7 @@ function createMoveToPanel(panelId, { playlistId }) {
         <div id="${panelId}" class="panel move-to-panel">
             <h3 class="panel-title move-to-panel-title">Move to</h3>
             ${getPlaylistList(playlistId)}
-            <button class="btn btn-icon move-to-new-pl-btn" data-panel-item="btn">
+            <button class="btn-icon move-to-new-pl-btn" data-panel-item="btn">
                 <svg viewBox="0 0 24 24">
                     <use href="#plus"></use>
                 </svg>
