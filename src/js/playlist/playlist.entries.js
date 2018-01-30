@@ -78,21 +78,11 @@ function updatePlaylistStats() {
     });
 }
 
-function getSyncBtnTemplate() {
+function getEntryBtn({ action, title, iconId }) {
     return `
-        <button class="btn btn-icon pl-entry-btn" data-action="sync" title="Synchronize playlist">
+        <button class="btn-icon pl-entry-btn" data-action="${action}" title="${title}">
             <svg viewBox="0 0 24 24">
-                <use href="#sync">
-            </svg>
-        </button>
-    `;
-}
-
-function getSettingsBtnTemplate() {
-    return `
-        <button class="btn btn-icon pl-entry-btn" data-action="settings" title="Settings">
-            <svg viewBox="0 0 24 24">
-                <use href="#settings">
+                <use href="#${iconId}">
             </svg>
         </button>
     `;
@@ -119,6 +109,21 @@ function parsePlaylistDuration(duration) {
 
 function createPlaylistEntry(pl) {
     const element = getContainer();
+    const syncBtn = pl.url ? getEntryBtn({
+        action: "sync",
+        title: "Synchronize playlist",
+        iconId: "sync"
+    }) : "";
+    const settingsBtn = pl.url ? getEntryBtn({
+        action: "settings",
+        title: "Settings",
+        iconId: "settings"
+    }) : "";
+    const removeBtn = getEntryBtn({
+        action: "remove",
+        title: "Remove playlist",
+        iconId: "trash"
+    });
 
     element.insertAdjacentHTML("beforeend", `
         <li class="pl-entry" data-entry-id=${pl.id}>
@@ -134,13 +139,9 @@ function createPlaylistEntry(pl) {
                     <span class="pl-entry-stats-item track-count">${pl.tracks.length} tracks</span>
                     <span class="pl-entry-stats-item playlist-duration">${parsePlaylistDuration(pl.duration)}</span>
                 </div>
-                ${pl.url ? getSyncBtnTemplate() : ""}
-                ${pl.url ? getSettingsBtnTemplate() : ""}
-                <button class="btn btn-icon pl-entry-btn" data-action="remove" title="Remove playlist">
-                    <svg viewBox="0 0 24 24">
-                        <use href="#trash">
-                    </svg>
-                </button>
+                ${syncBtn}
+                ${settingsBtn}
+                ${removeBtn}
             </div>
         </li>
     `);

@@ -64,8 +64,6 @@
 }
 
 .main-control-btn {
-    padding: 0;
-
     svg {
         width: 32px;
         height: 32px;
@@ -73,7 +71,7 @@
 }
 
 .play-pause-btn {
-    padding: 0;
+    position: relative;
     margin-right: 8px;
     margin-left: 8px;
 
@@ -196,12 +194,12 @@
 .controls {
     display: flex;
     justify-content: flex-end;
+    align-items: center;
     grid-row-start: 2;
     grid-column-start: 4;
 
     @include breakpoint-small {
         grid-row-start: 1;
-        align-items: center;
     }
 
     @include breakpoint-smallest {
@@ -220,11 +218,7 @@
 }
 
 .control-btn {
-    margin-right: 2px;
-
-    &.active {
-        background-color: $background-color-dark;
-    }
+    margin-right: 4px;
 }
 
 .volume-controls {
@@ -235,6 +229,10 @@
 .volume-slider-container {
     width: 100px;
     margin-left: 6px;
+
+    @include breakpoint-smallest {
+        margin-right: 4px;
+    }
 }
 
 .control-toggle-btn {

@@ -6,6 +6,7 @@
     z-index: 2;
     position: relative;
     display: none;
+    align-items: center;
     height: 40px;
     padding: 8px;
 
@@ -30,7 +31,7 @@
     display: none;
 
     @include breakpoint-small {
-        display: flex;
+        display: block;
     }
 
     @include breakpoint-smallest  {
@@ -41,6 +42,7 @@
 .playlist-tab-header-items {
     display: none;
     justify-content: flex-end;
+    align-items: center;
     flex-grow: 1;
     margin-left: auto;
 }
@@ -97,16 +99,16 @@
 
     right: 10px;
     display: none;
-    padding: 0;
     background-color: $background-color-darkest;
 
     &.visible {
-        display: flex;
+        display: block;
     }
 }
 
 .playlist-type-btns {
     display: flex;
+    align-items: center;
 
     @include breakpoint-smallest {
         display: none;

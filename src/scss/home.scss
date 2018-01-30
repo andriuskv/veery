@@ -47,11 +47,12 @@
 }
 
 .import-option-btn {
-    justify-content: flex-start;
+    display: flex;
+    align-items: center;
     width: 100%;
     padding: 10px 8px;
 
-    &:hover {
+    &:not(:disabled):hover {
         background-color: $background-color-light;
         color: $color-text;
 
@@ -69,9 +70,14 @@
 
 .import-option-btns {
     position: absolute;
-    top: 10px;
+    top: 12px;
     right: 4px;
     display: none;
+}
+
+.google-btn {
+    position: relative;
+    font-size: 13px;
 }
 
 .import-option-spinner {
@@ -85,11 +91,12 @@
 }
 
 .import-info-btn {
+    display: block;
     color: $color-text-dark;
 }
 
 .info-panel {
-    top: 26px;
+    top: 24px;
     right: 0;
     width: 268px;
 }
@@ -148,7 +155,7 @@
         }
 
         .pl-entry-input-icon {
-            display: flex;
+            display: block;
         }
     }
 }
@@ -157,14 +164,13 @@
     flex-grow: 1;
     padding-right: 24px;
     background-color: transparent;
-    transition: background-color 0.1s, box-shadow 0.1s;
 
     &:focus {
         background-color: $background-color-dark;
         box-shadow: $box-shadow-light;
 
         & + .pl-entry-input-icon {
-            display: flex;
+            display: block;
         }
     }
 }
@@ -176,20 +182,21 @@
     display: none;
     fill: $color-text-dark;
 }
-
-.pl-entry-btn {
-    color: $color-text-dark;
-
-    &:hover {
-        color: $color-text;
-    }
-}
-
 .pl-entry-content {
     position: relative;
     display: flex;
     padding-top: 4px;
     padding-left: 6px;
+}
+
+.pl-entry-btn {
+    position: relative;
+    margin-left: 4px;
+    color: $color-text-dark;
+
+    &:not(:disabled):hover {
+        color: $color-text;
+    }
 }
 
 .pl-entry-stats {

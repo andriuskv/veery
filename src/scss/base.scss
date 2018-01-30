@@ -36,6 +36,7 @@ ul {
 
 svg {
     box-sizing: content-box;
+    display: block;
     width: 20px;
     height: 20px;
     fill: currentColor;
@@ -83,8 +84,12 @@ svg {
     right: 4px;
     display: flex;
 
-    .btn-icon.hidden {
-        display: none;
+    .btn-icon {
+        margin-left: 4px;
+
+        &.hidden {
+            display: none;
+        }
     }
 }
 
@@ -121,11 +126,9 @@ svg {
     background-color: $background-color-darkest;
 }
 
-.btn {
+%default-btn-styles {
     @extend %default-input-styles;
 
-    background-color: $background-color-light;
-    transition: color 0.1s, background-color 0.1s;
     cursor: pointer;
 
     &:hover,
@@ -136,24 +139,19 @@ svg {
     &:disabled {
         color: $color-text-40;
         cursor: not-allowed;
-
-        &:hover {
-            background-color: transparent;
-            color: $color-text-40;
-
-            &.active {
-                color: $color-text-40;
-            }
-        }
     }
 }
 
+.btn {
+    @extend %default-btn-styles;
+
+    background-color: $background-color-light;
+}
+
 .btn-icon {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 2px;
+    @extend %default-btn-styles;
+
+    padding: 0;
     background-color: transparent;
 }
 
