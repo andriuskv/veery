@@ -1,5 +1,5 @@
 import { removeElement, removeElementClass, getImage } from "../utils.js";
-import { getVisiblePlaylist, getTab } from "../tab.js";
+import { getTab } from "../tab.js";
 import { postMessageToWorker } from "../worker.js";
 import { getPlayerState } from "../player/player.js";
 import { togglePlayPauseBtn } from "../player/player.controls.js";
@@ -206,14 +206,6 @@ function changePlaylistType(type, pl) {
     enableTrackSelection(pl);
     togglePlaylistTypeBtn(type);
 }
-
-window.addEventListener("resize", ({ target }) => {
-    const pl = getVisiblePlaylist();
-
-    if (pl && pl.type === "list" && target.innerWidth <= 540) {
-        changePlaylistType("grid", pl);
-    }
-});
 
 export {
     getPlaylistTrackElements,
