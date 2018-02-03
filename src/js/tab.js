@@ -11,6 +11,7 @@ import { resetFilteredPlaylist } from "./playlist/playlist.filter.js";
 import { playTrackFromElement } from "./player/player.js";
 
 const headerElement = document.getElementById("js-tab-header");
+const media = matchMedia("(max-width: 540px)");
 let visiblePlaylistId = "";
 
 function setVisiblePlaylistId(id = "") {
@@ -36,7 +37,7 @@ function updatePlaylistTab(id) {
         renderPlaylist(pl);
     }
 
-    if (pl.type === "list" && window.innerWidth <= 540) {
+    if (pl.type === "list" && media.matches) {
         changePlaylistType("grid", pl);
     }
     else {
@@ -106,6 +107,14 @@ window.addEventListener("route-change", ({ detail: { isPlaylistTab, tabId } }) =
     getTab(tabId).classList.add("active");
     getSidebarEntry(tabId).classList.add("active");
 });
+
+media.onchange = function({ matches }) {
+    const pl = getVisiblePlaylist();
+
+    if (matches && pl && pl.type === "list") {
+        changePlaylistType("grid", pl);
+    }
+};
 
 export {
     setVisiblePlaylistId,
