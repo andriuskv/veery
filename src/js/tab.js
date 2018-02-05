@@ -105,7 +105,10 @@ window.addEventListener("route-change", ({ detail: { isPlaylistTab, tabId } }) =
         headerElement.classList.remove("playlist-tab-active");
     }
     getTab(tabId).classList.add("active");
-    getSidebarEntry(tabId).classList.add("active");
+
+    if (tabId !== "not-found") {
+        getSidebarEntry(tabId).classList.add("active");
+    }
 });
 
 media.onchange = function({ matches }) {

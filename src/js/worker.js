@@ -1,4 +1,4 @@
-import { toggleCurrentRoute } from "./router.js";
+import { showCurrentRoute } from "./router.js";
 import { updatePlaylist, createPlaylist } from "./playlist/playlist.js";
 import { initPlaylist } from "./playlist/playlist.manage.js";
 import { syncPlaylists } from "./playlist/playlist.entries.js";
@@ -12,7 +12,7 @@ worker.onmessage = function({ data: { action, payload } }) {
             initPlaylist(createPlaylist(pl));
         });
         syncPlaylists(payload.filter(pl => pl.syncOnInit));
-        toggleCurrentRoute();
+        showCurrentRoute();
         storedTrack.initTrack();
     }
     else if (action === "update") {
