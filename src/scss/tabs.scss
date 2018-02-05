@@ -138,3 +138,7 @@
     margin-bottom: 20px;
     text-align: center;
 }
+
+.tab-not-found-title {
+    @include center-absolutely;
+}
