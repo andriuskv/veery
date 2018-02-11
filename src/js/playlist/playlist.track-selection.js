@@ -341,7 +341,6 @@ function onMouseup({ target, ctrlKey }) {
 }
 
 function addClickHandler() {
-
     // Use setTimeout to skip first click
     setTimeout(() => {
         window.addEventListener("click", onClick, true);

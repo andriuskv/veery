@@ -1,9 +1,7 @@
 import {
     removeElement,
     removeElementClass,
-    getElementByAttr,
-    enableBtn,
-    disableBtn
+    getElementByAttr
 } from "./../utils.js";
 import { togglePanel } from "../panels.js";
 import { isGoogleAuthInited, changeGoogleAuthState, initGoogleAuth } from "../google-auth.js";
@@ -25,21 +23,19 @@ function isNewImportOption(option) {
 }
 
 function disableImportOption(option) {
-    const { children } = document.querySelector(`[data-option=${option}]`);
-
-    Array.from(children).forEach(element => {
-        if (element.hasAttribute("data-item")) {
-            disableBtn(element, "", "import-option-spinner");
-        }
-    });
+    changeImportOptionState(option, true);
 }
 
 function enableImportOption(option) {
+    changeImportOptionState(option, false);
+}
+
+function changeImportOptionState(option, state) {
     const { children } = document.querySelector(`[data-option=${option}]`);
 
     Array.from(children).forEach(element => {
         if (element.hasAttribute("data-item")) {
-            enableBtn(element);
+            element.disabled = state;
         }
     });
 }
@@ -136,7 +132,7 @@ function createImportForm(container, item) {
 
     const element = document.getElementById(id);
 
-    element.elements["url"].focus();
+    element.elements.url.focus();
     element.addEventListener("submit", handleImportFormSubmit);
 }
 
@@ -187,7 +183,7 @@ function showFilePicker(item) {
 }
 
 function handleImportFormSubmit(event) {
-    const url = event.target.elements["url"].value.trim();
+    const url = event.target.elements.url.value.trim();
 
     if (url) {
         const option = event.target.getAttribute("data-for");

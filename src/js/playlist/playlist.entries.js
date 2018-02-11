@@ -1,4 +1,4 @@
-import { removeElement, getElementByAttr, enableBtn, disableBtn } from "../utils.js";
+import { removeElement, getElementByAttr } from "../utils.js";
 import { editSidebarEntryTitle } from "../sidebar.js";
 import { postMessageToWorker } from "../worker.js";
 import { togglePanel } from "../panels.js";
@@ -49,18 +49,18 @@ function getSyncBtn(id) {
 }
 
 function enableSyncBtn(id) {
-    const btn = getSyncBtn(id);
+    const element = getSyncBtn(id);
 
-    if (btn) {
-        enableBtn(btn);
+    if (element) {
+        element.disabled = false;
     }
 }
 
 function disableSyncBtn(id) {
-    const btn = getSyncBtn(id);
+    const element = getSyncBtn(id);
 
-    if (btn) {
-        disableBtn(btn);
+    if (element) {
+        element.disabled = true;
     }
 }
 

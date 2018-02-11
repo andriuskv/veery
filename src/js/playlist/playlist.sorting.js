@@ -89,7 +89,8 @@ function getSortOtions(sortedBy) {
     return options.reduce((str, option) => {
         const activeClass = option === sortedBy ? " active" : "";
 
-        return str + `
+        return `
+            ${str}
             <li>
                 <button class="btn sort-option-btn${activeClass}" data-sort="${option}">
                     ${capitalize(option)}

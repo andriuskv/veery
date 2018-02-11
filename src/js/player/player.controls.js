@@ -2,9 +2,7 @@ import {
     getElementByAttr,
     formatTime,
     dispatchCustomEvent,
-    setElementIconAndTitle,
-    removeElement,
-    addSpinner
+    setElementIconAndTitle
 } from "../utils.js";
 import { setSetting, getSetting, removeSetting } from "../settings.js";
 import { getCurrentTrack } from "../playlist/playlist.js";
@@ -60,27 +58,25 @@ function showPlayPauseBtnSpinner(track) {
         return;
     }
     const element = getTrackPlayPauseBtn(track);
-    const spinnerId = "play-pause-btn-spinner";
     isSpinnerActive = true;
 
     if (element) {
-        addSpinner(element, `js-track-${spinnerId}`);
+        element.classList.add("show-spinner");
     }
-    addSpinner(document.getElementById("js-play-btn"), `js-${spinnerId}`);
+    document.getElementById("js-play-btn").classList.add("show-spinner");
 }
 
-function hidePlayPauseBtnSpinner() {
+function hidePlayPauseBtnSpinner(track) {
     if (!isSpinnerActive) {
         return;
     }
-    const spinnerId = "play-pause-btn-spinner";
-    const element = document.getElementById(`js-track-${spinnerId}`);
+    const element = getTrackPlayPauseBtn(track);
     isSpinnerActive = false;
 
     if (element) {
-        removeElement(element);
+        element.classList.remove("show-spinner");
     }
-    removeElement(document.getElementById(`js-${spinnerId}`));
+    document.getElementById("js-play-btn").classList.remove("show-spinner");
 }
 
 function togglePlayPauseBtn(element, state) {

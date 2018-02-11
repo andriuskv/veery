@@ -155,12 +155,6 @@ svg {
     background-color: transparent;
 }
 
-.spinner {
-    @include center-absolutely;
-
-    height: 100%;
-}
-
 .checkbox::after {
     content: "";
     display: flex;

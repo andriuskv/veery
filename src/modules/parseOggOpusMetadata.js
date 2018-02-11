@@ -36,7 +36,6 @@ function getPictureFieldLenght(bytes, offset) {
 }
 
 function parsePictureBlock(bytes) {
-
     // Start from 4th byte to skip picture type
     let offset = 4;
 
@@ -132,7 +131,6 @@ function parsePages(buffer, offset) {
     let segment = new Uint8Array();
 
     while (offset < buffer.byteLength) {
-
         // Jump to header type
         offset += 5;
         const [headerType] = getBufferBytes(buffer, offset, 1);

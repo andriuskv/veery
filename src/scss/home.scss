@@ -60,6 +60,12 @@
             color: $color-accent;
         }
     }
+
+    &:disabled {
+        @include spinner {
+            margin-left: 8px;
+        }
+    }
 }
 
 .import-option-icon {
@@ -78,6 +84,12 @@
 .google-btn {
     position: relative;
     font-size: 13px;
+
+    &:disabled {
+        @include spinner {
+            @include center-absolutely;
+        };
+    }
 }
 
 .import-option-spinner {
@@ -182,6 +194,7 @@
     display: none;
     fill: $color-text-dark;
 }
+
 .pl-entry-content {
     position: relative;
     display: flex;
@@ -196,6 +209,12 @@
 
     &:not(:disabled):hover {
         color: $color-text;
+    }
+
+    &:disabled {
+        @include spinner {
+            @include center-absolutely;
+        };
     }
 }
 

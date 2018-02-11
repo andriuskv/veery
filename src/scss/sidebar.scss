@@ -112,6 +112,16 @@
             box-shadow: -2px 0 4px 2px $background-color-light;
         }
     }
+
+    &.show-spinner {
+        @include spinner {
+            @include center-vertically;
+
+            right: 5px;
+            width: 26px;
+            height: 26px;
+        }
+    }
 }
 
 .sidebar-link {
@@ -142,13 +152,4 @@
     background-color: inherit;
     fill: $color-text;
     transition: box-shadow 0.1s;
-}
-
-.sidebar-entry-spinner {
-    @include center-vertically;
-
-    z-index: 1;
-    right: 5px;
-    width: 26px;
-    height: 26px;
 }

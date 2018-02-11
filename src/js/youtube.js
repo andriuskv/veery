@@ -85,9 +85,7 @@ function parseItems(items, id) {
     }));
 }
 
-function handleError(error, id) {
-    const code = error.code;
-
+function handleError({ code, message }, id) {
     if (code === 403) {
         showMessage("You need to be sign in if you want to import private playlist");
     }
@@ -95,7 +93,7 @@ function handleError(error, id) {
         showMessage("Playlist was not found");
     }
     hideStatusIndicator(id);
-    throw new Error(error.message);
+    throw new Error(message);
 }
 
 async function fetchPlaylistItems(id, token) {
@@ -147,7 +145,7 @@ async function addVideo(id, type) {
         showStatusIndicator(playlistId);
     }
     const { items } = await fetchYoutube("videos", "snippet,contentDetails", "id", id);
-    const latestIndex = pl && pl.tracks.length || 0;
+    const latestIndex = pl && (pl.tracks.length || 0);
 
     if (!items.length) {
         showMessage("Video was not found");

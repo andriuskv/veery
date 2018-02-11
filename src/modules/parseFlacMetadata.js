@@ -46,7 +46,6 @@ function bytesToNum(bytes) {
 }
 
 function parsePictureBlock(bytes, tags) {
-
     // Start from 4th byte to skip picture type
     let step = 4;
 
