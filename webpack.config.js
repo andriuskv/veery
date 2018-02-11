@@ -48,7 +48,8 @@ module.exports = function(env = {}) {
                             loader: "css-loader",
                             options: {
                                 sourceMap: !env.prod,
-                                url: false
+                                url: false,
+                                minimize: env.prod
                             }
                         }, {
                             loader: "postcss-loader",
@@ -59,8 +60,7 @@ module.exports = function(env = {}) {
 
                                     if (env.prod) {
                                         plugins.push(
-                                            require("css-mqpacker")(),
-                                            require("cssnano")()
+                                            require("css-mqpacker")()
                                         );
                                     }
                                     return plugins;
