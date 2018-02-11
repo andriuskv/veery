@@ -90,7 +90,7 @@ window.addEventListener("route-change", ({ detail: { isPlaylistTab, tabId } }) =
 
     removeElementClass(".sidebar-entry.active", "active");
     removeElementClass(".tab.active", "active");
-    setVisiblePlaylistId(isPlaylistTab ? tabId: "");
+    setVisiblePlaylistId(isPlaylistTab ? tabId : "");
 
     if (element) {
         element.removeEventListener("click", playTrackFromElement);

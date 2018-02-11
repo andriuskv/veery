@@ -73,7 +73,7 @@ async function parseTracks(tracks, id, parsedTracks = []) {
     parsedTracks.push({
         audioTrack,
         name,
-        title: artist ? title.trim(): name,
+        title: artist ? title.trim() : name,
         artist: artist ? artist.trim() : "",
         album: album ? album.trim() : "",
         thumbnail: picture || "assets/images/album-art-placeholder.png",

@@ -212,7 +212,6 @@ function play(source, sourceValue, id) {
         track = getNextTrack(pl, sourceValue);
 
         if (!track) {
-
             // If playlist is empty reset player
             resetPlayer(currentTrack);
             return;
@@ -231,7 +230,6 @@ function playPreviousTrack() {
 }
 
 function playTrackFromElement({ currentTarget, detail, target }) {
-
     // Remove "js-" part
     const id = currentTarget.id.slice(3);
     const element = getElementByAttr("data-btn", target, currentTarget);
@@ -253,18 +251,18 @@ function playTrackFromElement({ currentTarget, detail, target }) {
     }
 }
 
-function stopTrack(player) {
-    if (player === "native") {
+function stopTrack(track) {
+    if (track.player === "native") {
         nPlayer.stopTrack();
     }
-    else if (player === "youtube") {
-        ytPlayer.stopTrack();
+    else if (track.player === "youtube") {
+        ytPlayer.stopTrack(track);
     }
 }
 
 function stopPlayer(track) {
     if (track) {
-        stopTrack(track.player);
+        stopTrack(track);
     }
     resetPlayer(track);
 }
@@ -283,7 +281,7 @@ function resetPlayer(track) {
 
     if (track) {
         resetTrackSlider();
-        hidePlayPauseBtnSpinner();
+        hidePlayPauseBtnSpinner(track);
         togglePlayPauseBtns(track, isPaused);
     }
 
@@ -370,15 +368,18 @@ function showPlayerMessage({ title, body }) {
 }
 
 window.addEventListener("track-start", ({ detail: startTime }) => {
-    const { playlistId, name, durationInSeconds } = getCurrentTrack();
+    const track = getCurrentTrack();
 
-    showActiveIcon(playlistId);
-    storedTrack.saveTrack({ playlistId, name });
+    showActiveIcon(track.playlistId);
+    storedTrack.saveTrack({
+        name: track.name,
+        playlistId: track.playlistId
+    });
     elapsedTime.start({
         currentTime: Math.floor(startTime),
-        durationInSeconds
+        durationInSeconds: track.durationInSeconds
     });
-    hidePlayPauseBtnSpinner();
+    hidePlayPauseBtnSpinner(track);
 });
 
 window.addEventListener("track-end", () => {

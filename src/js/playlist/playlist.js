@@ -64,7 +64,7 @@ function getActivePlaylist() {
 }
 
 function getTrack(track) {
-    return track ? Object.assign({}, track): null;
+    return track ? { ...track } : null;
 }
 
 function setCurrentTrack(track) {

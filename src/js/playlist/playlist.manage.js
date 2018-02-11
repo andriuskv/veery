@@ -1,5 +1,5 @@
 import * as playlist from "./playlist.js";
-import { removeElementClass, removeElement, addSpinner } from "../utils.js";
+import { removeElementClass } from "../utils.js";
 import { removePlaylistTab, updatePlaylistView } from "./playlist.view.js";
 import { addRoute, toggleRoute } from "../router.js";
 import { getSetting } from "../settings.js";
@@ -140,23 +140,21 @@ function createNewPlaylistForm(id, element, insertPoint, handleSubmit) {
 
     const form = document.getElementById(`js-${id}-form`);
 
-    form.elements["title"].focus();
+    form.elements.title.focus();
     form.addEventListener("submit", handleSubmit);
 }
 
 function showStatusIndicator(id) {
     const entry = getSidebarEntry(id);
 
-    addSpinner(entry, `js-${id}-sidebar-spinner`, "sidebar-entry-spinner");
+    entry.classList.add("show-spinner");
     disableSyncBtn(id);
 }
 
 function hideStatusIndicator(id) {
-    const element = document.getElementById(`js-${id}-sidebar-spinner`);
+    const entry = getSidebarEntry(id);
 
-    if (element) {
-        removeElement(element);
-    }
+    entry.classList.remove("show-spinner");
     enableSyncBtn(id);
 }
 

@@ -45,14 +45,14 @@ function onPlayerStateChange({ data: state }) {
         if (isStoredTrack || latestState === PAUSED) {
             isStoredTrack = false;
             ytPlayer.pauseVideo();
-            hidePlayPauseBtnSpinner();
+            hidePlayPauseBtnSpinner(track);
             return;
         }
         dispatchCustomEvent("track-start", ytPlayer.getCurrentTime());
     }
     else if (state === PAUSED && latestState === PLAYING) {
         ytPlayer.playVideo();
-        hidePlayPauseBtnSpinner();
+        hidePlayPauseBtnSpinner(track);
     }
     else if (state === BUFFERING) {
         elapsedTime.stop();
@@ -136,11 +136,11 @@ function playTrack(track, volume, startTime) {
     }
 }
 
-function stopTrack() {
+function stopTrack(track) {
     if (!initialized) {
         return;
     }
-    hidePlayPauseBtnSpinner();
+    hidePlayPauseBtnSpinner(track);
     ytPlayer.stopVideo();
 }
 

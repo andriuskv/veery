@@ -100,25 +100,6 @@ function setElementIconAndTitle(element, { id, title }) {
     element.querySelector(".js-icon").setAttribute("href", `#${id}`);
 }
 
-function addSpinner(element, id = "", classList = "spinner") {
-    element.insertAdjacentHTML("beforeend", `
-        <img src="./assets/images/ring-alt.svg" id="${id}" class="${classList}" alt="">
-    `);
-}
-
-function enableBtn(element) {
-    element.disabled = false;
-
-    if (element.lastElementChild.tagName === "IMG") {
-        removeElement(element.lastElementChild);
-    }
-}
-
-function disableBtn(element, id, classList) {
-    element.disabled = true;
-    addSpinner(element, id, classList);
-}
-
 export {
     scriptLoader,
     capitalize,
@@ -130,8 +111,5 @@ export {
     formatTime,
     dispatchCustomEvent,
     getImage,
-    setElementIconAndTitle,
-    addSpinner,
-    enableBtn,
-    disableBtn
+    setElementIconAndTitle
 };
