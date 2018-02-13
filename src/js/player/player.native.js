@@ -4,9 +4,6 @@ let audioBlobURL;
 let audio;
 
 function playTrack(audioTrack, volume, startTime) {
-    if (audioBlobURL) {
-        URL.revokeObjectURL(audioBlobURL);
-    }
     audioBlobURL = URL.createObjectURL(audioTrack);
     audio = new Audio(audioBlobURL);
     audio.onplaying = function() {
@@ -32,6 +29,10 @@ function togglePlaying(paused) {
 }
 
 function stopTrack() {
+    if (audioBlobURL) {
+        URL.revokeObjectURL(audioBlobURL);
+        audioBlobURL = null;
+    }
     audio.pause();
     audio.currentTime = 0;
     audio = null;

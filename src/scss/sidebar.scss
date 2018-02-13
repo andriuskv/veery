@@ -5,7 +5,7 @@
         position: absolute;
         top: 0;
         left: 0;
-        bottom: 80px;
+        bottom: 108px;
         width: 100%;
         background-color: $background-color-dark-80;
         transition: 0.1s opacity, 0.1s visibility;
@@ -20,10 +20,6 @@
                 transition-delay: 0s;
             }
         }
-    }
-
-    @include breakpoint-small {
-        bottom: 108px;
     }
 }
 
@@ -49,7 +45,6 @@
     text-indent: -9999px;
 
     h1 {
-        margin-top: 0;
         margin-bottom: 0;
     }
 }
