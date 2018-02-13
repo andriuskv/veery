@@ -129,6 +129,7 @@
 
     &.active {
         display: block;
+        will-change: scroll-position;
     }
 }
 

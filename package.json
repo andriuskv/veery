@@ -16,11 +16,11 @@
     "focus-visible": "^4.0.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.0.0-beta.39",
-    "@babel/plugin-syntax-dynamic-import": "^7.0.0-beta.39",
-    "@babel/polyfill": "^7.0.0-beta.39",
-    "@babel/preset-env": "^7.0.0-beta.39",
-    "autoprefixer": "^7.2.5",
+    "@babel/core": "^7.0.0-beta.40",
+    "@babel/plugin-syntax-dynamic-import": "^7.0.0-beta.40",
+    "@babel/polyfill": "^7.0.0-beta.40",
+    "@babel/preset-env": "^7.0.0-beta.40",
+    "autoprefixer": "^8.0.0",
     "babel-eslint": "^8.2.1",
     "babel-loader": "^8.0.0-beta.0",
     "css-loader": "^0.28.9",
@@ -34,7 +34,7 @@
     "sass-loader": "^6.0.6",
     "style-loader": "^0.20.1",
     "uglifyjs-webpack-plugin": "^1.1.8",
-    "webpack": "^3.10.0"
+    "webpack": "^3.11.0"
   },
   "browserslist": [
     "last 4 chrome versions",

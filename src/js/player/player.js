@@ -1,5 +1,4 @@
 import {
-    updateVolume,
     updateTrackSlider,
     showTrackDuration,
     togglePlayPauseBtn,
@@ -25,7 +24,7 @@ import {
 } from "../playlist/playlist.js";
 import { removeElementClass, getElementByAttr, getImage } from "../utils.js";
 import { getVisiblePlaylistId } from "../tab.js";
-import { setSetting, getSetting, removeSetting } from "../settings.js";
+import { getSetting } from "../settings.js";
 import { showActiveIcon, removeActiveIcon } from "../sidebar.js";
 import { togglePanel } from "../panels.js";
 import { showTrack, toggleTrackPlayPauseBtn } from "../playlist/playlist.view.js";
@@ -198,7 +197,7 @@ function play(source, sourceValue, id) {
     if (currentTrack) {
         resetTrackSlider();
         toggleTrackPlayPauseBtn(currentTrack, true);
-        stopTrack(currentTrack.player);
+        stopTrack(currentTrack);
     }
 
     if (pl.shuffled !== shuffle) {
@@ -335,18 +334,6 @@ function seekTo(player, currentTime) {
     }
 }
 
-function mutePlayer(muted) {
-    const volume = muted ? 0 : getSetting("volumeBeforeMute");
-
-    if (muted) {
-        setSetting("volumeBeforeMute", getSetting("volume"));
-    }
-    else {
-        removeSetting("volumeBeforeMute");
-    }
-    updateVolume(volume);
-}
-
 function getPlayerMessageCb(title, body) {
     return (id, { element }) => {
         element.insertAdjacentHTML("beforeend", `
@@ -377,6 +364,7 @@ window.addEventListener("track-start", ({ detail: startTime }) => {
     });
     elapsedTime.start({
         currentTime: Math.floor(startTime),
+        duration: track.duration,
         durationInSeconds: track.durationInSeconds
     });
     hidePlayPauseBtnSpinner(track);
@@ -408,7 +396,6 @@ export {
     toggleShuffle,
     setVolume,
     seekTo,
-    mutePlayer,
     storedTrack,
     showPlayerMessage
 };

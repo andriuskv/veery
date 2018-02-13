@@ -7,13 +7,12 @@ import {
 import { setSetting, getSetting, removeSetting } from "../settings.js";
 import { getCurrentTrack } from "../playlist/playlist.js";
 import { getTrackPlayPauseBtn } from "../playlist/playlist.view.js";
-import { storedTrack, toggleShuffle, setVolume, seekTo, mutePlayer, onControlButtonClick } from "./player.js";
+import { storedTrack, toggleShuffle, setVolume, seekTo, onControlButtonClick } from "./player.js";
 
 const volumeSlider = document.getElementById("js-volume-slider");
 const trackSlider = document.getElementById("js-track-slider");
 const controlsElement = document.getElementById("js-controls");
 let seeking = false;
-let isSpinnerActive = false;
 
 const elapsedTime = (function() {
     let timeout = 0;
@@ -54,11 +53,7 @@ const elapsedTime = (function() {
 })();
 
 function showPlayPauseBtnSpinner(track) {
-    if (isSpinnerActive) {
-        return;
-    }
     const element = getTrackPlayPauseBtn(track);
-    isSpinnerActive = true;
 
     if (element) {
         element.classList.add("show-spinner");
@@ -67,11 +62,7 @@ function showPlayPauseBtnSpinner(track) {
 }
 
 function hidePlayPauseBtnSpinner(track) {
-    if (!isSpinnerActive) {
-        return;
-    }
     const element = getTrackPlayPauseBtn(track);
-    isSpinnerActive = false;
 
     if (element) {
         element.classList.remove("show-spinner");
@@ -140,32 +131,6 @@ function updateVolumeSliderLabel(percentage) {
     label.style.left = `${percentage}%`;
 }
 
-function onVolumeSliderMousemove({ pageX }) {
-    const percentage = getPosInPercentage("volume", pageX);
-    const volume = percentage / 100;
-
-    if (volume === getSetting("volume")) {
-        return;
-    }
-    updateVolumeSliderLabel(percentage);
-
-    if (!volume) {
-        updateSetting({
-            attrValue: "mute",
-            elementRef: document.getElementById("js-volume-btn")
-        });
-        return;
-    }
-    unmutePlayer();
-    updateVolume(volume);
-}
-
-function onVolumeSliderMouseup() {
-    window.removeEventListener("mousemove", onVolumeSliderMousemove);
-    window.removeEventListener("mouseup", onVolumeSliderMouseup);
-    volumeSlider.addEventListener("mousemove", onLocalVolumeSliderMousemove);
-}
-
 function updateSlider(slider, value) {
     document.getElementById(`js-${slider}-slider-thumb`).style.left = `${value * 100}%`;
     document.getElementById(`js-${slider}-slider-elapsed`).style.transform = `scaleX(${value})`;
@@ -185,15 +150,11 @@ function updateTrackSlider(track, currentTime = 0) {
 }
 
 function updateVolumeSlider(volume) {
-    const percentage = Math.round(volume * 100);
+    const percentage = Math.floor(volume * 100);
 
     updateSlider("volume", volume);
     volumeSlider.setAttribute("aria-valuenow", percentage);
     volumeSlider.setAttribute("aria-valuetext", `${percentage}% volume`);
-}
-
-function onLocalVolumeSliderMousemove({ pageX }) {
-    updateVolumeSliderLabel(getPosInPercentage("volume", pageX));
 }
 
 function showTrackDuration(duration = "0:00", durationInSeconds = 0) {
@@ -260,6 +221,36 @@ function onTrackSliderMouseup({ pageX }) {
     trackSlider.addEventListener("mousemove", onLocalTrackSliderMousemove);
 }
 
+function onVolumeSliderMousemove({ pageX }) {
+    const percentage = getPosInPercentage("volume", pageX);
+    const volume = percentage / 100;
+
+    if (volume === getSetting("volume")) {
+        return;
+    }
+    updateVolumeSliderLabel(percentage);
+
+    if (!volume) {
+        updateSetting({
+            attrValue: "mute",
+            elementRef: document.getElementById("js-volume-btn")
+        });
+        return;
+    }
+    unmutePlayer();
+    updateVolume(volume);
+}
+
+function onLocalVolumeSliderMousemove({ pageX }) {
+    updateVolumeSliderLabel(getPosInPercentage("volume", pageX));
+}
+
+function onVolumeSliderMouseup() {
+    window.removeEventListener("mousemove", onVolumeSliderMousemove);
+    window.removeEventListener("mouseup", onVolumeSliderMouseup);
+    volumeSlider.addEventListener("mousemove", onLocalVolumeSliderMousemove);
+}
+
 function updateSetting({ attrValue, elementRef }) {
     const value = !getSetting(attrValue);
 
@@ -274,6 +265,18 @@ function updateSetting({ attrValue, elementRef }) {
         mutePlayer(value);
         toggleVolumeBtn(elementRef, value);
     }
+}
+
+function mutePlayer(muted) {
+    const volume = muted ? 0 : getSetting("volumeBeforeMute");
+
+    if (muted) {
+        setSetting("volumeBeforeMute", getSetting("volume"));
+    }
+    else {
+        removeSetting("volumeBeforeMute");
+    }
+    updateVolume(volume);
 }
 
 function unmutePlayer() {
@@ -381,10 +384,9 @@ document.getElementById("js-main-controls").addEventListener("click", ({ target 
 controlsElement.addEventListener("click", ({ target }) => {
     const element = getElementByAttr("data-item", target);
 
-    if (!element) {
-        return;
+    if (element) {
+        updateSetting(element);
     }
-    updateSetting(element);
 });
 
 controlsElement.addEventListener("keyup", ({ which, target }) => {
