@@ -22,19 +22,18 @@ import {
     getTrack,
     getNextTrack
 } from "../playlist/playlist.js";
-import { removeElementClass, getElementByAttr, getImage } from "../utils.js";
+import { removeElementClass, getElementByAttr } from "../utils.js";
 import { getVisiblePlaylistId } from "../tab.js";
 import { getSetting } from "../settings.js";
 import { showActiveIcon, removeActiveIcon } from "../sidebar.js";
 import { togglePanel } from "../panels.js";
 import { showTrack, toggleTrackPlayPauseBtn } from "../playlist/playlist.view.js";
-import { showNowPlaying, resetNowPlaying } from "./player.now-playing.js";
+import { showTrackInfo, resetTrackInfo } from "./player.now-playing.js";
 import * as nPlayer from "./player.native.js";
 import * as ytPlayer from "./player.youtube.js";
 
 let isPaused = true;
 let scrollToTrack = false;
-let artwork = null;
 
 const storedTrack = (function() {
     function getTrack() {
@@ -92,34 +91,6 @@ function updatePlayerState(state, track) {
         elapsedTime.stop();
     }
     togglePlayPauseBtns(track, isPaused);
-}
-
-function updateTrackMedia(track, artwork) {
-    const ytPlayer = document.getElementById("js-yt-player");
-    const ytPlayerWatch = document.getElementById("js-yt-player-watch");
-    const imageElement = document.getElementById("js-media-image");
-
-    if (track.player === "youtube") {
-        ytPlayer.classList.remove("hidden");
-        ytPlayerWatch.classList.remove("hidden");
-        imageElement.classList.add("hidden");
-        ytPlayerWatch.setAttribute("href", `https://www.youtube.com/watch?v=${track.id}`);
-    }
-    else {
-        ytPlayer.classList.add("hidden");
-        ytPlayerWatch.classList.add("hidden");
-        imageElement.classList.remove("hidden");
-        imageElement.src = artwork;
-    }
-}
-
-function showTrackInfo(track) {
-    if (artwork) {
-        URL.revokeObjectURL(artwork);
-    }
-    artwork = getImage(track.thumbnail);
-    showNowPlaying(track, artwork);
-    updateTrackMedia(track, artwork);
 }
 
 function beforeTrackStart(track) {
@@ -271,22 +242,16 @@ function resetPlayer(track) {
     storedTrack.removeTrack();
     showTrackDuration();
     hideTrackSlider();
-    resetNowPlaying();
+    resetTrackInfo();
     setCurrentTrack();
     setPlaylistAsActive();
     removeActiveIcon();
     removeElementClass(".track.playing", "playing");
-    document.getElementById("js-media-container").classList.remove("visible");
 
     if (track) {
         resetTrackSlider();
         hidePlayPauseBtnSpinner(track);
         togglePlayPauseBtns(track, isPaused);
-    }
-
-    if (artwork) {
-        URL.revokeObjectURL(artwork);
-        artwork = null;
     }
 }
 

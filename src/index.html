@@ -297,8 +297,10 @@
         </button>
     </div>
     <div id="js-media-container" class="media-container">
+        <div id="js-yt-player" class="yt-player hidden"></div>
+        <img src="" id="js-media-image" class="media-image" data-item="image" alt="">
         <div class="media-btn-container">
-            <a id="js-yt-player-watch" class="btn-icon hidden" data-item="yt-watch" title="Watch on YouTube" target="_blank">
+            <a id="js-yt-player-watch" class="btn-icon yt-player-watch-btn" data-item="yt-watch" title="Watch on YouTube" target="_blank">
                 <svg viewBox="0 0 24 24">
                     <use href="#youtube"></use>
                 </svg>
@@ -309,8 +311,6 @@
                 </svg>
             </button>
         </div>
-        <div id="js-yt-player" class="yt-player hidden"></div>
-        <img src="" id="js-media-image" class="media-image hidden" data-item="image" alt="">
     </div>
 </body>
 </html>

@@ -1,13 +1,15 @@
-import { getElementByAttr, removeElement } from "../utils.js";
+import { getElementByAttr, removeElement, getImage } from "../utils.js";
 import { togglePlaying } from "./player.js";
 import { watchOnYoutube } from "./player.youtube.js";
 import { getCurrentTrack } from "../playlist/playlist.js";
 import { getTrackName } from "../playlist/playlist.view.js";
 
 const nowPlayingElement = document.getElementById("js-now-playing");
+const mediaElement = document.getElementById("js-media-container");
+let artwork = null;
+let animationTarget = null;
 let animationId = 0;
 let timeoutId = 0;
-let animationTarget = null;
 
 function resetAnimationTarget() {
     clearTimeout(timeoutId);
@@ -73,7 +75,7 @@ function handleMouseleave({ currentTarget }) {
 }
 
 function toggleMedia() {
-    document.getElementById("js-media-container").classList.toggle("visible");
+    mediaElement.classList.toggle("visible");
 }
 
 function removeTrackNameElement() {
@@ -110,11 +112,48 @@ function showNowPlaying(track, artwork) {
     renderNowPlaying(track, artwork);
 }
 
+function updateTrackMedia(track, artwork) {
+    const ytPlayer = document.getElementById("js-yt-player");
+
+    if (track.player === "youtube") {
+        const ytPlayerWatch = document.getElementById("js-yt-player-watch");
+
+        ytPlayer.classList.remove("hidden");
+        ytPlayerWatch.setAttribute("href", `https://www.youtube.com/watch?v=${track.id}`);
+    }
+    else {
+        const imageElement = document.getElementById("js-media-image");
+
+        ytPlayer.classList.add("hidden");
+        imageElement.src = artwork;
+    }
+}
+
+function showTrackInfo(track) {
+    if (artwork) {
+        URL.revokeObjectURL(artwork);
+    }
+    artwork = getImage(track.thumbnail);
+
+    showNowPlaying(track, artwork);
+    updateTrackMedia(track, artwork);
+}
+
+function resetTrackInfo() {
+    resetNowPlaying();
+    mediaElement.classList.remove("visible");
+
+    if (artwork) {
+        URL.revokeObjectURL(artwork);
+        artwork = null;
+    }
+}
+
 nowPlayingElement.addEventListener("mousemove", handleMousemove);
+mediaElement.addEventListener("click", handleClickOnMedia);
 document.getElementById("js-expand-media-btn").addEventListener("click", toggleMedia);
-document.getElementById("js-media-container").addEventListener("click", handleClickOnMedia);
 
 export {
-    showNowPlaying,
-    resetNowPlaying
+    showTrackInfo,
+    resetTrackInfo
 };

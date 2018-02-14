@@ -35,13 +35,13 @@ let isMoveToVisible = false;
 function enableTrackSelection({ id, tracks }) {
     if (playlistElement) {
         playlistElement.removeEventListener("mousedown", onMousedown);
+        playlistElement = null;
     }
 
-    if (!tracks.length) {
-        return;
+    if (tracks.length) {
+        playlistElement = getTab(id);
+        playlistElement.addEventListener("mousedown", onMousedown);
     }
-    playlistElement = getTab(id);
-    playlistElement.addEventListener("mousedown", onMousedown);
 }
 
 function getPlaylistElementRect(element) {
