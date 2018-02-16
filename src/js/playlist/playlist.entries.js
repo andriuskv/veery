@@ -8,23 +8,18 @@ import { removePlaylist } from "./playlist.manage.js";
 import { importPlaylist, disableImportOption, resetImportOption } from "./playlist.import.js";
 
 function createContainer(id) {
-    const div = document.createElement("div");
-    const h2 = document.createElement("h2");
-    const ul = document.createElement("ul");
+    document.getElementById("js-tab-home").insertAdjacentHTML("beforeend", `
+        <div class="pl-entry-container">
+            <h2 class="home-tab-section-title">Playlists</h2>
+            <ul id="${id}"></ul>
+        </div>
+    `);
+    const element = document.getElementById(id);
 
-    div.classList.add("pl-entry-container");
-    h2.classList.add("home-tab-section-title");
-    ul.classList.add("pl-entries");
+    element.addEventListener("click", handleContainerClick);
+    element.addEventListener("focus", handleContainerFocus, true);
 
-    h2.textContent = "Playlists";
-    ul.id = id;
-    ul.addEventListener("click", handleContainerClick);
-    ul.addEventListener("focus", handleContainerFocus, true);
-
-    div.appendChild(h2);
-    div.appendChild(ul);
-    document.getElementById("js-tab-home").appendChild(div);
-    return ul;
+    return element;
 }
 
 function removeContainer(container) {
@@ -114,11 +109,11 @@ function createPlaylistEntry(pl) {
         title: "Synchronize playlist",
         iconId: "sync"
     }) : "";
-    const settingsBtn = pl.url ? getEntryBtn({
-        action: "settings",
-        title: "Settings",
-        iconId: "settings"
-    }) : "";
+    const settingsPanel = pl.url ? `
+        <div class="pl-entry-panel-container">
+            ${getEntryBtn({ action: "settings", title: "Settings", iconId: "settings" })}
+        </div>
+    ` : "";
     const removeBtn = getEntryBtn({
         action: "remove",
         title: "Remove playlist",
@@ -140,7 +135,7 @@ function createPlaylistEntry(pl) {
                     <span class="pl-entry-stats-item playlist-duration">${parsePlaylistDuration(pl.duration)}</span>
                 </div>
                 ${syncBtn}
-                ${settingsBtn}
+                ${settingsPanel}
                 ${removeBtn}
             </div>
         </li>
@@ -161,10 +156,10 @@ function createSettingsPanel(id, { element, pl }) {
     document.getElementById(id).addEventListener("change", handleSettingChange);
 }
 
-function removePlaylistEntry(entryElement) {
-    const parentElement = entryElement.parentElement;
+function removePlaylistEntry(element) {
+    const { parentElement } = element;
 
-    removeElement(entryElement);
+    removeElement(element);
 
     if (!parentElement.children.length) {
         removeContainer(parentElement);

@@ -101,9 +101,10 @@
     display: flex;
     align-items: center;
     height: 20px;
-    cursor: pointer;
 
     &.visible {
+        cursor: pointer;
+
         &:hover, &:active {
             & + .slider-label, .slider-thumb {
                 display: block;
@@ -175,7 +176,7 @@
 
     @include breakpoint-smallest {
         position: absolute;
-        top: -30px;
+        top: -28px;
         right: 4px;
         display: none;
         padding: 4px;

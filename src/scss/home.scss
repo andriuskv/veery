@@ -18,6 +18,7 @@
     padding: 8px;
     border-bottom: $border-light;
     font-size: 20px;
+    letter-spacing: 1px;
     color: $color-text-dark;
 }
 
@@ -34,16 +35,16 @@
     border-bottom: $border-light;
 }
 
-.import-option {
-    position: relative;
-}
-
 .import-option-local {
     display: flex;
 
     .import-option-btn:first-of-type {
         border-right: $border-light;
     }
+}
+
+.import-option-youtube {
+    position: relative;
 }
 
 .import-option-btn {
@@ -90,11 +91,6 @@
             @include center-absolutely;
         };
     }
-}
-
-.import-option-spinner {
-    height: 20px;
-    margin-left: 8px;
 }
 
 .info-panel-container {
@@ -196,15 +192,11 @@
 }
 
 .pl-entry-content {
-    position: relative;
     display: flex;
     padding-top: 4px;
-    padding-left: 6px;
 }
 
 .pl-entry-btn {
-    position: relative;
-    margin-left: 4px;
     color: $color-text-dark;
 
     &:not(:disabled):hover {
@@ -212,6 +204,8 @@
     }
 
     &:disabled {
+        position: relative;
+
         @include spinner {
             @include center-absolutely;
         };
@@ -220,7 +214,6 @@
 
 .pl-entry-stats {
     display: flex;
-    align-items: center;
     margin-right: auto;
     color: $color-text-dark;
     font-size: 13px;
@@ -238,10 +231,15 @@
     }
 }
 
+.pl-entry-panel-container {
+    position: relative;
+    height: 20px;
+}
+
 .pl-entry-panel {
-    top: 30px;
+    top: 24px;
     right: 0;
-    min-width: 200px;
+    min-width: 232px;
 }
 
 .pl-entry-setting {
