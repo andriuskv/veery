@@ -161,7 +161,7 @@
             <div class="import-option-container">
                 <h2 class="home-tab-section-title">Import options</h2>
                 <ul id="js-import-options">
-                    <li class="import-option import-option-local" data-option="local">
+                    <li class="import-option-local" data-option="local">
                         <button class="btn-icon import-option-btn" data-item="file">
                             <svg viewBox="0 0 24 24" class="import-option-icon">
                                 <path d="M13,9H18.5L13,3.5V9M6,2H14L20,8V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V4C4,2.89 4.89,2 6,2M11,15V12H9V15H6V17H9V20H11V17H14V15H11Z">
@@ -175,7 +175,7 @@
                             <span>Folder</span>
                         </button>
                     </li>
-                    <li id="js-dropbox-option" class="import-option" data-option="dropbox">
+                    <li id="js-dropbox-option" data-option="dropbox">
                         <button class="btn-icon import-option-btn" data-item="chooser">
                             <svg viewBox="0 0 24 24" class="import-option-icon">
                                 <path d="M12,14.56L16.35,18.16L18.2,16.95V18.3L12,
@@ -188,7 +188,7 @@
                             <span>Dropbox</span>
                         </button>
                     </li>
-                    <li class="import-option" data-option="youtube">
+                    <li class="import-option-youtube" data-option="youtube">
                         <button class="btn-icon import-option-btn" data-item="form-toggle">
                             <svg viewBox="0 0 24 24" class="import-option-icon">
                                 <use href="#youtube"></use>
@@ -227,7 +227,7 @@
         <div class="track-slider-panel">
             <div id="js-track-current" class="track-time">0:00</div>
             <div class="control-slider-container track-slider-container">
-                <div id="js-track-slider" class="control-slider" role="slider" aria-label="Seek slider" aria-valuemin="0" tabindex="0">
+                <div id="js-track-slider" class="control-slider" role="slider" aria-label="Seek slider" aria-valuemin="0" aria-valuenow="0" aria-valuemax="0" tabindex="0">
                     <div class="slider-inner">
                         <div id="js-track-slider-elapsed" class="slider-elapsed"></div>
                         <div id="js-track-slider-thumb" class="slider-thumb"></div>
@@ -280,7 +280,7 @@
                     </svg>
                 </div>
                 <div class="control-slider-container volume-slider-container">
-                    <div id="js-volume-slider" class="control-slider visible" role="slider" aria-valuemin="0" aria-valuemax="100" tabindex="0">
+                    <div id="js-volume-slider" class="control-slider visible" role="slider" aria-label="Volume slider" aria-valuemin="0" aria-valuenow="0" aria-valuemax="100" tabindex="0">
                         <div class="slider-inner">
                             <div id="js-volume-slider-elapsed" class="slider-elapsed"></div>
                             <div id="js-volume-slider-thumb" class="slider-thumb"></div>
@@ -290,7 +290,7 @@
                 </div>
             </div>
         </div>
-        <button id="js-control-toggle-btn" class="btn-icon control-toggle-btn">
+        <button id="js-control-toggle-btn" class="btn-icon control-toggle-btn" title="Show secondary controls">
             <svg viewBox="0 0 24 24">
                 <path d="M12,16A2,2 0 0,1 14,18A2,2 0 0,1 12,20A2,2 0 0,1 10,18A2,2 0 0,1 12,16M12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12A2,2 0 0,1 12,10M12,4A2,2 0 0,1 14,6A2,2 0 0,1 12,8A2,2 0 0,1 10,6A2,2 0 0,1 12,4Z"/>
             </svg>
@@ -300,7 +300,7 @@
         <div id="js-yt-player" class="yt-player hidden"></div>
         <img src="" id="js-media-image" class="media-image" data-item="image" alt="">
         <div class="media-btn-container">
-            <a id="js-yt-player-watch" class="btn-icon yt-player-watch-btn" data-item="yt-watch" title="Watch on YouTube" target="_blank">
+            <a id="js-yt-player-watch" class="btn-icon yt-player-watch-btn" data-item="yt-watch" title="Watch on YouTube" target="_blank" rel="noopener">
                 <svg viewBox="0 0 24 24">
                     <use href="#youtube"></use>
                 </svg>
