@@ -48,7 +48,7 @@ function updatePlaylistTab(id) {
     resetFilteredPlaylist();
 
     if (pl.tracks.length) {
-        document.getElementById(`js-${id}`).addEventListener("click", playTrackFromElement);
+        getTab(id).addEventListener("click", playTrackFromElement);
     }
 }
 
@@ -86,7 +86,7 @@ headerElement.addEventListener("click", ({ currentTarget, target }) => {
 
 window.addEventListener("route-change", ({ detail: { isPlaylistTab, tabId } }) => {
     const id = visiblePlaylistId;
-    const element = document.getElementById(`js-${id}`);
+    const element = document.getElementById(`js-tab-${id}`);
 
     removeElementClass(".sidebar-entry.active", "active");
     removeElementClass(".tab.active", "active");
