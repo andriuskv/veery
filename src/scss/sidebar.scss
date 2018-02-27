@@ -27,6 +27,7 @@
     user-select: none;
     width: 200px;
     height: 100%;
+    padding-top: 16px;
     background-color: $background-color-dark;
     box-shadow: 1px 0 4px rgba(0, 0, 0, 0.1);
 
@@ -43,15 +44,11 @@
     background-size: contain;
     background-repeat: no-repeat;
     text-indent: -9999px;
-
-    h1 {
-        margin-bottom: 0;
-    }
+    margin-bottom: 16px;
 }
 
 .sidebar-nav {
     height: calc(100% - 80px);
-    padding-top: 8px;
     display: flex;
     flex-direction: column;
 }

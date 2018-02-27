@@ -1,10 +1,11 @@
 const path = require("path");
-const { DefinePlugin, optimize } = require("webpack");
+const { DefinePlugin } = require("webpack");
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = function(env = {}) {
+    const mode = env.prod ? "production" : "development";
     const plugins = [
         new ExtractTextPlugin("main.css"),
         new HtmlWebpackPlugin({
@@ -12,6 +13,7 @@ module.exports = function(env = {}) {
         }),
         new DefinePlugin({
             "process.env": {
+                NODE_ENV: mode,
                 YOUTUBE_API_KEY: JSON.stringify(process.env.YOUTUBE_API_KEY),
                 SOUNDCLOUD_API_KEY: JSON.stringify(process.env.SOUNDCLOUD_API_KEY),
                 DROPBOX_API_KEY: JSON.stringify(process.env.DROPBOX_API_KEY)
@@ -21,7 +23,6 @@ module.exports = function(env = {}) {
 
     if (env.prod) {
         plugins.push(
-            new optimize.ModuleConcatenationPlugin(),
             new UglifyJsPlugin({
                 uglifyOptions: {
                     ecma: 8
@@ -31,6 +32,7 @@ module.exports = function(env = {}) {
     }
 
     return {
+        mode,
         entry: {
             main: "./src/js/index.js"
         },

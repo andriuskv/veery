@@ -200,8 +200,7 @@ function playPreviousTrack() {
 }
 
 function playTrackFromElement({ currentTarget, detail, target }) {
-    // Remove "js-" part
-    const id = currentTarget.id.slice(3);
+    const id = currentTarget.id.split("js-tab-")[1];
     const element = getElementByAttr("data-btn", target, currentTarget);
     const trackElement = getElementByAttr("data-index", target, currentTarget);
 
