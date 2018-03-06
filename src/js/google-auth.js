@@ -1,11 +1,16 @@
 /* global gapi */
 
-import { scriptLoader } from "./utils.js";
+import { scriptLoader, dispatchCustomEvent } from "./utils.js";
 
 let initialized = false;
+let initializing = false;
 
-function isGoogleAuthInited() {
+function isGoogleAPIInitialized() {
     return initialized;
+}
+
+function isGoogleAPIInitializing() {
+    return initializing;
 }
 
 async function changeGoogleAuthState(element) {
@@ -32,12 +37,12 @@ async function changeGoogleAuthState(element) {
     element.disabled = false;
 }
 
-async function initGoogleAuth() {
-    if (initialized) {
+async function initGoogleAPI() {
+    if (initialized || initializing) {
         return;
     }
     const element = document.getElementById("js-google-sign-in-or-out-btn");
-    initialized = true;
+    initializing = true;
     element.disabled = true;
 
     try {
@@ -53,15 +58,23 @@ async function initGoogleAuth() {
         if (gapi.auth2.getAuthInstance().isSignedIn.get()) {
             element.textContent = "Sign Out";
         }
+        initialized = true;
+        initializing = false;
+        dispatchCustomEvent("google-api-initialized");
     }
     catch (e) {
+        initializing = false;
+
         console.log(e);
     }
-    element.disabled = false;
+    finally {
+        element.disabled = false;
+    }
 }
 
 export {
-    isGoogleAuthInited,
+    isGoogleAPIInitialized,
+    isGoogleAPIInitializing,
     changeGoogleAuthState,
-    initGoogleAuth
+    initGoogleAPI
 };

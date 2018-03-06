@@ -5,6 +5,9 @@ import { addImportedPlaylist, enableImportOption } from "./playlist/playlist.imp
 import { showStatusIndicator, hideStatusIndicator } from "./playlist/playlist.manage.js";
 import { getPlaylistById } from "./playlist/playlist.js";
 import { showPlayerMessage } from "./player/player.js";
+import { isGoogleAPIInitializing } from "./google-auth.js";
+
+const fetchQueue = [];
 
 function showMessage(message) {
     showPlayerMessage({
@@ -214,6 +217,10 @@ function parseUrl(url) {
 }
 
 function fetchYoutubeItem(url, type) {
+    if (isGoogleAPIInitializing()) {
+        addItemToFetchQueue(url, type);
+        return;
+    }
     const { videoId, playlistId } = parseUrl(url);
 
     if (videoId) {
@@ -231,6 +238,19 @@ function fetchYoutubeItem(url, type) {
         addPlaylist(url, playlistId, type);
     }
 }
+
+function addItemToFetchQueue(url, type) {
+    if (!fetchQueue.some(item => item.url === url)) {
+        fetchQueue.push({ url, type });
+    }
+}
+
+window.addEventListener("google-api-initialized", () => {
+    fetchQueue.forEach(({ url, type }) => {
+        fetchYoutubeItem(url, type);
+    });
+    fetchQueue.length = 0;
+});
 
 export {
     fetchYoutubeItem
