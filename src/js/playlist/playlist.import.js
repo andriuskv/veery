@@ -4,7 +4,7 @@ import {
     getElementByAttr
 } from "./../utils.js";
 import { togglePanel } from "../panels.js";
-import { isGoogleAuthInited, changeGoogleAuthState, initGoogleAuth } from "../google-auth.js";
+import { isGoogleAPIInitialized, changeGoogleAuthState, initGoogleAPI } from "../google-auth.js";
 import { getPlaylistById, createPlaylist } from "./playlist.js";
 import { addTracksToPlaylist, clearPlaylistTracks } from "./playlist.manage.js";
 import { showDropboxChooser } from "../dropbox.js";
@@ -216,8 +216,8 @@ function handleYouTubeOptionClick({ attrValue, elementRef }) {
             createImportForm(elementRef, option);
             setImportOption(option);
 
-            if (!isGoogleAuthInited()) {
-                initGoogleAuth();
+            if (!isGoogleAPIInitialized()) {
+                initGoogleAPI();
             }
         }
         else {

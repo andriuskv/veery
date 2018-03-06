@@ -2,7 +2,7 @@ import { removeElement, getElementByAttr } from "../utils.js";
 import { editSidebarEntryTitle } from "../sidebar.js";
 import { postMessageToWorker } from "../worker.js";
 import { togglePanel } from "../panels.js";
-import { isGoogleAuthInited, initGoogleAuth } from "../google-auth.js";
+import { isGoogleAPIInitialized, initGoogleAPI } from "../google-auth.js";
 import { getPlaylistById, updatePlaylist } from "./playlist.js";
 import { removePlaylist } from "./playlist.manage.js";
 import { importPlaylist, disableImportOption, resetImportOption } from "./playlist.import.js";
@@ -171,11 +171,11 @@ async function syncPlaylists(playlists) {
         return;
     }
 
-    if (!isGoogleAuthInited()) {
+    if (!isGoogleAPIInitialized()) {
         playlists.forEach(pl => {
             disableSyncBtn(pl.id);
         });
-        await initGoogleAuth();
+        await initGoogleAPI();
         playlists.forEach(pl => {
             enableSyncBtn(pl.id);
         });
