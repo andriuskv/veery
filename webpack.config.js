@@ -13,7 +13,7 @@ module.exports = function(env = {}) {
         }),
         new DefinePlugin({
             "process.env": {
-                NODE_ENV: mode,
+                NODE_ENV: JSON.stringify(mode),
                 YOUTUBE_API_KEY: JSON.stringify(process.env.YOUTUBE_API_KEY),
                 SOUNDCLOUD_API_KEY: JSON.stringify(process.env.SOUNDCLOUD_API_KEY),
                 DROPBOX_API_KEY: JSON.stringify(process.env.DROPBOX_API_KEY)
@@ -91,6 +91,11 @@ module.exports = function(env = {}) {
                     }
                 }
             ]
+        },
+        watchOptions: {
+            aggregateTimeout: 300,
+            poll: 1000,
+            ignored: /node_modules/
         },
         devtool: env.prod ? false : "inline-source-map",
         plugins
