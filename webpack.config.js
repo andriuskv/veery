@@ -57,16 +57,10 @@ module.exports = function(env = {}) {
                             loader: "postcss-loader",
                             options: {
                                 sourceMap: !env.prod,
-                                plugins: () => {
-                                    const plugins = [require("autoprefixer")()];
-
-                                    if (env.prod) {
-                                        plugins.push(
-                                            require("css-mqpacker")()
-                                        );
-                                    }
-                                    return plugins;
-                                }
+                                plugins: () => [
+                                    require("autoprefixer")(),
+                                    require("css-mqpacker")()
+                                ]
                             }
                         }, {
                             loader: "sass-loader",
