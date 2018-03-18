@@ -83,7 +83,7 @@ svg {
     }
 
     &:disabled {
-        color: $color-text-40;
+        color: $color-text-transparent;
         cursor: not-allowed;
     }
 }

@@ -19,7 +19,7 @@
     border-bottom: $border-light;
     font-size: 20px;
     letter-spacing: 1px;
-    color: $color-text-40;
+    color: $color-text-transparent;
 }
 
 .import-option-container,
@@ -80,7 +80,7 @@
     display: none;
 
     .btn-icon {
-        color: $color-text-40;
+        color: $color-text-transparent;
 
         &:not(:disabled):hover {
             color: $color-text;
@@ -194,7 +194,7 @@
 
     right: 4px;
     display: none;
-    fill: $color-text-40;
+    fill: $color-text-transparent;
 }
 
 .pl-entry-content {
@@ -204,7 +204,7 @@
 
 .pl-entry-btn {
     margin-left: 4px;
-    color: $color-text-40;
+    color: $color-text-transparent;
 
     &:not(:disabled):hover {
         color: $color-text;
@@ -222,7 +222,7 @@
 .pl-entry-stats {
     display: flex;
     margin-right: auto;
-    color: $color-text-40;
+    color: $color-text-transparent;
     font-size: 13px;
 }
 
