@@ -35,6 +35,7 @@ module.exports = function(env = {}) {
 
     return {
         mode,
+        cache: false,
         entry: {
             main: "./src/js/index.js"
         },
@@ -102,6 +103,10 @@ module.exports = function(env = {}) {
             ]
         },
         devtool: env.prod ? false : "inline-source-map",
-        plugins
+        plugins,
+        stats: {
+            entrypoints: false,
+            children: false
+        }
     };
 };

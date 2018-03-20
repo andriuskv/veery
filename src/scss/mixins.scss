@@ -37,16 +37,20 @@
     }
 }
 
+%spinner {
+    z-index: 1;
+    content: "";
+    display: block;
+    width: 20px;
+    height: 20px;
+    background-image: url("./assets/images/ring-alt.svg");
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
 @mixin spinner {
     &::after {
-        z-index: 1;
-        content: "";
-        display: block;
-        width: 20px;
-        height: 20px;
-        background-image: url("./assets/images/ring-alt.svg");
-        background-size: contain;
-        background-repeat: no-repeat;
+        @extend %spinner;
 
         @content;
     }

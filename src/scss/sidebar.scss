@@ -120,6 +120,8 @@
 .sidebar-link {
     @include text-truncate;
 
+    z-index: 2;
+    position: relative;
     display: block;
     padding: 12px 8px;
     color: inherit;
