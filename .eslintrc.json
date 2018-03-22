@@ -18,7 +18,6 @@
             "before": true,
             "after": true
         }],
-        "arrow-body-style": [2, "as-needed"],
         "block-spacing": [2, "always"],
         "brace-style": [2, "stroustrup", {
             "allowSingleLine": true

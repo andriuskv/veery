@@ -1,6 +1,6 @@
 import { removeElement, removeElementClass, getImage } from "../utils.js";
 import { getTab } from "../tab.js";
-import { postMessageToWorker } from "../worker.js";
+import { postMessageToWorker } from "../web-worker.js";
 import { getPlayerState } from "../player/player.js";
 import { togglePlayPauseBtn } from "../player/player.controls.js";
 import { getPlaylistById, getCurrentTrack, updatePlaylist } from "./playlist.js";

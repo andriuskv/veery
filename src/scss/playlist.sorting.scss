@@ -27,10 +27,10 @@
 .sort-option-btn {
     width: 100%;
     padding: 8px 10px;
-    background-color: $background-color-lightest;
+    background-color: $background-color-light;
 
     &:hover {
-        background-color: $background-color-light;
+        background-color: $background-color-dark;
         color: $color-text;
 
         &.active {

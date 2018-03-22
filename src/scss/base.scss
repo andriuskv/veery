@@ -131,12 +131,24 @@ svg {
     }
 }
 
+.panel {
+    z-index: 2;
+    position: absolute;
+    padding: 8px;
+    background-color: $background-color-light;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
+    color: $color-text;
+}
+
+.panel-title {
+    font-size: 16px;
+}
+
 .player-message {
-    overflow: hidden;
     bottom: 88px;
     right: 8px;
     max-width: 300px;
-    padding: 16px;
+    padding: 8px 16px;
 
     @include breakpoint-small {
         bottom: 116px;
@@ -144,10 +156,7 @@ svg {
 }
 
 .play-message-title {
-    @include text-truncate;
-
-    margin-top: 0;
-    margin-bottom: 4px;
+    margin-bottom: 0;
 
     &::first-letter {
         text-transform: uppercase;
@@ -155,22 +164,6 @@ svg {
 }
 
 .play-message-body {
-    margin-top: 0;
+    margin-top: 4px;
     margin-bottom: 0;
-    word-wrap: break-word;
-    font-size: 13px;
-}
-
-.panel {
-    z-index: 2;
-    position: absolute;
-    padding: 8px;
-    filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.4));
-    background-color: $background-color-lightest;
-    color: $color-text;
-}
-
-.panel-title {
-    font-size: 16px;
-    line-height: 1;
 }
