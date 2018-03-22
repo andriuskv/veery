@@ -1,7 +1,8 @@
 /* global YT */
 
 import { scriptLoader, dispatchCustomEvent } from "../utils.js";
-import { storedTrack, getPlayerState, updatePlayerState, stopPlayer, showPlayerMessage } from "./player.js";
+import { storedTrack, getPlayerState, updatePlayerState, stopPlayer } from "./player.js";
+import { showPlayerMessage } from "./player.view.js";
 import { elapsedTime, showPlayPauseBtnSpinner, hidePlayPauseBtnSpinner } from "./player.controls.js";
 import { getCurrentTrack } from "../playlist/playlist.js";
 

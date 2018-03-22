@@ -39,12 +39,31 @@
 }
 
 .sidebar-header {
+    position: relative;
     height: 80px;
     background-image: url("./assets/images/main-icon.png");
     background-size: contain;
     background-repeat: no-repeat;
-    text-indent: -9999px;
     margin-bottom: 16px;
+
+    h1 {
+        margin-bottom: 0;
+        text-indent: -9999px;
+    }
+}
+
+.online-status {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    display: none;
+    color: $color-text-transparent;
+    font-style: italic;
+    font-size: 13px;
+
+    &.visible {
+        display: block;
+    }
 }
 
 .sidebar-nav {

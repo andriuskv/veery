@@ -4,7 +4,7 @@ import { formatTime } from "./utils.js";
 import { addImportedPlaylist, enableImportOption } from "./playlist/playlist.import.js";
 import { showStatusIndicator, hideStatusIndicator } from "./playlist/playlist.manage.js";
 import { getPlaylistById } from "./playlist/playlist.js";
-import { showPlayerMessage } from "./player/player.js";
+import { showPlayerMessage } from "./player/player.view.js";
 import { isGoogleAPIInitializing } from "./google-auth.js";
 
 const fetchQueue = [];

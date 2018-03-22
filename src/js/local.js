@@ -4,7 +4,7 @@ import { scriptLoader, formatTime } from "./utils.js";
 import { getPlaylistById, createPlaylist } from "./playlist/playlist.js";
 import { addTracksToPlaylist, showStatusIndicator, hideStatusIndicator } from "./playlist/playlist.manage.js";
 import { disableImportOption, enableImportOption } from "./playlist/playlist.import.js";
-import { showPlayerMessage } from "./player/player.js";
+import { showPlayerMessage } from "./player/player.view.js";
 
 function getTrackDuration(track) {
     return new Promise(resolve => {

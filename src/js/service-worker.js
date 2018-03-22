@@ -13,4 +13,3 @@ window.addEventListener("load", () => {
         };
     }).catch(console.log);
 });
-
