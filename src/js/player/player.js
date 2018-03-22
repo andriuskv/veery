@@ -26,7 +26,6 @@ import { removeElementClass, getElementByAttr } from "../utils.js";
 import { getVisiblePlaylistId } from "../tab.js";
 import { getSetting } from "../settings.js";
 import { showActiveIcon, removeActiveIcon } from "../sidebar.js";
-import { togglePanel } from "../panels.js";
 import { showTrack, toggleTrackPlayPauseBtn } from "../playlist/playlist.view.js";
 import { showTrackInfo, resetTrackInfo } from "./player.now-playing.js";
 import * as nPlayer from "./player.native.js";
@@ -298,26 +297,6 @@ function seekTo(player, currentTime) {
     }
 }
 
-function getPlayerMessageCb(title, body = "") {
-    return (id, { element }) => {
-        element.insertAdjacentHTML("beforeend", `
-            <div id="${id}" class="panel player-message">
-                <h3 class="panel-title play-message-title">${title}</h3>
-                ${body && `<p class="play-message-body">${body}</p>`}
-            </div>
-        `);
-    };
-}
-
-function showPlayerMessage({ title, body }) {
-    const createPlayerMessage = getPlayerMessageCb(title, body);
-
-    togglePanel("js-player-message", createPlayerMessage, {
-        element: document.getElementById("js-player"),
-        removeOnClick: true
-    });
-}
-
 window.addEventListener("track-start", ({ detail: startTime }) => {
     const track = getCurrentTrack();
 
@@ -350,19 +329,6 @@ window.addEventListener("track-end", () => {
     playNextTrack();
 });
 
-window.addEventListener("sw-state-change", ({ detail }) => {
-    if (detail === "init") {
-        showPlayerMessage({
-            title: "Content is cached for offline use."
-        });
-    }
-    else if (detail === "update") {
-        showPlayerMessage({
-            title: "Update is available, please refresh."
-        });
-    }
-});
-
 export {
     getPlayerState,
     updatePlayerState,
@@ -373,6 +339,5 @@ export {
     toggleShuffle,
     setVolume,
     seekTo,
-    storedTrack,
-    showPlayerMessage
+    storedTrack
 };
