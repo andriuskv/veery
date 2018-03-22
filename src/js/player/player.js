@@ -298,12 +298,12 @@ function seekTo(player, currentTime) {
     }
 }
 
-function getPlayerMessageCb(title, body) {
+function getPlayerMessageCb(title, body = "") {
     return (id, { element }) => {
         element.insertAdjacentHTML("beforeend", `
             <div id="${id}" class="panel player-message">
-                <p class="play-message-title">${title}</p>
-                <p class="play-message-body">${body}</p>
+                <h3 class="panel-title play-message-title">${title}</h3>
+                ${body && `<p class="play-message-body">${body}</p>`}
             </div>
         `);
     };
@@ -348,6 +348,19 @@ window.addEventListener("track-end", () => {
         return;
     }
     playNextTrack();
+});
+
+window.addEventListener("sw-state-change", ({ detail }) => {
+    if (detail === "init") {
+        showPlayerMessage({
+            title: "Content is cached for offline use."
+        });
+    }
+    else if (detail === "update") {
+        showPlayerMessage({
+            title: "Update is available, please refresh."
+        });
+    }
 });
 
 export {

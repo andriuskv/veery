@@ -18,7 +18,7 @@
     border-bottom: $border-light;
 
     &::-webkit-scrollbar-thumb {
-        background: $background-color-light;
+        background: $background-color-dark;
     }
 }
 
@@ -26,10 +26,10 @@
 .move-to-new-pl-btn {
     width: 100%;
     text-align: left;
-    background-color: $background-color-lightest;
+    background-color: $background-color-light;
 
     &:hover {
-        background-color: $background-color-light;
+        background-color: $background-color-dark;
         color: $color-text;
     }
 }
@@ -54,15 +54,10 @@
     display: flex;
     margin-left: 8px;
     margin-right: 8px;
-    box-shadow: 0 0 0 1px $background-color-dark;
+    box-shadow: 0 0 0 1px $background-color-darkest;
 
     .input {
         flex-grow: 1;
         width: 50%;
-        background-color: $background-color-light;
-    }
-
-    .btn {
-        background-color: $background-color-dark;
     }
 }

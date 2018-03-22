@@ -4,7 +4,7 @@ import "../scss/index.scss";
 
 import "./utils.js";
 import "./settings.js";
-import "./worker.js";
+import "./web-worker.js";
 import "./router.js";
 import "./tab.js";
 import "./panels.js";
@@ -25,3 +25,4 @@ import "./player/player.now-playing.js";
 import "./player/player.js";
 import "./player/player.native.js";
 import "./player/player.youtube.js";
+import "./service-worker.js";

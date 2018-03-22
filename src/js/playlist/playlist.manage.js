@@ -3,7 +3,7 @@ import { removeElementClass } from "../utils.js";
 import { removePlaylistTab, updatePlaylistView } from "./playlist.view.js";
 import { addRoute, toggleRoute } from "../router.js";
 import { getSetting } from "../settings.js";
-import { postMessageToWorker } from "../worker.js";
+import { postMessageToWorker } from "../web-worker.js";
 import { createSidebarEntry, getSidebarEntry, removeSidebarEntry } from "../sidebar.js";
 import { stopPlayer } from "../player/player.js";
 import { sortTracks } from "./playlist.sorting.js";

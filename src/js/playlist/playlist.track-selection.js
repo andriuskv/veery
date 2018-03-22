@@ -17,7 +17,7 @@ import {
 } from "./playlist.js";
 import { getSetting } from "../settings.js";
 import { getVisiblePlaylistId, getVisiblePlaylist, getTab } from "../tab.js";
-import { postMessageToWorker } from "../worker.js";
+import { postMessageToWorker } from "../web-worker.js";
 import { createMoveToContainer, removeMoveToContainer } from "./playlist.move-to.js";
 import { getPlaylistTrackElements, updatePlaylistView } from "./playlist.view.js";
 

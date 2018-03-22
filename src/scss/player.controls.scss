@@ -150,6 +150,8 @@
     display: none;
     min-width: 40px;
     padding: 4px 8px;
+    box-shadow: none;
+    filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.4));
     font-size: 13px;
     text-align: center;
     transform: translateX(-50%);
@@ -158,7 +160,7 @@
     @include popup-arrow {
         bottom: -4px;
         left: 50%;
-        border-top: 4px solid $background-color-lightest;
+        border-top: 4px solid $background-color-light;
         transform: translateX(-50%);
     }
 }

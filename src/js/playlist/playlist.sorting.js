@@ -1,7 +1,7 @@
 import { capitalize } from "./../utils.js";
 import { getVisiblePlaylist } from "./../tab.js";
 import { removePanel } from "./../panels.js";
-import { postMessageToWorker } from "../worker.js";
+import { postMessageToWorker } from "../web-worker.js";
 import { resetTrackIndexes, updatePlaylist } from "./playlist.js";
 import { updateCurrentTrack } from "./playlist.manage.js";
 import { getPlaylistTrackElements, updatePlaylistView } from "./playlist.view.js";

@@ -1,6 +1,6 @@
 import { removeElement, getElementByAttr } from "../utils.js";
 import { editSidebarEntryTitle } from "../sidebar.js";
-import { postMessageToWorker } from "../worker.js";
+import { postMessageToWorker } from "../web-worker.js";
 import { togglePanel } from "../panels.js";
 import { isGoogleAPIInitialized, initGoogleAPI } from "../google-auth.js";
 import { getPlaylistById, updatePlaylist } from "./playlist.js";
