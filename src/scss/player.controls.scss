@@ -146,12 +146,12 @@
 
 .slider-label {
     left: 0;
-    bottom: 28px;
+    bottom: 26px;
     display: none;
     min-width: 40px;
     padding: 4px 8px;
     box-shadow: none;
-    filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.4));
+    filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.2));
     font-size: 13px;
     text-align: center;
     transform: translateX(-50%);
@@ -160,7 +160,7 @@
     @include popup-arrow {
         bottom: -4px;
         left: 50%;
-        border-top: 4px solid $background-color-light;
+        border-top: 4px solid $background-color-lightest;
         transform: translateX(-50%);
     }
 }
@@ -183,7 +183,7 @@
         display: none;
         padding: 4px;
         background-color: $background-color-lightest;
-        box-shadow: 0 0 1px rgba(0, 0, 0, 0.4);
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
 
         &.visible {
             display: flex;

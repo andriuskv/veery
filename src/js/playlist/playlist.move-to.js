@@ -78,7 +78,7 @@ function getPlaylistItems(id) {
         if (pl.id !== id) {
             str += `
                 <li data-panel-item="${pl.id}">
-                    <button class="btn move-to-list-item-btn">${pl.title}</button>
+                    <button class="btn-icon move-to-list-item-btn">${pl.title}</button>
                 </li>
             `;
         }
