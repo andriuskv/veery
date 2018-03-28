@@ -26,10 +26,9 @@
 .move-to-new-pl-btn {
     width: 100%;
     text-align: left;
-    background-color: $background-color-light;
 
     &:hover {
-        background-color: $background-color-dark;
+        background-color: $background-color-light;
         color: $color-text;
     }
 }
@@ -54,7 +53,7 @@
     display: flex;
     margin-left: 8px;
     margin-right: 8px;
-    box-shadow: 0 0 0 1px $background-color-darkest;
+    box-shadow: $box-shadow-light;
 
     .input {
         flex-grow: 1;
