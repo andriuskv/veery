@@ -12,8 +12,8 @@ worker.onmessage = function({ data: { action, payload } }) {
             initPlaylist(createPlaylist(pl));
         });
         syncPlaylists(payload.filter(pl => pl.syncOnInit));
-        showCurrentRoute();
         storedTrack.initTrack();
+        showCurrentRoute();
     }
     else if (action === "update") {
         updatePlaylist(payload.id, payload);
