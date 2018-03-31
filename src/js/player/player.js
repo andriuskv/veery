@@ -159,6 +159,7 @@ function play(source, sourceValue, id) {
     const shuffle = getSetting("shuffle");
     const currentTrack = getCurrentTrack();
     let track = null;
+    let shuffled = false;
 
     if (!pl) {
         return;
@@ -171,10 +172,14 @@ function play(source, sourceValue, id) {
     }
 
     if (pl.shuffled !== shuffle) {
+        shuffled = true;
         setPlaybackOrder(pl, shuffle);
     }
 
     if (source === "index") {
+        if (!shuffled && pl.shuffled) {
+            setPlaybackOrder(pl, pl.shuffled);
+        }
         track = getTrack(pl.tracks[sourceValue]);
     }
     else if (source === "direction") {

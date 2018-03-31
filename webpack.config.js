@@ -35,7 +35,6 @@ module.exports = function(env = {}) {
 
     return {
         mode,
-        cache: false,
         entry: {
             main: "./src/js/index.js"
         },
