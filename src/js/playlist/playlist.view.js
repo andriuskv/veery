@@ -213,6 +213,7 @@ export {
     removePlaylistTab,
     updatePlaylistView,
     getTrackName,
+    showCurrentTrack,
     renderPlaylist,
     showTrack,
     toggleTrackPlayPauseBtn,

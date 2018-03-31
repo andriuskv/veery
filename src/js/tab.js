@@ -1,4 +1,4 @@
-import { renderPlaylist, changePlaylistType, togglePlaylistTypeBtn } from "./playlist/playlist.view.js";
+import { renderPlaylist, changePlaylistType, togglePlaylistTypeBtn, showCurrentTrack } from "./playlist/playlist.view.js";
 import { removeElementClass, getElementByAttr } from "./utils.js";
 import { getSidebarEntry } from "./sidebar.js";
 import { togglePanel } from "./panels.js";
@@ -35,6 +35,9 @@ function updatePlaylistTab(id) {
 
     if (!pl.rendered) {
         renderPlaylist(pl);
+    }
+    else {
+        showCurrentTrack(id);
     }
 
     if (pl.type === "list" && media.matches) {
