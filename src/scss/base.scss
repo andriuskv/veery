@@ -120,17 +120,6 @@ svg {
     }
 }
 
-.player {
-    display: grid;
-    grid-template-rows: 1fr 80px;
-    grid-template-columns: 200px 1fr;
-
-    @include breakpoint-small {
-        grid-template-rows: 1fr 108px;
-        grid-template-columns: 1fr;
-    }
-}
-
 .panel {
     z-index: 2;
     position: absolute;

@@ -10,7 +10,6 @@ const PLAYING = 1;
 const PAUSED = 2;
 const BUFFERING = 3;
 const UNSTARTED = -1;
-let isStoredTrack = false;
 let initialized = false;
 let ytPlayer = null;
 let args = null;
@@ -34,30 +33,26 @@ function onPlayerStateChange({ data: state }) {
         if (latestState === PAUSED) {
             dispatchCustomEvent("track-start", ytPlayer.getCurrentTime());
         }
-        updatePlayerState(!isPaused, track);
+        updatePlayerState(track);
         return;
     }
 
     if (state === PLAYING) {
-        if (latestState === PLAYING) {
-            isStoredTrack = false;
-        }
-
-        if (isStoredTrack || latestState === PAUSED) {
-            isStoredTrack = false;
+        if (latestState === PAUSED) {
             ytPlayer.pauseVideo();
-            hidePlayPauseBtnSpinner(track);
             return;
         }
         dispatchCustomEvent("track-start", ytPlayer.getCurrentTime());
     }
     else if (state === PAUSED && latestState === PLAYING) {
         ytPlayer.playVideo();
-        hidePlayPauseBtnSpinner(track);
     }
     else if (state === BUFFERING) {
         elapsedTime.stop();
         showPlayPauseBtnSpinner(track);
+    }
+    else {
+        hidePlayPauseBtnSpinner(track);
     }
 }
 
@@ -121,20 +116,13 @@ function togglePlaying(paused) {
 }
 
 function playTrack(track, volume, startTime) {
-    if (!initialized) {
-        args = [track, volume, startTime];
-        scriptLoader.load({ src: "https://www.youtube.com/iframe_api" });
+    if (initialized) {
+        setVolume(volume);
+        ytPlayer.loadVideoById(track.id, startTime);
         return;
     }
-    setVolume(volume);
-
-    if (typeof startTime === "number") {
-        isStoredTrack = true;
-        ytPlayer.loadVideoById(track.id, startTime);
-    }
-    else {
-        ytPlayer.loadVideoById(track.id);
-    }
+    args = [track, volume, startTime];
+    scriptLoader.load({ src: "https://www.youtube.com/iframe_api" });
 }
 
 function stopTrack(track) {
@@ -159,7 +147,7 @@ function watchOnYoutube(element, track) {
 
     if (!isPaused) {
         ytPlayer.pauseVideo();
-        updatePlayerState(!isPaused, track);
+        updatePlayerState(track, !isPaused);
     }
     element.setAttribute("href", `https://www.youtube.com/watch?v=${track.id}&time_continue=${currentTime}`);
 }

@@ -260,11 +260,11 @@ function handleContainerFocus({ target }) {
     }
 }
 
-function handleSettingChange(event) {
-    const entry = getElementByAttr("data-entry-id", event.target);
-    const pl = getPlaylistById(entry.attrValue);
+function handleSettingChange({ target }) {
+    const { attrValue } = getElementByAttr("data-entry-id", target);
+    const pl = getPlaylistById(attrValue);
 
-    pl.syncOnInit = event.target.checked;
+    pl.syncOnInit = target.checked;
 
     postMessageToWorker({
         action: "change-sync",
