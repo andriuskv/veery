@@ -1,4 +1,3 @@
-import { capitalize } from "./../utils.js";
 import { getVisiblePlaylist } from "./../tab.js";
 import { removePanel } from "./../panels.js";
 import { postMessageToWorker } from "../web-worker.js";
@@ -8,7 +7,7 @@ import { getPlaylistTrackElements, updatePlaylistView } from "./playlist.view.js
 import { filterTracks } from "./playlist.filter.js";
 
 function setSortBtnText(text) {
-    document.getElementById("js-sort-toggle").textContent = capitalize(text);
+    document.getElementById("js-sort-toggle").textContent = text;
 }
 
 function toggleOrderBtn(order) {
@@ -93,7 +92,7 @@ function getSortOtions(sortedBy) {
             ${str}
             <li>
                 <button class="btn-icon sort-option-btn${activeClass}" data-sort="${option}">
-                    ${capitalize(option)}
+                    ${option}
                 </button>
             </li>
         `;
