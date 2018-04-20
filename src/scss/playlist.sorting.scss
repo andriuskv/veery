@@ -10,6 +10,7 @@
 .sort-panel-toggle-btn {
     flex-grow: 1;
     background-color: $background-color-darkest;
+    text-transform: capitalize;
 }
 
 .sort-panel-order-btn {
@@ -27,6 +28,7 @@
 .sort-option-btn {
     width: 100%;
     padding: 8px 10px;
+    text-transform: capitalize;
 
     &:hover {
         background-color: $background-color-light;

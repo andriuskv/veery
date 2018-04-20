@@ -147,19 +147,6 @@ function removePlaylistTab(id) {
     removeElement(getTab(id));
 }
 
-function scrollToTrackElement(element, id) {
-    const containerElement = document.getElementById(`js-tab-${id}`);
-    const elementHeight = element.offsetHeight;
-    const trackTop = element.offsetTop;
-    const containerScrollTop = containerElement.scrollTop;
-    const containerClientHeight = containerElement.clientHeight;
-    const visibleContainerOffset = containerScrollTop + containerClientHeight;
-
-    if (trackTop - elementHeight < containerScrollTop || trackTop > visibleContainerOffset) {
-        containerElement.scrollTop = trackTop - containerClientHeight / 2;
-    }
-}
-
 function showTrack(id, index, { scrollToTrack } = {}) {
     const element = getPlaylistElementAtIndex(id, index);
 
@@ -167,7 +154,9 @@ function showTrack(id, index, { scrollToTrack } = {}) {
     element.classList.add("playing");
 
     if (scrollToTrack) {
-        scrollToTrackElement(element, id);
+        element.scrollIntoView({
+            inline: "center"
+        });
     }
 }
 

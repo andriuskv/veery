@@ -23,10 +23,6 @@ const scriptLoader = (function() {
     };
 })();
 
-function capitalize(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-}
-
 function removeElement(element) {
     element.parentElement.removeChild(element);
 }
@@ -102,7 +98,6 @@ function setElementIconAndTitle(element, { id, title }) {
 
 export {
     scriptLoader,
-    capitalize,
     removeElement,
     removeElements,
     removeElementClass,
