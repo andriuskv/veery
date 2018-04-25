@@ -1,7 +1,7 @@
 import { dispatchCustomEvent } from "./utils.js";
 
-window.addEventListener("load", () => {
-    if ("serviceWorker" in navigator) {
+if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
         navigator.serviceWorker.register("./sw.js").then(reg => {
             reg.onupdatefound = () => {
                 const worker = reg.installing;
@@ -13,5 +13,5 @@ window.addEventListener("load", () => {
                 };
             };
         }).catch(console.log);
-    }
-});
+    });
+}
