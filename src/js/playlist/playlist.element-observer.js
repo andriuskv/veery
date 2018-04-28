@@ -11,10 +11,13 @@ function handleIntersectingEntry(entry) {
     const track = tracks[entry.getAttribute("data-index")];
     const currentTrack = getCurrentTrack();
     const paused = getPlayerState();
-    const icon = getPlayPauseButtonIcon(paused && currentTrack && currentTrack.name === track.name);
-    const item = type === "list" ? createListItemContent(track, icon) : createGridItemContent(track, icon);
+    const icon = currentTrack && currentTrack.name === track.name ?
+        getPlayPauseButtonIcon(paused) :
+        getPlayPauseButtonIcon(true);
 
-    entry.insertAdjacentHTML("beforeend", item);
+    entry.innerHTML = type === "list" ?
+        createListItemContent(track, icon) :
+        createGridItemContent(track, icon);
 }
 
 function callback(entries) {
@@ -29,7 +32,7 @@ function callback(entries) {
 }
 
 function observePlaylist(id) {
-    if (observers[id]) {
+    if (!IntersectionObserver || observers[id]) {
         return;
     }
     observers[id] = new IntersectionObserver(callback, {
@@ -43,13 +46,17 @@ function observePlaylist(id) {
 }
 
 function reObservePlaylist(id) {
-    removePlaylistObserver(id);
-    observePlaylist(id);
+    if (observers[id]) {
+        removePlaylistObserver(id);
+        observePlaylist(id);
+    }
 }
 
 function removePlaylistObserver(id) {
-    observers[id].disconnect();
-    delete observers[id];
+    if (observers[id]) {
+        observers[id].disconnect();
+        delete observers[id];
+    }
 }
 
 export {
