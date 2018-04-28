@@ -26,8 +26,13 @@ function getTrackPlayPauseBtn(track) {
     return element.querySelector(".btn-icon");
 }
 
-function createListItem({ index }) {
-    return `<li class="list-item track" data-index="${index}" tabindex="0"></li>`;
+function createListItem(item) {
+    const content = createListItemContent(item, { id: "play", title: "Play" });
+    return createListItemContainer(item, content);
+}
+
+function createListItemContainer({ index }, content = "") {
+    return `<li class="list-item track" data-index="${index}" tabindex="0">${content}</li>`;
 }
 
 function createListItemContent(item, { title, id }) {
@@ -60,8 +65,13 @@ function createList(id, items) {
     `;
 }
 
-function createGridItem({ index }) {
-    return `<li class="grid-item track" data-index="${index}" tabindex="0"></li>`;
+function createGridItem(item) {
+    const content = createGridItemContent(item, { id: "play", title: "Play" });
+    return createGridItemContainer(item, content);
+}
+
+function createGridItemContainer({ index }, content = "") {
+    return `<li class="grid-item track" data-index="${index}" tabindex="0">${content}</li>`;
 }
 
 function createGridItemContent(item, { title, id }) {
@@ -88,10 +98,18 @@ function createItems(tracks, cb) {
 }
 
 function createPlaylist({ id, type, tracks }) {
-    if (type === "list") {
-        return createList(id, createItems(tracks, createListItem));
+    let listItemCb = createListItem;
+    let gridItemCb = createGridItem;
+
+    if ("IntersectionObserver" in window) {
+        listItemCb = createListItemContainer;
+        gridItemCb = createGridItemContainer;
     }
-    return createGrid(id, createItems(tracks, createGridItem));
+
+    if (type === "list") {
+        return createList(id, createItems(tracks, listItemCb));
+    }
+    return createGrid(id, createItems(tracks, gridItemCb));
 }
 
 function getPlaylistTemplate(pl) {
