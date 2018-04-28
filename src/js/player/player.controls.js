@@ -70,19 +70,21 @@ function hidePlayPauseBtnSpinner(track) {
     document.getElementById("js-play-btn").classList.remove("show-spinner");
 }
 
-function togglePlayPauseBtn(element, state) {
-    const data = {
-        on: {
+function getPlayPauseButtonIcon(state) {
+    if (state) {
+        return {
             id: "play",
             title: "Play"
-        },
-        off: {
-            id:"pause",
-            title: "Pause"
-        }
+        };
+    }
+    return {
+        id: "pause",
+        title: "Pause"
     };
+}
 
-    setElementIconAndTitle(element, state ? data.on : data.off);
+function togglePlayPauseBtn(element, state) {
+    setElementIconAndTitle(element, getPlayPauseButtonIcon(state));
 }
 
 function toggleVolumeBtn(element, state) {
@@ -423,6 +425,7 @@ export {
     elapsedTime,
     showPlayPauseBtnSpinner,
     hidePlayPauseBtnSpinner,
+    getPlayPauseButtonIcon,
     togglePlayPauseBtn,
     updateTrackSlider,
     updateVolume,

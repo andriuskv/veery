@@ -33,7 +33,7 @@ function onPlayerStateChange({ data: state }) {
         if (latestState === PAUSED) {
             dispatchCustomEvent("track-start", ytPlayer.getCurrentTime());
         }
-        updatePlayerState(!isPaused, track);
+        updatePlayerState(track);
         return;
     }
 
@@ -147,7 +147,7 @@ function watchOnYoutube(element, track) {
 
     if (!isPaused) {
         ytPlayer.pauseVideo();
-        updatePlayerState(!isPaused, track);
+        updatePlayerState(track, !isPaused);
     }
     element.setAttribute("href", `https://www.youtube.com/watch?v=${track.id}&time_continue=${currentTime}`);
 }

@@ -5,6 +5,7 @@ import { getPlayerState } from "../player/player.js";
 import { togglePlayPauseBtn } from "../player/player.controls.js";
 import { getPlaylistById, getCurrentTrack, updatePlaylist } from "./playlist.js";
 import { enableTrackSelection } from "./playlist.track-selection.js";
+import { observePlaylist, reObservePlaylist, removePlaylistObserver } from "./playlist.element-observer.js";
 
 function getPlaylistTrackElements(id) {
     return document.getElementById(`js-${id}`).children;
@@ -25,22 +26,24 @@ function getTrackPlayPauseBtn(track) {
     return element.querySelector(".btn-icon");
 }
 
-function createListItem(item) {
+function createListItem({ index }) {
+    return `<li class="list-item track" data-index="${index}" tabindex="0"></li>`;
+}
+
+function createListItemContent(item, { title, id }) {
     return `
-        <li class="list-item track" data-index="${item.index}" tabindex="0">
-            <span class="list-item-first-col">
-                <span class="list-item-index">${item.index + 1}</span>
-                <button class="btn-icon track-play-pause-btn" data-btn="play" title="Play">
-                    <svg viewBox="0 0 24 24">
-                        <use class="js-icon" href="#play"></use>
-                    </svg>
-                </button>
-            </span>
-            <span class="list-item-col">${item.title}</span>
-            <span class="list-item-col">${item.artist}</span>
-            <span class="list-item-col">${item.album}</span>
-            <span class="list-item-last-col">${item.duration}</span>
-        </li>
+        <span class="list-item-first-col">
+            <span class="list-item-index">${item.index + 1}</span>
+            <button class="btn-icon track-play-pause-btn" data-btn="play" title="${title}">
+                <svg viewBox="0 0 24 24">
+                    <use class="js-icon" href="#${id}"></use>
+                </svg>
+            </button>
+        </span>
+        <span class="list-item-col">${item.title}</span>
+        <span class="list-item-col">${item.artist}</span>
+        <span class="list-item-col">${item.album}</span>
+        <span class="list-item-last-col">${item.duration}</span>
     `;
 }
 
@@ -57,20 +60,22 @@ function createList(id, items) {
     `;
 }
 
-function createGridItem(item) {
+function createGridItem({ index }) {
+    return `<li class="grid-item track" data-index="${index}" tabindex="0"></li>`;
+}
+
+function createGridItemContent(item, { title, id }) {
     return `
-        <li class="grid-item track" data-index="${item.index}" tabindex="0">
-            <div class="artwork-container grid-item-first-col" tabindex="-1">
-                <button class="btn-icon track-play-pause-btn artwork-container-btn" data-btn="play" title="Play">
-                    <svg viewBox="0 0 24 24">
-                        <use class="js-icon" href="#play"></use>
-                    </svg>
-                </button>
-                <img src="${getImage(item.thumbnail)}" class="artwork" alt="">
-            </div>
-            ${getTrackName(item)}
-            <div class="grid-item-duration">${item.duration}</div>
-        </li>
+        <div class="artwork-container grid-item-first-col" tabindex="-1">
+            <button class="btn-icon track-play-pause-btn artwork-container-btn" data-btn="play" title="${title}">
+                <svg viewBox="0 0 24 24">
+                    <use class="js-icon" href="#${id}"></use>
+                </svg>
+            </button>
+            <img src="${getImage(item.thumbnail)}" class="artwork" alt="">
+        </div>
+        ${getTrackName(item)}
+        <div class="grid-item-duration">${item.duration}</div>
     `;
 }
 
@@ -130,20 +135,23 @@ function showCurrentTrack(id) {
 function renderPlaylist(pl) {
     const tab = createPlaylistTab(pl);
     const element = document.getElementById("js-tabs");
-    pl.rendered = true;
 
     element.insertAdjacentHTML("beforeend", tab);
+    pl.rendered = true;
     showCurrentTrack(pl.id);
+    observePlaylist(pl.id);
 }
 
 function updatePlaylistView(pl) {
     const element = getTab(pl.id);
 
     element.innerHTML = getPlaylistTemplate(pl);
+    reObservePlaylist(pl.id);
     showCurrentTrack(pl.id);
 }
 
 function removePlaylistTab(id) {
+    removePlaylistObserver(id);
     removeElement(getTab(id));
 }
 
@@ -199,6 +207,8 @@ function changePlaylistType(type, pl) {
 export {
     getPlaylistTrackElements,
     getTrackPlayPauseBtn,
+    createListItemContent,
+    createGridItemContent,
     removePlaylistTab,
     updatePlaylistView,
     getTrackName,

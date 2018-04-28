@@ -1,12 +1,15 @@
 .sidebar-container {
+    float: left;
+    height: calc(100% - 80px);
+
     @include breakpoint-small {
         z-index: 3;
         overflow: hidden;
         position: absolute;
         top: 0;
         left: 0;
-        bottom: 108px;
         width: 100%;
+        height: calc(100% - 108px);
         background-color: $background-color-dark-80;
         transition: 0.1s opacity, 0.1s visibility;
 
@@ -25,9 +28,10 @@
 
 .sidebar {
     user-select: none;
+    display: flex;
+    flex-direction: column;
     width: 200px;
     height: 100%;
-    padding-top: 16px;
     background-color: $background-color-dark;
     box-shadow: 1px 0 4px rgba(0, 0, 0, 0.1);
 
@@ -44,6 +48,7 @@
     background-image: url("./assets/images/main-icon.png");
     background-size: contain;
     background-repeat: no-repeat;
+    margin-top: 16px;
     margin-bottom: 16px;
 
     h1 {
@@ -66,9 +71,9 @@
 }
 
 .sidebar-nav {
-    height: calc(100% - 80px);
     display: flex;
     flex-direction: column;
+    flex-grow: 1;
 }
 
 .sidebar-section-title {

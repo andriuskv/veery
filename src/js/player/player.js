@@ -82,8 +82,8 @@ function getPlayerState() {
     return isPaused;
 }
 
-function updatePlayerState(state, track) {
-    isPaused = state;
+function updatePlayerState(track, state) {
+    isPaused = typeof state === "boolean" ? state : !isPaused;
 
     if (isPaused) {
         removeActiveIcon();
@@ -120,7 +120,7 @@ function togglePlaying(track) {
     else if (track.player === "youtube") {
         ytPlayer.togglePlaying(isPaused);
     }
-    updatePlayerState(!isPaused, track);
+    updatePlayerState(track);
 }
 
 function playNewTrack(track, startTime) {

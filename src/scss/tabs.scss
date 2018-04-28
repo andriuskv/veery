@@ -1,5 +1,13 @@
 .tabs {
     overflow: hidden;
+    float: right;
+    width: calc(100% - 200px);
+    height: calc(100% - 80px);
+
+    @include breakpoint-small {
+        width: 100%;
+        height: calc(100% - 108px);
+    }
 }
 
 .tab-header {

@@ -1,8 +1,8 @@
 .player-controls {
     z-index: 3;
     position: relative;
+    clear: both;
     display: grid;
-    grid-column: span 2;
     grid-template-columns: 28% 1fr 1fr 28%;
     grid-template-rows: repeat(3, 1fr);
     padding: 8px;
