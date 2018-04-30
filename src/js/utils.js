@@ -96,6 +96,18 @@ function setElementIconAndTitle(element, { id, title }) {
     element.querySelector(".js-icon").setAttribute("href", `#${id}`);
 }
 
+function shuffleArray(array) {
+    let index = array.length;
+
+    while (index) {
+        const randomIndex = Math.floor(Math.random() * index);
+
+        index -= 1;
+        [array[index], array[randomIndex]] = [array[randomIndex], array[index]];
+    }
+    return array;
+}
+
 export {
     scriptLoader,
     removeElement,
@@ -106,5 +118,6 @@ export {
     formatTime,
     dispatchCustomEvent,
     getImage,
-    setElementIconAndTitle
+    setElementIconAndTitle,
+    shuffleArray
 };

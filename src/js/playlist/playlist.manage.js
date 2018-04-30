@@ -7,7 +7,13 @@ import { postMessageToWorker } from "../web-worker.js";
 import { createSidebarEntry, getSidebarEntry, removeSidebarEntry } from "../sidebar.js";
 import { stopPlayer } from "../player/player.js";
 import { sortTracks } from "./playlist.sorting.js";
-import { createPlaylistEntry, enableSyncBtn, disableSyncBtn, updatePlaylistStats } from "./playlist.entries.js";
+import {
+    createPlaylistEntry,
+    enableSyncBtn,
+    disableSyncBtn,
+    updatePlaylistStats,
+    updatePlaylistThumbnail
+} from "./playlist.entries.js";
 
 function updateTracks(pl) {
     playlist.setPlaybackOrder(pl, getSetting("shuffle"));
@@ -76,6 +82,7 @@ function addTracksToPlaylist(pl, tracks, showPlaylist) {
         hideStatusIndicator(pl.id);
         updateTracks(pl);
         updateCurrentTrack(pl);
+        updatePlaylistThumbnail(pl);
 
         if (pl.rendered) {
             updatePlaylistView(pl);

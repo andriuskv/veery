@@ -147,8 +147,10 @@
 }
 
 .pl-entry {
-    margin-left: 8px;
-    margin-right: 8px;
+    display: grid;
+    grid-template-columns: 128px 1fr;
+    grid-template-rows: repeat(4, 1fr);
+    grid-column-gap: 8px;
 
     &:not(:last-of-type) {
         margin-bottom: 8px;
@@ -157,11 +159,31 @@
     }
 }
 
+.pl-entry-thumbnail {
+    grid-row: 1 / 5;
+    display: flex;
+    flex-wrap: wrap;
+    width: 128px;
+    height: 128px;
+}
+
+.pl-entry-thumb-image-container {
+    overflow-x: hidden;
+    position: relative;
+    width: 50%;
+    height: 50%;
+}
+
+.pl-entry-thumb-image {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 100%;
+}
+
 .pl-entry-input-container {
     position: relative;
-    flex-grow: 1;
     display: flex;
-    width: 100%;
 
     &:hover {
         .pl-entry-input {
@@ -179,6 +201,7 @@
     flex-grow: 1;
     padding-right: 24px;
     background-color: transparent;
+    font-size: 16px;
 
     &:focus {
         background-color: $background-color-dark;
@@ -199,8 +222,9 @@
 }
 
 .pl-entry-content {
+    grid-row: 4;
     display: flex;
-    padding-top: 8px;
+    align-items: center;
 }
 
 .pl-entry-btn {
@@ -214,6 +238,7 @@
 
 .pl-entry-stats {
     display: flex;
+    min-height: 20px;
     margin-right: auto;
     color: $color-text-transparent;
     font-size: 13px;

@@ -1,3 +1,5 @@
+import { shuffleArray } from "../utils";
+
 const playlists = {};
 let activePlaylistId = "";
 let currentTrack = null;
@@ -100,18 +102,6 @@ function resetPlaybackIndex() {
     if (currentTrack) {
         setPlaybackIndex(currentTrack.index);
     }
-}
-
-function shuffleArray(array) {
-    let index = array.length;
-
-    while (index) {
-        const randomIndex = Math.floor(Math.random() * index);
-
-        index -= 1;
-        [array[index], array[randomIndex]] = [array[randomIndex], array[index]];
-    }
-    return array;
 }
 
 function getPlaybackOrder(tracks, shuffle) {

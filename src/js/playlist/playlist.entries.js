@@ -1,4 +1,4 @@
-import { removeElement, getElementByAttr } from "../utils.js";
+import { removeElement, getElementByAttr, getImage, shuffleArray } from "../utils.js";
 import { editSidebarEntryTitle } from "../sidebar.js";
 import { postMessageToWorker } from "../web-worker.js";
 import { togglePanel } from "../panels.js";
@@ -102,6 +102,29 @@ function parsePlaylistDuration(duration) {
     return `${hours} hr ${minutes} min`;
 }
 
+function getPlaylistThumbnailContent(tracks) {
+    const images = getPlaylistThumbnailImages(tracks);
+
+    return images.map(image => `
+        <div class="pl-entry-thumb-image-container">
+            <img src="${getImage(image)}" class="pl-entry-thumb-image" alt="">
+        </div>
+    `).join("");
+}
+
+function updatePlaylistThumbnail({ id, tracks }) {
+    const { children } = document.getElementById("js-pl-entries");
+
+    for (const entry of children) {
+        if (id === entry.getAttribute("data-entry-id")) {
+            const thumbnail = entry.querySelector(".pl-entry-thumbnail");
+
+            thumbnail.innerHTML = getPlaylistThumbnailContent(tracks);
+            break;
+        }
+    }
+}
+
 function createPlaylistEntry(pl) {
     const element = getContainer();
     const syncBtn = pl.url ? getEntryBtn({
@@ -122,6 +145,7 @@ function createPlaylistEntry(pl) {
 
     element.insertAdjacentHTML("beforeend", `
         <li class="pl-entry" data-entry-id=${pl.id}>
+            <div class="pl-entry-thumbnail">${getPlaylistThumbnailContent(pl.tracks)}</div>
             <div class="pl-entry-input-container" data-action="edit">
                 <input type="text" class="input pl-entry-input" value="${pl.title}">
                 <svg viewBox="0 0 24 24" class="pl-entry-input-icon">
@@ -140,6 +164,26 @@ function createPlaylistEntry(pl) {
             </div>
         </li>
     `);
+}
+
+function getPlaylistThumbnailImages(tracks) {
+    const placeholder = "assets/images/album-art-placeholder.png";
+    const thumbnails = shuffleArray(tracks.map(track => track.thumbnail));
+    const images = [];
+
+    for (const thumbnail of thumbnails) {
+        if (images.length === 4) {
+            break;
+        }
+        else if (thumbnail !== placeholder) {
+            images.push(thumbnail);
+        }
+    }
+
+    while (images.length < 4) {
+        images.push(placeholder);
+    }
+    return images;
 }
 
 function createSettingsPanel(id, { element, pl }) {
@@ -280,5 +324,6 @@ export {
     enableSyncBtn,
     disableSyncBtn,
     updatePlaylistStats,
+    updatePlaylistThumbnail,
     syncPlaylists
 };

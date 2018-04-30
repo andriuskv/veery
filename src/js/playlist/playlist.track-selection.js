@@ -20,6 +20,7 @@ import { getVisiblePlaylistId, getVisiblePlaylist, getTab } from "../tab.js";
 import { postMessageToWorker } from "../web-worker.js";
 import { createMoveToContainer, removeMoveToContainer } from "./playlist.move-to.js";
 import { getPlaylistTrackElements, updatePlaylistView } from "./playlist.view.js";
+import { updatePlaylistThumbnail } from "./playlist.entries.js";
 
 const startingPoint = {};
 const mousePos = {};
@@ -473,6 +474,7 @@ function removeSelectedTracks() {
         }
     });
     updateCurrentTrackIndex(pl.id, indexes);
+    updatePlaylistThumbnail(pl);
 
     if (!tracksToKeep.length) {
         enableTrackSelection(pl);
