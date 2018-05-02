@@ -48,8 +48,8 @@ function observePlaylist(id) {
 function reObservePlaylist(id) {
     if (observers[id]) {
         removePlaylistObserver(id);
-        observePlaylist(id);
     }
+    observePlaylist(id);
 }
 
 function removePlaylistObserver(id) {

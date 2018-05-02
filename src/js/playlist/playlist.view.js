@@ -156,16 +156,25 @@ function renderPlaylist(pl) {
 
     element.insertAdjacentHTML("beforeend", tab);
     pl.rendered = true;
-    showCurrentTrack(pl.id);
-    observePlaylist(pl.id);
+
+    if (pl.tracks.length) {
+        showCurrentTrack(pl.id);
+        observePlaylist(pl.id);
+    }
 }
 
 function updatePlaylistView(pl) {
     const element = getTab(pl.id);
 
     element.innerHTML = getPlaylistTemplate(pl);
-    reObservePlaylist(pl.id);
-    showCurrentTrack(pl.id);
+
+    if (pl.tracks.length) {
+        reObservePlaylist(pl.id);
+        showCurrentTrack(pl.id);
+    }
+    else {
+        removePlaylistObserver(pl.id);
+    }
 }
 
 function removePlaylistTab(id) {

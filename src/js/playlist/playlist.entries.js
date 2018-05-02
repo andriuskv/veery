@@ -3,7 +3,7 @@ import { editSidebarEntryTitle } from "../sidebar.js";
 import { postMessageToWorker } from "../web-worker.js";
 import { togglePanel } from "../panels.js";
 import { isGoogleAPIInitialized, initGoogleAPI } from "../google-auth.js";
-import { getPlaylistById, updatePlaylist } from "./playlist.js";
+import { getPlaylistById, updatePlaylist, getPlaylistDuration } from "./playlist.js";
 import { removePlaylist } from "./playlist.manage.js";
 import { importPlaylist, disableImportOption, resetImportOption } from "./playlist.import.js";
 
@@ -59,20 +59,6 @@ function disableSyncBtn(id) {
     }
 }
 
-function updatePlaylistStats() {
-    const container = document.getElementById("js-pl-entries");
-
-    if (!container) {
-        return;
-    }
-    Array.from(container.children).forEach(entry => {
-        const { tracks, duration } = getPlaylistById(entry.getAttribute("data-entry-id"));
-
-        entry.querySelector(".track-count").textContent = `${tracks.length} tracks`;
-        entry.querySelector(".playlist-duration").textContent = parsePlaylistDuration(duration);
-    });
-}
-
 function getEntryBtn({ action, title, iconId }) {
     return `
         <button class="btn-icon pl-entry-btn" data-action="${action}" title="${title}">
@@ -112,14 +98,26 @@ function getPlaylistThumbnailContent(tracks) {
     `).join("");
 }
 
-function updatePlaylistThumbnail({ id, tracks }) {
+function updatePlaylistStats(entry, tracks) {
+    const duration = getPlaylistDuration(tracks);
+
+    entry.querySelector(".track-count").textContent = `${tracks.length} tracks`;
+    entry.querySelector(".playlist-duration").textContent = parsePlaylistDuration(duration);
+}
+
+function updatePlaylistThumbnail(entry, tracks) {
+    const thumbnail = entry.querySelector(".pl-entry-thumbnail");
+
+    thumbnail.innerHTML = getPlaylistThumbnailContent(tracks);
+}
+
+function updatePlaylistEntry({ id, tracks }) {
     const { children } = document.getElementById("js-pl-entries");
 
     for (const entry of children) {
         if (id === entry.getAttribute("data-entry-id")) {
-            const thumbnail = entry.querySelector(".pl-entry-thumbnail");
-
-            thumbnail.innerHTML = getPlaylistThumbnailContent(tracks);
+            updatePlaylistStats(entry, tracks);
+            updatePlaylistThumbnail(entry, tracks);
             break;
         }
     }
@@ -127,6 +125,7 @@ function updatePlaylistThumbnail({ id, tracks }) {
 
 function createPlaylistEntry(pl) {
     const element = getContainer();
+    const duration = getPlaylistDuration(pl.tracks);
     const syncBtn = pl.url ? getEntryBtn({
         action: "sync",
         title: "Synchronize playlist",
@@ -156,7 +155,7 @@ function createPlaylistEntry(pl) {
                 <div class="pl-entry-stats">
                     ${pl.isPrivate ? getStatusIcon() : ""}
                     <span class="pl-entry-stats-item track-count">${pl.tracks.length} tracks</span>
-                    <span class="pl-entry-stats-item playlist-duration">${parsePlaylistDuration(pl.duration)}</span>
+                    <span class="pl-entry-stats-item playlist-duration">${parsePlaylistDuration(duration)}</span>
                 </div>
                 ${syncBtn}
                 ${settingsPanel}
@@ -323,7 +322,6 @@ export {
     createPlaylistEntry,
     enableSyncBtn,
     disableSyncBtn,
-    updatePlaylistStats,
-    updatePlaylistThumbnail,
+    updatePlaylistEntry,
     syncPlaylists
 };
