@@ -11,8 +11,7 @@ import {
     createPlaylistEntry,
     enableSyncBtn,
     disableSyncBtn,
-    updatePlaylistStats,
-    updatePlaylistThumbnail
+    updatePlaylistEntry
 } from "./playlist.entries.js";
 
 function updateTracks(pl) {
@@ -82,7 +81,7 @@ function addTracksToPlaylist(pl, tracks, showPlaylist) {
         hideStatusIndicator(pl.id);
         updateTracks(pl);
         updateCurrentTrack(pl);
-        updatePlaylistThumbnail(pl);
+        updatePlaylistEntry(pl);
 
         if (pl.rendered) {
             updatePlaylistView(pl);
@@ -99,7 +98,6 @@ function addTracksToPlaylist(pl, tracks, showPlaylist) {
     if (showPlaylist) {
         toggleRoute(`playlist/${pl.id}`);
     }
-    updatePlaylistStats();
 }
 
 function clearPlaylistTracks(pl) {

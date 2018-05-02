@@ -6,7 +6,6 @@ import {
 } from "../utils.js";
 import {
     updatePlaylist,
-    getPlaylistDuration,
     isPlaylistActive,
     getCurrentTrack,
     updateCurrentTrack,
@@ -20,7 +19,7 @@ import { getVisiblePlaylistId, getVisiblePlaylist, getTab } from "../tab.js";
 import { postMessageToWorker } from "../web-worker.js";
 import { createMoveToContainer, removeMoveToContainer } from "./playlist.move-to.js";
 import { getPlaylistTrackElements, updatePlaylistView } from "./playlist.view.js";
-import { updatePlaylistThumbnail } from "./playlist.entries.js";
+import { updatePlaylistEntry } from "./playlist.entries.js";
 
 const startingPoint = {};
 const mousePos = {};
@@ -35,14 +34,18 @@ let isMoveToVisible = false;
 
 function enableTrackSelection({ id, tracks }) {
     if (playlistElement) {
-        playlistElement.removeEventListener("mousedown", onMousedown);
-        playlistElement = null;
+        disableTrackSelection();
     }
 
     if (tracks.length) {
         playlistElement = getTab(id);
         playlistElement.addEventListener("mousedown", onMousedown);
     }
+}
+
+function disableTrackSelection() {
+    playlistElement.removeEventListener("mousedown", onMousedown);
+    playlistElement = null;
 }
 
 function getPlaylistElementRect(element) {
@@ -463,8 +466,7 @@ function removeSelectedTracks() {
     resetPlaylistElementIndexes(pl.id, pl.type, indexes);
     updatePlaylist(pl.id, {
         playbackOrder: getPlaybackOrder(tracksToKeep, getSetting("shuffle")),
-        tracks: tracksToKeep,
-        duration: getPlaylistDuration(tracksToKeep)
+        tracks: tracksToKeep
     });
     postMessageToWorker({
         action: "remove-tracks",
@@ -474,10 +476,10 @@ function removeSelectedTracks() {
         }
     });
     updateCurrentTrackIndex(pl.id, indexes);
-    updatePlaylistThumbnail(pl);
+    updatePlaylistEntry(pl);
 
     if (!tracksToKeep.length) {
-        enableTrackSelection(pl);
+        disableTrackSelection();
         updatePlaylistView(pl);
     }
 }

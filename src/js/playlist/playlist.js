@@ -19,17 +19,13 @@ function createPlaylist(pl) {
         shuffled: false,
         tracks: [],
         playbackIndex: 0,
-        playbackOrder: [],
-        duration: 0
+        playbackOrder: []
     };
     const defaultState = {
         rendered: false,
         initialized: false
     };
 
-    if (pl.tracks) {
-        pl.duration = getPlaylistDuration(pl.tracks);
-    }
     playlists[pl.id] = Object.assign(defaultProperties, pl, defaultState);
     return playlists[pl.id];
 }
