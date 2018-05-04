@@ -94,7 +94,7 @@ function createGrid(id, items) {
 }
 
 function createItems(tracks, cb) {
-    return tracks.map(cb).join("");
+    return tracks.map(track => cb(track)).join("");
 }
 
 function createPlaylist({ id, type, tracks }) {
