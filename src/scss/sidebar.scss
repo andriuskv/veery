@@ -16,40 +16,41 @@
         &.hidden {
             opacity: 0;
             visibility: hidden;
-            transition-delay: 0.05s;
+            transition-delay: 0.1s;
 
             .sidebar {
-                transform: translateX(-210px);
-                transition-delay: 0s;
+                transform: translateX(calc(-100% - 10px));
             }
         }
     }
 }
 
 .sidebar {
-    user-select: none;
+    z-index: 2;
+    position: relative;
     display: flex;
     flex-direction: column;
     width: 200px;
     height: 100%;
     background-color: $background-color-dark;
     box-shadow: 1px 0 4px rgba(0, 0, 0, 0.1);
+    user-select: none;
 
     @include breakpoint-small {
         transform: translateX(0);
-        transition: 0.1s transform;
-        transition-delay: 0.05s;
+        transition: 0.2s transform;
     }
 }
 
 .sidebar-header {
     position: relative;
+    flex-shrink: 0;
     height: 80px;
+    margin-top: 16px;
+    margin-bottom: 16px;
     background-image: url("./assets/images/main-icon.png");
     background-size: contain;
     background-repeat: no-repeat;
-    margin-top: 16px;
-    margin-bottom: 16px;
 
     h1 {
         text-indent: -9999px;

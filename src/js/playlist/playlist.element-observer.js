@@ -20,13 +20,22 @@ function handleIntersectingEntry(entry) {
         createGridItemContent(track, icon);
 }
 
+function cleanEntry(entry) {
+    const artwork = entry.querySelector(".artwork");
+
+    if (artwork) {
+        URL.revokeObjectURL(artwork.src);
+    }
+    entry.innerHTML = "";
+}
+
 function callback(entries) {
     entries.forEach(({ isIntersecting, target }) => {
         if (isIntersecting) {
             handleIntersectingEntry(target);
         }
-        else {
-            target.innerHTML = "";
+        else if (target.childElementCount) {
+            cleanEntry(target);
         }
     });
 }
