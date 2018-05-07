@@ -67,7 +67,6 @@ function addTracksToPlaylist(pl, tracks, showPlaylist) {
         tracks = setPrimaryTackIndexes(tracks, pl.lastTrackIndex);
         pl.lastTrackIndex = tracks[tracks.length - 1].primaryIndex + 1;
         pl.tracks = pl.tracks.concat(tracks);
-        pl.duration = playlist.getPlaylistDuration(pl.tracks);
     }
 
     if (!pl.initialized) {
@@ -109,7 +108,6 @@ function clearPlaylistTracks(pl) {
         }
     });
     pl.tracks.length = 0;
-    pl.duration = 0;
 }
 
 function setPrimaryTackIndexes(tracks, lastIndex = 0) {

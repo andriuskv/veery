@@ -1,4 +1,4 @@
-import { getElementByAttr, isOutsideElement } from "../utils.js";
+import { getElementByAttr } from "../utils.js";
 import { getVisiblePlaylistId } from "../tab.js";
 import { getPlaylistById } from "./playlist.js";
 import { getPlaylistTrackElements } from "./playlist.view.js";
@@ -9,33 +9,22 @@ let timeout = 0;
 let filteredPlaylistId = "";
 
 function filterTracks(tracks, trackElements, query) {
+    const regex = new RegExp(query, "i");
+
     tracks.forEach(track => {
         const element = trackElements[track.index];
-        const regex = new RegExp(query, "gi");
         const filterString = `
             ${track.title}
             ${track.artist}
             ${track.album}
         `;
 
-        if (regex.test(filterString)) {
-            element.classList.remove("hidden");
-        }
-        else {
-            element.classList.add("hidden");
-        }
+        element.classList.toggle("hidden", !regex.test(filterString));
     });
 }
 
-function toggleFilterInputCleanBtn(inputValue) {
-    const btn = document.getElementById("js-clear-input-btn");
-
-    if (inputValue) {
-        btn.classList.add("visible");
-    }
-    else {
-        btn.classList.remove("visible");
-    }
+function toggleClearInputBtn(value) {
+    document.getElementById("js-clear-input-btn").classList.toggle("visible", value);
 }
 
 function filterPlaylist(id, query = "") {
@@ -48,7 +37,7 @@ function filterPlaylist(id, query = "") {
 
     filteredPlaylistId = query ? id : "";
     filterTracks(tracks, elements, query);
-    toggleFilterInputCleanBtn(query);
+    toggleClearInputBtn(query);
 }
 
 function resetFilteredPlaylist() {
@@ -61,27 +50,20 @@ function resetFilteredPlaylist() {
 function resetInput() {
     filterInput.classList.remove("active");
     filterInput.removeEventListener("keyup", handleKeyup);
-    window.removeEventListener("click", blurInput);
-}
-
-function blurInput({ target }) {
-    if (isOutsideElement(target, filterInputContainer)) {
-        resetInput();
-    }
+    filterInput.removeEventListener("blur", resetInput);
 }
 
 function handleKeyup({ target }) {
     const id = getVisiblePlaylistId();
-    const filter = target.value.trim().toLowerCase();
 
     clearTimeout(timeout);
-    timeout = setTimeout(filterPlaylist, 400, id, filter);
+    timeout = setTimeout(filterPlaylist, 400, id, target.value);
 }
 
 filterInput.addEventListener("focus", ({ currentTarget }) => {
     currentTarget.classList.add("active");
     currentTarget.addEventListener("keyup", handleKeyup);
-    window.addEventListener("click", blurInput);
+    currentTarget.addEventListener("blur", resetInput);
 });
 
 filterInputContainer.addEventListener("click", ({ target }) => {
