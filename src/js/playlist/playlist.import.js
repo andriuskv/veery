@@ -1,12 +1,6 @@
-import {
-    removeElement,
-    removeElementClass,
-    getElementByAttr
-} from "./../utils.js";
+import { removeElement, removeElementClass, getElementByAttr } from "./../utils.js";
 import { togglePanel } from "../panels.js";
 import { isGoogleAPIInitialized, changeGoogleAuthState, initGoogleAPI } from "../google-auth.js";
-import { getPlaylistById, createPlaylist } from "./playlist.js";
-import { addTracksToPlaylist, clearPlaylistTracks } from "./playlist.manage.js";
 import { showDropboxChooser } from "../dropbox.js";
 import { selectLocalFiles } from "../local.js";
 import { fetchYoutubeItem } from "../youtube.js";
@@ -49,74 +43,6 @@ function importPlaylist(option, { url, type }) {
     if (option === "youtube") {
         fetchYoutubeItem(url, type);
     }
-}
-
-function filterDuplicateTracks(tracks, oldTracks) {
-    return tracks.reduce((tracks, track) => {
-        const duplicate = oldTracks.some(oldTrack => oldTrack.name === track.name);
-
-        if (!duplicate) {
-            tracks.push(track);
-        }
-        return tracks;
-    }, []);
-}
-
-function replaceInvalidImages(tracks) {
-    if (!tracks.length) {
-        return Promise.resolve(tracks);
-    }
-    return new Promise(resolve => {
-        let i = 0;
-
-        tracks.forEach(track => {
-            const image = new Image();
-
-            image.onload = function() {
-                i += 1;
-                if (i === tracks.length) {
-                    resolve(tracks);
-                }
-            };
-            image.onerror = function() {
-                track.thumbnail = "assets/images/album-art-placeholder.png";
-                i += 1;
-                if (i === tracks.length) {
-                    resolve(tracks);
-                }
-            };
-            image.src = track.thumbnail;
-        });
-    });
-}
-
-async function addImportedPlaylist(playlist, type = "new") {
-    const tempTracks = playlist.tracks.splice(0);
-    let pl = null;
-    let tracks = [];
-
-    if (type === "new") {
-        pl = createPlaylist(playlist);
-        tracks = tempTracks;
-    }
-    else if (type === "sync") {
-        pl = getPlaylistById(playlist.id);
-        tracks = tempTracks;
-
-        clearPlaylistTracks(pl);
-    }
-    else if (type === "update") {
-        pl = getPlaylistById(playlist.id);
-        tracks = filterDuplicateTracks(tempTracks, pl.tracks);
-    }
-    else {
-        throw new Error("Unknown import type");
-    }
-    const newTracks = await replaceInvalidImages(tracks);
-
-    addTracksToPlaylist(pl, newTracks);
-    resetImportOption();
-    enableImportOption(playlist.player);
 }
 
 function createImportForm(container, item) {
@@ -253,7 +179,6 @@ importOptionsElement.addEventListener("click", ({ currenTarget, target }) => {
 
 export {
     importPlaylist,
-    addImportedPlaylist,
     disableImportOption,
     enableImportOption,
     resetImportOption

@@ -100,6 +100,9 @@ function addTracksToPlaylist(pl, tracks, showPlaylist) {
 }
 
 function clearPlaylistTracks(pl) {
+    if (pl.rendered) {
+        getPlaylistElement(pl.id).innerHTML = "";
+    }
     postMessageToWorker({
         action: "remove-tracks",
         playlist: {
@@ -150,14 +153,18 @@ function createNewPlaylistForm(id, element, insertPoint, handleSubmit) {
 function showStatusIndicator(id) {
     const entry = getSidebarEntry(id);
 
-    entry.classList.add("show-spinner");
+    if (entry) {
+        entry.classList.add("show-spinner");
+    }
     disableSyncBtn(id);
 }
 
 function hideStatusIndicator(id) {
     const entry = getSidebarEntry(id);
 
-    entry.classList.remove("show-spinner");
+    if (entry) {
+        entry.classList.remove("show-spinner");
+    }
     enableSyncBtn(id);
 }
 

@@ -7,8 +7,12 @@ import { getPlaylistById, getCurrentTrack, updatePlaylist } from "./playlist.js"
 import { enableTrackSelection } from "./playlist.track-selection.js";
 import { observePlaylist, reObservePlaylist, removePlaylistObserver } from "./playlist.element-observer.js";
 
+function getPlaylistElement(id) {
+    return document.getElementById(`js-${id}`);
+}
+
 function getPlaylistTrackElements(id) {
-    return document.getElementById(`js-${id}`).children;
+    return getPlaylistElement(id).children;
 }
 
 function getPlaylistElementAtIndex(id, index) {
@@ -232,6 +236,7 @@ function changePlaylistType(type, pl) {
 }
 
 export {
+    getPlaylistElement,
     getPlaylistTrackElements,
     getTrackPlayPauseBtn,
     createListItemContent,

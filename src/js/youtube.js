@@ -1,9 +1,9 @@
 /* global gapi */
 
 import { formatTime } from "./utils.js";
-import { addImportedPlaylist, enableImportOption } from "./playlist/playlist.import.js";
-import { showStatusIndicator, hideStatusIndicator } from "./playlist/playlist.manage.js";
-import { getPlaylistById } from "./playlist/playlist.js";
+import { enableImportOption } from "./playlist/playlist.import.js";
+import { showStatusIndicator, hideStatusIndicator, addTracksToPlaylist, clearPlaylistTracks } from "./playlist/playlist.manage.js";
+import { getPlaylistById, createPlaylist } from "./playlist/playlist.js";
 import { showPlayerMessage } from "./player/player.view.js";
 import { isGoogleAPIInitializing } from "./google-auth.js";
 
@@ -65,6 +65,17 @@ function fetchYoutube(path, part, filter, id, token) {
         .then(response => response.json());
 }
 
+function filterDuplicateTracks(tracks, oldTracks) {
+    return tracks.reduce((tracks, track) => {
+        const duplicate = oldTracks.some(oldTrack => oldTrack.id === track.id);
+
+        if (!duplicate) {
+            tracks.push(track);
+        }
+        return tracks;
+    }, []);
+}
+
 function filterInvalidItems(items) {
     return items.filter(item => {
         const title = item.snippet.title;
@@ -100,92 +111,99 @@ function handleError({ code, message }, id) {
 }
 
 async function fetchPlaylistItems(id, token) {
-    const data = await fetchYoutube("playlistItems", "snippet", "playlistId", id, token);
+    const { error, items, nextPageToken } = await fetchYoutube("playlistItems", "snippet", "playlistId", id, token);
 
-    if (data.error) {
-        handleError(data.error, id);
+    if (error) {
+        handleError(error, id);
     }
-    const validItems = filterInvalidItems(data.items);
-    const items = await getVideoDuration(validItems);
-    const tracks = parseItems(items, id);
+    const validItems = await getVideoDuration(filterInvalidItems(items));
+    const tracks = parseItems(validItems, id);
 
-    if (data.nextPageToken) {
-        const nextPageItems = await fetchPlaylistItems(id, data.nextPageToken);
+    if (nextPageToken) {
+        const nextPageItems = await fetchPlaylistItems(id, nextPageToken);
 
         return tracks.concat(nextPageItems);
     }
     return tracks;
 }
 
-function parseVideos(videos, latestIndex) {
+function parseVideos(videos) {
     const items = filterInvalidItems(videos).map(item => {
         item.snippet.resourceId = { videoId: item.id };
         item.durationInSeconds = parseDuration(item.contentDetails.duration) - 1;
         return item;
     });
 
-    return parseItems(items, "youtube", latestIndex);
+    return parseItems(items, "youtube");
 }
 
 async function getPlaylistTitleAndStatus(id) {
     const { items } = await fetchYoutube("playlists", "snippet,status", "id", id);
 
+    if (!items.length) {
+        handleError({ code: 404 }, id);
+    }
     return {
         title: items[0].snippet.title,
         status: items[0].status.privacyStatus
     };
 }
 
-async function addVideo(id, type) {
-    const playlistId = "youtube";
-    const pl = getPlaylistById(playlistId);
+async function addVideo(videoId) {
+    const id = "youtube";
+    let pl = getPlaylistById(id);
 
-    if (!type) {
-        type = pl ? "update" : "new";
+    if (pl && pl.initialized) {
+        showStatusIndicator(id);
     }
-
-    if (pl) {
-        showStatusIndicator(playlistId);
+    else {
+        pl = createPlaylist({
+            id,
+            title: "YouTube",
+            player: "youtube",
+            type: "grid"
+        });
     }
-    const { items } = await fetchYoutube("videos", "snippet,contentDetails", "id", id);
-    const latestIndex = pl && (pl.tracks.length || 0);
+    const { items } = await fetchYoutube("videos", "snippet,contentDetails", "id", videoId);
 
     if (!items.length) {
         showMessage("Video was not found");
-        hideStatusIndicator(playlistId);
+        hideStatusIndicator(id);
         return;
     }
-    addImportedPlaylist({
-        title: "YouTube",
-        id: playlistId,
-        tracks: parseVideos(items, latestIndex),
-        player: playlistId,
-        type: "grid"
-    }, type);
+    const tracks = filterDuplicateTracks(parseVideos(items), pl.tracks);
+
+    addTracksToPlaylist(pl, tracks);
+    enableImportOption(pl.player);
 }
 
 async function addPlaylist(url, id, type) {
-    const pl = getPlaylistById(id);
+    let pl = getPlaylistById(id);
 
-    if (!type) {
-        type = pl ? "update" : "new";
-    }
-
-    if (pl) {
+    if (pl && pl.initialized) {
         showStatusIndicator(id);
     }
-    const tracks = await fetchPlaylistItems(id);
-    const { title, status } = await getPlaylistTitleAndStatus(id);
+    else {
+        const { title, status } = await getPlaylistTitleAndStatus(id);
 
-    addImportedPlaylist({
-        url,
-        title,
-        id,
-        tracks,
-        player: "youtube",
-        type: "grid",
-        isPrivate: status === "private"
-    }, type);
+        pl = createPlaylist({
+            id,
+            url,
+            title,
+            isPrivate: status === "private",
+            player: "youtube",
+            type: "grid"
+        });
+    }
+    let tracks = await fetchPlaylistItems(id);
+
+    if (type === "sync") {
+        clearPlaylistTracks(pl);
+    }
+    tracks = filterDuplicateTracks(tracks, pl.tracks);
+
+    addTracksToPlaylist(pl, tracks);
+    enableImportOption(pl.player);
 }
 
 function parseUrl(url) {
@@ -224,7 +242,7 @@ function fetchYoutubeItem(url, type) {
     const { videoId, playlistId } = parseUrl(url);
 
     if (videoId) {
-        addVideo(videoId, type);
+        addVideo(videoId);
         return;
     }
 

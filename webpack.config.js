@@ -27,6 +27,9 @@ module.exports = function(env = {}) {
         plugins.push(
             new UglifyJsPlugin({
                 uglifyOptions: {
+                    compress: {
+                        inline: true
+                    },
                     ecma: 8
                 }
             })
