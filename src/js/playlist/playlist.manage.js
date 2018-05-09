@@ -1,7 +1,7 @@
 import * as playlist from "./playlist.js";
 import { removeElementClass } from "../utils.js";
 import { removePlaylistTab, updatePlaylistView, addTracks, getPlaylistElement } from "./playlist.view.js";
-import { addRoute, toggleRoute } from "../router.js";
+import { addRoute, toggleRoute, removeRoute } from "../router.js";
 import { getSetting } from "../settings.js";
 import { postMessageToWorker } from "../web-worker.js";
 import { createSidebarEntry, getSidebarEntry, removeSidebarEntry } from "../sidebar.js";
@@ -38,6 +38,7 @@ function removePlaylist({ id, rendered, _id }) {
     }
     playlist.removePlaylist(id);
     removeSidebarEntry(id);
+    removeRoute(id);
     postMessageToWorker({
         action: "remove",
         playlist: { _id }

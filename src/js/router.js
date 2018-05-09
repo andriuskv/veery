@@ -1,6 +1,6 @@
 import { dispatchCustomEvent } from "./utils.js";
 
-const routes = [];
+let routes = [];
 
 function contains(hash) {
     return routes.some(route => route === hash);
@@ -14,6 +14,10 @@ function addRoute(route) {
     if (!contains(route)) {
         routes.push(route);
     }
+}
+
+function removeRoute(id) {
+    routes = routes.filter(route => !route.includes(id));
 }
 
 function toggleRoute(route) {
@@ -42,6 +46,7 @@ window.addEventListener("hashchange", showCurrentRoute);
 
 export {
     addRoute,
+    removeRoute,
     toggleRoute,
     showCurrentRoute,
     isRouteActive
