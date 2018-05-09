@@ -19,6 +19,7 @@ function createPlaylist(pl) {
         shuffled: false,
         tracks: [],
         playbackIndex: 0,
+        lastTrackIndex: 0,
         playbackOrder: []
     };
     const defaultState = {

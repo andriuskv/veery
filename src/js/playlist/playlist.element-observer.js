@@ -11,7 +11,7 @@ function handleIntersectingEntry(entry) {
     const track = tracks[entry.getAttribute("data-index")];
     const currentTrack = getCurrentTrack();
     const paused = getPlayerState();
-    const icon = currentTrack && currentTrack.name === track.name ?
+    const icon = currentTrack && currentTrack.index === track.index ?
         getPlayPauseButtonIcon(paused) :
         getPlayPauseButtonIcon(true);
 
@@ -47,11 +47,9 @@ function observePlaylist(id) {
     observers[id] = new IntersectionObserver(callback, {
         root: getTab(id)
     });
-    const elements = getPlaylistTrackElements(id);
+    const elements = Array.from(getPlaylistTrackElements(id));
 
-    Array.from(elements).forEach(element => {
-        observers[id].observe(element);
-    });
+    observeElements(id, elements);
 }
 
 function reObservePlaylist(id) {
@@ -59,6 +57,12 @@ function reObservePlaylist(id) {
         removePlaylistObserver(id);
     }
     observePlaylist(id);
+}
+
+function observeElements(id, elements) {
+    elements.forEach(element => {
+        observers[id].observe(element);
+    });
 }
 
 function removePlaylistObserver(id) {
@@ -71,5 +75,6 @@ function removePlaylistObserver(id) {
 export {
     observePlaylist,
     reObservePlaylist,
-    removePlaylistObserver
+    removePlaylistObserver,
+    observeElements
 };

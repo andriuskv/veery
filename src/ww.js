@@ -29,8 +29,9 @@ function addPlaylist(playlist) {
     });
 }
 
-function addTracks(id, tracks) {
-    getPlaylist(id).modify((value, ref) => {
+function addTracks({ _id, tracks, lastTrackIndex }) {
+    getPlaylist(_id).modify((value, ref) => {
+        ref.value.lastTrackIndex = lastTrackIndex;
         ref.value.tracks = ref.value.tracks.concat(tracks);
     });
 }
@@ -65,7 +66,7 @@ self.onmessage = function({ data: { action, playlist } }) {
             getPlaylist(playlist._id).delete();
         }
         else if (action === "add-tracks") {
-            addTracks(playlist._id, playlist.tracks);
+            addTracks(playlist);
         }
         else if (action === "remove-tracks") {
             removeTracks(playlist._id, playlist.tracks);

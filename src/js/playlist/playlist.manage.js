@@ -1,6 +1,6 @@
 import * as playlist from "./playlist.js";
 import { removeElementClass } from "../utils.js";
-import { removePlaylistTab, updatePlaylistView } from "./playlist.view.js";
+import { removePlaylistTab, updatePlaylistView, addTracks, getPlaylistElement } from "./playlist.view.js";
 import { addRoute, toggleRoute } from "../router.js";
 import { getSetting } from "../settings.js";
 import { postMessageToWorker } from "../web-worker.js";
@@ -83,12 +83,18 @@ function addTracksToPlaylist(pl, tracks, showPlaylist) {
         updatePlaylistEntry(pl);
 
         if (pl.rendered) {
-            updatePlaylistView(pl);
+            if (tracks.length) {
+                addTracks(pl, tracks);
+            }
+            else {
+                updatePlaylistView(pl);
+            }
         }
         postMessageToWorker({
             action: "add-tracks",
             playlist: {
                 _id: pl._id,
+                lastTrackIndex: pl.lastTrackIndex,
                 tracks
             }
         });
@@ -100,8 +106,10 @@ function addTracksToPlaylist(pl, tracks, showPlaylist) {
 }
 
 function clearPlaylistTracks(pl) {
-    if (pl.rendered) {
-        getPlaylistElement(pl.id).innerHTML = "";
+    const element = getPlaylistElement(pl.id);
+
+    if (pl.rendered && element) {
+        element.innerHTML = "";
     }
     postMessageToWorker({
         action: "remove-tracks",
