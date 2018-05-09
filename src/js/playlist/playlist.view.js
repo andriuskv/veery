@@ -5,7 +5,7 @@ import { getPlayerState } from "../player/player.js";
 import { togglePlayPauseBtn } from "../player/player.controls.js";
 import { getPlaylistById, getCurrentTrack, updatePlaylist } from "./playlist.js";
 import { enableTrackSelection } from "./playlist.track-selection.js";
-import { observePlaylist, reObservePlaylist, removePlaylistObserver } from "./playlist.element-observer.js";
+import { observePlaylist, reObservePlaylist, removePlaylistObserver, observeElements } from "./playlist.element-observer.js";
 
 function getPlaylistElement(id) {
     return document.getElementById(`js-${id}`);
@@ -93,6 +93,17 @@ function createGridItemContent(item, { title, id }) {
     `;
 }
 
+function getItemCreationCallback() {
+    let listItemCb = createListItem;
+    let gridItemCb = createGridItem;
+
+    if ("IntersectionObserver" in window) {
+        listItemCb = createListItemContainer;
+        gridItemCb = createGridItemContainer;
+    }
+    return { listItemCb, gridItemCb };
+}
+
 function createGrid(id, items) {
     return `<ul id="js-${id}" class="playlist-view grid-view">${items}</ul>`;
 }
@@ -102,13 +113,7 @@ function createItems(tracks, cb) {
 }
 
 function createPlaylist({ id, type, tracks }) {
-    let listItemCb = createListItem;
-    let gridItemCb = createGridItem;
-
-    if ("IntersectionObserver" in window) {
-        listItemCb = createListItemContainer;
-        gridItemCb = createGridItemContainer;
-    }
+    const { listItemCb, gridItemCb } = getItemCreationCallback();
 
     if (type === "list") {
         return createList(id, createItems(tracks, listItemCb));
@@ -181,6 +186,26 @@ function updatePlaylistView(pl) {
     }
 }
 
+function addTracks(pl, tracks) {
+    const element = getPlaylistElement(pl.id);
+
+    if (element) {
+        const { listItemCb, gridItemCb } = getItemCreationCallback();
+        const items = createItems(tracks, pl.type === "list" ? listItemCb : gridItemCb);
+
+        element.insertAdjacentHTML("beforeend", items);
+
+        // Add newly created elements to intersection observer
+        observeElements(pl.id, [...element.children].slice(-tracks.length));
+    }
+    else {
+        const element = getTab(pl.id);
+
+        element.innerHTML = getPlaylistTemplate(pl);
+        reObservePlaylist(pl.id);
+    }
+}
+
 function removePlaylistTab(id) {
     removePlaylistObserver(id);
     removeElement(getTab(id));
@@ -246,6 +271,7 @@ export {
     getTrackName,
     showCurrentTrack,
     renderPlaylist,
+    addTracks,
     showTrack,
     toggleTrackPlayPauseBtn,
     togglePlaylistTypeBtn,
