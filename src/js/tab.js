@@ -88,7 +88,7 @@ headerElement.addEventListener("click", ({ currentTarget, target }) => {
 
 window.addEventListener("route-change", ({ detail: { isPlaylistTab, tabId } }) => {
     const id = visiblePlaylistId;
-    const element = document.getElementById(`js-tab-${id}`);
+    const element = getTab(id);
 
     removeElementClass(".sidebar-entry.active", "active");
     removeElementClass(".tab.active", "active");
