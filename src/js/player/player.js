@@ -121,6 +121,7 @@ function togglePlaying(track) {
         ytPlayer.togglePlaying(isPaused);
     }
     updatePlayerState(track);
+    updateDocumentTitle();
 }
 
 function playNewTrack(track, startTime) {
@@ -132,6 +133,7 @@ function playNewTrack(track, startTime) {
     beforeTrackStart(track);
 
     if (typeof startTime === "undefined") {
+        updateDocumentTitle();
         showPlayPauseBtnSpinner(track);
         togglePlayPauseBtns(track, isPaused);
     }
@@ -302,6 +304,21 @@ function seekTo(player, currentTime) {
     }
 }
 
+function updateDocumentTitle(id = getVisiblePlaylistId()) {
+    const isPlayerPaused = getPlayerState();
+    const pl = getPlaylistById(id);
+    let documentTitle = "Veery";
+
+    if (!isPlayerPaused) {
+        const { artist, name, title } = getCurrentTrack();
+        documentTitle = `${artist && title ? `${artist} - ${title}` : name} | Veery`;
+    }
+    else if (pl) {
+        documentTitle = `${pl.title} | Veery`;
+    }
+    document.title = documentTitle;
+}
+
 window.addEventListener("track-start", ({ detail: startTime }) => {
     const track = getCurrentTrack();
 
@@ -344,5 +361,6 @@ export {
     toggleShuffle,
     setVolume,
     seekTo,
-    storedTrack
+    storedTrack,
+    updateDocumentTitle
 };
