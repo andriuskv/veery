@@ -7,8 +7,8 @@ if ("serviceWorker" in navigator) {
                 const worker = reg.installing;
 
                 worker.onstatechange = () => {
-                    if (worker.state === "installed") {
-                        dispatchCustomEvent("sw-state-change", navigator.serviceWorker.controller ? "update" : "init");
+                    if (worker.state === "installed" && navigator.serviceWorker.controller) {
+                        dispatchCustomEvent("sw-state-change", "update");
                     }
                 };
             };

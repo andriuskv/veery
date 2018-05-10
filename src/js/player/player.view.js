@@ -4,17 +4,29 @@ function getPlayerMessageCb(title, body = "") {
     return (id, { element }) => {
         element.insertAdjacentHTML("beforeend", `
             <div id="${id}" class="panel player-message">
-                <h3 class="panel-title player-message-title">${title}</h3>
+                <h3 class="panel-title">${title}</h3>
                 ${body && `<p class="player-message-body">${body}</p>`}
             </div>
         `);
     };
 }
 
-function showPlayerMessage({ title, body }) {
-    const createPlayerMessage = getPlayerMessageCb(title, body);
+function getServiceWorkerMessageCb() {
+    return (id, { element }) => {
+        element.insertAdjacentHTML("beforeend", `
+            <div id="${id}" class="panel player-message service-worker-message">
+                <p class="player-message-body">Update is available, please refresh.</p>
+                <button id="js-player-message-btn" class="btn-icon player-message-btn">Refresh</button>
+            </div>
+        `);
+        document.getElementById("js-player-message-btn").addEventListener("click", refreshPage, { once: true });
+    };
+}
 
-    togglePanel("js-player-message", createPlayerMessage, {
+function showPlayerMessage({ title, body, callback = getPlayerMessageCb }) {
+    const createMessage = callback(title, body);
+
+    togglePanel("js-player-message", createMessage, {
         element: document.getElementById("js-player"),
         removeOnClick: true
     });
@@ -23,23 +35,17 @@ function showPlayerMessage({ title, body }) {
 function updateOnlineStatus() {
     const statusElement = document.getElementById("js-online-status");
 
-    if (!navigator.onLine) {
-        statusElement.classList.add("visible");
-    }
-    else {
-        statusElement.classList.remove("visible");
-    }
+    statusElement.classList.toggle("visible", !navigator.onLine);
+}
+
+function refreshPage() {
+    location.reload();
 }
 
 window.addEventListener("sw-state-change", ({ detail }) => {
-    if (detail === "init") {
+    if (detail === "update") {
         showPlayerMessage({
-            title: "Content is cached for offline use."
-        });
-    }
-    else if (detail === "update") {
-        showPlayerMessage({
-            title: "Update is available, please refresh."
+            callback: getServiceWorkerMessageCb
         });
     }
 });
