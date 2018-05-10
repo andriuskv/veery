@@ -105,8 +105,6 @@ function resetNowPlaying() {
 }
 
 function showNowPlaying(track, artwork) {
-    document.title = track.artist && track.title ? `${track.artist} - ${track.title}` : track.name;
-
     setArtwork();
     removeTrackNameElement();
     renderNowPlaying(track, artwork);

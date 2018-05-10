@@ -3,6 +3,7 @@
     align-items: center;
     grid-row: 1 / 4;
     grid-column: 1;
+    max-width: 320px;
 
     &:not(.inactive) .artwork-container:hover {
         .artwork-container-btn {
@@ -21,6 +22,7 @@
 
     @include breakpoint-smallest {
         grid-column: 1 / 5;
+        max-width: none;
         padding-right: 28px;
     }
 }

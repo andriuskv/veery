@@ -7,7 +7,7 @@ import { enableTrackSelection } from "./playlist/playlist.track-selection.js";
 import { setSortOptions, createSortPanel, changePlaylistOrder } from "./playlist/playlist.sorting.js";
 import { createMoveToPanel } from "./playlist/playlist.move-to.js";
 import { resetFilteredPlaylist } from "./playlist/playlist.filter.js";
-import { playTrackFromElement } from "./player/player.js";
+import { playTrackFromElement, updateDocumentTitle } from "./player/player.js";
 
 const headerElement = document.getElementById("js-tab-header");
 const media = matchMedia("(max-width: 540px)");
@@ -105,6 +105,7 @@ window.addEventListener("route-change", ({ detail: { isPlaylistTab, tabId } }) =
     else {
         headerElement.classList.remove("playlist-tab-active");
     }
+    updateDocumentTitle(tabId);
     getTab(tabId).classList.add("active");
 
     if (tabId !== "not-found") {
