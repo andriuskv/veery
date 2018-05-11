@@ -13,7 +13,6 @@ import {
     getPlaylistById,
     getActivePlaylistId,
     setPlaylistAsActive,
-    getActivePlaylist,
     setPlaybackOrder,
     findTrack,
     setCurrentTrack,
@@ -90,6 +89,7 @@ function updatePlayerState(track, state) {
         elapsedTime.stop();
     }
     togglePlayPauseBtns(track, isPaused);
+    updateDocumentTitle();
 }
 
 function beforeTrackStart(track) {
@@ -121,7 +121,6 @@ function togglePlaying(track) {
         ytPlayer.togglePlaying(isPaused);
     }
     updatePlayerState(track);
-    updateDocumentTitle();
 }
 
 function playNewTrack(track, startTime) {
@@ -260,28 +259,6 @@ function resetPlayer(track) {
     }
 }
 
-function onControlButtonClick(button) {
-    switch (button) {
-        case "previous":
-            playPreviousTrack();
-            break;
-        case "play":
-            playTrack();
-            break;
-        case "next":
-            playNextTrack();
-            break;
-    }
-}
-
-function toggleShuffle(shuffle) {
-    const pl = getActivePlaylist();
-
-    if (pl) {
-        setPlaybackOrder(pl, shuffle);
-    }
-}
-
 function setVolume(volume) {
     const track = getCurrentTrack() || {};
 
@@ -355,10 +332,11 @@ export {
     getPlayerState,
     updatePlayerState,
     togglePlaying,
+    playPreviousTrack,
+    playTrack,
+    playNextTrack,
     playTrackFromElement,
-    onControlButtonClick,
     stopPlayer,
-    toggleShuffle,
     setVolume,
     seekTo,
     storedTrack,
