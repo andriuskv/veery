@@ -149,7 +149,6 @@ export {
     updatePlaylist,
     getPlaylistDuration,
     isPlaylistActive,
-    getActivePlaylist,
     getActivePlaylistId,
     getTrack,
     setCurrentTrack,

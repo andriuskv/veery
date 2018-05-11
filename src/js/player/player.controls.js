@@ -7,7 +7,7 @@ import {
 import { setSetting, getSetting, removeSetting } from "../settings.js";
 import { getCurrentTrack } from "../playlist/playlist.js";
 import { getTrackPlayPauseBtn } from "../playlist/playlist.view.js";
-import { storedTrack, toggleShuffle, setVolume, seekTo, onControlButtonClick } from "./player.js";
+import { storedTrack, setVolume, seekTo, playPreviousTrack, playTrack, playNextTrack } from "./player.js";
 
 const volumeSlider = document.getElementById("js-volume-slider");
 const trackSlider = document.getElementById("js-track-slider");
@@ -260,10 +260,7 @@ function updateSetting({ attrValue, elementRef }) {
     elementRef.setAttribute("aria-checked", value);
     setSetting(attrValue, value);
 
-    if (attrValue === "shuffle") {
-        toggleShuffle(value);
-    }
-    else if (attrValue === "mute") {
+    if (attrValue === "mute") {
         mutePlayer(value);
         toggleVolumeBtn(elementRef, value);
     }
@@ -379,7 +376,17 @@ document.getElementById("js-main-controls").addEventListener("click", ({ target 
     const element = getElementByAttr("data-item", target);
 
     if (element) {
-        onControlButtonClick(element.attrValue);
+        switch (element.attrValue) {
+            case "previous":
+                playPreviousTrack();
+                break;
+            case "play":
+                playTrack();
+                break;
+            case "next":
+                playNextTrack();
+                break;
+        }
     }
 });
 

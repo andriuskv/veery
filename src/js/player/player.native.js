@@ -29,13 +29,14 @@ function togglePlaying(paused) {
 }
 
 function stopTrack() {
+    audio.pause();
+    audio.currentTime = 0;
+    audio = null;
+
     if (audioBlobURL) {
         URL.revokeObjectURL(audioBlobURL);
         audioBlobURL = null;
     }
-    audio.pause();
-    audio.currentTime = 0;
-    audio = null;
 }
 
 function setVolume(volume) {
