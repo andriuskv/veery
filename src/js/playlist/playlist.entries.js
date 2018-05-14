@@ -145,21 +145,23 @@ function createPlaylistEntry(pl) {
     element.insertAdjacentHTML("beforeend", `
         <li class="pl-entry" data-entry-id=${pl.id}>
             <div class="pl-entry-thumbnail">${getPlaylistThumbnailContent(pl.tracks)}</div>
-            <div class="pl-entry-input-container" data-action="edit">
-                <input type="text" class="input pl-entry-input" value="${pl.title}">
-                <svg viewBox="0 0 24 24" class="pl-entry-input-icon">
-                    <use href="#edit">
-                </svg>
-            </div>
             <div class="pl-entry-content">
-                <div class="pl-entry-stats">
-                    ${pl.isPrivate ? getStatusIcon() : ""}
-                    <span class="pl-entry-stats-item track-count">${pl.tracks.length} tracks</span>
-                    <span class="pl-entry-stats-item playlist-duration">${parsePlaylistDuration(duration)}</span>
+                <div class="pl-entry-input-container" data-action="edit">
+                    <input type="text" class="input pl-entry-input" value="${pl.title}">
+                    <svg viewBox="0 0 24 24" class="pl-entry-input-icon">
+                        <use href="#edit">
+                    </svg>
                 </div>
-                ${syncBtn}
-                ${settingsPanel}
-                ${removeBtn}
+                <div class="pl-entry-footer">
+                    <div class="pl-entry-stats">
+                        ${pl.isPrivate ? getStatusIcon() : ""}
+                        <span class="pl-entry-stats-item track-count">${pl.tracks.length} tracks</span>
+                        <span class="pl-entry-stats-item playlist-duration">${parsePlaylistDuration(duration)}</span>
+                    </div>
+                    ${syncBtn}
+                    ${settingsPanel}
+                    ${removeBtn}
+                </div>
             </div>
         </li>
     `);
