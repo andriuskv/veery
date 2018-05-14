@@ -180,10 +180,10 @@
 
     @include breakpoint-smallest {
         position: absolute;
-        top: -28px;
-        right: 4px;
+        top: -32px;
+        right: 8px;
         display: none;
-        padding: 4px;
+        padding: 8px;
         background-color: $background-color-lightest;
         box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
 

@@ -126,10 +126,20 @@ function updateVolume(volume) {
     setVolume(volume);
 }
 
-function updateVolumeSliderLabel(percentage) {
-    const label = document.getElementById("js-volume-slider-label");
+function isOutsideViewport(x, width) {
+    const maxWidth = window.innerWidth;
+    const halfWidth = width / 2;
 
+    return x + halfWidth + 8 > maxWidth || x - halfWidth - 8 < 0;
+}
+
+function updateVolumeSliderLabel(percentage, pageX) {
+    const label = document.getElementById("js-volume-slider-label");
     label.textContent = `${Math.floor(percentage)}%`;
+
+    if (isOutsideViewport(pageX, label.offsetWidth)) {
+        return;
+    }
     label.style.left = `${percentage}%`;
 }
 
@@ -181,11 +191,15 @@ function getCurrentTime(offset, duration) {
     };
 }
 
-function updateTrackSliderLabel(percent, currentTime) {
+function updateTrackSliderLabel(percentage, currentTime, pageX) {
     const label = document.getElementById("js-track-slider-label");
 
-    label.style.left = `${percent}%`;
     label.textContent = formatTime(currentTime);
+
+    if (isOutsideViewport(pageX, label.offsetWidth)) {
+        return;
+    }
+    label.style.left = `${percentage}%`;
 }
 
 function onTrackSliderMousemove({ pageX }) {
@@ -193,7 +207,7 @@ function onTrackSliderMousemove({ pageX }) {
     const { percent, currentTime } = getCurrentTime(pageX, track.durationInSeconds);
 
     updateTrackSlider(track, currentTime);
-    updateTrackSliderLabel(percent, currentTime);
+    updateTrackSliderLabel(percent, currentTime, pageX);
 }
 
 function onLocalTrackSliderMousemove({ pageX }) {
@@ -204,7 +218,7 @@ function onLocalTrackSliderMousemove({ pageX }) {
     }
     const { percent, currentTime } = getCurrentTime(pageX, track.durationInSeconds);
 
-    updateTrackSliderLabel(percent, currentTime);
+    updateTrackSliderLabel(percent, currentTime, pageX);
 }
 
 function onTrackSliderMouseup({ pageX }) {
@@ -230,7 +244,7 @@ function onVolumeSliderMousemove({ pageX }) {
     if (volume === getSetting("volume")) {
         return;
     }
-    updateVolumeSliderLabel(percentage);
+    updateVolumeSliderLabel(percentage, pageX);
 
     if (!volume) {
         updateSetting({
@@ -244,7 +258,7 @@ function onVolumeSliderMousemove({ pageX }) {
 }
 
 function onLocalVolumeSliderMousemove({ pageX }) {
-    updateVolumeSliderLabel(getPosInPercentage("volume", pageX));
+    updateVolumeSliderLabel(getPosInPercentage("volume", pageX), pageX);
 }
 
 function onVolumeSliderMouseup() {
@@ -291,6 +305,23 @@ function unmutePlayer() {
     }
 }
 
+function getMouseEnterHandler(slider) {
+    return function ({ pageX }) {
+        const label = document.getElementById(`js-${slider}-slider-label`);
+        const viewportWidth = window.innerWidth;
+        const halfLabelWidth = label.offsetWidth / 2;
+
+        if (pageX + halfLabelWidth + 8 > viewportWidth) {
+            const percent = getPosInPercentage(slider, viewportWidth - halfLabelWidth - 8);
+            label.style.left = `${percent}%`;
+        }
+        else if (pageX - halfLabelWidth - 8 < 0) {
+            const percent = getPosInPercentage(slider, halfLabelWidth + 8);
+            label.style.left = `${percent}%`;
+        }
+    }
+}
+
 trackSlider.addEventListener("mousedown", event => {
     if (event.which !== 1 || !getCurrentTrack()) {
         return;
@@ -304,6 +335,7 @@ trackSlider.addEventListener("mousedown", event => {
 });
 
 trackSlider.addEventListener("mousemove", onLocalTrackSliderMousemove);
+trackSlider.addEventListener("mouseenter", getMouseEnterHandler("track"));
 
 trackSlider.addEventListener("keydown", ({ which }) => {
     const track = getCurrentTrack();
@@ -344,6 +376,7 @@ volumeSlider.addEventListener("mousedown", event => {
 });
 
 volumeSlider.addEventListener("mousemove", onLocalVolumeSliderMousemove);
+volumeSlider.addEventListener("mouseenter", getMouseEnterHandler("volume"));
 
 volumeSlider.addEventListener("keydown", ({ which }) => {
     let volume = getSetting("volume");
