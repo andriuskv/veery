@@ -415,8 +415,13 @@ function separatePlaylistTracks(tracks, indexes) {
 
 function resetListElementIndexes(elements, startIndex) {
     elements.forEach((element, index) => {
+        const indexElement = element.querySelector(".list-item-index");
+
         element.setAttribute("data-index", startIndex + index);
-        element.querySelector(".list-item-index").textContent = startIndex + index + 1;
+
+        if (indexElement) {
+            indexElement.textContent = startIndex + index + 1;
+        }
     });
 }
 

@@ -218,9 +218,18 @@ function showTrack(id, index, { scrollToTrack } = {}) {
     element.classList.add("playing");
 
     if (scrollToTrack) {
-        element.scrollIntoView({
-            inline: "center"
-        });
+        scrollToTrackElement(element, id);
+    }
+}
+
+function scrollToTrackElement(element, id) {
+    const containerElement = getTab(id);
+    const { offsetHeight, offsetTop } = element;
+    const { clientHeight, scrollTop } = containerElement;
+    const offset = scrollTop + clientHeight;
+
+    if (offsetTop - offsetHeight < scrollTop || offsetTop > offset) {
+        containerElement.scrollTop = offsetTop - clientHeight / 2;
     }
 }
 
