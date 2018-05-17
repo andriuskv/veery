@@ -16,10 +16,10 @@
     "focus-visible": "^4.1.4"
   },
   "devDependencies": {
-    "@babel/core": "^7.0.0-beta.46",
-    "@babel/plugin-syntax-dynamic-import": "^7.0.0-beta.46",
-    "@babel/polyfill": "^7.0.0-beta.46",
-    "@babel/preset-env": "^7.0.0-beta.46",
+    "@babel/core": "^7.0.0-beta.47",
+    "@babel/plugin-syntax-dynamic-import": "^7.0.0-beta.47",
+    "@babel/polyfill": "^7.0.0-beta.47",
+    "@babel/preset-env": "^7.0.0-beta.47",
     "autoprefixer": "^8.5.0",
     "babel-eslint": "^8.2.3",
     "babel-loader": "^8.0.0-beta.0",
