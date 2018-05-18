@@ -1,5 +1,18 @@
-import * as playlist from "./playlist.js";
-import { removeElementClass } from "../utils.js";
+import {
+    isPlaylistActive,
+    createPlaylist,
+    removePlaylist,
+    getCurrentTrack,
+    updateCurrentTrackIndex,
+    resetTrackIndexes,
+    setPlaybackOrder
+} from "./playlist.js";
+import {
+    createPlaylistEntry,
+    enableSyncBtn,
+    disableSyncBtn,
+    updatePlaylistEntry
+} from "./playlist.entries.js";
 import { removePlaylistTab, updatePlaylistView, addTracks, getPlaylistElement } from "./playlist.view.js";
 import { addRoute, toggleRoute, removeRoute } from "../router.js";
 import { getSetting } from "../settings.js";
@@ -7,17 +20,11 @@ import { postMessageToWorker } from "../web-worker.js";
 import { createSidebarEntry, getSidebarEntry, removeSidebarEntry } from "../sidebar.js";
 import { stopPlayer } from "../player/player.js";
 import { sortTracks } from "./playlist.sorting.js";
-import {
-    createPlaylistEntry,
-    enableSyncBtn,
-    disableSyncBtn,
-    updatePlaylistEntry
-} from "./playlist.entries.js";
 
 function updateTracks(pl) {
-    playlist.setPlaybackOrder(pl, getSetting("shuffle"));
+    setPlaybackOrder(pl, getSetting("shuffle"));
     sortTracks(pl.tracks, pl.sortedBy, pl.order);
-    pl.tracks = playlist.resetTrackIndexes(pl.tracks);
+    pl.tracks = resetTrackIndexes(pl.tracks);
 }
 
 function initPlaylist(pl) {
@@ -28,39 +35,21 @@ function initPlaylist(pl) {
     updateTracks(pl);
 }
 
-function removePlaylist({ id, rendered, _id }) {
-    if (playlist.isPlaylistActive(id)) {
-        stopPlayer(playlist.getCurrentTrack());
+function deletePlaylist({ id, rendered, _id }) {
+    if (isPlaylistActive(id)) {
+        stopPlayer(getCurrentTrack());
     }
 
     if (rendered) {
         removePlaylistTab(id);
     }
-    playlist.removePlaylist(id);
+    removePlaylist(id);
     removeSidebarEntry(id);
     removeRoute(id);
     postMessageToWorker({
         action: "remove",
         playlist: { _id }
     });
-}
-
-function updateCurrentTrack(pl) {
-    const currentTrack = playlist.getCurrentTrack();
-
-    if (currentTrack && playlist.isPlaylistActive(pl.id)) {
-        const track = playlist.findTrack(pl.id, currentTrack.name);
-        let index = -1;
-
-        if (track) {
-            index = track.index;
-        }
-        else {
-            removeElementClass(".track.playing", "playing");
-        }
-        playlist.updateCurrentTrack({ index });
-        playlist.setPlaybackIndex(index);
-    }
 }
 
 function addTracksToPlaylist(pl, tracks, showPlaylist) {
@@ -80,8 +69,8 @@ function addTracksToPlaylist(pl, tracks, showPlaylist) {
     else {
         hideStatusIndicator(pl.id);
         updateTracks(pl);
-        updateCurrentTrack(pl);
-        updatePlaylistEntry(pl);
+        updateCurrentTrackIndex(pl.id);
+        updatePlaylistEntry(pl.id, pl.tracks);
 
         if (pl.rendered) {
             if (tracks.length) {
@@ -130,7 +119,7 @@ function setPrimaryTackIndexes(tracks, lastIndex = 0) {
 }
 
 function onNewPlaylistFormSubmit(event) {
-    const pl = playlist.createPlaylist({
+    const pl = createPlaylist({
         title: event.target.title.value,
         id: Math.random().toString(36).slice(2),
         type: "grid"
@@ -179,8 +168,7 @@ function hideStatusIndicator(id) {
 
 export {
     initPlaylist,
-    removePlaylist,
-    updateCurrentTrack,
+    deletePlaylist,
     addTracksToPlaylist,
     clearPlaylistTracks,
     onNewPlaylistFormSubmit,

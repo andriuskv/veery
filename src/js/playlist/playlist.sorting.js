@@ -1,8 +1,7 @@
 import { getVisiblePlaylist } from "./../tab.js";
 import { removePanel } from "./../panels.js";
 import { postMessageToWorker } from "../web-worker.js";
-import { resetTrackIndexes, updatePlaylist } from "./playlist.js";
-import { updateCurrentTrack } from "./playlist.manage.js";
+import { resetTrackIndexes, updatePlaylist, updateCurrentTrackIndex } from "./playlist.js";
 import { getPlaylistTrackElements, updatePlaylistView } from "./playlist.view.js";
 import { filterTracks } from "./playlist.filter.js";
 
@@ -62,7 +61,7 @@ function changePlaylistSorting(pl, sortBy) {
         }
     });
     updatePlaylistView(pl);
-    updateCurrentTrack(pl);
+    updateCurrentTrackIndex(pl.id);
 
     if (value) {
         const elements = getPlaylistTrackElements(pl.id);
