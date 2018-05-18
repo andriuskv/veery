@@ -28,7 +28,7 @@ async function parseTracks(tracks, id, parsedTracks = []) {
     });
 
     if (parsedTracks.length !== tracks.length) {
-        return await parseTracks(tracks, id, parsedTracks);
+        return parseTracks(tracks, id, parsedTracks);
     }
     return parsedTracks;
 }

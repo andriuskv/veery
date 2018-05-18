@@ -204,6 +204,7 @@ function addTracks(pl, tracks) {
         element.innerHTML = getPlaylistTemplate(pl);
         reObservePlaylist(pl.id);
     }
+    showCurrentTrack(pl.id);
 }
 
 function removePlaylistTab(id) {

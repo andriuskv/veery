@@ -2,7 +2,7 @@ import { getElementByAttr, removeElement } from "./../utils.js";
 import { getVisiblePlaylistId, getVisiblePlaylist } from "./../tab.js";
 import { removePanel } from "./../panels.js";
 import { getPlaylistById, getPlaylistArray, findTrack } from "./playlist.js";
-import { getSelectedElements, getElementIndexes, deselectTrackElements } from "./playlist.track-selection.js";
+import { getSelectedElementIndexes, deselectTrackElements } from "./playlist.track-selection.js";
 import { onNewPlaylistFormSubmit, createNewPlaylistForm, addTracksToPlaylist } from "./playlist.manage.js";
 
 function createMoveToContainer() {
@@ -63,12 +63,12 @@ function handleSubmit(event) {
 }
 
 function moveTracks(playlistId) {
-    const indexes = getElementIndexes(getSelectedElements());
+    const indexes = getSelectedElementIndexes();
     const { tracks } = getVisiblePlaylist();
     const pl = getPlaylistById(playlistId);
     const selectedTracks = tracks
         .filter(track => indexes.includes(track.index) && !findTrack(playlistId, track.name))
-        .map(track => Object.assign({}, track, { playlistId }));
+        .map(track => ({ ...track, playlistId }));
 
     addTracksToPlaylist(pl, selectedTracks, true);
 }

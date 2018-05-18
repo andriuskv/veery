@@ -16,13 +16,13 @@ function createPlaylist(pl) {
     const defaultProperties = {
         sortedBy: "index",
         order: 1,
-        shuffled: false,
         tracks: [],
         playbackIndex: 0,
         lastTrackIndex: 0,
         playbackOrder: []
     };
     const defaultState = {
+        shuffled: false,
         rendered: false,
         initialized: false
     };
@@ -78,6 +78,21 @@ function getCurrentTrack() {
     return currentTrack;
 }
 
+function updateCurrentTrackIndex(playlistId) {
+    const currentTrack = getCurrentTrack();
+
+    if (currentTrack && isPlaylistActive(playlistId)) {
+        const track = findTrack(playlistId, currentTrack.name);
+        let index = -1;
+
+        if (track) {
+            index = track.index;
+        }
+        updateCurrentTrack({ index });
+        setPlaybackIndex(index);
+    }
+}
+
 function findTrack(id, trackId) {
     const pl = getPlaylistById(id);
     const track = pl ? pl.tracks.find(track => track.name === trackId) : null;
@@ -87,9 +102,10 @@ function findTrack(id, trackId) {
 
 function setPlaybackIndex(index) {
     const { id, playbackOrder } = getActivePlaylist();
+    const playbackIndex = playbackOrder.indexOf(parseInt(index, 10));
 
     updatePlaylist(id, {
-        playbackIndex: playbackOrder.indexOf(parseInt(index, 10))
+        playbackIndex: playbackIndex < 0 ? 0 : playbackIndex
     });
 }
 
@@ -154,6 +170,7 @@ export {
     setCurrentTrack,
     getCurrentTrack,
     updateCurrentTrack,
+    updateCurrentTrackIndex,
     findTrack,
     getNextTrack,
     setPlaybackIndex,

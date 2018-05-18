@@ -6,13 +6,9 @@ import {
 } from "../utils.js";
 import {
     updatePlaylist,
-    isPlaylistActive,
-    getCurrentTrack,
-    updateCurrentTrack,
+    updateCurrentTrackIndex,
     resetTrackIndexes,
-    findTrack,
-    getPlaybackOrder,
-    setPlaybackIndex
+    getPlaybackOrder
 } from "./playlist.js";
 import { getSetting } from "../settings.js";
 import { getVisiblePlaylistId, getVisiblePlaylist, getTab } from "../tab.js";
@@ -394,6 +390,10 @@ function getElementIndexes(elements) {
     return elements.map(element => parseInt(element.getAttribute("data-index"), 10));
 }
 
+function getSelectedElementIndexes() {
+    return getElementIndexes(getSelectedElements());
+}
+
 function separatePlaylistTracks(tracks, indexes) {
     const tracksToKeep = [];
     const tracksToRemove = [];
@@ -413,52 +413,18 @@ function separatePlaylistTracks(tracks, indexes) {
     };
 }
 
-function resetListElementIndexes(elements, startIndex) {
-    elements.forEach((element, index) => {
-        const indexElement = element.querySelector(".list-item-index");
-
-        element.setAttribute("data-index", startIndex + index);
-
-        if (indexElement) {
-            indexElement.textContent = startIndex + index + 1;
-        }
-    });
-}
-
-function resetGridElementIndexes(elements, startIndex) {
-    elements.forEach((element, index) => {
-        element.setAttribute("data-index", startIndex + index);
-    });
-}
-
-function resetPlaylistElementIndexes(id, type, selectedTrackIndexes) {
-    const startIndex = Math.min(...selectedTrackIndexes);
+function resetElementIndexes(id, startIndex) {
     const elements = Array.from(getPlaylistTrackElements(id)).slice(startIndex);
 
-    if (type === "list") {
-        resetListElementIndexes(elements, startIndex);
-    }
-    else {
-        resetGridElementIndexes(elements, startIndex);
-    }
-}
+    elements.forEach((element, index) => {
+        const indexElement = element.querySelector(".list-item-index");
+        const newIndex = startIndex + index;
 
-function updateCurrentTrackIndex(playlistId, selectedTrackIndexes) {
-    const currentTrack = getCurrentTrack();
-
-    if (currentTrack && isPlaylistActive(playlistId)) {
-        const track = findTrack(playlistId, currentTrack.name);
-        let index = currentTrack.index;
-
-        if (selectedTrackIndexes.includes(index) || !track) {
-            updateCurrentTrack({ index: -1 });
+        if (indexElement) {
+            indexElement.textContent = newIndex + 1;
         }
-        else {
-            index = track.index;
-            updateCurrentTrack({ index });
-        }
-        setPlaybackIndex(index);
-    }
+        element.setAttribute("data-index", newIndex);
+    });
 }
 
 function removeSelectedTracks() {
@@ -468,11 +434,18 @@ function removeSelectedTracks() {
     const { tracksToKeep, tracksToRemove } = separatePlaylistTracks(pl.tracks, indexes);
 
     removeElements(elements);
-    resetPlaylistElementIndexes(pl.id, pl.type, indexes);
+    resetElementIndexes(pl.id, indexes[0]);
     updatePlaylist(pl.id, {
         playbackOrder: getPlaybackOrder(tracksToKeep, getSetting("shuffle")),
         tracks: tracksToKeep
     });
+    updateCurrentTrackIndex(pl.id);
+    updatePlaylistEntry(pl.id, tracksToKeep);
+
+    if (!tracksToKeep.length) {
+        disableTrackSelection();
+        updatePlaylistView(pl);
+    }
     postMessageToWorker({
         action: "remove-tracks",
         playlist: {
@@ -480,18 +453,10 @@ function removeSelectedTracks() {
             tracks: tracksToRemove
         }
     });
-    updateCurrentTrackIndex(pl.id, indexes);
-    updatePlaylistEntry(pl);
-
-    if (!tracksToKeep.length) {
-        disableTrackSelection();
-        updatePlaylistView(pl);
-    }
 }
 
 export {
     enableTrackSelection,
-    getSelectedElements,
-    getElementIndexes,
+    getSelectedElementIndexes,
     deselectTrackElements
 };

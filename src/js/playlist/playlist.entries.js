@@ -4,7 +4,7 @@ import { postMessageToWorker } from "../web-worker.js";
 import { togglePanel } from "../panels.js";
 import { isGoogleAPIInitialized, initGoogleAPI } from "../google-auth.js";
 import { getPlaylistById, updatePlaylist, getPlaylistDuration } from "./playlist.js";
-import { removePlaylist } from "./playlist.manage.js";
+import { deletePlaylist } from "./playlist.manage.js";
 import { importPlaylist, disableImportOption, resetImportOption } from "./playlist.import.js";
 
 function createContainer(id) {
@@ -111,7 +111,7 @@ function updatePlaylistThumbnail(entry, tracks) {
     thumbnail.innerHTML = getPlaylistThumbnailContent(tracks);
 }
 
-function updatePlaylistEntry({ id, tracks }) {
+function updatePlaylistEntry(id, tracks) {
     const { children } = document.getElementById("js-pl-entries");
 
     for (const entry of children) {
@@ -279,7 +279,7 @@ function handleContainerClick({ target }) {
     const pl = getPlaylistById(entry.attrValue);
 
     if (attrValue === "remove") {
-        removePlaylist(pl);
+        deletePlaylist(pl);
         removePlaylistEntry(entry.elementRef);
     }
     else if (attrValue === "sync") {
