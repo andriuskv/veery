@@ -1,4 +1,5 @@
 import { getElementByAttr, removeElement } from "./../utils.js";
+import { toggleRoute } from "../router.js";
 import { getVisiblePlaylistId, getVisiblePlaylist } from "./../tab.js";
 import { removePanel } from "./../panels.js";
 import { getPlaylistById, getPlaylistArray, findTrack } from "./playlist.js";
@@ -71,6 +72,7 @@ function moveTracks(playlistId) {
         .map(track => ({ ...track, playlistId }));
 
     addTracksToPlaylist(pl, selectedTracks, true);
+    toggleRoute(`playlist/${pl.id}`);
 }
 
 function getPlaylistItems(id) {

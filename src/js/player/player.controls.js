@@ -306,7 +306,7 @@ function unmutePlayer() {
 }
 
 function getMouseEnterHandler(slider) {
-    return function ({ pageX }) {
+    return function({ pageX }) {
         const label = document.getElementById(`js-${slider}-slider-label`);
         const viewportWidth = window.innerWidth;
         const halfLabelWidth = label.offsetWidth / 2;
@@ -319,7 +319,7 @@ function getMouseEnterHandler(slider) {
             const percent = getPosInPercentage(slider, halfLabelWidth + 8);
             label.style.left = `${percent}%`;
         }
-    }
+    };
 }
 
 trackSlider.addEventListener("mousedown", event => {

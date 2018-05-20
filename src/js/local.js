@@ -46,6 +46,15 @@ function filterDuplicateTracks(tracks, existingTracks) {
     }, []);
 }
 
+async function parseAudioMetadata(track) {
+    await scriptLoader.load({ src: "libs/metadata-audio-parser.min.js" });
+
+    return Promise.all([
+        new Promise(resolve => { parse_audio_metadata(track, resolve); }),
+        getTrackDuration(track)
+    ]).then(([data, duration]) => ({ ...data, duration }));
+}
+
 async function getTrackMetadata(track) {
     if (track.type === "audio/flac") {
         const { default: parse } = await import("../modules/parseFlacMetadata.js");
@@ -57,13 +66,7 @@ async function getTrackMetadata(track) {
 
         return parse(track);
     }
-    let data = {};
-
-    [data, data.duration] = await Promise.all([
-        new Promise(resolve => { parse_audio_metadata(track, resolve); }),
-        getTrackDuration(track)
-    ]);
-    return data;
+    return parseAudioMetadata(track);
 }
 
 async function parseTracks(tracks, id, parsedTracks = []) {
@@ -73,9 +76,9 @@ async function parseTracks(tracks, id, parsedTracks = []) {
     parsedTracks.push({
         audioTrack,
         name,
-        title: artist ? title.trim() : name,
-        artist: artist ? artist.trim() : "",
-        album: album ? album.trim() : "",
+        title: artist ? title : name,
+        artist: artist || "",
+        album: album || "",
         thumbnail: picture || "assets/images/album-art-placeholder.png",
         durationInSeconds: duration,
         duration: formatTime(duration),
@@ -89,63 +92,46 @@ async function parseTracks(tracks, id, parsedTracks = []) {
     return parsedTracks;
 }
 
-function updateStatus(importOption, message, { initialized, id }) {
-    showPlayerMessage({
-        title: `${importOption} files`,
-        body: message
-    });
-    enableImportOption(importOption);
-
-    if (initialized) {
-        hideStatusIndicator(id);
-    }
-}
-
 async function addTracks(importOption, pl, files, parseTracks) {
     disableImportOption(importOption);
-
-    if (!files.length) {
-        updateStatus(importOption, "No valid audio file found", pl);
-        return;
-    }
-    const newTracks = filterDuplicateTracks(files, pl.tracks);
-
-    if (!newTracks.length) {
-        updateStatus(importOption, `Track${files.length > 1 ? "s" : ""} already exist`, pl);
-        return;
-    }
+    showStatusIndicator(pl.id);
 
     try {
-        await scriptLoader.load({ src: "libs/metadata-audio-parser.min.js" });
-        const parsedTracks = await parseTracks(newTracks, pl.id);
+        if (!files.length) {
+            throw new Error("No valid audio file found");
+        }
+        const newTracks = filterDuplicateTracks(files, pl.tracks);
 
-        addTracksToPlaylist(pl, parsedTracks);
+        if (!newTracks.length) {
+            throw new Error(`Track${files.length > 1 ? "s" : ""} already exist`);
+        }
+        const tracks = await parseTracks(newTracks, pl.id);
+
+        addTracksToPlaylist(pl, tracks);
     }
-    catch (error) {
-        console.log(error);
-        hideStatusIndicator(pl.id);
+    catch (e) {
+        showPlayerMessage({
+            title: `${importOption} files`,
+            body: e.message
+        });
+        console.log(e);
     }
     finally {
         enableImportOption(importOption);
+        hideStatusIndicator(pl.id);
     }
 }
 
 function selectLocalFiles(files) {
     const supportedFiles = filterUnsupportedFiles(files);
     const id = "local-files";
-    let pl = getPlaylistById(id);
+    const pl = getPlaylistById(id) || createPlaylist({
+        id,
+        title: "Local files",
+        type: "list",
+        player: "native"
+    });
 
-    if (pl && pl.initialized) {
-        showStatusIndicator(id);
-    }
-    else {
-        pl = createPlaylist({
-            id,
-            title: "Local files",
-            type: "list",
-            player: "native"
-        });
-    }
     addTracks("local", pl, supportedFiles, parseTracks);
 }
 

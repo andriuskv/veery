@@ -2,7 +2,7 @@ import { renderPlaylist, changePlaylistType, togglePlaylistTypeBtn, showCurrentT
 import { removeElementClass, getElementByAttr } from "./utils.js";
 import { getSidebarEntry } from "./sidebar.js";
 import { togglePanel } from "./panels.js";
-import { getPlaylistById } from "./playlist/playlist.js";
+import { getPlaylistById, getPlaylistState } from "./playlist/playlist.js";
 import { enableTrackSelection } from "./playlist/playlist.track-selection.js";
 import { setSortOptions, createSortPanel, changePlaylistOrder } from "./playlist/playlist.sorting.js";
 import { createMoveToPanel } from "./playlist/playlist.move-to.js";
@@ -31,13 +31,12 @@ function getTab(id) {
 
 function updatePlaylistTab(id) {
     const pl = getPlaylistById(id);
+    const { rendered } = getPlaylistState(id);
 
-    if (!pl.rendered) {
+    if (!rendered) {
         renderPlaylist(pl);
     }
-    else {
-        showCurrentTrack(id);
-    }
+    showCurrentTrack(id);
 
     if (pl.type === "list" && media.matches) {
         changePlaylistType("grid", pl);

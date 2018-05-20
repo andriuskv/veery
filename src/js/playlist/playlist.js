@@ -1,6 +1,7 @@
 import { shuffleArray } from "../utils";
 
 const playlists = {};
+const playlistState = {};
 let activePlaylistId = "";
 let currentTrack = null;
 
@@ -13,21 +14,16 @@ function getPlaylistById(id) {
 }
 
 function createPlaylist(pl) {
-    const defaultProperties = {
+    playlistState[pl.id] = {};
+    playlists[pl.id] = {
         sortedBy: "index",
         order: 1,
         tracks: [],
         playbackIndex: 0,
         lastTrackIndex: 0,
-        playbackOrder: []
+        playbackOrder: [],
+        ...pl
     };
-    const defaultState = {
-        shuffled: false,
-        rendered: false,
-        initialized: false
-    };
-
-    playlists[pl.id] = Object.assign(defaultProperties, pl, defaultState);
     return playlists[pl.id];
 }
 
@@ -37,6 +33,16 @@ function updatePlaylist(id, data) {
 
 function removePlaylist(id) {
     delete playlists[id];
+    delete playlistState[id];
+}
+
+function getPlaylistState(id) {
+    return playlistState[id];
+}
+
+function setPlaylistState(id, state) {
+    playlistState[id] = { ...playlistState[id], ...state };
+    return playlistState[id];
 }
 
 function getPlaylistDuration(tracks) {
@@ -104,9 +110,7 @@ function setPlaybackIndex(index) {
     const { id, playbackOrder } = getActivePlaylist();
     const playbackIndex = playbackOrder.indexOf(parseInt(index, 10));
 
-    updatePlaylist(id, {
-        playbackIndex: playbackIndex < 0 ? 0 : playbackIndex
-    });
+    playlists[id].playbackIndex = playbackIndex < 0 ? 0 : playbackIndex;
 }
 
 function resetPlaybackIndex() {
@@ -124,10 +128,9 @@ function getPlaybackOrder(tracks, shuffle) {
 }
 
 function setPlaybackOrder({ id, tracks }, shuffle) {
-    updatePlaylist(id, {
-        shuffled: shuffle,
-        playbackOrder: getPlaybackOrder(tracks, shuffle)
-    });
+    playlistState[id].shuffled = shuffle;
+    playlists[id].playbackOrder = getPlaybackOrder(tracks, shuffle);
+
     resetPlaybackIndex();
 }
 
@@ -160,6 +163,8 @@ export {
     setPlaylistAsActive,
     getPlaylistById,
     removePlaylist,
+    getPlaylistState,
+    setPlaylistState,
     getPlaylistArray,
     createPlaylist,
     updatePlaylist,
