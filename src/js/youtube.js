@@ -3,18 +3,22 @@
 import { formatTime } from "./utils.js";
 import { enableImportOption } from "./playlist/playlist.import.js";
 import { showStatusIndicator, hideStatusIndicator, addTracksToPlaylist, clearPlaylistTracks } from "./playlist/playlist.manage.js";
-import { getPlaylistById, createPlaylist } from "./playlist/playlist.js";
+import { getPlaylistById, createPlaylist, updatePlaylist } from "./playlist/playlist.js";
 import { showPlayerMessage } from "./player/player.view.js";
 import { isGoogleAPIInitializing } from "./google-auth.js";
 
 const fetchQueue = [];
+let accessToken = null;
 
-function showMessage(message) {
-    showPlayerMessage({
-        title: "YouTube",
-        body: message
-    });
-    enableImportOption("youtube");
+function setAccessToken() {
+    const instance = gapi.auth2.getAuthInstance();
+
+    if (instance.isSignedIn.get()) {
+        accessToken = instance.currentUser.get().getAuthResponse().access_token;
+    }
+    else {
+        accessToken = null;
+    }
 }
 
 function parseDuration(duration) {
@@ -53,13 +57,13 @@ async function getVideoDuration(items) {
 
 function fetchYoutube(path, part, filter, id, token) {
     let params = `part=${part}&${filter}=${id}&maxResults=50&key=${process.env.YOUTUBE_API_KEY}`;
-    const googleAuth = gapi.auth2.getAuthInstance();
 
     if (token) {
         params += `&pageToken=${token}`;
     }
-    if (googleAuth.isSignedIn.get()) {
-        params += `&access_token=${googleAuth.currentUser.get().getAuthResponse().access_token}`;
+
+    if (accessToken) {
+        params += `&access_token=${accessToken}`;
     }
     return fetch(`https://www.googleapis.com/youtube/v3/${path}?${params}`)
         .then(response => response.json());
@@ -99,14 +103,13 @@ function parseItems(items, id) {
     }));
 }
 
-function handleError({ code, message }, id) {
+function handleError({ code, message }) {
     if (code === 403) {
-        showMessage("You need to be sign in if you want to import private playlist");
+        message = "You need to be sign in if you want to import private playlist";
     }
     else if (code === 404) {
-        showMessage("Playlist was not found");
+        message = "Playlist was not found";
     }
-    hideStatusIndicator(id);
     throw new Error(message);
 }
 
@@ -114,7 +117,7 @@ async function fetchPlaylistItems(id, token) {
     const { error, items, nextPageToken } = await fetchYoutube("playlistItems", "snippet", "playlistId", id, token);
 
     if (error) {
-        handleError(error, id);
+        handleError(error);
     }
     const validItems = await getVideoDuration(filterInvalidItems(items));
     const tracks = parseItems(validItems, id);
@@ -140,70 +143,48 @@ function parseVideos(videos) {
 async function getPlaylistTitleAndStatus(id) {
     const { items } = await fetchYoutube("playlists", "snippet,status", "id", id);
 
-    if (!items.length) {
-        handleError({ code: 404 }, id);
-    }
     return {
         title: items[0].snippet.title,
         status: items[0].status.privacyStatus
     };
 }
 
-async function addVideo(videoId) {
-    const id = "youtube";
-    let pl = getPlaylistById(id);
-
-    if (pl && pl.initialized) {
-        showStatusIndicator(id);
-    }
-    else {
-        pl = createPlaylist({
-            id,
-            title: "YouTube",
-            player: "youtube",
-            type: "grid"
-        });
-    }
+async function addVideo(id, videoId) {
+    const pl = getPlaylistById(id) || createPlaylist({
+        id,
+        title: "YouTube",
+        player: "youtube",
+        type: "grid"
+    });
     const { items } = await fetchYoutube("videos", "snippet,contentDetails", "id", videoId);
 
-    if (!items.length) {
-        showMessage("Video was not found");
-        hideStatusIndicator(id);
-        return;
-    }
-    const tracks = filterDuplicateTracks(parseVideos(items), pl.tracks);
+    if (items.length) {
+        const tracks = filterDuplicateTracks(parseVideos(items), pl.tracks);
 
-    addTracksToPlaylist(pl, tracks);
-    enableImportOption(pl.player);
+        addTracksToPlaylist(pl, tracks);
+    }
+    else {
+        throw new Error("Video was not found");
+    }
 }
 
 async function addPlaylist(url, id, type) {
-    let pl = getPlaylistById(id);
-
-    if (pl && pl.initialized) {
-        showStatusIndicator(id);
-    }
-    else {
-        const { title, status } = await getPlaylistTitleAndStatus(id);
-
-        pl = createPlaylist({
-            id,
-            url,
-            title,
-            isPrivate: status === "private",
-            player: "youtube",
-            type: "grid"
-        });
-    }
-    let tracks = await fetchPlaylistItems(id);
+    const pl = getPlaylistById(id) || createPlaylist({
+        id,
+        url,
+        player: "youtube",
+        type: "grid"
+    });
+    const tracks = await fetchPlaylistItems(id);
 
     if (type === "sync") {
         clearPlaylistTracks(pl);
     }
-    tracks = filterDuplicateTracks(tracks, pl.tracks);
 
-    addTracksToPlaylist(pl, tracks);
-    enableImportOption(pl.player);
+    if (!pl.title) {
+        updatePlaylist(pl.id, await getPlaylistTitleAndStatus(id));
+    }
+    addTracksToPlaylist(pl, filterDuplicateTracks(tracks, pl.tracks));
 }
 
 function parseUrl(url) {
@@ -234,26 +215,43 @@ function parseUrl(url) {
     };
 }
 
-function fetchYoutubeItem(url, type) {
+async function fetchYoutubeItem(url, type) {
     if (isGoogleAPIInitializing()) {
         addItemToFetchQueue(url, type);
         return;
     }
     const { videoId, playlistId } = parseUrl(url);
+    const id = playlistId || "youtube";
 
-    if (videoId) {
-        addVideo(videoId);
-        return;
-    }
+    showStatusIndicator(id);
+    setAccessToken();
 
-    if (!playlistId) {
-        showMessage("Invalid url");
+    try {
+        if (videoId) {
+            await addVideo(id, videoId);
+            return;
+        }
+
+        if (!playlistId) {
+            throw new Error("Invalid url");
+        }
+        else if (playlistId === "WL") {
+            throw new Error("Importing Watch Later playlist is not allowed");
+        }
+        else {
+            await addPlaylist(url, id, type);
+        }
     }
-    else if (playlistId === "WL") {
-        showMessage("Importing Watch Later playlist is not allowed");
+    catch (e) {
+        showPlayerMessage({
+            title: "YouTube",
+            body: e.message
+        });
+        console.log(e);
     }
-    else {
-        addPlaylist(url, playlistId, type);
+    finally {
+        enableImportOption("youtube");
+        hideStatusIndicator(id);
     }
 }
 

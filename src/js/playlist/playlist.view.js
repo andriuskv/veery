@@ -3,7 +3,7 @@ import { getTab } from "../tab.js";
 import { postMessageToWorker } from "../web-worker.js";
 import { getPlayerState } from "../player/player.js";
 import { togglePlayPauseBtn } from "../player/player.controls.js";
-import { getPlaylistById, getCurrentTrack, updatePlaylist } from "./playlist.js";
+import { getCurrentTrack, getPlaylistState, setPlaylistState, updatePlaylist } from "./playlist.js";
 import { enableTrackSelection } from "./playlist.track-selection.js";
 import { observePlaylist, reObservePlaylist, removePlaylistObserver, observeElements } from "./playlist.element-observer.js";
 
@@ -19,13 +19,13 @@ function getPlaylistElementAtIndex(id, index) {
     return getPlaylistTrackElements(id)[index];
 }
 
-function getTrackPlayPauseBtn(track) {
-    const pl = getPlaylistById(track.playlistId);
+function getTrackPlayPauseBtn({ index, playlistId }) {
+    const { rendered } = getPlaylistState(playlistId);
 
-    if (track.index === -1 || !pl.rendered) {
+    if (index === -1 || !rendered) {
         return;
     }
-    const element = getPlaylistElementAtIndex(track.playlistId, track.index);
+    const element = getPlaylistElementAtIndex(playlistId, index);
 
     return element.querySelector(".btn-icon");
 }
@@ -164,10 +164,9 @@ function renderPlaylist(pl) {
     const element = document.getElementById("js-tabs");
 
     element.insertAdjacentHTML("beforeend", tab);
-    pl.rendered = true;
+    setPlaylistState(pl.id, { rendered: true });
 
     if (pl.tracks.length) {
-        showCurrentTrack(pl.id);
         observePlaylist(pl.id);
     }
 }
@@ -208,8 +207,12 @@ function addTracks(pl, tracks) {
 }
 
 function removePlaylistTab(id) {
-    removePlaylistObserver(id);
-    removeElement(getTab(id));
+    const element = getTab(id);
+
+    if (element) {
+        removePlaylistObserver(id);
+        removeElement(element);
+    }
 }
 
 function showTrack(id, index, { scrollToTrack } = {}) {

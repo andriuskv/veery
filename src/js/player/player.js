@@ -12,6 +12,7 @@ import {
 import {
     getPlaylistById,
     getActivePlaylistId,
+    getPlaylistState,
     setPlaylistAsActive,
     setPlaybackOrder,
     findTrack,
@@ -93,14 +94,15 @@ function updatePlayerState(track, state) {
 }
 
 function beforeTrackStart(track) {
-    const pl = getPlaylistById(track.playlistId);
+    const { id } = getPlaylistById(track.playlistId);
+    const { rendered } = getPlaylistState(id);
 
     showTrackInfo(track);
     showTrackDuration(track.duration, track.durationInSeconds);
     showTrackSlider();
 
-    if (pl.rendered && track.index !== -1) {
-        showTrack(pl.id, track.index, { scrollToTrack });
+    if (rendered && track.index !== -1) {
+        showTrack(id, track.index, { scrollToTrack });
     }
     scrollToTrack = false;
     isPaused = false;
@@ -157,14 +159,14 @@ function playTrack() {
 
 function play(source, sourceValue, id) {
     const pl = getPlaylistById(id);
-    const shuffle = getSetting("shuffle");
-    const currentTrack = getCurrentTrack();
-    let track = null;
-    let shuffled = false;
 
     if (!pl) {
         return;
     }
+    const shuffle = getSetting("shuffle");
+    const currentTrack = getCurrentTrack();
+    const { shuffled } = getPlaylistState(id);
+    let alreadyShuffled = false;
 
     if (currentTrack) {
         resetTrackSlider();
@@ -172,28 +174,29 @@ function play(source, sourceValue, id) {
         stopTrack(currentTrack);
     }
 
-    if (pl.shuffled !== shuffle) {
-        shuffled = true;
+    if (shuffled !== shuffle) {
+        alreadyShuffled = true;
         setPlaybackOrder(pl, shuffle);
     }
 
     if (source === "index") {
-        if (!shuffled && pl.shuffled) {
-            setPlaybackOrder(pl, pl.shuffled);
+        if (!alreadyShuffled && shuffle) {
+            setPlaybackOrder(pl, shuffle);
         }
-        track = getTrack(pl.tracks[sourceValue]);
+        playNewTrack(getTrack(pl.tracks[sourceValue]));
     }
     else if (source === "direction") {
-        track = getNextTrack(pl, sourceValue);
+        const track = getNextTrack(pl, sourceValue);
 
-        if (!track) {
+        if (track) {
+            scrollToTrack = true;
+            playNewTrack(track);
+        }
+        else {
             // If playlist is empty reset player
             resetPlayer(currentTrack);
-            return;
         }
-        scrollToTrack = true;
     }
-    playNewTrack(track);
 }
 
 function playNextTrack() {
