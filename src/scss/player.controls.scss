@@ -151,12 +151,11 @@
     bottom: 26px;
     display: none;
     min-width: 40px;
-    padding: 4px 8px;
+    padding: 6px 10px;
     box-shadow: none;
     filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.2));
     font-size: 13px;
     text-align: center;
-    transform: translateX(-50%);
     will-change: left;
 
     @include popup-arrow {

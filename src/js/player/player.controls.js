@@ -133,14 +133,19 @@ function isOutsideViewport(x, width) {
     return x + halfWidth + 8 > maxWidth || x - halfWidth - 8 < 0;
 }
 
+function getLabelOffset(percent, halfLabelWidth) {
+    return `calc(${percent}% - ${halfLabelWidth}px)`;
+}
+
 function updateVolumeSliderLabel(percentage, pageX) {
     const label = document.getElementById("js-volume-slider-label");
     label.textContent = `${Math.floor(percentage)}%`;
+    const width = label.offsetWidth;
 
-    if (isOutsideViewport(pageX, label.offsetWidth)) {
+    if (isOutsideViewport(pageX, width)) {
         return;
     }
-    label.style.left = `${percentage}%`;
+    label.style.left = getLabelOffset(percentage, width / 2);
 }
 
 function updateSlider(slider, value) {
@@ -193,13 +198,13 @@ function getCurrentTime(offset, duration) {
 
 function updateTrackSliderLabel(percentage, currentTime, pageX) {
     const label = document.getElementById("js-track-slider-label");
-
     label.textContent = formatTime(currentTime);
+    const width = label.offsetWidth;
 
-    if (isOutsideViewport(pageX, label.offsetWidth)) {
+    if (isOutsideViewport(pageX, width)) {
         return;
     }
-    label.style.left = `${percentage}%`;
+    label.style.left = getLabelOffset(percentage, width / 2);
 }
 
 function onTrackSliderMousemove({ pageX }) {
@@ -313,11 +318,11 @@ function getMouseEnterHandler(slider) {
 
         if (pageX + halfLabelWidth + 8 > viewportWidth) {
             const percent = getPosInPercentage(slider, viewportWidth - halfLabelWidth - 8);
-            label.style.left = `${percent}%`;
+            label.style.left = getLabelOffset(percent, halfLabelWidth);
         }
         else if (pageX - halfLabelWidth - 8 < 0) {
             const percent = getPosInPercentage(slider, halfLabelWidth + 8);
-            label.style.left = `${percent}%`;
+            label.style.left = getLabelOffset(percent, halfLabelWidth);
         }
     };
 }
