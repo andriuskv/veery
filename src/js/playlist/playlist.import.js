@@ -4,6 +4,8 @@ import { isGoogleAPIInitialized, changeGoogleAuthState, initGoogleAPI } from "..
 import { showDropboxChooser } from "../dropbox.js";
 import { selectLocalFiles } from "../local.js";
 import { fetchYoutubeItem } from "../youtube.js";
+import { getSidebarEntry } from "../sidebar.js";
+import { getSyncBtn } from "./playlist.entries.js";
 
 const importOptionsElement = document.getElementById("js-import-options");
 let importOption = "";
@@ -37,6 +39,32 @@ function changeImportOptionState(option, state) {
 function resetImportOption() {
     setImportOption();
     removeImportForm();
+}
+
+function showStatusIndicator(id) {
+    const entry = getSidebarEntry(id);
+    const btn = getSyncBtn(id);
+
+    if (entry) {
+        entry.classList.add("show-spinner");
+    }
+
+    if (btn) {
+        btn.disabled = true;
+    }
+}
+
+function hideStatusIndicator(id) {
+    const entry = getSidebarEntry(id);
+    const btn = getSyncBtn(id);
+
+    if (entry) {
+        entry.classList.remove("show-spinner");
+    }
+
+    if (btn) {
+        btn.disabled = false;
+    }
 }
 
 function importPlaylist(option, { url, type }) {
@@ -115,7 +143,6 @@ function handleImportFormSubmit(event) {
         const option = event.target.getAttribute("data-for");
 
         resetImportOption();
-        disableImportOption(option);
         importPlaylist(option, { url });
     }
     event.preventDefault();
@@ -177,9 +204,20 @@ importOptionsElement.addEventListener("click", ({ currenTarget, target }) => {
     }
 });
 
+window.addEventListener("import", ({ detail }) => {
+    const { importing, option, playlistId } = detail;
+
+    if (importing) {
+        disableImportOption(option);
+        showStatusIndicator(playlistId);
+    }
+    else {
+        enableImportOption(option);
+        hideStatusIndicator(playlistId);
+    }
+});
+
 export {
     importPlaylist,
-    disableImportOption,
-    enableImportOption,
     resetImportOption
 };

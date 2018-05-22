@@ -244,6 +244,14 @@
     &:not(:disabled):hover {
         color: $color-text;
     }
+
+    &:disabled {
+        position: relative;
+
+        @include spinner {
+            @include center-absolutely;
+        };
+    }
 }
 
 .pl-entry-stats {

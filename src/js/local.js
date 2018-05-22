@@ -1,9 +1,8 @@
 /* global parse_audio_metadata */
 
-import { scriptLoader, formatTime } from "./utils.js";
+import { scriptLoader, formatTime, dispatchCustomEvent } from "./utils.js";
 import { getPlaylistById, createPlaylist } from "./playlist/playlist.js";
-import { addTracksToPlaylist, showStatusIndicator, hideStatusIndicator } from "./playlist/playlist.manage.js";
-import { disableImportOption, enableImportOption } from "./playlist/playlist.import.js";
+import { addTracksToPlaylist } from "./playlist/playlist.manage.js";
 import { showPlayerMessage } from "./player/player.view.js";
 
 function getTrackDuration(track) {
@@ -93,8 +92,11 @@ async function parseTracks(tracks, id, parsedTracks = []) {
 }
 
 async function addTracks(importOption, pl, files, parseTracks) {
-    disableImportOption(importOption);
-    showStatusIndicator(pl.id);
+    dispatchCustomEvent("import", {
+        importing: true,
+        option: importOption,
+        playlistId: pl.id
+    });
 
     try {
         if (!files.length) {
@@ -117,8 +119,11 @@ async function addTracks(importOption, pl, files, parseTracks) {
         console.log(e);
     }
     finally {
-        enableImportOption(importOption);
-        hideStatusIndicator(pl.id);
+        dispatchCustomEvent("import", {
+            importing: false,
+            option: importOption,
+            playlistId: pl.id
+        });
     }
 }
 

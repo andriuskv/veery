@@ -10,16 +10,12 @@ import {
     setPlaybackOrder
 } from "./playlist.js";
 import {
-    createPlaylistEntry,
-    enableSyncBtn,
-    disableSyncBtn,
-    updatePlaylistEntry
-} from "./playlist.entries.js";
+    createPlaylistEntry, updatePlaylistEntry } from "./playlist.entries.js";
 import { removePlaylistTab, updatePlaylistView, addTracks, getPlaylistElement } from "./playlist.view.js";
 import { addRoute, removeRoute } from "../router.js";
 import { getSetting } from "../settings.js";
 import { postMessageToWorker } from "../web-worker.js";
-import { createSidebarEntry, getSidebarEntry, removeSidebarEntry } from "../sidebar.js";
+import { createSidebarEntry, removeSidebarEntry } from "../sidebar.js";
 import { stopPlayer } from "../player/player.js";
 import { sortTracks } from "./playlist.sorting.js";
 
@@ -61,7 +57,6 @@ function addTracksToPlaylist(pl, tracks) {
     }
 
     if (initialized) {
-        hideStatusIndicator(pl.id);
         updateTracks(pl);
         updateCurrentTrackIndex(pl.id);
         updatePlaylistEntry(pl.id, pl.tracks);
@@ -143,31 +138,11 @@ function createNewPlaylistForm(id, element, insertPoint, handleSubmit) {
     form.addEventListener("submit", handleSubmit);
 }
 
-function showStatusIndicator(id) {
-    const entry = getSidebarEntry(id);
-
-    if (entry) {
-        entry.classList.add("show-spinner");
-    }
-    disableSyncBtn(id);
-}
-
-function hideStatusIndicator(id) {
-    const entry = getSidebarEntry(id);
-
-    if (entry) {
-        entry.classList.remove("show-spinner");
-    }
-    enableSyncBtn(id);
-}
-
 export {
     initPlaylist,
     deletePlaylist,
     addTracksToPlaylist,
     clearPlaylistTracks,
     onNewPlaylistFormSubmit,
-    createNewPlaylistForm,
-    showStatusIndicator,
-    hideStatusIndicator
+    createNewPlaylistForm
 };

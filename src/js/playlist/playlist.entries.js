@@ -1,11 +1,17 @@
-import { removeElement, getElementByAttr, getImage, shuffleArray } from "../utils.js";
+import {
+    removeElement,
+    getElementByAttr,
+    getImage,
+    shuffleArray,
+    dispatchCustomEvent
+} from "../utils.js";
 import { editSidebarEntryTitle } from "../sidebar.js";
 import { postMessageToWorker } from "../web-worker.js";
 import { togglePanel } from "../panels.js";
-import { isGoogleAPIInitialized, initGoogleAPI } from "../google-auth.js";
+import { initGoogleAPI } from "../google-auth.js";
 import { getPlaylistById, updatePlaylist, getPlaylistDuration } from "./playlist.js";
 import { deletePlaylist } from "./playlist.manage.js";
-import { importPlaylist, disableImportOption, resetImportOption } from "./playlist.import.js";
+import { importPlaylist, resetImportOption } from "./playlist.import.js";
 
 function createContainer(id) {
     document.getElementById("js-tab-home").insertAdjacentHTML("beforeend", `
@@ -41,22 +47,6 @@ function getSyncBtn(id) {
         return entry.querySelector("[data-action='sync']");
     }
     return null;
-}
-
-function enableSyncBtn(id) {
-    const element = getSyncBtn(id);
-
-    if (element) {
-        element.disabled = false;
-    }
-}
-
-function disableSyncBtn(id) {
-    const element = getSyncBtn(id);
-
-    if (element) {
-        element.disabled = true;
-    }
 }
 
 function getEntryBtn({ action, title, iconId }) {
@@ -215,18 +205,16 @@ async function syncPlaylists(playlists) {
     if (!playlists.length) {
         return;
     }
-
-    if (!isGoogleAPIInitialized()) {
-        playlists.forEach(pl => {
-            disableSyncBtn(pl.id);
-        });
-        await initGoogleAPI();
-        playlists.forEach(pl => {
-            enableSyncBtn(pl.id);
-        });
-    }
     resetImportOption();
-    disableImportOption("youtube");
+    playlists.forEach(pl => {
+        dispatchCustomEvent("import", {
+            importing: true,
+            option: "youtube",
+            playlistId: pl.id
+        });
+    });
+
+    await initGoogleAPI();
 
     playlists.forEach(({ player, url }) => {
         importPlaylist(player, {
@@ -322,8 +310,7 @@ function handleSettingChange({ target }) {
 
 export {
     createPlaylistEntry,
-    enableSyncBtn,
-    disableSyncBtn,
     updatePlaylistEntry,
+    getSyncBtn,
     syncPlaylists
 };

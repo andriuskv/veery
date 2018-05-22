@@ -1,8 +1,7 @@
 /* global gapi */
 
-import { formatTime } from "./utils.js";
-import { enableImportOption } from "./playlist/playlist.import.js";
-import { showStatusIndicator, hideStatusIndicator, addTracksToPlaylist, clearPlaylistTracks } from "./playlist/playlist.manage.js";
+import { dispatchCustomEvent, formatTime } from "./utils.js";
+import { addTracksToPlaylist, clearPlaylistTracks } from "./playlist/playlist.manage.js";
 import { getPlaylistById, createPlaylist, updatePlaylist } from "./playlist/playlist.js";
 import { showPlayerMessage } from "./player/player.view.js";
 import { isGoogleAPIInitializing } from "./google-auth.js";
@@ -223,8 +222,12 @@ async function fetchYoutubeItem(url, type) {
     const { videoId, playlistId } = parseUrl(url);
     const id = playlistId || "youtube";
 
-    showStatusIndicator(id);
     setAccessToken();
+    dispatchCustomEvent("import", {
+        importing: true,
+        option: "youtube",
+        playlistId: id
+    });
 
     try {
         if (videoId) {
@@ -250,8 +253,11 @@ async function fetchYoutubeItem(url, type) {
         console.log(e);
     }
     finally {
-        enableImportOption("youtube");
-        hideStatusIndicator(id);
+        dispatchCustomEvent("import", {
+            importing: false,
+            option: "youtube",
+            playlistId: id
+        });
     }
 }
 
