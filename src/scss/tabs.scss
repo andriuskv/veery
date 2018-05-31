@@ -55,23 +55,32 @@
     margin-left: auto;
 }
 
-.playlist-tab-header-item {
+.playlist-tab-header-separator {
+    display: none;
+    width: 1px;
+    height: 24px;
+    margin-left: 8px;
     margin-right: 8px;
-    padding-right: 8px;
-    border-right: $border-light;
+    background-color: $background-color-light;
+}
 
-    @include breakpoint-smallest {
-        margin-right: 4px;
-        padding-right: 4px;
-        border-right: none;
-    }
+.playlist-tab-header-item + .playlist-tab-header-separator {
+    display: block;
 }
 
 .filter-input-container {
     position: relative;
+    width: 100px;
+    box-shadow: $box-shadow-light;
+    transition: 0.2s width;
 
-    @include breakpoint-smallest {
-        width: 100%;
+    &.active {
+        width: 200px;
+
+        @include breakpoint-smallest {
+            width: 100%;
+            transition-delay: 0.1s;
+        }
     }
 }
 
@@ -85,29 +94,15 @@
 
 .filter-input {
     user-select: none;
-    width: 80px;
+    width: 100%;
     padding-left: 26px;
-    transition: 0.2s width;
-    box-shadow: $box-shadow-light;
-    will-change: width;
-
-    &.active {
-        width: 180px;
-
-        @include breakpoint-smallest {
-            width: 100%;
-        }
-    }
-
-    @include breakpoint-smallest {
-        width: 100%;
-    }
+    padding-right: 24px;
 }
 
 .clear-input-btn {
     @include center-vertically;
 
-    right: 10px;
+    right: 2px;
     display: none;
     background-color: $background-color-darkest;
 
@@ -122,11 +117,15 @@
 
     @include breakpoint-smallest {
         display: none;
+
+        & + .playlist-tab-header-separator {
+            display: none;
+        }
     }
 }
 
 .list-type-btn {
-    margin-right: 4px;
+    margin-right: 8px;
 }
 
 .tab {

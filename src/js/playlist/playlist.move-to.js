@@ -8,9 +8,9 @@ import { onNewPlaylistFormSubmit, createNewPlaylistForm, addTracksToPlaylist } f
 
 function createMoveToContainer() {
     const id = "js-move-to-panel-container";
-    const element = document.getElementById("js-playlist-type-btns");
+    const element = document.getElementById("js-playlist-tab-header-items");
 
-    element.insertAdjacentHTML("beforebegin", `
+    element.insertAdjacentHTML("afterbegin", `
         <div id="${id}" class="playlist-tab-header-item" data-move-to>
             <button class="btn-icon" data-item="move-to" title="Move to">
                 <svg viewBox="0 0 24 24">

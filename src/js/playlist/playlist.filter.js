@@ -48,7 +48,7 @@ function resetFilteredPlaylist() {
 }
 
 function resetInput() {
-    filterInput.classList.remove("active");
+    filterInputContainer.classList.remove("active");
     filterInput.removeEventListener("keyup", handleKeyup);
     filterInput.removeEventListener("blur", resetInput);
 }
@@ -61,7 +61,7 @@ function handleKeyup({ target }) {
 }
 
 filterInput.addEventListener("focus", ({ currentTarget }) => {
-    currentTarget.classList.add("active");
+    filterInputContainer.classList.add("active");
     currentTarget.addEventListener("keyup", handleKeyup);
     currentTarget.addEventListener("blur", resetInput);
 });
