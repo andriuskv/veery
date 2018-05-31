@@ -1,25 +1,7 @@
 .grid-view {
-    --items-per-row: 1;
-
     display: grid;
     grid-gap: 4px;
-    grid-template-columns: repeat(var(--items-per-row), 1fr);
-
-    @media (min-width: 782px) {
-        --items-per-row: 2;
-    }
-
-    @media (min-width: 1086px) {
-        --items-per-row: 3;
-    }
-
-    @media (min-width: 1390px) {
-        --items-per-row: 4;
-    }
-
-    @media (min-width: 1694px) {
-        --items-per-row: 5;
-    }
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 }
 
 .grid-item {
