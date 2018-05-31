@@ -120,8 +120,9 @@
                     <path d="M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z" />
                 </svg>
             </button>
-            <div class="playlist-tab-header-items">
-                <div id="js-playlist-type-btns" class="playlist-tab-header-item playlist-type-btns">
+            <div id="js-playlist-tab-header-items" class="playlist-tab-header-items">
+                <div class="playlist-tab-header-separator"></div>
+                <div class="playlist-tab-header-item playlist-type-btns">
                     <button id="js-list-toggle-btn" class="btn-icon list-type-btn" data-item="list" title="List">
                         <svg viewBox="0 0 24 24">
                             <path d="M9,5V9H21V5M9,19H21V15H9M9,14H21V10H9M4,9H8V5H4M4,19H8V15H4M4,14H8V10H4V14Z">
@@ -133,6 +134,7 @@
                         </svg>
                     </button>
                 </div>
+                <div class="playlist-tab-header-separator"></div>
                 <div class="playlist-tab-header-item filter-input-container">
                     <svg viewBox="0 0 24 24" class="filter-input-icon" data-filter-item="icon">
                         <path d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59
@@ -141,13 +143,14 @@
                             1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7
                             12,5 9.5,5Z">
                     </svg>
-                    <input type="text" id="js-filter-input" class="input filter-input" placeholder="Search">
+                    <input type="text" id="js-filter-input" class="input filter-input" placeholder="Filter">
                     <button id="js-clear-input-btn" class="btn-icon clear-input-btn" data-filter-item="button" title="Clear input">
                         <svg viewBox="0 0 24 24">
                             <path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z">
                         </svg>
                     </button>
                 </div>
+                <div class="playlist-tab-header-separator"></div>
                 <div id="js-sort-panel-container" class="sort-panel-container">
                     <button id="js-sort-toggle" class="btn sort-panel-toggle-btn" data-item="sorting">Index</button>
                     <button id="js-order-toggle" class="btn-icon sort-panel-order-btn" title="Ascending/Descending" data-item="order">
