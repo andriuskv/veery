@@ -1,4 +1,4 @@
-const cacheName = "veery-27";
+const cacheName = "veery-28";
 const toCache = [
     "./index.html",
     "./main.css",
