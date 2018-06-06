@@ -4,7 +4,6 @@
     align-items: center;
     height: 33px;
     padding: 6px 4px 6px 40px;
-    background-color: $background-color-darkest;
     user-select: none;
 }
 
@@ -14,6 +13,7 @@
     top: 0;
     padding-left: 44px;
     padding-right: 8px;
+    background-color: $background-color-darkest;
     color: $color-text-transparent;
 }
 

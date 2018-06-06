@@ -3,7 +3,7 @@
     align-items: center;
     grid-row: 1 / 4;
     grid-column: 1;
-    max-width: 320px;
+    max-width: 340px;
 
     &:not(.inactive) .artwork-container:hover {
         .artwork-container-btn {
@@ -65,15 +65,23 @@
     }
 }
 
-.track-name,
-.track-title,
-.track-artist {
-    @include text-truncate;
-}
-
-.track-name {
+.track-info {
+    overflow: hidden;
+    position: relative;
     flex-grow: 1;
+    white-space: nowrap;
     font-size: 13px;
+
+    &::after {
+        position: absolute;
+        right: 0;
+        top: 0;
+        content: "";
+        display: block;
+        width: 16px;
+        height: 100%;
+        box-shadow: inset -8px 0 10px 0 var(--background-color);
+    }
 }
 
 .track-title {

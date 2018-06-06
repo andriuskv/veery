@@ -88,7 +88,7 @@ function createGridItemContent(item, { title, id }) {
             </button>
             <img src="${getImage(item.thumbnail)}" class="artwork" alt="">
         </div>
-        ${getTrackName(item)}
+        ${getTrackInfo(item)}
         <div class="grid-item-duration">${item.duration}</div>
     `;
 }
@@ -134,16 +134,16 @@ function createPlaylistTab(pl) {
     return `<div id="js-tab-${pl.id}" class="tab">${template}</div>`;
 }
 
-function getTrackName(track, id = "") {
-    let trackName = track.name;
+function getTrackInfo(track, id = "") {
+    let trackName = `<div>${track.name}</div>`;
 
     if (track.artist && track.title) {
         trackName = `
             <div class="track-title">${track.title}</div>
-            <div class="track-artist">${track.artist} ${track.album ? `- ${track.album}` : ""}</div>
+            <div>${track.artist} ${track.album ? `- ${track.album}` : ""}</div>
         `;
     }
-    return `<div id="${id}" class="track-name">${trackName}</div>`;
+    return `<div id="${id}" class="track-info">${trackName}</div> `;
 }
 
 function showCurrentTrack(id) {
@@ -281,7 +281,7 @@ export {
     createGridItemContent,
     removePlaylistTab,
     updatePlaylistView,
-    getTrackName,
+    getTrackInfo,
     showCurrentTrack,
     renderPlaylist,
     addTracks,
