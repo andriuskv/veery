@@ -3,6 +3,10 @@
 }
 
 .track {
+    --background-color: #{$background-color-darkest};
+
+    background-color: var(--background-color);
+
     &:hover, &:focus-within, &.playing {
         .list-item-index {
             opacity: 0;
@@ -18,7 +22,7 @@
     }
 
     &:hover, &:focus-within {
-        background-color: $background-color-dark;
+        --background-color: #{$background-color-dark};
     }
 
     &.playing {
@@ -30,7 +34,7 @@
     }
 
     &.selected {
-        background-color: $background-color-light;
+        --background-color: #{$background-color-light};
      }
  }
 

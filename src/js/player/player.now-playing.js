@@ -2,7 +2,7 @@ import { getElementByAttr, removeElement, getImage } from "../utils.js";
 import { togglePlaying } from "./player.js";
 import { watchOnYoutube } from "./player.youtube.js";
 import { getCurrentTrack } from "../playlist/playlist.js";
-import { getTrackName } from "../playlist/playlist.view.js";
+import { getTrackInfo } from "../playlist/playlist.view.js";
 
 const nowPlayingElement = document.getElementById("js-now-playing");
 const mediaElement = document.getElementById("js-media-container");
@@ -15,16 +15,16 @@ function resetAnimationTarget() {
     clearTimeout(timeoutId);
     cancelAnimationFrame(animationId);
 
-    animationTarget.style.textIndent = "0";
+    animationTarget.style.transform = "translateX(0)";
     timeoutId = 0;
     animationTarget = null;
 }
 
-function indentText(element, width, maxWidth, x = 0) {
+function moveLeft(element, width, maxWidth, x = 0) {
     x = Math.abs(x) < width + 10 ? x - 1 : maxWidth;
-    element.style.textIndent = `${x}px`;
+    element.style.transform = `translateX(${x}px)`;
     animationId = requestAnimationFrame(() => {
-        indentText(element, width, maxWidth, x);
+        moveLeft(element, width, maxWidth, x);
     });
 }
 
@@ -55,12 +55,12 @@ function handleMousemove({ currentTarget, target }) {
     else if (timeoutId) {
         return;
     }
-    const width = target.scrollWidth;
-    const maxWidth = target.offsetWidth;
+    const { scrollWidth, offsetWidth } = target;
 
-    if (width > maxWidth) {
+    // If text is overflowing
+    if (scrollWidth > offsetWidth) {
         animationTarget = target;
-        timeoutId = setTimeout(indentText, 400, target, width, maxWidth);
+        timeoutId = setTimeout(moveLeft, 400, target, scrollWidth, offsetWidth);
 
         target.addEventListener("mouseleave", handleMouseleave);
     }
@@ -78,8 +78,8 @@ function toggleMedia() {
     mediaElement.classList.toggle("visible");
 }
 
-function removeTrackNameElement() {
-    const element = document.getElementById("js-track-name");
+function removeTrackInfoElement() {
+    const element = document.getElementById("js-track-info");
 
     if (element) {
         removeElement(element);
@@ -93,20 +93,20 @@ function setArtwork(artwork = "./assets/images/album-art-placeholder.png") {
 function renderNowPlaying(track, artwork) {
     setArtwork(artwork);
     nowPlayingElement.classList.remove("inactive");
-    nowPlayingElement.insertAdjacentHTML("beforeend", getTrackName(track, "js-track-name"));
+    nowPlayingElement.insertAdjacentHTML("beforeend", getTrackInfo(track, "js-track-info"));
 }
 
 function resetNowPlaying() {
     document.title = "Veery";
 
     setArtwork();
-    removeTrackNameElement();
+    removeTrackInfoElement();
     nowPlayingElement.classList.add("inactive");
 }
 
 function showNowPlaying(track, artwork) {
     setArtwork();
-    removeTrackNameElement();
+    removeTrackInfoElement();
     renderNowPlaying(track, artwork);
 }
 
