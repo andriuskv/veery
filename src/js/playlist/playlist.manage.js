@@ -45,6 +45,16 @@ function deletePlaylist({ id, _id }) {
         action: "remove",
         playlist: { _id }
     });
+
+    if (id === "local-files") {
+        caches.keys().then(keys => {
+            keys.forEach(key => {
+                if (key.startsWith("local-file")) {
+                    caches.delete(key);
+                }
+            });
+        });
+    }
 }
 
 function addTracksToPlaylist(pl, tracks) {

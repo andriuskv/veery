@@ -68,10 +68,43 @@ async function getTrackMetadata(track) {
     return parseAudioMetadata(track);
 }
 
+async function getTrackAlbum(artist, title, album, picture) {
+    if (album && picture) {
+        return { album, picture };
+    }
+    const key = process.env.LAST_FM_API_KEY;
+    const apiRootURL = "https://ws.audioscrobbler.com/2.0/";
+    const params = `?method=track.getInfo&api_key=${key}&artist=${artist}&track=${title}&format=json`;
+    const json = await fetch(apiRootURL + params).then(response => response.json());
+
+    if (json.track && json.track.album) {
+        const { title, image } = json.track.album;
+
+        if (!album && title) {
+            album = title;
+        }
+
+        if (!picture && image) {
+            const url = image[image.length - 1]["#text"];
+
+            if (url) {
+                const { origin, pathname } = new URL(url);
+                const [imageName] = pathname.split("/").slice(-1);
+
+                picture = `${origin}/i/u/${imageName}`;
+            }
+        }
+    }
+    return { album, picture };
+}
+
 async function parseTracks(tracks, id, parsedTracks = []) {
     const { audioTrack, name } = tracks[parsedTracks.length];
-    const { artist, title, album, duration, picture } = await getTrackMetadata(audioTrack);
+    let { artist, title, album, duration, picture } = await getTrackMetadata(audioTrack);
 
+    if (navigator.onLine && artist && title) {
+        ({ album, picture } = await getTrackAlbum(artist, title, album, picture));
+    }
     parsedTracks.push({
         audioTrack,
         name,
