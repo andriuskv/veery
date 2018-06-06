@@ -12,7 +12,8 @@ module.exports = function(env = {}) {
                 NODE_ENV: JSON.stringify(mode),
                 YOUTUBE_API_KEY: JSON.stringify(process.env.YOUTUBE_API_KEY),
                 SOUNDCLOUD_API_KEY: JSON.stringify(process.env.SOUNDCLOUD_API_KEY),
-                DROPBOX_API_KEY: JSON.stringify(process.env.DROPBOX_API_KEY)
+                DROPBOX_API_KEY: JSON.stringify(process.env.DROPBOX_API_KEY),
+                LAST_FM_API_KEY: JSON.stringify(process.env.LAST_FM_API_KEY)
             }
         }),
         new MiniCssExtractPlugin({
