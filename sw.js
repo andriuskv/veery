@@ -1,4 +1,4 @@
-const cacheName = "veery-26";
+const cacheName = "veery-27";
 const toCache = [
     "./index.html",
     "./main.css",
@@ -35,9 +35,28 @@ self.addEventListener("activate", event => {
 });
 
 self.addEventListener("fetch", event => {
-    event.respondWith(
-        caches.match(event.request)
-            .then(response => response || fetch(event.request))
-            .catch(() => caches.match("index.html"))
-    );
+    if (event.request.url.startsWith("https://lastfm-img2.akamaized.net")) {
+        event.respondWith(
+            caches.open("local-file-artwork-cache").then(cache => {
+                return cache.match(event.request).then(response => {
+                    if (response) {
+                        return response;
+                    }
+                    return fetch(event.request.clone()).then(response => {
+                        cache.put(event.request, response.clone());
+                        return response;
+                    });
+                }).catch(error => {
+                    console.log(error);
+                });
+            })
+        );
+    }
+    else {
+        event.respondWith(
+            caches.match(event.request)
+                .then(response => response || fetch(event.request))
+                .catch(() => caches.match("index.html"))
+        );
+    }
 });
