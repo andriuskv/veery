@@ -1,9 +1,9 @@
 .list-view-header,
 .list-item {
-    display: flex;
+    display: grid;
+    grid-template-columns: 40px repeat(3, 1fr) 62px;
     align-items: center;
     height: 33px;
-    padding: 6px 4px 6px 40px;
     user-select: none;
 }
 
@@ -11,25 +11,18 @@
     z-index: 1;
     position: sticky;
     top: 0;
-    padding-left: 44px;
-    padding-right: 8px;
+    padding-left: 4px;
+    padding-right: 4px;
     background-color: $background-color-darkest;
     color: $color-text-transparent;
 }
 
-.list-item {
-    position: relative;
-
-    &:not(:last-of-type) {
-        border-bottom: 1px solid $background-color-light;
-    }
+.list-item:not(:last-of-type) {
+    border-bottom: 1px solid $background-color-light;
 }
 
 .list-item-first-col {
-    @include center-vertically;
-
-    left: 0;
-    width: 40px;
+    position: relative;
     text-align: center;
 
     .track-play-pause-btn {
@@ -43,13 +36,23 @@
 }
 
 .list-item-col {
-    @include text-truncate;
+    overflow: hidden;
+    position: relative;
+    margin-right: 8px;
+    white-space: nowrap;
 
-    flex: 1;
-    margin-right: 4px;
+    &::after {
+        position: absolute;
+        right: 0;
+        top: 0;
+        content: "";
+        display: block;
+        width: 16px;
+        height: 100%;
+        box-shadow: inset -8px 0 10px 0 var(--background-color);
+    }
 }
 
 .list-item-last-col {
-    flex: 0 0 62px;
     text-align: center;
 }
