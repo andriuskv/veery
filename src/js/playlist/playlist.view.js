@@ -60,9 +60,9 @@ function createList(id, items) {
     return `
         <ul class="list-view-header">
             <li class="list-item-first-col">#</li>
-            <li class="list-item-col">Title</li>
-            <li class="list-item-col">Artist</li>
-            <li class="list-item-col">Album</li>
+            <li>Title</li>
+            <li>Artist</li>
+            <li>Album</li>
             <li class="list-item-last-col">Duration</li>
         </ul>
         <ul id="js-${id}" class="playlist-view">${items}</ul>
