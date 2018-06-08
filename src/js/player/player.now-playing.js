@@ -6,25 +6,29 @@ import { getTrackInfo } from "../playlist/playlist.view.js";
 
 const nowPlayingElement = document.getElementById("js-now-playing");
 const mediaElement = document.getElementById("js-media-container");
+const animatedElements = {};
 let artwork = null;
-let animationTarget = null;
-let animationId = 0;
-let timeoutId = 0;
 
-function resetAnimationTarget() {
-    clearTimeout(timeoutId);
-    cancelAnimationFrame(animationId);
+function moveLeft(name, width, maxWidth, x = 0) {
+    const element = animatedElements[name];
 
-    animationTarget.style.transform = "translateX(0)";
-    timeoutId = 0;
-    animationTarget = null;
-}
+    if (Math.abs(x) < width + 10) {
+        x -= 1;
 
-function moveLeft(element, width, maxWidth, x = 0) {
-    x = Math.abs(x) < width + 10 ? x - 1 : maxWidth;
-    element.style.transform = `translateX(${x}px)`;
-    animationId = requestAnimationFrame(() => {
-        moveLeft(element, width, maxWidth, x);
+        if (x === 0 && !element.isHovering && element.loopedOnce) {
+            element.target.style.transform = "translateX(0)";
+            element.target.removeEventListener("mouseleave", handleMouseleave);
+            delete animatedElements[name];
+            return;
+        }
+    }
+    else {
+        x = maxWidth;
+        element.loopedOnce = true;
+    }
+    element.target.style.transform = `translateX(${x}px)`;
+    requestAnimationFrame(() => {
+        moveLeft(name, width, maxWidth, x);
     });
 }
 
@@ -48,29 +52,51 @@ function handleClickOnMedia({ currentTarget, target }) {
     }
 }
 
-function handleMousemove({ currentTarget, target }) {
-    if (animationTarget && target !== animationTarget && target !== currentTarget) {
-        resetAnimationTarget();
-    }
-    else if (timeoutId) {
+function handleMousemove({ target }) {
+    const name = target.getAttribute("data-element");
+
+    if (!name) {
         return;
+    }
+    animatedElements[name] = animatedElements[name] || {};
+    const element = animatedElements[name];
+
+    if (element.target) {
+        element.loopedOnce = false;
+        element.isHovering = true;
+        return;
+    }
+
+    if (element.timeoutId) {
+        clearTimeout(element.timeoutId);
     }
     const { scrollWidth, offsetWidth } = target;
 
     // If text is overflowing
     if (scrollWidth > offsetWidth) {
-        animationTarget = target;
-        timeoutId = setTimeout(moveLeft, 400, target, scrollWidth, offsetWidth);
+        element.timeoutId = setTimeout(() => {
+            element.target = target;
+            element.isHovering = true;
+            moveLeft(name, scrollWidth, offsetWidth);
+        }, 500);
 
-        target.addEventListener("mouseleave", handleMouseleave);
+        if (!element.mouseLeaveAdded) {
+            element.mouseLeaveAdded = true;
+            target.addEventListener("mouseleave", handleMouseleave);
+        }
     }
 }
 
 function handleMouseleave({ currentTarget }) {
-    currentTarget.removeEventListener("mouseleave", handleMouseleave);
+    const element = animatedElements[currentTarget.getAttribute("data-element")];
 
-    if (animationTarget) {
-        resetAnimationTarget();
+    if (element.target) {
+        element.isHovering = false;
+    }
+    else {
+        clearTimeout(element.timeoutId);
+        element.mouseLeaveAdded = false;
+        currentTarget.removeEventListener("mouseleave", handleMouseleave);
     }
 }
 
@@ -82,6 +108,7 @@ function removeTrackInfoElement() {
     const element = document.getElementById("js-track-info");
 
     if (element) {
+        element.removeEventListener("mousemove", handleMousemove);
         removeElement(element);
     }
 }
@@ -94,6 +121,7 @@ function renderNowPlaying(track, artwork) {
     setArtwork(artwork);
     nowPlayingElement.classList.remove("inactive");
     nowPlayingElement.insertAdjacentHTML("beforeend", getTrackInfo(track, "js-track-info"));
+    document.getElementById("js-track-info").addEventListener("mousemove", handleMousemove);
 }
 
 function resetNowPlaying() {
@@ -147,7 +175,6 @@ function resetTrackInfo() {
     }
 }
 
-nowPlayingElement.addEventListener("mousemove", handleMousemove);
 mediaElement.addEventListener("click", handleClickOnMedia);
 document.getElementById("js-expand-media-btn").addEventListener("click", toggleMedia);
 
