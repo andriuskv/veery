@@ -135,12 +135,12 @@ function createPlaylistTab(pl) {
 }
 
 function getTrackInfo(track, id = "") {
-    let trackName = `<div>${track.name}</div>`;
+    let trackName = `<div  data-element="name">${track.name}</div>`;
 
     if (track.artist && track.title) {
         trackName = `
-            <div class="track-title">${track.title}</div>
-            <div>${track.artist} ${track.album ? `- ${track.album}` : ""}</div>
+            <div class="track-title" data-element="title">${track.title}</div>
+            <div data-element="artist">${track.artist} ${track.album ? `- ${track.album}` : ""}</div>
         `;
     }
     return `<div id="${id}" class="track-info">${trackName}</div> `;
