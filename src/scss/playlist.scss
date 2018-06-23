@@ -6,6 +6,8 @@
     --background-color: #{$background-color-darkest};
 
     background-color: var(--background-color);
+    user-select: none;
+    cursor: default;
 
     &:hover, &:focus-within, &.playing {
         .list-item-index {

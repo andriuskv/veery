@@ -5,25 +5,18 @@
 }
 
 .grid-item {
-    overflow: hidden;
-    position: relative;
     display: flex;
     align-items: center;
     height: 60px;
-    padding-left: 68px;
-    user-select: none;
-    cursor: default;
+    padding-right: 8px;
 }
 
-.grid-item-first-col {
-    position: absolute;
-    left: 0;
+.grid-item-thumbnail {
     width: 60px;
     height: 100%;
 }
 
 .grid-item-duration {
-    margin-right: 8px;
     margin-left: 8px;
     color: $color-text-transparent;
     font-size: 13px;

@@ -4,7 +4,6 @@ import { postMessageToWorker } from "../web-worker.js";
 import { getPlayerState } from "../player/player.js";
 import { togglePlayPauseBtn } from "../player/player.controls.js";
 import { getCurrentTrack, getPlaylistState, setPlaylistState, updatePlaylist } from "./playlist.js";
-import { enableTrackSelection } from "./playlist.track-selection.js";
 import { observePlaylist, reObservePlaylist, removePlaylistObserver, observeElements } from "./playlist.element-observer.js";
 
 function getPlaylistElement(id) {
@@ -80,7 +79,7 @@ function createGridItemContainer({ index }, content = "") {
 
 function createGridItemContent(item, { title, id }) {
     return `
-        <div class="artwork-container grid-item-first-col" tabindex="-1">
+        <div class="artwork-container grid-item-thumbnail" tabindex="-1">
             <button class="btn-icon track-play-pause-btn artwork-container-btn" data-btn="play" title="${title}">
                 <svg viewBox="0 0 24 24">
                     <use class="js-icon" href="#${id}"></use>
@@ -269,7 +268,6 @@ function changePlaylistType(type, pl) {
         }
     });
     updatePlaylistView(pl);
-    enableTrackSelection(pl);
     togglePlaylistTypeBtn(type);
 }
 
