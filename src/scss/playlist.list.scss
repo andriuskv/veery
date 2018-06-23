@@ -4,7 +4,6 @@
     grid-template-columns: 40px repeat(3, 1fr) 62px;
     align-items: center;
     height: 33px;
-    user-select: none;
 }
 
 .list-view-header {
@@ -15,6 +14,7 @@
     padding-right: 4px;
     background-color: $background-color-darkest;
     color: $color-text-transparent;
+    user-select: none;
 }
 
 .list-item:not(:last-of-type) {

@@ -18,17 +18,7 @@ function isNewImportOption(option) {
     return importOption !== option;
 }
 
-function disableImportOption(option) {
-    changeImportOptionState(option, true);
-}
-
-function enableImportOption(option) {
-    changeImportOptionState(option, false);
-}
-
-function changeImportOptionState(option, state) {
-    const { children } = document.querySelector(`[data-option=${option}]`);
-
+function changeImportOptionState({ children }, state) {
     Array.from(children).forEach(element => {
         if (element.hasAttribute("data-item")) {
             element.disabled = state;
@@ -41,29 +31,16 @@ function resetImportOption() {
     removeImportForm();
 }
 
-function showStatusIndicator(id) {
+function toggleStatusIndicator(id, state) {
     const entry = getSidebarEntry(id);
     const btn = getSyncBtn(id);
 
     if (entry) {
-        entry.classList.add("show-spinner");
+        entry.classList.toggle("show-spinner", state);
     }
 
     if (btn) {
-        btn.disabled = true;
-    }
-}
-
-function hideStatusIndicator(id) {
-    const entry = getSidebarEntry(id);
-    const btn = getSyncBtn(id);
-
-    if (entry) {
-        entry.classList.remove("show-spinner");
-    }
-
-    if (btn) {
-        btn.disabled = false;
+        btn.disabled = state;
     }
 }
 
@@ -206,15 +183,10 @@ importOptionsElement.addEventListener("click", ({ currenTarget, target }) => {
 
 window.addEventListener("import", ({ detail }) => {
     const { importing, option, playlistId } = detail;
+    const element = document.querySelector(`[data-option=${option}]`);
 
-    if (importing) {
-        disableImportOption(option);
-        showStatusIndicator(playlistId);
-    }
-    else {
-        enableImportOption(option);
-        hideStatusIndicator(playlistId);
-    }
+    changeImportOptionState(element, importing);
+    toggleStatusIndicator(playlistId, importing);
 });
 
 export {
