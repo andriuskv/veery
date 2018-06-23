@@ -164,7 +164,7 @@
     height: 128px;
     margin-right: 8px;
 
-    @include breakpoint-small {
+    @include breakpoint-smallest {
         width:64px;
         height: 64px;
     }

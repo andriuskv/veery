@@ -1,7 +1,4 @@
 .sidebar-container {
-    float: left;
-    height: calc(100% - 80px);
-
     @include breakpoint-small {
         z-index: 3;
         overflow: hidden;

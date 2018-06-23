@@ -138,6 +138,16 @@ svg {
     }
 }
 
+.player {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    grid-template-rows: 1fr 80px;
+
+    @include breakpoint-small {
+        grid-template-rows: 1fr 108px;
+    }
+}
+
 .player-message {
     bottom: 88px;
     right: 8px;
