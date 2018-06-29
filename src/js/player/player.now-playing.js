@@ -2,7 +2,6 @@ import { getElementByAttr, removeElement, getImage } from "../utils.js";
 import { togglePlaying } from "./player.js";
 import { watchOnYoutube } from "./player.youtube.js";
 import { getCurrentTrack } from "../playlist/playlist.js";
-import { getTrackInfo } from "../playlist/playlist.view.js";
 
 const nowPlayingElement = document.getElementById("js-now-playing");
 const mediaElement = document.getElementById("js-media-container");
@@ -25,6 +24,7 @@ function moveLeft(name, width, maxWidth, x = 0) {
     else {
         x = maxWidth;
         element.loopedOnce = true;
+        element.target.classList.remove("moving");
     }
     element.target.style.transform = `translateX(${x}px)`;
     requestAnimationFrame(() => {
@@ -64,6 +64,7 @@ function handleMousemove({ target }) {
     if (element.target) {
         element.loopedOnce = false;
         element.isHovering = true;
+        target.classList.add("moving");
         return;
     }
 
@@ -75,6 +76,7 @@ function handleMousemove({ target }) {
     // If text is overflowing
     if (scrollWidth > offsetWidth) {
         element.timeoutId = setTimeout(() => {
+            target.classList.add("moving");
             element.target = target;
             element.isHovering = true;
             moveLeft(name, scrollWidth, offsetWidth);
@@ -153,6 +155,18 @@ function updateTrackMedia(track, artwork) {
         ytPlayer.classList.add("hidden");
         imageElement.src = artwork;
     }
+}
+
+function getTrackInfo(track, id) {
+    let trackName = `<div class="track-info-item" data-element="name">${track.name}</div>`;
+
+    if (track.artist && track.title) {
+        trackName = `
+            <div class="track-info-item track-title" data-element="title">${track.title}</div>
+            <div class="track-info-item" data-element="artist">${track.artist} ${track.album ? `- ${track.album}` : ""}</div>
+        `;
+    }
+    return `<div id="${id}" class="track-info now-playing-info">${trackName}</div> `;
 }
 
 function showTrackInfo(track) {

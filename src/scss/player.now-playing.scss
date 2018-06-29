@@ -89,6 +89,25 @@
     font-size: 14px;
 }
 
+.now-playing-info::before {
+    position: absolute;
+    left: 0;
+    top: 0;
+    content: "";
+    display: block;
+    width: 16px;
+    height: 100%;
+    box-shadow: inset 8px 0 10px 0 var(--background-color);
+}
+
+.track-info-item {
+    position: relative;
+
+    &.moving {
+        z-index: -1;
+    }
+}
+
 .media-container {
     z-index: 2;
     position: absolute;

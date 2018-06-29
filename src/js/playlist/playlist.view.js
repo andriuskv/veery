@@ -133,16 +133,16 @@ function createPlaylistTab(pl) {
     return `<div id="js-tab-${pl.id}" class="tab">${template}</div>`;
 }
 
-function getTrackInfo(track, id = "") {
-    let trackName = `<div  data-element="name">${track.name}</div>`;
+function getTrackInfo(track) {
+    let trackName = track.name;
 
     if (track.artist && track.title) {
         trackName = `
-            <div class="track-title" data-element="title">${track.title}</div>
-            <div data-element="artist">${track.artist} ${track.album ? `- ${track.album}` : ""}</div>
+            <div class="track-title">${track.title}</div>
+            <div>${track.artist} ${track.album ? `- ${track.album}` : ""}</div>
         `;
     }
-    return `<div id="${id}" class="track-info">${trackName}</div> `;
+    return `<div class="track-info">${trackName}</div> `;
 }
 
 function showCurrentTrack(id) {
@@ -279,7 +279,6 @@ export {
     createGridItemContent,
     removePlaylistTab,
     updatePlaylistView,
-    getTrackInfo,
     showCurrentTrack,
     renderPlaylist,
     addTracks,
