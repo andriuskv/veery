@@ -65,6 +65,11 @@ async function getTrackMetadata(track) {
 
         return parse(track);
     }
+    else if (track.type === "audio/mp3") {
+        const { default: parse } = await import("../modules/parseMP3Metadata.js");
+
+        return await parse(track);
+    }
     return parseAudioMetadata(track);
 }
 
