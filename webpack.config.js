@@ -93,8 +93,6 @@ module.exports = function(env = {}) {
                     options: {
                         presets: [["@babel/preset-env", {
                             modules: false,
-                            shippedProposals: true,
-                            loose: true,
                             useBuiltIns: "usage"
                         }]],
                         plugins: ["@babel/plugin-syntax-dynamic-import"]
