@@ -64,18 +64,24 @@ module.exports = function(env = {}) {
                             loader: "css-loader",
                             options: {
                                 sourceMap: !env.prod,
-                                url: false,
-                                minimize: env.prod
+                                url: false
                             }
                         },
                         {
                             loader: "postcss-loader",
                             options: {
                                 sourceMap: !env.prod,
-                                plugins: () => [
-                                    require("autoprefixer")(),
-                                    require("css-mqpacker")()
-                                ]
+                                plugins() {
+                                    const plugins = [
+                                        require("autoprefixer")(),
+                                        require("css-mqpacker")()
+                                    ];
+
+                                    if (env.prod) {
+                                        plugins.push(require("cssnano")());
+                                    }
+                                    return plugins;
+                                }
                             }
                         },
                         {
@@ -93,6 +99,7 @@ module.exports = function(env = {}) {
                     options: {
                         presets: [["@babel/preset-env", {
                             modules: false,
+                            loose: true,
                             useBuiltIns: "usage"
                         }]],
                         plugins: ["@babel/plugin-syntax-dynamic-import"]
