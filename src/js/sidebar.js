@@ -1,4 +1,5 @@
 import { removeElement, getElementByAttr, isOutsideElement } from "./utils.js";
+import { togglePanel } from "./panels.js";
 import { createNewPlaylistForm, onNewPlaylistFormSubmit } from "./playlist/playlist.manage.js";
 
 const sidebarContainerElement = document.getElementById("js-sidebar-container");
@@ -44,14 +45,13 @@ function removeActiveIcon() {
     }
 }
 
-function toggleSidebarForm(btn) {
-    const element = document.getElementById("js-sidebar-form");
+function createSidebarFormPanel(id, { element }) {
+    element.insertAdjacentHTML("afterend", `
+        <div id="${id}" class="panel sidebar-form-panel"></div>
+    `);
+    const panel = document.getElementById(id);
 
-    if (element) {
-        removeElement(element);
-        return;
-    }
-    createNewPlaylistForm("sidebar", btn.parentElement, "afterend", onNewPlaylistFormSubmit);
+    createNewPlaylistForm("sidebar", panel, "beforeend", onNewPlaylistFormSubmit);
 }
 
 sidebarContainerElement.addEventListener("click", ({ currentTarget, target }) => {
@@ -64,7 +64,7 @@ sidebarContainerElement.addEventListener("click", ({ currentTarget, target }) =>
     const element = getElementByAttr("data-btn", target, currentTarget);
 
     if (element) {
-        toggleSidebarForm(element.elementRef);
+        togglePanel("js-sidebar-form-panel", createSidebarFormPanel, { element: element.elementRef });
     }
 });
 
