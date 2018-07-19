@@ -86,22 +86,24 @@
     text-align: center;
 }
 
-.sidebar-form-toggle-btn {
+.sidebar-form-container {
     @include center-vertically;
 
+    z-index: 3;
     right: 8px;
 }
 
-.sidebar-form {
-    flex-shrink: 0;
-    display: flex;
-    margin: 0 8px 8px 8px;
-    box-shadow: $box-shadow-light;
+.sidebar-form-toggle-btn {
+    display: block;
+}
 
-    .input {
-        flex-grow: 1;
-        width: 50%;
-    }
+.sidebar-form-panel {
+    top: 24px;
+    left: calc(100% - 32px);
+}
+
+.sidebar-form {
+    display: flex;
 }
 
 .sidebar-entries {
