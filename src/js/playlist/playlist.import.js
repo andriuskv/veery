@@ -77,6 +77,38 @@ function removeImportForm() {
     }
 }
 
+function createImportProgessContainer() {
+    importOptionsElement.insertAdjacentHTML("afterend", `
+        <div id="js-import-progess" class="import-progess">
+            <p id="js-import-progess-label" class="import-progess-label"></p>
+            <div class="import-progess-bar">
+                <div id="js-import-progess-bar-inner" class="import-progess-bar-inner"></div>
+                <div id="js-import-progess-bar-label" class="import-progess-bar-label"></div>
+            </div>
+        </div>
+    `);
+}
+
+function removeImportProgessContainer() {
+    const element = document.getElementById("js-import-progess");
+    element.classList.add("collapsing");
+    setImportProgessLabel();
+
+    setTimeout(() => {
+        removeElement(element);
+    }, 1200);
+}
+
+function setImportProgessLabel(label = "") {
+    document.getElementById("js-import-progess-label").textContent = label;
+}
+
+function updateProgess(label, current, total) {
+    setImportProgessLabel(label);
+    document.getElementById("js-import-progess-bar-inner").style.transform = `scaleX(${current / total})`;
+    document.getElementById("js-import-progess-bar-label").textContent = `${current}/${total}`;
+}
+
 function handleChangeOnFileInput({ target }) {
     selectLocalFiles([...target.files]);
     target.value = "";
@@ -89,6 +121,7 @@ function createFileInput() {
 
     input.setAttribute("type", "file");
     input.setAttribute("id", "js-file-picker");
+    input.setAttribute("accept", "audio/*");
     input.classList.add("file-picker");
     input.addEventListener("change", handleChangeOnFileInput);
     document.body.appendChild(input);
@@ -187,9 +220,19 @@ window.addEventListener("import", ({ detail }) => {
 
     changeImportOptionState(element, importing);
     toggleStatusIndicator(playlistId, importing);
+
+    if (option === "local") {
+        if (importing) {
+            createImportProgessContainer();
+        }
+        else {
+            removeImportProgessContainer();
+        }
+    }
 });
 
 export {
     importPlaylist,
-    resetImportOption
+    resetImportOption,
+    updateProgess
 };

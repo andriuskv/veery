@@ -3,6 +3,7 @@
 import { scriptLoader, formatTime, dispatchCustomEvent } from "./utils.js";
 import { getPlaylistById, createPlaylist } from "./playlist/playlist.js";
 import { addTracksToPlaylist } from "./playlist/playlist.manage.js";
+import { updateProgess } from "./playlist/playlist.import.js";
 import { showPlayerMessage } from "./player/player.view.js";
 
 function getTrackDuration(track) {
@@ -68,7 +69,7 @@ async function getTrackMetadata(track) {
     else if (track.type === "audio/mp3") {
         const { default: parse } = await import("../modules/parseMP3Metadata.js");
 
-        return await parse(track);
+        return parse(track);
     }
     return parseAudioMetadata(track);
 }
@@ -104,7 +105,11 @@ async function getTrackAlbum(artist, title, album, picture) {
 }
 
 async function parseTracks(tracks, id, parsedTracks = []) {
-    const { audioTrack, name } = tracks[parsedTracks.length];
+    const index = parsedTracks.length;
+    const { audioTrack, name } = tracks[index];
+
+    updateProgess(`Processing: ${name}`, index + 1, tracks.length);
+
     let { artist, title, album, duration, picture } = await getTrackMetadata(audioTrack);
 
     if (navigator.onLine && artist && title) {
@@ -123,10 +128,10 @@ async function parseTracks(tracks, id, parsedTracks = []) {
         playlistId: id
     });
 
-    if (parsedTracks.length !== tracks.length) {
-        return parseTracks(tracks, id, parsedTracks);
+    if (index + 1 === tracks.length) {
+        return parsedTracks;
     }
-    return parsedTracks;
+    return parseTracks(tracks, id, parsedTracks);
 }
 
 async function addTracks(importOption, pl, files, parseTracks) {
