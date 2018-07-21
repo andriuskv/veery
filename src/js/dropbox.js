@@ -16,7 +16,6 @@ async function parseTracks(tracks, id, parsedTracks = []) {
     parsedTracks.push({
         audioTrack,
         durationInSeconds,
-        index: parsedTracks.length,
         title: track.name,
         artist: "",
         album: "",
@@ -27,10 +26,10 @@ async function parseTracks(tracks, id, parsedTracks = []) {
         playlistId: id
     });
 
-    if (parsedTracks.length !== tracks.length) {
-        return parseTracks(tracks, id, parsedTracks);
+    if (parsedTracks.length === tracks.length) {
+        return parsedTracks;
     }
-    return parsedTracks;
+    return parseTracks(tracks, id, parsedTracks);
 }
 
 function showDropboxChooser() {

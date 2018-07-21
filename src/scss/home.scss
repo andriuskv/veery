@@ -141,6 +141,68 @@
     display: none;
 }
 
+.import-progess {
+    overflow: hidden;
+    animation-name: expand-import-progess;
+    animation-duration: 0.2s;
+    animation-fill-mode: both;
+
+    &.collapsing {
+        animation-delay: 1s;
+        animation-name: collapse-import-progess;
+    }
+}
+
+.import-progess-bar {
+    position: relative;
+    height: 18px;
+    padding: 2px;
+    background-color: $background-color-lightest;
+}
+
+.import-progess-label {
+    @include text-truncate;
+
+    margin: 8px 4px;
+}
+
+.import-progess-bar-inner {
+    height: 100%;
+    background-color: $color-accent;
+    transform-origin: left;
+    transition: transform 0.1s;
+}
+
+.import-progess-bar-label {
+    @include center-absolutely;
+
+    font-size: 13px;
+    font-weight: bold;
+    color: $background-color-darkest;
+}
+
+@keyframes expand-import-progess {
+    from {
+        opacity: 0;
+        height: 0;
+    }
+    to {
+        opacity: 1;
+        height: 50px;
+    }
+}
+
+@keyframes collapse-import-progess {
+    from {
+        opacity: 1;
+        height: 50px;
+    }
+    to {
+        opacity: 0;
+        height: 0;
+    }
+}
+
 .pl-entry-container {
     max-width: 500px;
     margin-left: 16px;
