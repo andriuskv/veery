@@ -27,8 +27,27 @@ function removeFileType(fileName) {
 
 function filterUnsupportedFiles(files) {
     const audio = new Audio();
+    const unsupportedTypes = [];
 
-    return files.filter(file => audio.canPlayType(file.type));
+    files = files.reduce((files, file) => {
+        if (audio.canPlayType(file.type)) {
+            files.push(file);
+        }
+        else {
+            const { name } = file;
+
+            unsupportedTypes.push(name.slice(name.lastIndexOf(".")));
+        }
+        return files;
+    }, []);
+
+    if (unsupportedTypes.length) {
+        showPlayerMessage({
+            title: "Local files",
+            body: `Can't play audio files with type: ${unsupportedTypes.join(", ")}`
+        });
+    }
+    return files;
 }
 
 function filterDuplicateTracks(tracks, existingTracks) {

@@ -92,7 +92,6 @@ function createImportProgessContainer() {
 function removeImportProgessContainer() {
     const element = document.getElementById("js-import-progess");
     element.classList.add("collapsing");
-    setImportProgessLabel();
 
     setTimeout(() => {
         removeElement(element);
