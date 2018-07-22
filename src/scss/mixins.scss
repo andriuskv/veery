@@ -57,8 +57,13 @@
 }
 
 // Force css-mqpacker to use correct breakpoint order.
+@media (max-width: 980px) {/* */}
 @media (max-width: 760px) {/* */}
 @media (max-width: 540px) {/* */}
+
+@mixin home-tab-breakpoint {
+    @media (max-width: 980px) { @content; }
+}
 
 @mixin breakpoint-small {
     @media (max-width: 760px) { @content; }

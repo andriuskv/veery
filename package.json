@@ -20,7 +20,7 @@
     "@babel/plugin-syntax-dynamic-import": "^7.0.0-beta.54",
     "@babel/polyfill": "^7.0.0-beta.54",
     "@babel/preset-env": "^7.0.0-beta.54",
-    "autoprefixer": "^9.0.0",
+    "autoprefixer": "^9.0.1",
     "babel-eslint": "^8.2.6",
     "babel-loader": "^8.0.0-beta.0",
     "css-loader": "^1.0.0",
