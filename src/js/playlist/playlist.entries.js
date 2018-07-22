@@ -15,7 +15,7 @@ import { importPlaylist, resetImportOption } from "./playlist.import.js";
 
 function createContainer(id) {
     document.getElementById("js-tab-home").insertAdjacentHTML("beforeend", `
-        <div class="pl-entry-container">
+        <div class="home-tab-section pl-entry-container">
             <h2 class="home-tab-section-title">Playlists</h2>
             <ul id="${id}"></ul>
         </div>
