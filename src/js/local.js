@@ -80,13 +80,18 @@ async function getTrackMetadata(track) {
 
         return parse(track);
     }
-    else if (track.type === "audio/ogg") {
+    else if (track.type === "audio/ogg" || track.type === "video/ogg") {
         const { default: parse } = await import("../modules/parseOggOpusMetadata.js");
 
         return parse(track);
     }
-    else if (track.type === "audio/mp3") {
-        const { default: parse } = await import("../modules/parseMP3Metadata.js");
+    else if (track.type === "audio/mp3" || track.type === "audio/mpeg") {
+        const { default: parse } = await import("../modules/parseMp3Metadata.js");
+
+        return parse(track);
+    }
+    else if (track.type === "audio/x-m4a" || track.type === "audio/mp4") {
+        const { default: parse } = await import("../modules/parseM4aMetadata.js");
 
         return parse(track);
     }
