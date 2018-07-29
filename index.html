@@ -10,6 +10,9 @@
 <link href="main.css" rel="stylesheet"></head>
 <body id="js-player" class="player">
     <svg style="display:none;">
+        <symbol id="alert" viewBox="0 0 24 24">
+            <path d="M13,14H11V10H13M13,18H11V16H13M1,21H23L12,2L1,21Z" />
+        </symbol>
         <symbol id="play" viewBox="0 0 24 24">
             <path d="M8,5.14V19.14L19,12.14L8,5.14Z">
         </symbol>
@@ -70,7 +73,6 @@
             <path d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z">
         </symbol>
         <symbol id="lock" viewBox="0 0 24 24">
-            <title>Private</title>
             <path d="M12,17A2,2 0 0,0 14,15C14,13.89 13.1,13 12,13A2,2 0 0,0 10,15A2,2 0 0,0 12,17M18,8A2,2 0 0,1 20,10V20A2,2 0 0,1 18,22H6A2,2 0 0,1 4,20V10C4,8.89 4.9,8 6,8H7V6A5,5 0 0,1 12,1A5,5 0 0,1 17,6V8H18M12,3A3,3 0 0,0 9,6V8H15V6A3,3 0 0,0 12,3Z">
         </symbol>
         <symbol id="settings" viewBox="0 0 24 24">
@@ -97,7 +99,7 @@
                 <div class="sidebar-section-title">
                     <span>PLAYLISTS</span>
                     <div class="sidebar-form-container">
-                        <button class="btn-icon sidebar-form-toggle-btn" data-btn title="Toggle playlist form">
+                        <button class="btn-icon sidebar-form-toggle-btn" data-btn title="Create playlist">
                             <svg viewBox="0 0 24 24">
                                 <use href="#plus"></use>
                             </svg>
@@ -158,7 +160,16 @@
         </div>
         <div id="js-tab-home" class="tab home-tab">
             <div class="home-tab-section import-option-container">
-                <h2 class="home-tab-section-title">Import options</h2>
+                <div class="home-tab-section-header">
+                    <h2 class="home-tab-section-title">Import</h2>
+                    <div class="import-settings-container">
+                        <button id="js-import-settings-btn" class="btn-icon import-settings-btn" title="Settings">
+                            <svg viewBox="0 0 24 24">
+                                <use href="#settings">
+                            </svg>
+                        </button>
+                    </div>
+                </div>
                 <ul id="js-import-options">
                     <li class="import-option-local" data-option="local">
                         <button class="btn-icon import-option-btn" data-item="file">
