@@ -1,3 +1,32 @@
+.import-settings-container {
+    position: relative;
+}
+
+.import-settings-btn {
+    color: $color-text-transparent;
+
+    &:hover {
+        color: $color-text;
+    }
+}
+
+.import-settings-panel {
+    right: 0;
+    min-width: 240px;
+}
+
+.import-setting {
+    display: flex;
+
+    &:not(:last-of-type) {
+        margin-bottom: 8px;
+    }
+}
+
+.import-setting-label {
+    margin-left: 8px;
+}
+
 .import-option-container {
     max-width: 380px;
     margin-right: 16px;
@@ -147,6 +176,7 @@
     background-color: $color-accent;
     transform-origin: left;
     transition: transform 0.1s;
+    will-change: transform;
 }
 
 .import-progess-bar-label {

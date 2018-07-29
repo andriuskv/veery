@@ -3,7 +3,7 @@
 import { scriptLoader, formatTime, dispatchCustomEvent } from "./utils.js";
 import { getPlaylistById, createPlaylist } from "./playlist/playlist.js";
 import { addTracksToPlaylist } from "./playlist/playlist.manage.js";
-import { updateProgess } from "./playlist/playlist.import.js";
+import { updateProgess, importSettings } from "./playlist/playlist.import.js";
 import { showPlayerMessage } from "./player/player.view.js";
 
 function getTrackDuration(track) {
@@ -201,7 +201,8 @@ function selectLocalFiles(files) {
         id,
         title: "Local files",
         type: "list",
-        player: "native"
+        player: "native",
+        storageDisabled: importSettings.getSetting(id, "storageDisabled")
     });
 
     addTracks("local", pl, supportedFiles, parseTracks);

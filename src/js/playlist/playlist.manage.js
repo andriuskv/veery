@@ -9,8 +9,7 @@ import {
     resetTrackIndexes,
     setPlaybackOrder
 } from "./playlist.js";
-import {
-    createPlaylistEntry, updatePlaylistEntry } from "./playlist.entries.js";
+import { createPlaylistEntry, updatePlaylistEntry } from "./playlist.entries.js";
 import { removePlaylistTab, updatePlaylistView, addTracks, getPlaylistElement } from "./playlist.view.js";
 import { addRoute, removeRoute } from "../router.js";
 import { getSetting } from "../settings.js";

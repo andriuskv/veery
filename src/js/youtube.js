@@ -144,7 +144,7 @@ async function getPlaylistTitleAndStatus(id) {
 
     return {
         title: items[0].snippet.title,
-        status: items[0].status.privacyStatus
+        isPrivate: items[0].status.privacyStatus === "private"
     };
 }
 
