@@ -3,7 +3,7 @@
 import { scriptLoader, formatTime, dispatchCustomEvent } from "./utils.js";
 import { getPlaylistById, createPlaylist } from "./playlist/playlist.js";
 import { addTracksToPlaylist } from "./playlist/playlist.manage.js";
-import { updateProgess, importSettings } from "./playlist/playlist.import.js";
+import { updateProgress, importSettings } from "./playlist/playlist.import.js";
 import { showPlayerMessage } from "./player/player.view.js";
 
 function getTrackDuration(track) {
@@ -132,7 +132,7 @@ async function parseTracks(tracks, id, parsedTracks = []) {
     const index = parsedTracks.length;
     const { audioTrack, name } = tracks[index];
 
-    updateProgess(`Processing: ${name}`, index + 1, tracks.length);
+    updateProgress(`Processing: ${name}`, index + 1, tracks.length);
 
     let { artist, title, album, duration, picture } = await getTrackMetadata(audioTrack);
 
