@@ -104,30 +104,30 @@ function removeImportForm() {
     }
 }
 
-function createImportProgessContainer() {
+function createImportProgressContainer() {
     importOptionsElement.insertAdjacentHTML("afterend", `
-        <div id="js-import-progess" class="import-progess">
-            <p id="js-import-progess-label" class="import-progess-label"></p>
-            <div class="import-progess-bar">
-                <div id="js-import-progess-bar-inner" class="import-progess-bar-inner"></div>
-                <div id="js-import-progess-bar-label" class="import-progess-bar-label"></div>
+        <div id="js-import-progress" class="import-progress">
+            <p id="js-import-progress-label" class="import-progress-label"></p>
+            <div class="import-progress-bar">
+                <div id="js-import-progress-bar-inner" class="import-progress-bar-inner"></div>
+                <div id="js-import-progress-bar-label" class="import-progress-bar-label"></div>
             </div>
         </div>
     `);
 }
 
-function removeImportProgessContainer() {
-    removeElement(document.getElementById("js-import-progess"));
+function removeImportProgressContainer() {
+    removeElement(document.getElementById("js-import-progress"));
 }
 
-function setImportProgessLabel(label = "") {
-    document.getElementById("js-import-progess-label").textContent = label;
+function setImportProgressLabel(label = "") {
+    document.getElementById("js-import-progress-label").textContent = label;
 }
 
-function updateProgess(label, current, total) {
-    setImportProgessLabel(label);
-    document.getElementById("js-import-progess-bar-inner").style.transform = `scaleX(${current / total})`;
-    document.getElementById("js-import-progess-bar-label").textContent = `${current}/${total}`;
+function updateProgress(label, current, total) {
+    setImportProgressLabel(label);
+    document.getElementById("js-import-progress-bar-inner").style.transform = `scaleX(${current / total})`;
+    document.getElementById("js-import-progress-bar-label").textContent = `${current}/${total}`;
 }
 
 function handleChangeOnFileInput({ target }) {
@@ -279,10 +279,10 @@ window.addEventListener("import", ({ detail }) => {
 
     if (option === "local") {
         if (importing) {
-            createImportProgessContainer();
+            createImportProgressContainer();
         }
         else {
-            removeImportProgessContainer();
+            removeImportProgressContainer();
         }
     }
 });
@@ -291,5 +291,5 @@ export {
     importSettings,
     importPlaylist,
     resetImportOption,
-    updateProgess
+    updateProgress
 };

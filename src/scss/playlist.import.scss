@@ -145,29 +145,29 @@
     display: none;
 }
 
-.import-progess {
+.import-progress {
     overflow: hidden;
     padding: 0 8px;
-    animation-name: expand-import-progess, reveal;
+    animation-name: expand-import-progress, reveal;
     animation-delay: 0s, 0.2s;
     animation-duration: 0.2s;
     animation-fill-mode: both;
 }
 
-.import-progess-bar {
+.import-progress-bar {
     position: relative;
     height: 18px;
     padding: 2px;
     background-color: $background-color-lightest;
 }
 
-.import-progess-label {
+.import-progress-label {
     @include text-truncate;
 
     margin: 8px 4px;
 }
 
-.import-progess-bar-inner {
+.import-progress-bar-inner {
     height: 100%;
     background-color: $color-accent;
     transform-origin: left;
@@ -175,7 +175,7 @@
     will-change: transform;
 }
 
-.import-progess-bar-label {
+.import-progress-bar-label {
     @include center-absolutely;
 
     font-size: 13px;
@@ -192,7 +192,7 @@
     }
 }
 
-@keyframes expand-import-progess {
+@keyframes expand-import-progress {
     from {
         height: 0;
     }
