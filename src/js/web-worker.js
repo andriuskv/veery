@@ -25,7 +25,12 @@ worker.onerror = function(event) {
 };
 
 function postMessageToWorker(message) {
-    worker.postMessage(message);
+    if (message.playlist.storageDisabled) {
+        return;
+    }
+    else if (message.action === "add" || message.playlist._id) {
+        worker.postMessage(message);
+    }
 }
 
 export {

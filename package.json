@@ -16,10 +16,10 @@
     "focus-visible": "^4.1.4"
   },
   "devDependencies": {
-    "@babel/core": "^7.0.0-beta.54",
-    "@babel/plugin-syntax-dynamic-import": "^7.0.0-beta.54",
-    "@babel/polyfill": "^7.0.0-beta.54",
-    "@babel/preset-env": "^7.0.0-beta.54",
+    "@babel/core": "^7.0.0-beta.55",
+    "@babel/plugin-syntax-dynamic-import": "^7.0.0-beta.55",
+    "@babel/polyfill": "^7.0.0-beta.55",
+    "@babel/preset-env": "^7.0.0-beta.55",
     "autoprefixer": "^9.0.1",
     "babel-eslint": "^8.2.6",
     "babel-loader": "^8.0.0-beta.0",
@@ -35,7 +35,7 @@
     "sass-loader": "^7.0.3",
     "style-loader": "^0.21.0",
     "uglifyjs-webpack-plugin": "^1.2.7",
-    "webpack": "^4.16.2",
+    "webpack": "^4.16.3",
     "webpack-cli": "^3.1.0"
   },
   "browserslist": [

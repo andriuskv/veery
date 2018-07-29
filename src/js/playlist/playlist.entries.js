@@ -16,7 +16,9 @@ import { importPlaylist, resetImportOption } from "./playlist.import.js";
 function createContainer(id) {
     document.getElementById("js-tab-home").insertAdjacentHTML("beforeend", `
         <div class="home-tab-section pl-entry-container">
-            <h2 class="home-tab-section-title">Playlists</h2>
+            <div class="home-tab-section-header">
+                <h2 class="home-tab-section-title">Playlists</h2>
+            </div>
             <ul id="${id}"></ul>
         </div>
     `);
@@ -59,9 +61,19 @@ function getEntryBtn({ action, title, iconId }) {
     `;
 }
 
+function getAlertIcon() {
+    return `
+        <svg viewBox="0 0 24 24" class="pl-entry-stats-item">
+            <title>This playlist will not persist through reload</title>
+            <use href="#alert"></use>
+        </svg>
+    `;
+}
+
 function getStatusIcon() {
     return `
         <svg viewBox="0 0 24 24" class="pl-entry-stats-item">
+            <title>Private</title>
             <use href="#lock"></use>
         </svg>
     `;
@@ -144,6 +156,7 @@ function createPlaylistEntry(pl) {
                 </div>
                 <div class="pl-entry-footer">
                     <div class="pl-entry-stats">
+                        ${pl.storageDisabled ? getAlertIcon() : ""}
                         ${pl.isPrivate ? getStatusIcon() : ""}
                         <span class="pl-entry-stats-item track-count">${pl.tracks.length} tracks</span>
                         <span class="pl-entry-stats-item playlist-duration">${parsePlaylistDuration(duration)}</span>

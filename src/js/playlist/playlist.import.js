@@ -10,6 +10,33 @@ import { getSyncBtn } from "./playlist.entries.js";
 const importOptionsElement = document.getElementById("js-import-options");
 let importOption = "";
 
+const importSettings = (function() {
+    const defaultSettings = {
+        "local-files": {
+            storageDisabled: false
+        },
+        dropbox: {
+            storageDisabled: false
+        }
+    };
+    const settings = Object.assign(defaultSettings, JSON.parse(localStorage.getItem("import-settings")));
+
+    function setSetting(id, setting, value) {
+        settings[id][setting] = value;
+        localStorage.setItem("import-settings", JSON.stringify(settings));
+    }
+
+    function getSetting(id, setting) {
+        return settings[id] ? settings[id][setting] : null;
+    }
+
+    function getSettings() {
+        return settings;
+    }
+
+    return { setSetting, getSetting, getSettings };
+})();
+
 function setImportOption(option = "") {
     importOption = option;
 }
@@ -169,6 +196,35 @@ function createYouTubeInfoPanel(id, { element }) {
     `);
 }
 
+function createSettingsPanel(id, { element }) {
+    const settings = importSettings.getSettings();
+
+    element.insertAdjacentHTML("afterend", `
+        <div id="${id}" class="panel import-settings-panel">
+            <h3 class="panel-title">Settings</h3>
+            <label class="import-setting">
+                <input type="checkbox" class="checkbox-input"
+                    ${settings["local-files"].storageDisabled ? "checked" : ""} data-id="local-files">
+                <div class="checkbox"></div>
+                <span class="import-setting-label">Don't store <b>Local files</b> playlist</span>
+            </label>
+            <label class="import-setting">
+                <input type="checkbox" class="checkbox-input"
+                    ${settings.dropbox.storageDisabled ? "checked" : ""} data-id="dropbox">
+                <div class="checkbox"></div>
+                <span class="import-setting-label">Don't store <b>Dropbox</b> playlist</span>
+            </label>
+        </div>
+    `);
+    document.getElementById(id).addEventListener("change", handleSettingChange);
+}
+
+function handleSettingChange({ target }) {
+    const id = target.getAttribute("data-id");
+
+    importSettings.setSetting(id, "storageDisabled", target.checked);
+}
+
 function handleYouTubeOptionClick({ attrValue, elementRef }) {
     if (attrValue === "form-toggle") {
         const option = "youtube";
@@ -213,6 +269,12 @@ importOptionsElement.addEventListener("click", ({ currenTarget, target }) => {
     }
 });
 
+document.getElementById("js-import-settings-btn").addEventListener("click", ({ currentTarget }) => {
+    togglePanel("js-import-settings-panel", createSettingsPanel, {
+        element: currentTarget
+    });
+});
+
 window.addEventListener("import", ({ detail }) => {
     const { importing, option, playlistId } = detail;
     const element = document.querySelector(`[data-option=${option}]`);
@@ -231,6 +293,7 @@ window.addEventListener("import", ({ detail }) => {
 });
 
 export {
+    importSettings,
     importPlaylist,
     resetImportOption,
     updateProgess

@@ -108,7 +108,7 @@ function createGrid(id, items) {
 }
 
 function createItems(tracks, cb) {
-    return tracks.map(track => cb(track)).join("");
+    return tracks.reduce((items, track) => items + cb(track), "");
 }
 
 function createPlaylist({ id, type, tracks }) {
@@ -121,10 +121,10 @@ function createPlaylist({ id, type, tracks }) {
 }
 
 function getPlaylistTemplate(pl) {
-    if (!pl.tracks.length) {
-        return `<p class="playlist-message">This playlist is empty</p>`;
+    if (pl.tracks.length) {
+        return createPlaylist(pl);
     }
-    return createPlaylist(pl);
+    return `<p class="playlist-message">This playlist is empty</p>`;
 }
 
 function createPlaylistTab(pl) {
