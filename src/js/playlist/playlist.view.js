@@ -1,4 +1,4 @@
-import { removeElement, removeElementClass, getImage } from "../utils.js";
+import { removeElement, removeElementClass, getImage, getIcon } from "../utils.js";
 import { getTab } from "../tab.js";
 import { postMessageToWorker } from "../web-worker.js";
 import { getPlayerState } from "../player/player.js";
@@ -43,9 +43,7 @@ function createListItemContent(item, { title, id }) {
         <span class="list-item-first-col">
             <span class="list-item-index">${item.index + 1}</span>
             <button class="btn-icon track-play-pause-btn" data-btn="play" title="${title}">
-                <svg viewBox="0 0 24 24">
-                    <use class="js-icon" href="#${id}"></use>
-                </svg>
+                ${getIcon({ iconId: id })}
             </button>
         </span>
         <span class="list-item-col">${item.title}</span>
@@ -81,9 +79,7 @@ function createGridItemContent(item, { title, id }) {
     return `
         <div class="artwork-container grid-item-thumbnail" tabindex="-1">
             <button class="btn-icon track-play-pause-btn artwork-container-btn" data-btn="play" title="${title}">
-                <svg viewBox="0 0 24 24">
-                    <use class="js-icon" href="#${id}"></use>
-                </svg>
+                ${getIcon({ iconId: id })}
             </button>
             <img src="${getImage(item.thumbnail)}" class="artwork" alt="">
         </div>

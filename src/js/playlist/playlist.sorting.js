@@ -10,7 +10,7 @@ function setSortBtnText(text) {
 }
 
 function toggleOrderBtn(order) {
-    const icon = document.getElementById("js-order-toggle").querySelector(".js-icon");
+    const icon = document.getElementById("js-order-toggle").querySelector("use");
 
     icon.setAttribute("href", `#${order === 1 ? "down" : "up"}-arrow`);
 }

@@ -1,4 +1,4 @@
-import { removeElement, getElementByAttr, isOutsideElement } from "./utils.js";
+import { removeElement, getElementByAttr, isOutsideElement, getIcon } from "./utils.js";
 import { togglePanel } from "./panels.js";
 import { createNewPlaylistForm, onNewPlaylistFormSubmit } from "./playlist/playlist.manage.js";
 
@@ -30,11 +30,11 @@ function showActiveIcon(id) {
     const entry = getSidebarEntry(id);
 
     removeActiveIcon();
-    entry.insertAdjacentHTML("beforeend", `
-        <svg viewBox="0 0 24 24" id="js-active-playlist-icon" class="active-playlist-icon">
-            <use href="#volume"></use>
-        </svg>
-    `);
+    entry.insertAdjacentHTML("beforeend", getIcon({
+        iconId: "volume",
+        elementId: "js-active-playlist-icon",
+        className: "active-playlist-icon"
+    }));
 }
 
 function removeActiveIcon() {

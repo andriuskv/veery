@@ -94,15 +94,14 @@ function updatePlayerState(track, state) {
 }
 
 function beforeTrackStart(track) {
-    const { id } = getPlaylistById(track.playlistId);
-    const { rendered } = getPlaylistState(id);
+    const { rendered } = getPlaylistState(track.playlistId);
 
     showTrackInfo(track);
     showTrackDuration(track.duration, track.durationInSeconds);
     showTrackSlider();
 
     if (rendered && track.index !== -1) {
-        showTrack(id, track.index, { scrollToTrack });
+        showTrack(track.playlistId, track.index, { scrollToTrack });
     }
     scrollToTrack = false;
     isPaused = false;
