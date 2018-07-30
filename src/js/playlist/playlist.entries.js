@@ -3,7 +3,8 @@ import {
     getElementByAttr,
     getImage,
     shuffleArray,
-    dispatchCustomEvent
+    dispatchCustomEvent,
+    getIcon
 } from "../utils.js";
 import { editSidebarEntryTitle } from "../sidebar.js";
 import { postMessageToWorker } from "../web-worker.js";
@@ -54,28 +55,8 @@ function getSyncBtn(id) {
 function getEntryBtn({ action, title, iconId }) {
     return `
         <button class="btn-icon pl-entry-btn" data-action="${action}" title="${title}">
-            <svg viewBox="0 0 24 24">
-                <use href="#${iconId}">
-            </svg>
+            ${getIcon({ iconId })}
         </button>
-    `;
-}
-
-function getAlertIcon() {
-    return `
-        <svg viewBox="0 0 24 24" class="pl-entry-stats-item">
-            <title>This playlist will not persist through reload</title>
-            <use href="#alert"></use>
-        </svg>
-    `;
-}
-
-function getStatusIcon() {
-    return `
-        <svg viewBox="0 0 24 24" class="pl-entry-stats-item">
-            <title>Private</title>
-            <use href="#lock"></use>
-        </svg>
     `;
 }
 
@@ -143,6 +124,20 @@ function createPlaylistEntry(pl) {
         title: "Remove playlist",
         iconId: "trash"
     });
+    const editIcon = getIcon({
+        iconId: "edit",
+        className: "pl-entry-input-icon"
+    });
+    const alertIcon = pl.storageDisabled ? getIcon({
+        iconId: "alert",
+        className: "pl-entry-stats-item",
+        title: "This playlist will not persist through reload"
+    }) : "";
+    const statusIcon = pl.isPrivate ? getIcon({
+        iconId: "lock",
+        className: "pl-entry-stats-item",
+        title: "Private"
+    }) : "";
 
     element.insertAdjacentHTML("beforeend", `
         <li class="pl-entry" data-entry-id=${pl.id}>
@@ -150,14 +145,12 @@ function createPlaylistEntry(pl) {
             <div class="pl-entry-content">
                 <div class="pl-entry-input-container" data-action="edit">
                     <input type="text" class="input pl-entry-input" value="${pl.title}">
-                    <svg viewBox="0 0 24 24" class="pl-entry-input-icon">
-                        <use href="#edit">
-                    </svg>
+                    ${editIcon}
                 </div>
                 <div class="pl-entry-footer">
                     <div class="pl-entry-stats">
-                        ${pl.storageDisabled ? getAlertIcon() : ""}
-                        ${pl.isPrivate ? getStatusIcon() : ""}
+                        ${alertIcon}
+                        ${statusIcon}
                         <span class="pl-entry-stats-item track-count">${pl.tracks.length} tracks</span>
                         <span class="pl-entry-stats-item playlist-duration">${parsePlaylistDuration(duration)}</span>
                     </div>

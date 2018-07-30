@@ -93,7 +93,7 @@ function getImage(image) {
 
 function setElementIconAndTitle(element, { id, title }) {
     element.setAttribute("title", title);
-    element.querySelector(".js-icon").setAttribute("href", `#${id}`);
+    element.querySelector("use").setAttribute("href", `#${id}`);
 }
 
 function shuffleArray(array) {
@@ -108,6 +108,19 @@ function shuffleArray(array) {
     return array;
 }
 
+function getIcon(config) {
+    const elementId = config.elementId ? `id=${config.elementId}` : "";
+    const className = config.className ? `class="${config.className}"` : "";
+    const title = config.title ? `<title>${config.title}</title>` : "";
+
+    return `
+        <svg viewBox="0 0 24 24" ${elementId} ${className}>
+            ${title}
+            <use href="#${config.iconId}"></use>
+        </svg>
+    `;
+}
+
 export {
     scriptLoader,
     removeElement,
@@ -119,5 +132,6 @@ export {
     dispatchCustomEvent,
     getImage,
     setElementIconAndTitle,
-    shuffleArray
+    shuffleArray,
+    getIcon
 };
