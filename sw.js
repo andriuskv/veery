@@ -1,4 +1,4 @@
-const cacheName = "veery-43";
+const cacheName = "veery-44";
 const toCache = [
     "./index.html",
     "./main.css",
@@ -8,8 +8,7 @@ const toCache = [
     "./assets/images/album-art-placeholder.png",
     "./assets/images/main-icon.png",
     "./assets/images/ring-alt.svg",
-    "./libs/dexie.min.js",
-    "./libs/metadata-audio-parser.min.js"
+    "./libs/dexie.min.js"
 ];
 
 self.addEventListener("install", event => {
