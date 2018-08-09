@@ -1,6 +1,6 @@
 import { getTab, getVisiblePlaylist } from "../tab.js";
 import { getCurrentTrack } from "./playlist.js";
-import { getPlaylistTrackElements, createListItemContent, createGridItemContent } from "./playlist.view.js";
+import { getPlaylistElement, createListItemContent, createGridItemContent } from "./playlist.view.js";
 import { getPlayerState } from "../player/player.js";
 import { getPlayPauseButtonIcon } from "../player/player.controls.js";
 
@@ -47,9 +47,9 @@ function observePlaylist(id) {
     observers[id] = new IntersectionObserver(callback, {
         root: getTab(id)
     });
-    const elements = Array.from(getPlaylistTrackElements(id));
+    const { children } = getPlaylistElement(id);
 
-    observeElements(id, elements);
+    observeElements(id, Array.from(children));
 }
 
 function reObservePlaylist(id) {

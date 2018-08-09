@@ -1,7 +1,7 @@
 import { getElementByAttr } from "../utils.js";
 import { getVisiblePlaylistId } from "../tab.js";
 import { getPlaylistById } from "./playlist.js";
-import { getPlaylistTrackElements } from "./playlist.view.js";
+import { getPlaylistElement } from "./playlist.view.js";
 
 const filterInput = document.getElementById("js-filter-input");
 const filterInputContainer = filterInput.parentElement;
@@ -33,10 +33,10 @@ function filterPlaylist(id, query = "") {
     if (!tracks.length) {
         return;
     }
-    const elements = getPlaylistTrackElements(id);
+    const { children } = getPlaylistElement(id);
 
     filteredPlaylistId = query ? id : "";
-    filterTracks(tracks, elements, query);
+    filterTracks(tracks, children, query);
     toggleClearInputBtn(query);
 }
 

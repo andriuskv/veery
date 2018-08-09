@@ -19,20 +19,19 @@ import {
     setCurrentTrack,
     getCurrentTrack,
     setPlaybackIndex,
-    getTrack,
+    cloneTrack,
     getNextTrack
 } from "../playlist/playlist.js";
-import { removeElementClass, getElementByAttr } from "../utils.js";
+import { getElementByAttr } from "../utils.js";
 import { getVisiblePlaylistId } from "../tab.js";
 import { getSetting } from "../settings.js";
 import { showActiveIcon, removeActiveIcon } from "../sidebar.js";
-import { showTrack, toggleTrackPlayPauseBtn } from "../playlist/playlist.view.js";
+import { showTrack, toggleTrackPlayPauseBtn, removePlayingClass } from "../playlist/playlist.view.js";
 import { showTrackInfo, resetTrackInfo } from "./player.now-playing.js";
 import * as nPlayer from "./player.native.js";
 import * as ytPlayer from "./player.youtube.js";
 
 let isPaused = true;
-let scrollToTrack = false;
 
 const storedTrack = (function() {
     function getTrack() {
@@ -57,16 +56,14 @@ const storedTrack = (function() {
         if (!storedTrack) {
             return;
         }
-        const track = findTrack(storedTrack.playlistId, storedTrack.name);
+        const track = cloneTrack(findTrack(storedTrack.playlistId, storedTrack.name));
 
         if (!track) {
             removeTrack();
             return;
         }
-        playNewTrack(track, storedTrack.currentTime);
+        playNewTrack(track, { startTime: storedTrack.currentTime });
         updateTrackSlider(track, storedTrack.currentTime);
-
-        isPaused = true;
     }
 
     return {
@@ -93,18 +90,30 @@ function updatePlayerState(track, state) {
     updateDocumentTitle();
 }
 
-function beforeTrackStart(track) {
+function beforeTrackStart(track, { scrollToTrack, startTime }) {
     const { rendered } = getPlaylistState(track.playlistId);
 
     showTrackInfo(track);
     showTrackDuration(track.duration, track.durationInSeconds);
     showTrackSlider();
+    setPlaylistAsActive(track.playlistId);
+    setPlaybackIndex(track.index);
+    setCurrentTrack(track);
 
     if (rendered && track.index !== -1) {
-        showTrack(track.playlistId, track.index, { scrollToTrack });
+        showTrack(track, scrollToTrack);
     }
-    scrollToTrack = false;
-    isPaused = false;
+
+    if (typeof startTime === "undefined") {
+        isPaused = false;
+
+        updateDocumentTitle();
+        showPlayPauseBtnSpinner(track);
+        togglePlayPauseBtns(track, isPaused);
+    }
+    else {
+        isPaused = true;
+    }
 }
 
 function togglePlayPauseBtns(track, isPaused) {
@@ -124,25 +133,16 @@ function togglePlaying(track) {
     updatePlayerState(track);
 }
 
-function playNewTrack(track, startTime) {
+function playNewTrack(track, options = {}) {
     const volume = getSetting("volume");
 
-    setPlaylistAsActive(track.playlistId);
-    setPlaybackIndex(track.index);
-    setCurrentTrack(track);
-    beforeTrackStart(track);
-
-    if (typeof startTime === "undefined") {
-        updateDocumentTitle();
-        showPlayPauseBtnSpinner(track);
-        togglePlayPauseBtns(track, isPaused);
-    }
+    beforeTrackStart(track, options);
 
     if (track.player === "native") {
-        nPlayer.playTrack(track.audioTrack, volume, startTime);
+        nPlayer.playTrack(track.audioTrack, volume, options.startTime);
     }
     else if (track.player === "youtube") {
-        ytPlayer.playTrack(track, volume, startTime);
+        ytPlayer.playTrack(track, volume, options.startTime);
     }
 }
 
@@ -168,6 +168,7 @@ function play(source, sourceValue, id) {
     let alreadyShuffled = false;
 
     if (currentTrack) {
+        removePlayingClass(currentTrack.element);
         resetTrackSlider();
         toggleTrackPlayPauseBtn(currentTrack, true);
         stopTrack(currentTrack);
@@ -182,14 +183,13 @@ function play(source, sourceValue, id) {
         if (!alreadyShuffled && shuffle) {
             setPlaybackOrder(pl, shuffle);
         }
-        playNewTrack(getTrack(pl.tracks[sourceValue]));
+        playNewTrack(cloneTrack(pl.tracks[sourceValue]));
     }
     else if (source === "direction") {
         const track = getNextTrack(pl, sourceValue);
 
         if (track) {
-            scrollToTrack = true;
-            playNewTrack(track);
+            playNewTrack(track, { scrollToTrack: true });
         }
         else {
             // If playlist is empty reset player
@@ -207,7 +207,7 @@ function playPreviousTrack() {
 }
 
 function playTrackFromElement({ currentTarget, detail, target }) {
-    const id = currentTarget.id.split("js-tab-")[1];
+    const id = getVisiblePlaylistId();
     const element = getElementByAttr("data-btn", target, currentTarget);
     const trackElement = getElementByAttr("data-index", target, currentTarget);
 
@@ -252,9 +252,9 @@ function resetPlayer(track) {
     setCurrentTrack();
     setPlaylistAsActive();
     removeActiveIcon();
-    removeElementClass(".track.playing", "playing");
 
     if (track) {
+        removePlayingClass(track.element);
         resetTrackSlider();
         hidePlayPauseBtnSpinner(track);
         togglePlayPauseBtns(track, isPaused);
@@ -290,10 +290,10 @@ function updateDocumentTitle(id = getVisiblePlaylistId()) {
 
     if (!isPlayerPaused) {
         const { artist, name, title } = getCurrentTrack();
-        documentTitle = `${artist && title ? `${artist} - ${title}` : name} | Veery`;
+        documentTitle = `${artist && title ? `${artist} - ${title}` : name} | ${documentTitle}`;
     }
     else if (pl) {
-        documentTitle = `${pl.title} | Veery`;
+        documentTitle = `${pl.title} | ${documentTitle}`;
     }
     document.title = documentTitle;
 }
