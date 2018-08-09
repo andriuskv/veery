@@ -2,7 +2,7 @@ import { getVisiblePlaylist } from "./../tab.js";
 import { removePanel } from "./../panels.js";
 import { postMessageToWorker } from "../web-worker.js";
 import { resetTrackIndexes, updatePlaylist, updateCurrentTrackIndex } from "./playlist.js";
-import { getPlaylistTrackElements, updatePlaylistView } from "./playlist.view.js";
+import { getPlaylistElement, updatePlaylistView } from "./playlist.view.js";
 import { filterTracks } from "./playlist.filter.js";
 
 function setSortBtnText(text) {
@@ -60,13 +60,13 @@ function changePlaylistSorting(pl, sortBy) {
             sortedBy: sortBy
         }
     });
-    updatePlaylistView(pl);
     updateCurrentTrackIndex(pl.id);
+    updatePlaylistView(pl);
 
     if (value) {
-        const elements = getPlaylistTrackElements(pl.id);
+        const { children } = getPlaylistElement(pl.id);
 
-        filterTracks(pl.tracks, elements, value);
+        filterTracks(pl.tracks, children, value);
     }
 }
 

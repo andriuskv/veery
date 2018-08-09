@@ -68,12 +68,12 @@ function getActivePlaylist() {
     return playlists[activePlaylistId];
 }
 
-function getTrack(track) {
+function cloneTrack(track) {
     return track ? { ...track } : null;
 }
 
 function setCurrentTrack(track) {
-    currentTrack = getTrack(track);
+    currentTrack = track;
 }
 
 function updateCurrentTrack(data) {
@@ -101,9 +101,8 @@ function updateCurrentTrackIndex(playlistId) {
 
 function findTrack(id, trackId) {
     const pl = getPlaylistById(id);
-    const track = pl ? pl.tracks.find(track => track.name === trackId) : null;
 
-    return getTrack(track);
+    return pl ? pl.tracks.find(track => track.name === trackId) : null;
 }
 
 function setPlaybackIndex(index) {
@@ -149,7 +148,7 @@ function getNextTrackIndex({ playbackIndex, playbackOrder }, direction) {
 function getNextTrack(pl, direction) {
     const index = getNextTrackIndex(pl, direction);
 
-    return getTrack(pl.tracks[index]);
+    return cloneTrack(pl.tracks[index]);
 }
 
 function resetTrackIndexes(tracks) {
@@ -171,7 +170,7 @@ export {
     getPlaylistDuration,
     isPlaylistActive,
     getActivePlaylistId,
-    getTrack,
+    cloneTrack,
     setCurrentTrack,
     getCurrentTrack,
     updateCurrentTrack,

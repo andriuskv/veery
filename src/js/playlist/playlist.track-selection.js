@@ -14,7 +14,7 @@ import { getSetting } from "../settings.js";
 import { getVisiblePlaylistId, getVisiblePlaylist, getTab } from "../tab.js";
 import { postMessageToWorker } from "../web-worker.js";
 import { createMoveToContainer, removeMoveToContainer } from "./playlist.move-to.js";
-import { getPlaylistTrackElements, updatePlaylistView } from "./playlist.view.js";
+import { getPlaylistElement, updatePlaylistView } from "./playlist.view.js";
 import { updatePlaylistEntry } from "./playlist.entries.js";
 
 const startingPoint = {};
@@ -66,9 +66,9 @@ function initSelectionArea(parent, { x, y }) {
 }
 
 function getTrackElements() {
-    const elements = getPlaylistTrackElements(getVisiblePlaylistId());
+    const { children } = getPlaylistElement(getVisiblePlaylistId());
 
-    return Array.from(elements).map(element => {
+    return Array.from(children).map(element => {
         const top = element.offsetTop;
         const left = element.offsetLeft;
 
@@ -414,7 +414,7 @@ function separatePlaylistTracks(tracks, indexes) {
 }
 
 function resetElementIndexes(id, startIndex) {
-    const elements = Array.from(getPlaylistTrackElements(id)).slice(startIndex);
+    const elements = Array.from(getPlaylistElement(id).children).slice(startIndex);
 
     elements.forEach((element, index) => {
         const indexElement = element.querySelector(".list-item-index");
