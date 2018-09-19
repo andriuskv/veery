@@ -183,7 +183,7 @@ function addTracks(pl, tracks) {
         reObservePlaylist(pl.id);
     }
 
-    if (track.playlistId === pl.id) {
+    if (track && track.playlistId === pl.id) {
         removePlayingClass(track.element);
         setTrackElement(track);
     }

@@ -14,6 +14,7 @@ import { removePlaylistTab, updatePlaylistView, addTracks, getPlaylistElement } 
 import { addRoute, removeRoute } from "../router.js";
 import { getSetting } from "../settings.js";
 import { postMessageToWorker } from "../web-worker.js";
+import { removeServiceWorkerCache } from "../service-worker.js";
 import { createSidebarEntry, removeSidebarEntry } from "../sidebar.js";
 import { stopPlayer } from "../player/player.js";
 import { sortTracks } from "./playlist.sorting.js";
@@ -32,7 +33,7 @@ function initPlaylist(pl) {
     addRoute(`playlist/${pl.id}`);
 }
 
-function deletePlaylist({ id, _id }) {
+function deletePlaylist({ id, _id, player }) {
     if (isPlaylistActive(id)) {
         stopPlayer(getCurrentTrack());
     }
@@ -40,20 +41,11 @@ function deletePlaylist({ id, _id }) {
     removePlaylist(id);
     removeSidebarEntry(id);
     removeRoute(id);
+    removeServiceWorkerCache(player);
     postMessageToWorker({
         action: "remove",
         playlist: { _id }
     });
-
-    if (id === "local-files") {
-        caches.keys().then(keys => {
-            keys.forEach(key => {
-                if (key.startsWith("local-file")) {
-                    caches.delete(key);
-                }
-            });
-        });
-    }
 }
 
 function addTracksToPlaylist(pl, tracks) {
