@@ -1,10 +1,15 @@
-const cacheName = "veery-44";
+const cacheName = "veery-45";
 const toCache = [
     "./index.html",
     "./main.css",
     "./main.js",
     "./vendor.js",
     "./ww.js",
+    "./0.js",
+    "./1.js",
+    "./2.js",
+    "./3.js",
+    "./4.js",
     "./assets/images/album-art-placeholder.png",
     "./assets/images/main-icon.png",
     "./assets/images/ring-alt.svg",
@@ -35,21 +40,10 @@ self.addEventListener("activate", event => {
 
 self.addEventListener("fetch", event => {
     if (event.request.url.startsWith("https://lastfm-img2.akamaized.net")) {
-        event.respondWith(
-            caches.open("local-file-artwork-cache").then(cache => {
-                return cache.match(event.request).then(response => {
-                    if (response) {
-                        return response;
-                    }
-                    return fetch(event.request.clone()).then(response => {
-                        cache.put(event.request, response.clone());
-                        return response;
-                    });
-                }).catch(error => {
-                    console.log(error);
-                });
-            })
-        );
+        event.respondWith(cacheRequest(event.request, "local-files-artwork-cache"));
+    }
+    else if (event.request.url.startsWith("https://i.ytimg.com")) {
+        event.respondWith(cacheRequest(event.request, "youtube-thumbnail-cache"));
     }
     else {
         event.respondWith(
@@ -59,3 +53,19 @@ self.addEventListener("fetch", event => {
         );
     }
 });
+
+function cacheRequest(request, cacheName) {
+    return caches.open(cacheName).then(cache => {
+        return cache.match(request).then(response => {
+            if (response) {
+                return response;
+            }
+            return fetch(request.clone()).then(response => {
+                cache.put(request, response.clone());
+                return response;
+            });
+        }).catch(error => {
+            console.log(error);
+        });
+    });
+}

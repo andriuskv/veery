@@ -1,6 +1,6 @@
 const path = require("path");
 const { DefinePlugin } = require("webpack");
-const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
+const TerserPlugin = require("terser-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
@@ -24,16 +24,6 @@ module.exports = function(env = {}) {
         })
     ];
 
-    if (env.prod) {
-        plugins.push(
-            new UglifyJsPlugin({
-                uglifyOptions: {
-                    ecma: 8
-                }
-            })
-        );
-    }
-
     return {
         mode,
         entry: {
@@ -52,7 +42,16 @@ module.exports = function(env = {}) {
                         chunks: "initial"
                     }
                 }
-            }
+            },
+            minimizer: [new TerserPlugin({
+                parallel: true,
+                terserOptions: {
+                    ecma: 8,
+                    output: {
+                        comments: false
+                    }
+                }
+            })]
         },
         module: {
             rules: [
