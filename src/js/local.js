@@ -201,7 +201,7 @@ function selectLocalFiles(files) {
         id,
         title: "Local files",
         type: "list",
-        player: "native",
+        cacheId: "local-files-artwork-cache",
         storageDisabled: importSettings.getSetting(id, "storageDisabled")
     });
 

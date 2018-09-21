@@ -148,13 +148,17 @@ async function getPlaylistTitleAndStatus(id) {
     };
 }
 
-async function addVideo(id, videoId) {
-    const pl = getPlaylistById(id) || createPlaylist({
+function getYouTubePlaylist(id, props) {
+    return getPlaylistById(id) || createPlaylist({
         id,
-        title: "YouTube",
-        player: "youtube",
-        type: "grid"
+        type: "grid",
+        cacheId: "youtube-thumbnail-cache",
+        ...props
     });
+}
+
+async function addVideo(id, videoId) {
+    const pl = getYouTubePlaylist(id, { title: "YouTube" });
     const { items } = await fetchYoutube("videos", "snippet,contentDetails", "id", videoId);
 
     if (items.length) {
@@ -168,12 +172,7 @@ async function addVideo(id, videoId) {
 }
 
 async function addPlaylist(url, id, type) {
-    const pl = getPlaylistById(id) || createPlaylist({
-        id,
-        url,
-        player: "youtube",
-        type: "grid"
-    });
+    const pl = getYouTubePlaylist(id, { url });
     const tracks = await fetchPlaylistItems(id);
 
     if (type === "sync") {
