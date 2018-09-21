@@ -1,13 +1,8 @@
 import { dispatchCustomEvent } from "./utils.js";
 
-function removeServiceWorkerCache(player) {
-    let cacheId = "";
-
-    if (player === "native") {
-        cacheId = "local-files-artwork-cache";
-    }
-    else if (player === "youtube") {
-        cacheId = "youtube-thumbnail-cache";
+function removeServiceWorkerCache(cacheId) {
+    if (!cacheId) {
+        return;
     }
     caches.keys().then(keys => {
         keys.forEach(key => {

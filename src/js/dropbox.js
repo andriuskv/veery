@@ -41,7 +41,6 @@ function showDropboxChooser() {
                 id,
                 title: "Dropbox",
                 type: "grid",
-                player: "native",
                 storageDisabled: importSettings.getSetting(id, "storageDisabled")
             });
 

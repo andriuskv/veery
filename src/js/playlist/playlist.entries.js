@@ -212,18 +212,18 @@ async function syncPlaylists(playlists) {
         return;
     }
     resetImportOption();
-    playlists.forEach(pl => {
+    playlists.forEach(({ id }) => {
         dispatchCustomEvent("import", {
             importing: true,
             option: "youtube",
-            playlistId: pl.id
+            playlistId: id
         });
     });
 
     await initGoogleAPI();
 
-    playlists.forEach(({ player, url }) => {
-        importPlaylist(player, {
+    playlists.forEach(({ url }) => {
+        importPlaylist("youtube", {
             url,
             type: "sync"
         });

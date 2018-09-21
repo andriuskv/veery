@@ -33,7 +33,7 @@ function initPlaylist(pl) {
     addRoute(`playlist/${pl.id}`);
 }
 
-function deletePlaylist({ id, _id, player }) {
+function deletePlaylist({ id, _id, cacheId }) {
     if (isPlaylistActive(id)) {
         stopPlayer(getCurrentTrack());
     }
@@ -41,7 +41,7 @@ function deletePlaylist({ id, _id, player }) {
     removePlaylist(id);
     removeSidebarEntry(id);
     removeRoute(id);
-    removeServiceWorkerCache(player);
+    removeServiceWorkerCache(cacheId);
     postMessageToWorker({
         action: "remove",
         playlist: { _id }

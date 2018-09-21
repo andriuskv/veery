@@ -1,4 +1,4 @@
-const cacheName = "veery-45";
+const cacheName = "veery-46";
 const toCache = [
     "./index.html",
     "./main.css",
@@ -21,6 +21,7 @@ self.addEventListener("install", event => {
         caches.open(cacheName)
             .then(cache => cache.addAll(toCache))
             .then(() => self.skipWaiting())
+            .catch(error => console.log(error))
     );
 });
 
