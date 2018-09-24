@@ -1,4 +1,5 @@
 import { togglePanel } from "../panels.js";
+import { dispatchCustomEvent } from "../utils.js";
 
 function getPlayerMessageCb(title, body = "") {
     return (id, { element }) => {
@@ -32,14 +33,12 @@ function showPlayerMessage({ title, body, callback = getPlayerMessageCb }) {
     });
 }
 
-function updateOnlineStatus() {
-    const statusElement = document.getElementById("js-online-status");
-
-    statusElement.classList.toggle("visible", !navigator.onLine);
-}
-
 function refreshPage() {
     location.reload();
+}
+
+function emitConnectivityStatus() {
+    dispatchCustomEvent("connectivity-status", navigator.onLine);
 }
 
 window.addEventListener("sw-state-change", ({ detail }) => {
@@ -50,10 +49,9 @@ window.addEventListener("sw-state-change", ({ detail }) => {
     }
 });
 
-window.addEventListener("online", updateOnlineStatus);
-window.addEventListener("offline", updateOnlineStatus);
-window.addEventListener("load", updateOnlineStatus);
-
+window.addEventListener("online", emitConnectivityStatus);
+window.addEventListener("offline", emitConnectivityStatus);
+window.addEventListener("load", emitConnectivityStatus);
 export {
     showPlayerMessage
 };
