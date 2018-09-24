@@ -68,6 +68,12 @@ sidebarContainerElement.addEventListener("click", ({ currentTarget, target }) =>
     }
 });
 
+window.addEventListener("connectivity-status", ({ detail: status }) => {
+    const statusElement = document.getElementById("js-online-status");
+
+    statusElement.classList.toggle("visible", !status);
+});
+
 export {
     createSidebarEntry,
     editSidebarEntryTitle,

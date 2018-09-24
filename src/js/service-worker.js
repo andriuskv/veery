@@ -33,4 +33,4 @@ if ("serviceWorker" in navigator) {
 
 export {
     removeServiceWorkerCache
-}
+};
