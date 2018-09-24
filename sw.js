@@ -1,42 +1,18 @@
-const cacheName = "veery-46";
-const toCache = [
-    "./index.html",
-    "./main.css",
-    "./main.js",
-    "./vendor.js",
-    "./ww.js",
-    "./0.js",
-    "./1.js",
-    "./2.js",
-    "./3.js",
-    "./4.js",
-    "./assets/images/album-art-placeholder.png",
-    "./assets/images/main-icon.png",
-    "./assets/images/ring-alt.svg",
-    "./libs/dexie.min.js"
-];
+importScripts("precache-manifest.85ac23c40ba9d0714b2e5a4642f6fd90.js", "https://storage.googleapis.com/workbox-cdn/releases/3.6.1/workbox-sw.js");
+
+/* global workbox */
+
+workbox.setConfig({
+    debug: false
+});
+workbox.precaching.precacheAndRoute(self.__precacheManifest);
 
 self.addEventListener("install", event => {
-    event.waitUntil(
-        caches.open(cacheName)
-            .then(cache => cache.addAll(toCache))
-            .then(() => self.skipWaiting())
-            .catch(error => console.log(error))
-    );
+    event.waitUntil(self.skipWaiting());
 });
 
 self.addEventListener("activate", event => {
     event.waitUntil(self.clients.claim());
-    event.waitUntil(
-        caches.keys().then(keys => {
-            return Promise.all(keys.map(key => {
-                if (key.startsWith("veery") && key !== cacheName) {
-                    return caches.delete(key);
-                }
-                return key;
-            }));
-        })
-    );
 });
 
 self.addEventListener("fetch", event => {
@@ -70,3 +46,4 @@ function cacheRequest(request, cacheName) {
         });
     });
 }
+
