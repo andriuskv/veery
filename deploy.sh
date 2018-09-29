@@ -8,7 +8,9 @@ git checkout gh-pages
 cd ..
 
 echo "Copy build to gh-pages"
-rm -rf ./gh-pages/**/*
+
+# Remove old precache files
+rm -rf ./gh-pages/precache*
 cp -r ./dist/. ./gh-pages
 
 cd ./gh-pages
