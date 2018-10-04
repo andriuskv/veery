@@ -36,21 +36,7 @@
 }
 
 .list-item-col {
-    overflow: hidden;
-    position: relative;
     margin-right: 8px;
-    white-space: nowrap;
-
-    &::after {
-        position: absolute;
-        right: 0;
-        top: 0;
-        content: "";
-        display: block;
-        width: 16px;
-        height: 100%;
-        box-shadow: inset -8px 0 10px 0 var(--background-color);
-    }
 }
 
 .list-item-last-col {

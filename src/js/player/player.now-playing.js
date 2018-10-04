@@ -166,7 +166,7 @@ function getTrackInfo(track, id) {
             <div class="track-info-item" data-element="artist">${track.artist} ${track.album ? `- ${track.album}` : ""}</div>
         `;
     }
-    return `<div id="${id}" class="track-info now-playing-info">${trackName}</div> `;
+    return `<div id="${id}" class="track-info fade-left fade-right">${trackName}</div> `;
 }
 
 function showTrackInfo(track) {
