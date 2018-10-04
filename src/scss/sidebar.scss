@@ -119,21 +119,18 @@
 }
 
 .sidebar-entry {
+    --background-color: #{$background-color-dark};
+
     position: relative;
-    background-color: $background-color-dark;
+    background-color: var(--background-color);
     color: $color-text;
-    transition: background-color 0.1s;
 
     &.active {
         color: $color-accent;
     }
 
     &:hover {
-        background-color: $background-color-light;
-
-        .active-playlist-icon {
-            box-shadow: -2px 0 4px 2px $background-color-light;
-        }
+        --background-color: #{$background-color-light};
     }
 
     &.show-spinner {
@@ -148,10 +145,6 @@
 }
 
 .sidebar-link {
-    @include text-truncate;
-
-    z-index: 2;
-    position: relative;
     display: block;
     padding: 12px 8px;
     color: inherit;
@@ -173,8 +166,8 @@
     @include center-vertically;
 
     right: 8px;
-    box-shadow: -2px 0 4px 2px $background-color-dark;
+    box-shadow: -2px 0 4px 2px var(--background-color);
     background-color: inherit;
     fill: $color-text;
-    transition: box-shadow 0.1s;
+    pointer-events: none;
 }

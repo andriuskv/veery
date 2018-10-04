@@ -33,9 +33,9 @@ function createListItemContent(item, { title, id }) {
                 ${getIcon({ iconId: id })}
             </button>
         </span>
-        <span class="list-item-col">${item.title}</span>
-        <span class="list-item-col">${item.artist}</span>
-        <span class="list-item-col">${item.album}</span>
+        <span class="list-item-col fade-right">${item.title}</span>
+        <span class="list-item-col fade-right">${item.artist}</span>
+        <span class="list-item-col fade-right">${item.album}</span>
         <span class="list-item-last-col">${item.duration}</span>
     `;
 }
@@ -125,7 +125,7 @@ function getTrackInfo(track) {
             <div>${track.artist} ${track.album ? `- ${track.album}` : ""}</div>
         `;
     }
-    return `<div class="track-info">${trackName}</div> `;
+    return `<div class="track-info fade-right">${trackName}</div> `;
 }
 
 function showCurrentTrack(id) {
