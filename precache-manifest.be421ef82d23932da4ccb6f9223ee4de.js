@@ -4,7 +4,7 @@ self.__precacheManifest = [
     "url": "index.html"
   },
   {
-    "revision": "e4140de38ebe00fe41f4",
+    "revision": "1d564a9466cfc13ceedf",
     "url": "main.css"
   },
   {
@@ -12,7 +12,7 @@ self.__precacheManifest = [
     "url": "ww.js"
   },
   {
-    "revision": "e4140de38ebe00fe41f4",
+    "revision": "1d564a9466cfc13ceedf",
     "url": "main.js"
   },
   {
