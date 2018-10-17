@@ -4,7 +4,7 @@ self.__precacheManifest = [
     "url": "index.html"
   },
   {
-    "revision": "1d564a9466cfc13ceedf",
+    "revision": "e5d728ff42926fa3d930",
     "url": "main.css"
   },
   {
@@ -12,11 +12,11 @@ self.__precacheManifest = [
     "url": "ww.js"
   },
   {
-    "revision": "1d564a9466cfc13ceedf",
+    "revision": "e5d728ff42926fa3d930",
     "url": "main.js"
   },
   {
-    "revision": "0cf1f361bea462fd60f3",
+    "revision": "10bec9db6849744b0af8",
     "url": "vendor.js"
   },
   {
@@ -40,19 +40,19 @@ self.__precacheManifest = [
     "url": "assets/images/album-art-placeholder.png"
   },
   {
-    "revision": "1a04fdb430055b515d6a",
+    "revision": "9297f1353274342e0f4a",
     "url": "4.js"
   },
   {
-    "revision": "d5da90971106204d13f4",
+    "revision": "70e24462ed9ff4080a38",
     "url": "3.js"
   },
   {
-    "revision": "3e43a259658a5906c3ec",
+    "revision": "ddf2ad73e6091e9f1ef5",
     "url": "2.js"
   },
   {
-    "revision": "74ca37eb6df8c7fa48a5",
+    "revision": "1a8ad8e89f2484b5ea11",
     "url": "1.js"
   }
 ];
