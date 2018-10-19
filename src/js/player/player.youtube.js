@@ -1,7 +1,7 @@
 /* global YT */
 
 import { scriptLoader, dispatchCustomEvent } from "../utils.js";
-import { storedTrack, getPlayerState, updatePlayerState, stopPlayer } from "./player.js";
+import { getPlayerState, updatePlayerState, stopPlayer } from "./player.js";
 import { showPlayerMessage } from "./player.view.js";
 import { elapsedTime, showPlayPauseBtnSpinner, hidePlayPauseBtnSpinner } from "./player.controls.js";
 import { getCurrentTrack } from "../playlist/playlist.js";
@@ -83,8 +83,6 @@ function initPlayer() {
             disablekb: 1,
             controls: 0,
             fs: 0,
-            showinfo: 0,
-            rel: 0,
 
             // Hide annotations
             iv_load_policy: 3
@@ -141,22 +139,10 @@ function seekTo(currentTime) {
     ytPlayer.seekTo(currentTime, true);
 }
 
-function watchOnYoutube(element, track) {
-    const isPaused = getPlayerState();
-    const { currentTime } = storedTrack.getTrack();
-
-    if (!isPaused) {
-        ytPlayer.pauseVideo();
-        updatePlayerState(track, !isPaused);
-    }
-    element.setAttribute("href", `https://www.youtube.com/watch?v=${track.id}&time_continue=${currentTime}`);
-}
-
 export {
     playTrack,
     stopTrack,
     togglePlaying,
     seekTo,
-    setVolume,
-    watchOnYoutube
+    setVolume
 };
