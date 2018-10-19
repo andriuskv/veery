@@ -1,6 +1,5 @@
 import { getElementByAttr, removeElement, getImage } from "../utils.js";
 import { togglePlaying } from "./player.js";
-import { watchOnYoutube } from "./player.youtube.js";
 import { getCurrentTrack } from "../playlist/playlist.js";
 
 const nowPlayingElement = document.getElementById("js-now-playing");
@@ -32,23 +31,15 @@ function moveLeft(name, width, maxWidth, x = 0) {
     });
 }
 
-function handleClickOnMedia({ currentTarget, target }) {
+function handleClickOnMedia({ target }) {
     const element = getElementByAttr("data-item", target);
 
     if (!element) {
         return;
     }
-    const { attrValue, elementRef } = element;
-    const track = getCurrentTrack();
 
-    if (attrValue === "image") {
-        togglePlaying(track);
-    }
-    else if (attrValue === "yt-watch") {
-        watchOnYoutube(elementRef, track);
-    }
-    else if (attrValue === "close") {
-        currentTarget.classList.remove("visible");
+    if (element.attrValue === "image") {
+        togglePlaying(getCurrentTrack());
     }
 }
 
@@ -102,8 +93,22 @@ function handleMouseleave({ currentTarget }) {
     }
 }
 
+function hideMedia(event) {
+    if (event.which === 27) {
+        mediaElement.classList.remove("visible");
+        window.removeEventListener("keydown", hideMedia);
+    }
+}
+
 function toggleMedia() {
     mediaElement.classList.toggle("visible");
+
+    if (mediaElement.classList.contains("visible")) {
+        window.addEventListener("keydown", hideMedia);
+    }
+    else {
+        window.removeEventListener("keydown", hideMedia);
+    }
 }
 
 function removeTrackInfoElement() {
@@ -144,10 +149,7 @@ function updateTrackMedia(track, artwork) {
     const ytPlayer = document.getElementById("js-yt-player");
 
     if (track.player === "youtube") {
-        const ytPlayerWatch = document.getElementById("js-yt-player-watch");
-
         ytPlayer.classList.remove("hidden");
-        ytPlayerWatch.setAttribute("href", `https://www.youtube.com/watch?v=${track.id}`);
     }
     else {
         const imageElement = document.getElementById("js-media-image");
