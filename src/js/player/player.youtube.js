@@ -63,15 +63,23 @@ function onPlayerReady() {
 }
 
 function onError(error) {
+    let body = "";
+
+    if (error.data === 100) {
+        body = "Video is either removed or marked as private";
+    }
+    else if (error.data === 101 || error.data === 150) {
+        body = "The owner of the requested video does not allow it to be played in embedded players";
+    }
     console.log(error);
 
-    if (error.data >= 100) {
+    if (body) {
         const track = getCurrentTrack();
 
         stopPlayer(track);
         showPlayerMessage({
             title: `Cannot play ${track.name}`,
-            body: "It is either removed or marked as private"
+            body
         });
     }
 }
