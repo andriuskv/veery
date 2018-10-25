@@ -154,9 +154,14 @@ function updateSlider(slider, value) {
 }
 
 function updateTrackSlider(track, currentTime = 0) {
-    const formatedCurrentTime = formatTime(currentTime);
-    const durationInSeconds = track ? track.durationInSeconds : 1;
-    const duration = track ? track.duration : formatedCurrentTime;
+    let durationInSeconds = 1;
+    let duration = "0:00";
+
+    if (track) {
+        durationInSeconds = track.durationInSeconds;
+        duration = track.duration;
+    }
+    const formatedCurrentTime = formatTime(currentTime, durationInSeconds >= 3600);
 
     if (!seeking) {
         document.getElementById("js-track-current").textContent = formatedCurrentTime;

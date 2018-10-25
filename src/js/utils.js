@@ -56,29 +56,28 @@ function isOutsideElement(element, targetElement) {
 }
 
 function getSeconds(time) {
-    const seconds = time % 60;
-
-    return seconds < 10 ? `0${seconds}` : seconds;
+    return time % 60;
 }
 
 function getMinutes(time) {
-    const minutes = Math.floor(time / 60 % 60);
-
-    return time >= 3600 && minutes < 10 ? `0${minutes}` : minutes;
+    return Math.floor(time / 60 % 60);
 }
 
 function getHours(time) {
-    const hours = Math.floor(time / 3600);
-
-    return hours ? `${hours}:` : "";
+    return Math.floor(time / 3600);
 }
 
-function formatTime(time) {
-    const seconds = getSeconds(time);
-    const minutes = getMinutes(time);
-    const hours = getHours(time);
+function padTime(time, pad = true) {
+    return pad && time < 10 ? `0${time}` : time;
+}
 
-    return `${hours}${minutes}:${seconds}`;
+function formatTime(time, showHours = false) {
+    const hours = getHours(time);
+    const minutes = getMinutes(time);
+    const seconds = getSeconds(time);
+    showHours = showHours || hours;
+
+    return `${showHours ? `${hours}:` : ""}${padTime(minutes, showHours)}:${padTime(seconds)}`;
 }
 
 function dispatchCustomEvent(eventName, data) {
