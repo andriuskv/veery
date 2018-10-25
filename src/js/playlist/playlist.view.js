@@ -2,7 +2,7 @@ import { removeElement, getImage, getIcon } from "../utils.js";
 import { getTab } from "../tab.js";
 import { postMessageToWorker } from "../web-worker.js";
 import { togglePlayPauseBtn } from "../player/player.controls.js";
-import { getCurrentTrack, setPlaylistState, updatePlaylist } from "./playlist.js";
+import { getCurrentTrack, setPlaylistState, updatePlaylist, findTrack } from "./playlist.js";
 import { observePlaylist, reObservePlaylist, removePlaylistObserver, observeElements } from "./playlist.element-observer.js";
 
 function getPlaylistElement(id) {
@@ -183,7 +183,7 @@ function addTracks(pl, tracks) {
         reObservePlaylist(pl.id);
     }
 
-    if (track && track.playlistId === pl.id) {
+    if (track && track.playlistId === pl.id && findTrack(pl.id, track.name)) {
         removePlayingClass(track.element);
         setTrackElement(track);
     }
