@@ -28,6 +28,9 @@ function decodeFrame(buffer, offset, size) {
     const decoder = new TextDecoder(encoding);
     const stringBytes = bytes.length % 2 === 0 ? bytes.slice(3, -1) : bytes.slice(3);
 
+    if (encoding === "utf-16be") {
+      stringBytes[0] = 0;
+    }
     return decoder.decode(stringBytes);
   }
   else if (firstByte === 2) {
@@ -102,20 +105,29 @@ async function parseID3Tag(blob, buffer, version, offset = 0, tags = {}) {
   while (true) {
     const id = getFrameId(buffer, offset);
     offset += 4;
-    const frameSize = getFrameSize(buffer, offset, version);
+    let frameSize = getFrameSize(buffer, offset, version);
+    offset += 4;
 
-    // Jump over frame size and skip flags
-    offset += 6;
+    const [encodingFlagByte] = getBytes(buffer, offset + 1, 2);
+    const usesCompression = (encodingFlagByte >> 1) % 2 !== 0;
+    offset += 2;
 
     if (id) {
       const field = mapFrameIdToField(id);
+      let frameOffset = offset;
+      let size = frameSize;
+
+      if (usesCompression) {
+        size = getFrameSize(buffer, frameOffset, version);
+        frameOffset += 4;
+      }
 
       if (field && !tags[field]) {
         if (field === "picture") {
-          tags[field] = getPicture(buffer, offset, frameSize);
+          tags[field] = getPicture(buffer, frameOffset, size);
         }
         else {
-          tags[field] = decodeFrame(buffer, offset, frameSize);
+          tags[field] = decodeFrame(buffer, frameOffset, size);
         }
       }
     }
