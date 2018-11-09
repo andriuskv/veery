@@ -4,7 +4,7 @@ import { scriptLoader, dispatchCustomEvent } from "../utils.js";
 import { getPlayerState, updatePlayerState, playNextTrack, stopPlayer } from "./player.js";
 import { showPlayerMessage } from "./player.view.js";
 import { elapsedTime, showPlayPauseBtnSpinner, hidePlayPauseBtnSpinner } from "./player.controls.js";
-import { getCurrentTrack, getNextTrack, getPlaylistById } from "../playlist/playlist.js";
+import { getCurrentTrack, getNextTrack } from "../playlist/playlist.js";
 
 const PLAYING = 1;
 const PAUSED = 2;
@@ -75,8 +75,7 @@ function onError(error) {
 
     if (body) {
         const track = getCurrentTrack();
-        const pl = getPlaylistById(track.playlistId);
-        const { name } = getNextTrack(pl, 1);
+        const { name } = getNextTrack(track.playlistId, 1);
 
         if (track.name === name) {
             stopPlayer(track);
