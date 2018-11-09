@@ -1,18 +1,5 @@
 import { dispatchCustomEvent } from "./utils.js";
 
-function removeServiceWorkerCache(cacheId) {
-    if (!cacheId) {
-        return;
-    }
-    caches.keys().then(keys => {
-        keys.forEach(key => {
-            if (key === cacheId) {
-                caches.delete(key);
-            }
-        });
-    });
-}
-
 function registerServiceWorker() {
     navigator.serviceWorker.register("./sw.js").then(reg => {
         reg.onupdatefound = () => {
@@ -30,7 +17,3 @@ function registerServiceWorker() {
 if ("serviceWorker" in navigator) {
     window.addEventListener("load", registerServiceWorker);
 }
-
-export {
-    removeServiceWorkerCache
-};

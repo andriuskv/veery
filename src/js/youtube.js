@@ -152,7 +152,6 @@ function getYouTubePlaylist(id, props) {
     return getPlaylistById(id) || createPlaylist({
         id,
         type: "grid",
-        cacheId: "youtube-thumbnail-cache",
         ...props
     });
 }
