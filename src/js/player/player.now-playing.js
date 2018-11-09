@@ -4,92 +4,13 @@ import { getCurrentTrack } from "../playlist/playlist.js";
 
 const nowPlayingElement = document.getElementById("js-now-playing");
 const mediaElement = document.getElementById("js-media-container");
-const animatedElements = {};
 let artwork = null;
-
-function moveLeft(name, width, maxWidth, x = 0) {
-    const element = animatedElements[name];
-
-    if (Math.abs(x) < width + 10) {
-        x -= 1;
-
-        if (x === 0 && !element.isHovering && element.loopedOnce) {
-            element.target.style.transform = "translateX(0)";
-            element.target.removeEventListener("mouseleave", handleMouseleave);
-            delete animatedElements[name];
-            return;
-        }
-    }
-    else {
-        x = maxWidth;
-        element.loopedOnce = true;
-        element.target.classList.remove("moving");
-    }
-    element.target.style.transform = `translateX(${x}px)`;
-    requestAnimationFrame(() => {
-        moveLeft(name, width, maxWidth, x);
-    });
-}
 
 function handleClickOnMedia({ target }) {
     const element = getElementByAttr("data-item", target);
 
-    if (!element) {
-        return;
-    }
-
-    if (element.attrValue === "image") {
+    if (element && element.attrValue === "image") {
         togglePlaying(getCurrentTrack());
-    }
-}
-
-function handleMousemove({ target }) {
-    const name = target.getAttribute("data-element");
-
-    if (!name) {
-        return;
-    }
-    animatedElements[name] = animatedElements[name] || {};
-    const element = animatedElements[name];
-
-    if (element.target) {
-        element.loopedOnce = false;
-        element.isHovering = true;
-        target.classList.add("moving");
-        return;
-    }
-
-    if (element.timeoutId) {
-        clearTimeout(element.timeoutId);
-    }
-    const { scrollWidth, offsetWidth } = target;
-
-    // If text is overflowing
-    if (scrollWidth > offsetWidth) {
-        element.timeoutId = setTimeout(() => {
-            target.classList.add("moving");
-            element.target = target;
-            element.isHovering = true;
-            moveLeft(name, scrollWidth, offsetWidth);
-        }, 500);
-
-        if (!element.mouseLeaveAdded) {
-            element.mouseLeaveAdded = true;
-            target.addEventListener("mouseleave", handleMouseleave);
-        }
-    }
-}
-
-function handleMouseleave({ currentTarget }) {
-    const element = animatedElements[currentTarget.getAttribute("data-element")];
-
-    if (element.target) {
-        element.isHovering = false;
-    }
-    else {
-        clearTimeout(element.timeoutId);
-        element.mouseLeaveAdded = false;
-        currentTarget.removeEventListener("mouseleave", handleMouseleave);
     }
 }
 
@@ -115,7 +36,6 @@ function removeTrackInfoElement() {
     const element = document.getElementById("js-track-info");
 
     if (element) {
-        element.removeEventListener("mousemove", handleMousemove);
         removeElement(element);
     }
 }
@@ -128,7 +48,6 @@ function renderNowPlaying(track, artwork) {
     setArtwork(artwork);
     nowPlayingElement.classList.remove("inactive");
     nowPlayingElement.insertAdjacentHTML("beforeend", getTrackInfo(track, "js-track-info"));
-    document.getElementById("js-track-info").addEventListener("mousemove", handleMousemove);
 }
 
 function resetNowPlaying() {
@@ -160,15 +79,15 @@ function updateTrackMedia(track, artwork) {
 }
 
 function getTrackInfo(track, id) {
-    let trackName = `<div class="track-info-item" data-element="name">${track.name}</div>`;
+    let trackName = `<div>${track.name}</div>`;
 
     if (track.artist && track.title) {
         trackName = `
-            <div class="track-info-item track-title" data-element="title">${track.title}</div>
-            <div class="track-info-item" data-element="artist">${track.artist} ${track.album ? `- ${track.album}` : ""}</div>
+            <div class="track-title">${track.title}</div>
+            <div>${track.artist} ${track.album ? `- ${track.album}` : ""}</div>
         `;
     }
-    return `<div id="${id}" class="track-info fade-left fade-right">${trackName}</div> `;
+    return `<div id="${id}" class="track-info fade-right">${trackName}</div> `;
 }
 
 function showTrackInfo(track) {

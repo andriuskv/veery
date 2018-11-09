@@ -68,20 +68,13 @@
 
 .track-info {
     flex-grow: 1;
+    padding: 2px 0;
     font-size: 13px;
 }
 
 .track-title {
     margin-bottom: 2px;
     font-size: 14px;
-}
-
-.track-info-item {
-    position: relative;
-
-    &.moving {
-        z-index: -1;
-    }
 }
 
 .media-container {
