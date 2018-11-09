@@ -149,17 +149,16 @@ function playNewTrack(track, options = {}) {
 function playTrack() {
     const track = getCurrentTrack();
 
-    if (!track) {
-        play("direction", 0, getVisiblePlaylistId());
-        return;
+    if (track) {
+        togglePlaying(track);
     }
-    togglePlaying(track);
+    else {
+        play("direction", 0, getVisiblePlaylistId());
+    }
 }
 
 function play(source, sourceValue, id) {
-    const pl = getPlaylistById(id);
-
-    if (!pl) {
+    if (!id) {
         return;
     }
     const shuffle = getSetting("shuffle");
@@ -176,17 +175,19 @@ function play(source, sourceValue, id) {
 
     if (shuffled !== shuffle) {
         alreadyShuffled = true;
-        setPlaybackOrder(pl, shuffle);
+        setPlaybackOrder(id, shuffle);
     }
 
     if (source === "index") {
+        const { tracks } = getPlaylistById(id);
+
         if (!alreadyShuffled && shuffle) {
-            setPlaybackOrder(pl, shuffle);
+            setPlaybackOrder(id, shuffle);
         }
-        playNewTrack(cloneTrack(pl.tracks[sourceValue]));
+        playNewTrack(cloneTrack(tracks[sourceValue]));
     }
     else if (source === "direction") {
-        const track = getNextTrack(pl, sourceValue);
+        const track = getNextTrack(id, sourceValue);
 
         if (track) {
             playNewTrack(track, { scrollToTrack: true });

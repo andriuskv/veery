@@ -20,7 +20,6 @@ import { stopPlayer } from "../player/player.js";
 import { sortTracks } from "./playlist.sorting.js";
 
 function updateTracks(pl) {
-    setPlaybackOrder(pl, getSetting("shuffle"));
     sortTracks(pl.tracks, pl.sortedBy, pl.order);
     pl.tracks = resetTrackIndexes(pl.tracks);
 }
@@ -58,6 +57,9 @@ function addTracksToPlaylist(pl, tracks) {
     }
 
     if (initialized) {
+        if (isPlaylistActive(pl.id)) {
+            setPlaybackOrder(pl.id, getSetting("shuffle"));
+        }
         updateTracks(pl);
         updateCurrentTrackIndex(pl.id);
         updatePlaylistEntry(pl.id, pl.tracks);

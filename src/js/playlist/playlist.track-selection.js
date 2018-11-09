@@ -5,10 +5,9 @@ import {
     isOutsideElement
 } from "../utils.js";
 import {
-    updatePlaylist,
     updateCurrentTrackIndex,
     resetTrackIndexes,
-    getPlaybackOrder
+    setPlaybackOrder
 } from "./playlist.js";
 import { getSetting } from "../settings.js";
 import { getVisiblePlaylistId, getVisiblePlaylist, getTab } from "../tab.js";
@@ -432,13 +431,11 @@ function removeSelectedTracks() {
     const pl = getVisiblePlaylist();
     const indexes = getElementIndexes(elements);
     const { tracksToKeep, tracksToRemove } = separatePlaylistTracks(pl.tracks, indexes);
+    pl.tracks = tracksToKeep;
 
     removeElements(elements);
     resetElementIndexes(pl.id, indexes[0]);
-    updatePlaylist(pl.id, {
-        playbackOrder: getPlaybackOrder(tracksToKeep, getSetting("shuffle")),
-        tracks: tracksToKeep
-    });
+    setPlaybackOrder(pl.id, getSetting("shuffle"));
     updateCurrentTrackIndex(pl.id);
     updatePlaylistEntry(pl.id, tracksToKeep);
 

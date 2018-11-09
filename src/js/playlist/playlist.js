@@ -4,6 +4,8 @@ const playlists = {};
 const playlistState = {};
 let activePlaylistId = "";
 let currentTrack = null;
+let playbackIndex = -1;
+let playbackOrder = [];
 
 function getPlaylistArray() {
     return Object.keys(playlists).map(getPlaylistById);
@@ -19,9 +21,7 @@ function createPlaylist(pl) {
         sortedBy: "index",
         order: 1,
         tracks: [],
-        playbackIndex: 0,
         lastTrackIndex: 0,
-        playbackOrder: [],
         ...pl
     };
     return playlists[pl.id];
@@ -64,10 +64,6 @@ function isPlaylistActive(id) {
     return id === activePlaylistId;
 }
 
-function getActivePlaylist() {
-    return playlists[activePlaylistId];
-}
-
 function cloneTrack(track) {
     return track ? { ...track } : null;
 }
@@ -100,16 +96,14 @@ function updateCurrentTrackIndex(playlistId) {
 }
 
 function findTrack(id, trackId) {
-    const pl = getPlaylistById(id);
+    const pl = playlists[id];
 
     return pl ? pl.tracks.find(track => track.name === trackId) : null;
 }
 
 function setPlaybackIndex(index) {
-    const { id, playbackOrder } = getActivePlaylist();
-    const playbackIndex = playbackOrder.indexOf(parseInt(index, 10));
-
-    playlists[id].playbackIndex = playbackIndex < 0 ? 0 : playbackIndex;
+    playbackIndex = playbackOrder.indexOf(index);
+    playbackIndex = playbackIndex < 0 ? 0 : playbackIndex;
 }
 
 function resetPlaybackIndex() {
@@ -121,34 +115,37 @@ function resetPlaybackIndex() {
 }
 
 function getPlaybackOrder(tracks, shuffle) {
-    const playbackOrder = tracks.map((track, index) => index);
+    const playbackOrder = tracks.map((_, index) => index);
 
     return shuffle ? shuffleArray(playbackOrder) : playbackOrder;
 }
 
-function setPlaybackOrder({ id, tracks }, shuffle) {
+function setPlaybackOrder(id, shuffle) {
+    const { tracks } = playlists[id];
     playlistState[id].shuffled = shuffle;
-    playlists[id].playbackOrder = getPlaybackOrder(tracks, shuffle);
+    playbackOrder = getPlaybackOrder(tracks, shuffle);
 
     resetPlaybackIndex();
 }
 
-function getNextTrackIndex({ playbackIndex, playbackOrder }, direction) {
-    playbackIndex += direction;
+function getNextTrackIndex(direction) {
+    let index = playbackIndex;
+    index += direction;
 
-    if (!direction || playbackIndex >= playbackOrder.length) {
-        playbackIndex = 0;
+    if (!direction || index >= playbackOrder.length) {
+        index = 0;
     }
-    else if (playbackIndex === -1) {
-        playbackIndex = playbackOrder.length - 1;
+    else if (index === -1) {
+        index = playbackOrder.length - 1;
     }
-    return playbackOrder[playbackIndex];
+    return playbackOrder[index];
 }
 
-function getNextTrack(pl, direction) {
-    const index = getNextTrackIndex(pl, direction);
+function getNextTrack(id, direction) {
+    const index = getNextTrackIndex(direction);
+    const { tracks } = playlists[id];
 
-    return cloneTrack(pl.tracks[index]);
+    return cloneTrack(tracks[index]);
 }
 
 function resetTrackIndexes(tracks) {
