@@ -175,20 +175,6 @@ svg {
     display: flex;
 }
 
-.fade-left {
-    &::before {
-        position: absolute;
-        left: 0;
-        top: 0;
-        content: "";
-        display: block;
-        width: 16px;
-        height: 100%;
-        box-shadow: inset 8px 0 10px 0 var(--background-color);
-        pointer-events: none;
-    }
-}
-
 .fade-right {
     position: relative;
     overflow: hidden;
