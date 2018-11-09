@@ -9,8 +9,8 @@ cd ..
 
 echo "Copy build to gh-pages"
 
-# Remove old precache files
-rm -rf ./gh-pages/precache*
+# Remove old build files
+rm -rf ./gh-pages/*
 cp -r ./dist/. ./gh-pages
 
 cd ./gh-pages
