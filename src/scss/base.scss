@@ -149,21 +149,41 @@ svg {
     }
 }
 
-.player-message {
+.player-messages {
+    position: absolute;
     bottom: 88px;
     right: 8px;
-    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
 
     @include breakpoint-small {
         bottom: 116px;
         max-width: calc(100% - 16px);
-        padding: 8px;
     }
+}
+
+.player-message {
+    padding: 16px;
+    background-color: $background-color-lightest;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+    color: $color-text;
+
+    &:not(:last-of-type) {
+        margin-bottom: 8px;
+    }
+}
+
+.player-message-title {
+    margin-bottom: 4px;
+    font-size: 14px;
+    font-weight: bold;
 }
 
 .player-message-body {
     margin-top: 0;
     margin-bottom: 0;
+    font-size: 13px;
 }
 
 .player-message-btn {

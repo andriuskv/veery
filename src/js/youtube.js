@@ -9,6 +9,13 @@ import { isGoogleAPIInitializing } from "./google-auth.js";
 const fetchQueue = [];
 let accessToken = null;
 
+function showYouTubeMessage(message) {
+    showPlayerMessage({
+        title: "YouTube",
+        body: message
+    });
+}
+
 function setAccessToken() {
     const instance = gapi.auth2.getAuthInstance();
 
@@ -104,11 +111,12 @@ function parseItems(items, id) {
 
 function handleError({ code, message }) {
     if (code === 403) {
-        message = "You need to be sign in if you want to import private playlist";
+        message = "You need to be sign in if you want to import private playlists";
     }
     else if (code === 404) {
         message = "Playlist was not found";
     }
+    showYouTubeMessage(message);
     throw new Error(message);
 }
 
@@ -166,7 +174,7 @@ async function addVideo(id, videoId) {
         addTracksToPlaylist(pl, tracks);
     }
     else {
-        throw new Error("Video was not found");
+        showYouTubeMessage("Video was not found");
     }
 }
 
@@ -220,6 +228,15 @@ async function fetchYoutubeItem(url, type) {
     const { videoId, playlistId } = parseUrl(url);
     const id = playlistId || "youtube";
 
+    if (!videoId && !playlistId) {
+        showYouTubeMessage("Invalid url");
+        return;
+    }
+
+    if (playlistId === "WL") {
+        showYouTubeMessage("Importing Watch Later playlist is not allowed");
+        return;
+    }
     setAccessToken();
     dispatchCustomEvent("import", {
         importing: true,
@@ -230,24 +247,12 @@ async function fetchYoutubeItem(url, type) {
     try {
         if (videoId) {
             await addVideo(id, videoId);
-            return;
-        }
-
-        if (!playlistId) {
-            throw new Error("Invalid url");
-        }
-        else if (playlistId === "WL") {
-            throw new Error("Importing Watch Later playlist is not allowed");
         }
         else {
             await addPlaylist(url, id, type);
         }
     }
     catch (e) {
-        showPlayerMessage({
-            title: "YouTube",
-            body: e.message
-        });
         console.log(e);
     }
     finally {

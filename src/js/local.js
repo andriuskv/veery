@@ -159,6 +159,22 @@ async function parseTracks(tracks, id, parsedTracks = []) {
 }
 
 async function addTracks(importOption, pl, files, parseTracks) {
+    if (!files.length) {
+        showPlayerMessage({
+            title: `${importOption} files`,
+            body: "No valid audio file found"
+        });
+        return;
+    }
+    const newTracks = filterDuplicateTracks(files, pl.tracks);
+
+    if (!newTracks.length) {
+        showPlayerMessage({
+            title: `${importOption} files`,
+            body: `Track${files.length > 1 ? "s" : ""} already exist`
+        });
+        return;
+    }
     dispatchCustomEvent("import", {
         importing: true,
         option: importOption,
@@ -166,23 +182,11 @@ async function addTracks(importOption, pl, files, parseTracks) {
     });
 
     try {
-        if (!files.length) {
-            throw new Error("No valid audio file found");
-        }
-        const newTracks = filterDuplicateTracks(files, pl.tracks);
-
-        if (!newTracks.length) {
-            throw new Error(`Track${files.length > 1 ? "s" : ""} already exist`);
-        }
         const tracks = await parseTracks(newTracks, pl.id);
 
         addTracksToPlaylist(pl, tracks);
     }
     catch (e) {
-        showPlayerMessage({
-            title: `${importOption} files`,
-            body: e.message
-        });
         console.log(e);
     }
     finally {
