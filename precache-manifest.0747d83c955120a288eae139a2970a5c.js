@@ -1,10 +1,10 @@
 self.__precacheManifest = [
   {
-    "revision": "855f6b387564cbbb9d47",
+    "revision": "17e44aa81bc1065b58cd",
     "url": "main.css"
   },
   {
-    "revision": "855f6b387564cbbb9d47",
+    "revision": "17e44aa81bc1065b58cd",
     "url": "main.js"
   },
   {
@@ -32,15 +32,15 @@ self.__precacheManifest = [
     "url": "index.html"
   },
   {
-    "revision": "7d6f38ea9b43b77f8188645cab4675a6",
+    "revision": "9c4de475997adfd018e027d6484cb5b9",
     "url": "assets/images/album-art-placeholder.png"
   },
   {
-    "revision": "23886e72342b42f3c92719206e7e7d48",
+    "revision": "c5a2d3d8ee0dcfeaa2ed00be845eba4c",
     "url": "assets/images/main-icon.png"
   },
   {
-    "revision": "fc65dbc458dd82c0c345ab8e03ea1bfc",
+    "revision": "92b347bfba388b957b82c13a6ac88f59",
     "url": "assets/images/ring-alt.svg"
   },
   {
