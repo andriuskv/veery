@@ -193,7 +193,22 @@
 }
 
 .control-btn {
+    position: relative;
     margin-right: 4px;
+
+    &.active::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -6px;
+        display: block;
+        width: 4px;
+        height: 4px;
+        margin: 0 auto;
+        border-radius: 50%;
+        background-color: $color-accent;
+    }
 }
 
 .volume-controls {
