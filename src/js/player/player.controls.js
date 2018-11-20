@@ -280,13 +280,15 @@ function onVolumeSliderMouseup() {
 function updateSetting({ attrValue, elementRef }) {
     const value = !getSetting(attrValue);
 
-    elementRef.classList.toggle("active");
     elementRef.setAttribute("aria-checked", value);
     setSetting(attrValue, value);
 
     if (attrValue === "mute") {
         mutePlayer(value);
         toggleVolumeBtn(elementRef, value);
+    }
+    else {
+        elementRef.classList.toggle("active");
     }
 }
 
@@ -347,23 +349,26 @@ trackSlider.addEventListener("mousedown", event => {
 trackSlider.addEventListener("mousemove", onLocalTrackSliderMousemove);
 trackSlider.addEventListener("mouseenter", getMouseEnterHandler("track"));
 
-trackSlider.addEventListener("keydown", ({ which }) => {
+trackSlider.addEventListener("keydown", ({ key }) => {
+    if (!key.startsWith("Arrow")) {
+        return;
+    }
     const track = getCurrentTrack();
 
-    if (!track || which < 37 || which > 40) {
+    if (!track) {
         return;
     }
     const duration = track.durationInSeconds;
     let { currentTime } = storedTrack.getTrack();
 
-    if (which === 38 || which === 39) {
+    if (key === "ArrowRight" || key === "ArrowUp") {
         currentTime += 5;
 
         if (currentTime > duration) {
             currentTime = duration;
         }
     }
-    else if (which === 37 || which === 40) {
+    else if (key === "ArrowLeft" || key === "ArrowDown") {
         currentTime -= 5;
 
         if (currentTime < 0) {
@@ -388,18 +393,23 @@ volumeSlider.addEventListener("mousedown", event => {
 volumeSlider.addEventListener("mousemove", onLocalVolumeSliderMousemove);
 volumeSlider.addEventListener("mouseenter", getMouseEnterHandler("volume"));
 
-volumeSlider.addEventListener("keydown", ({ which }) => {
+volumeSlider.addEventListener("keydown", ({ key }) => {
+    if (!key.startsWith("Arrow")) {
+        return;
+    }
     let volume = getSetting("volume");
 
-    if (which === 38 || which === 39) {
+    if (volume < 1 && (key === "ArrowRight" || key === "ArrowUp")) {
+        if (!volume) {
+            unmutePlayer();
+        }
         volume += 0.05;
 
         if (volume > 1) {
             volume = 1;
         }
-        unmutePlayer();
     }
-    else if (volume && (which === 37 || which === 40)) {
+    else if (volume && (key === "ArrowLeft" || key === "ArrowDown")) {
         volume -= 0.05;
 
         if (volume <= 0) {
@@ -461,11 +471,13 @@ document.getElementById("js-control-toggle-btn").addEventListener("click", () =>
         const setting = getSetting(item);
 
         if (setting) {
-            element.classList.add("active");
             element.setAttribute("aria-checked", true);
 
             if (item === "mute") {
                 toggleVolumeBtn(element, setting);
+            }
+            else {
+                element.classList.add("active");
             }
         }
     });
