@@ -13,6 +13,7 @@ body {
     text-rendering: optimizeLegibility;
     font-family: $font-family;
     font-size: 14px;
+    color: $color-text;
     scrollbar-face-color: transparent;
     scrollbar-track-color: $background-color-light;
 }
@@ -101,15 +102,15 @@ svg {
     background-color: transparent;
 }
 
-.checkbox::after {
-    content: "";
-    display: block;
+.checkbox {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 16px;
     height: 16px;
+    border-radius: 2px;
     background-color: $background-color-darkest;
     font-size: 16px;
-    font-weight: bold;
-    text-align: center;
     color: $color-accent;
 }
 
@@ -127,7 +128,6 @@ svg {
     padding: 8px;
     background-color: $background-color-lightest;
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
-    color: $color-text;
 }
 
 .panel-title {
@@ -167,7 +167,6 @@ svg {
     padding: 16px;
     background-color: $background-color-lightest;
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
-    color: $color-text;
 
     &:not(:last-of-type) {
         margin-bottom: 8px;

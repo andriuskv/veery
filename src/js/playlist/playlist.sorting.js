@@ -82,7 +82,7 @@ function getSortPanel(id, sortedBy) {
 }
 
 function getSortOtions(sortedBy) {
-    const options = ["index", "name", "title", "artist", "album", "duration"];
+    const options = ["index", "title", "artist", "album", "duration"];
 
     return options.reduce((str, option) => {
         const activeClass = option === sortedBy ? " active" : "";
