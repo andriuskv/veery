@@ -23,7 +23,13 @@ function decodeFrame(buffer, offset, size) {
   const bytes = getBytes(buffer, offset, size);
   const [firstByte] = bytes;
 
-  if (firstByte === 1) {
+  if (firstByte === 0) {
+    const decoder = new TextDecoder("iso-8859-1");
+    const string = decoder.decode(bytes);
+
+    return string.slice(1);
+  }
+  else if (firstByte === 1) {
     const encoding = bytes[1] === 255 && bytes[2] === 254 ? "utf-16le" : "utf-16be";
     const decoder = new TextDecoder(encoding);
     const stringBytes = bytes.length % 2 === 0 ? bytes.slice(3, -1) : bytes.slice(3);
@@ -105,7 +111,7 @@ async function parseID3Tag(blob, buffer, version, offset = 0, tags = {}) {
   while (true) {
     const id = getFrameId(buffer, offset);
     offset += 4;
-    let frameSize = getFrameSize(buffer, offset, version);
+    const frameSize = getFrameSize(buffer, offset, version);
     offset += 4;
 
     const [encodingFlagByte] = getBytes(buffer, offset + 1, 2);
