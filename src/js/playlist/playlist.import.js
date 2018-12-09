@@ -200,13 +200,17 @@ function createSettingsPanel(id, { element }) {
             <label class="import-setting">
                 <input type="checkbox" class="checkbox-input"
                     ${settings["local-files"].storageDisabled ? "checked" : ""} data-id="local-files">
-                <div class="checkbox"></div>
+                <div class="checkbox">
+                    <div class="checkbox-tick"></div>
+                </div>
                 <span class="import-setting-label">Don't store <b>Local files</b> playlist</span>
             </label>
             <label class="import-setting">
                 <input type="checkbox" class="checkbox-input"
                     ${settings.dropbox.storageDisabled ? "checked" : ""} data-id="dropbox">
-                <div class="checkbox"></div>
+                <div class="checkbox">
+                    <div class="checkbox-tick"></div>
+                </div>
                 <span class="import-setting-label">Don't store <b>Dropbox</b> playlist</span>
             </label>
         </div>
