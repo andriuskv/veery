@@ -189,7 +189,9 @@ function createSettingsPanel(id, { element, pl }) {
             <h3 class="panel-title">Playlist settings</h3>
             <label class="pl-entry-setting">
                 <input type="checkbox" class="checkbox-input" ${pl.syncOnInit ? "checked" : ""}>
-                <div class="checkbox"></div>
+                <div class="checkbox">
+                    <div class="checkbox-tick"></div>
+                </div>
                 <span>Synchronize playlist on startup</span>
             </label>
         </div>
