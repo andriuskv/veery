@@ -142,7 +142,7 @@ function playNewTrack(track, options = {}) {
         nPlayer.playTrack(track, volume, options.startTime);
     }
     else if (track.player === "youtube") {
-        ytPlayer.playTrack(track, volume, options.startTime);
+        ytPlayer.playTrack(track.id, volume, options.startTime);
     }
 }
 

@@ -1,7 +1,7 @@
 /* global YT */
 
 import { scriptLoader, dispatchCustomEvent } from "../utils.js";
-import { getPlayerState, updatePlayerState, playNextTrack, stopPlayer } from "./player.js";
+import { updatePlayerState, playNextTrack, stopPlayer } from "./player.js";
 import { showPlayerMessage } from "./player.view.js";
 import { elapsedTime, showPlayPauseBtnSpinner, hidePlayPauseBtnSpinner } from "./player.controls.js";
 import { getCurrentTrack, getNextTrack } from "../playlist/playlist.js";
@@ -9,11 +9,11 @@ import { getCurrentTrack, getNextTrack } from "../playlist/playlist.js";
 const PLAYING = 1;
 const PAUSED = 2;
 const BUFFERING = 3;
-const UNSTARTED = -1;
 let initialized = false;
 let ytPlayer = null;
+let videoCued = false;
 let args = null;
-window.onYouTubeIframeAPIReady = initPlayer;
+let stateUpdated = false;
 
 function onPlayerStateChange({ data: state }) {
     const track = getCurrentTrack();
@@ -21,31 +21,20 @@ function onPlayerStateChange({ data: state }) {
     if (!track || track.player !== "youtube") {
         return;
     }
-    const iframe = document.getElementById("js-yt-player");
-    const isPaused = getPlayerState();
-    const latestState = isPaused ? PAUSED : PLAYING;
-
-    if (document.activeElement === iframe &&
-        (state === PLAYING && latestState === PAUSED ||
-        state === PAUSED && latestState === PLAYING)) {
-        iframe.blur();
-
-        if (latestState === PAUSED) {
-            dispatchCustomEvent("track-start", ytPlayer.getCurrentTime());
-        }
-        updatePlayerState(track);
-        return;
-    }
 
     if (state === PLAYING) {
-        if (latestState === PAUSED) {
-            ytPlayer.pauseVideo();
-            return;
+        if (!stateUpdated) {
+            updatePlayerState(track, false);
         }
+        stateUpdated = false;
         dispatchCustomEvent("track-start", ytPlayer.getCurrentTime());
     }
-    else if (state === PAUSED && latestState === PLAYING) {
-        ytPlayer.playVideo();
+    else if (state === PAUSED) {
+        if (!stateUpdated) {
+            updatePlayerState(track, true);
+        }
+        stateUpdated = false;
+        hidePlayPauseBtnSpinner(track);
     }
     else if (state === BUFFERING) {
         elapsedTime.stop();
@@ -57,9 +46,17 @@ function onPlayerStateChange({ data: state }) {
 }
 
 function onPlayerReady() {
+    const { id, volume, startTime } = args;
     initialized = true;
-    playTrack(...args);
-    args = null;
+
+    if (typeof startTime === "number") {
+        setVolume(volume);
+        ytPlayer.cueVideoById(id, startTime);
+        videoCued = true;
+    }
+    else {
+        playTrack(id, volume);
+    }
 }
 
 function onError(error) {
@@ -113,11 +110,8 @@ function togglePlaying(paused) {
     if (!initialized) {
         return;
     }
-    const state = ytPlayer.getPlayerState();
-
-    if (state === BUFFERING || state === UNSTARTED) {
-        return;
-    }
+    stateUpdated = true;
+    videoCued = false;
 
     if (paused) {
         ytPlayer.playVideo();
@@ -127,31 +121,43 @@ function togglePlaying(paused) {
     }
 }
 
-function playTrack(track, volume, startTime) {
+function playTrack(id, volume, startTime) {
     if (initialized) {
         setVolume(volume);
-        ytPlayer.loadVideoById(track.id, startTime);
+        ytPlayer.loadVideoById(id, startTime);
         return;
     }
-    args = [track, volume, startTime];
+    args = { id, volume, startTime };
+    window.onYouTubeIframeAPIReady = initPlayer;
     scriptLoader.load({ src: "https://www.youtube.com/iframe_api" });
 }
 
 function stopTrack(track) {
-    if (!initialized) {
-        return;
+    if (initialized) {
+        hidePlayPauseBtnSpinner(track);
+        ytPlayer.stopVideo();
+        videoCued = false;
     }
-    hidePlayPauseBtnSpinner(track);
-    ytPlayer.stopVideo();
 }
 
 function setVolume(volume) {
-    ytPlayer.setVolume(volume * 100);
+    if (initialized) {
+        ytPlayer.setVolume(volume * 100);
+    }
 }
 
 function seekTo(currentTime) {
-    ytPlayer.seekTo(currentTime, true);
+    if (initialized) {
+        if (videoCued) {
+            // Cue video again at the different timestamp to prefent it from playing
+            ytPlayer.cueVideoById(args.id, currentTime);
+        }
+        else {
+            ytPlayer.seekTo(currentTime, true);
+        }
+    }
 }
+
 
 export {
     playTrack,
