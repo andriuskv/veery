@@ -164,7 +164,8 @@
 .import-progress-label {
     @include text-truncate;
 
-    margin: 8px 4px;
+    margin: 0;
+    padding: 8px 4px;
 }
 
 .import-progress-bar-inner {
