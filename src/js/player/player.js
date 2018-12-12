@@ -139,7 +139,7 @@ function playNewTrack(track, options = {}) {
     beforeTrackStart(track, options);
 
     if (track.player === "native") {
-        nPlayer.playTrack(track.audioTrack, volume, options.startTime);
+        nPlayer.playTrack(track, volume, options.startTime);
     }
     else if (track.player === "youtube") {
         ytPlayer.playTrack(track, volume, options.startTime);
@@ -173,7 +173,7 @@ function play(source, sourceValue, id) {
         stopTrack(currentTrack);
     }
 
-    if (shuffled !== shuffle) {
+    if (id !== getActivePlaylistId() || shuffled !== shuffle) {
         alreadyShuffled = true;
         setPlaybackOrder(id, shuffle);
     }
