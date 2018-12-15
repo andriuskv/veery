@@ -1,7 +1,7 @@
 import { dispatchCustomEvent } from "../utils.js";
 import { stopPlayer, playNextTrack } from "./player.js";
 import { showPlayerMessage } from "./player.view.js";
-import { getNextTrack } from "../playlist/playlist.js";
+import { getNextTrack, getCurrentTrack } from "../playlist/playlist.js";
 
 let audioBlobURL;
 let audio;
@@ -14,6 +14,7 @@ function playTrack(track, volume, startTime) {
     };
 
     audio.onerror = function(error) {
+        const track = getCurrentTrack();
         const { name } = getNextTrack(track.playlistId, 1);
 
         if (track.name === name) {
@@ -49,6 +50,8 @@ function togglePlaying(paused) {
 
 function stopTrack() {
     audio.pause();
+    audio.onplaying = null;
+    audio.onerror = null;
     audio.currentTime = 0;
     audio = null;
 
