@@ -49,7 +49,7 @@ function decodeFrame(buffer, offset, size) {
     const decoder = new TextDecoder("utf-8");
     const string = decoder.decode(bytes);
 
-    return string.slice(1);
+    return bytes[bytes.length - 1] === 0 ? string.slice(1, -1) : string.slice(1);
   }
   const decoder = new TextDecoder("iso-8859-1");
 
