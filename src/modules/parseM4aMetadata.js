@@ -74,7 +74,8 @@ function parseMetadataItemListAtom(buffer, offset, atomSize, metadata) {
         metadata[field] = new Blob([dataBytes], { type: getMIMEType(dataBytes) });
       }
       else {
-        metadata[field] = String.fromCharCode(...dataBytes);
+        const decoder = new TextDecoder("utf-8");
+        metadata[field] = decoder.decode(dataBytes);
       }
     }
     offset += size;
