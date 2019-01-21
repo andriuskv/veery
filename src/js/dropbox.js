@@ -41,7 +41,7 @@ function showDropboxChooser() {
                 id,
                 title: "Dropbox",
                 type: "grid",
-                storageDisabled: importSettings.getSetting(id, "storageDisabled")
+                storePlaylist: importSettings.getSetting(id, "storePlaylist")
             });
 
             addTracks(id, pl, files, parseTracks);

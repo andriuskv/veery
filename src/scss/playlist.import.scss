@@ -12,7 +12,7 @@
 
 .import-settings-panel {
     right: 0;
-    width: 260px;
+    width: 280px;
 }
 
 .import-setting {
@@ -25,6 +25,18 @@
 
 .import-setting-label {
     margin-left: 8px;
+}
+
+.import-setting-message {
+    display: flex;
+    font-size: 13px;
+    align-items: center;
+    margin-top: 8px;
+    color: $color-text-transparent;
+
+    svg {
+        margin-right: 4px;
+    }
 }
 
 .import-option-container {
