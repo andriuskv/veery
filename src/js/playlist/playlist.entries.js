@@ -109,6 +109,13 @@ function updatePlaylistEntry(id, tracks) {
 function createPlaylistEntry(pl) {
     const element = getContainer();
     const duration = getPlaylistDuration(pl.tracks);
+    const linkIcon = getIcon({ iconId: "link" });
+    const linkBtn = pl.url ? `<a href="${pl.url}"
+            class="btn-icon pl-entry-btn" target="_blank"
+            title="Open playlist on YouTube">
+            ${linkIcon}
+        </a>
+    ` : "";
     const syncBtn = pl.url ? getEntryBtn({
         action: "sync",
         title: "Synchronize playlist",
@@ -156,6 +163,7 @@ function createPlaylistEntry(pl) {
                         <span class="pl-entry-stats-item track-count">${pl.tracks.length} tracks</span>
                         <span class="pl-entry-stats-item playlist-duration">${parsePlaylistDuration(duration)}</span>
                     </div>
+                    ${linkBtn}
                     ${syncBtn}
                     ${settingsPanel}
                     ${removeBtn}
