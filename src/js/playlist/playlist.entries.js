@@ -128,11 +128,11 @@ function createPlaylistEntry(pl) {
         iconId: "edit",
         className: "pl-entry-input-icon"
     });
-    const alertIcon = pl.storageDisabled ? getIcon({
+    const alertIcon = pl.storePlaylist ? "" : getIcon({
         iconId: "alert",
         className: "pl-entry-stats-item",
-        title: "This playlist will not persist through reload"
-    }) : "";
+        title: "This playlist will not be stored"
+    });
     const statusIcon = pl.isPrivate ? getIcon({
         iconId: "lock",
         className: "pl-entry-stats-item",
@@ -141,7 +141,9 @@ function createPlaylistEntry(pl) {
 
     element.insertAdjacentHTML("beforeend", `
         <li class="pl-entry" data-entry-id=${pl.id}>
-            <div class="pl-entry-thumbnail">${getPlaylistThumbnailContent(pl.tracks)}</div>
+            <div class="pl-entry-thumbnail">
+                ${getPlaylistThumbnailContent(pl.tracks)}
+            </div>
             <div class="pl-entry-content">
                 <div class="pl-entry-input-container" data-action="edit">
                     <input type="text" class="input pl-entry-input" value="${pl.title}">

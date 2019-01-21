@@ -13,13 +13,13 @@ let importOption = "";
 const importSettings = (function() {
     const defaultSettings = {
         "local-files": {
-            storageDisabled: false
+            storePlaylist: false
         },
         dropbox: {
-            storageDisabled: false
+            storePlaylist: false
         }
     };
-    const settings = Object.assign(defaultSettings, JSON.parse(localStorage.getItem("import-settings")));
+    const settings = { ...defaultSettings, ...JSON.parse(localStorage.getItem("import-settings")) };
 
     function setSetting(id, setting, value) {
         settings[id][setting] = value;
@@ -199,20 +199,26 @@ function createSettingsPanel(id, { element }) {
             <h3 class="panel-title">Settings</h3>
             <label class="import-setting">
                 <input type="checkbox" class="checkbox-input"
-                    ${settings["local-files"].storageDisabled ? "checked" : ""} data-id="local-files">
+                    ${settings["local-files"].storePlaylist ? "checked" : ""} data-id="local-files">
                 <div class="checkbox">
                     <div class="checkbox-tick"></div>
                 </div>
-                <span class="import-setting-label">Don't store <b>Local files</b> playlist</span>
+                <span class="import-setting-label">Store <b>Local files</b> playlist</span>
             </label>
             <label class="import-setting">
                 <input type="checkbox" class="checkbox-input"
-                    ${settings.dropbox.storageDisabled ? "checked" : ""} data-id="dropbox">
+                    ${settings.dropbox.storePlaylist ? "checked" : ""} data-id="dropbox">
                 <div class="checkbox">
                     <div class="checkbox-tick"></div>
                 </div>
-                <span class="import-setting-label">Don't store <b>Dropbox</b> playlist</span>
+                <span class="import-setting-label">Store <b>Dropbox</b> playlist</span>
             </label>
+            <div class="import-setting-message">
+                <svg viewBox="0 0 24 24">
+                    <use href="#info"></use>
+                </svg>
+                <span>Stored playlists will persist through reload</span>
+            </div>
         </div>
     `);
     document.getElementById(id).addEventListener("change", handleSettingChange);
@@ -221,7 +227,7 @@ function createSettingsPanel(id, { element }) {
 function handleSettingChange({ target }) {
     const id = target.getAttribute("data-id");
 
-    importSettings.setSetting(id, "storageDisabled", target.checked);
+    importSettings.setSetting(id, "storePlaylist", target.checked);
 }
 
 function handleYouTubeOptionClick({ attrValue, elementRef }) {

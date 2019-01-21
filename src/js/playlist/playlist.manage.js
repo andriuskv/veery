@@ -81,6 +81,10 @@ function addTracksToPlaylist(pl, tracks) {
     }
     else {
         initPlaylist(pl);
+
+        if (!pl.storePlaylist) {
+            return;
+        }
         postMessageToWorker({
             action: "add",
             playlist: pl
@@ -113,6 +117,7 @@ function onNewPlaylistFormSubmit(event) {
     const pl = createPlaylist({
         title: event.target.title.value,
         id: Math.random().toString(36).slice(2),
+        storePlaylist: true,
         type: "grid"
     });
 

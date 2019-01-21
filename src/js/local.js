@@ -205,7 +205,7 @@ function selectLocalFiles(files) {
         id,
         title: "Local files",
         type: "list",
-        storageDisabled: importSettings.getSetting(id, "storageDisabled")
+        storePlaylist: importSettings.getSetting(id, "storePlaylist")
     });
 
     addTracks("local", pl, supportedFiles, parseTracks);

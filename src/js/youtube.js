@@ -160,6 +160,7 @@ function getYouTubePlaylist(id, props) {
     return getPlaylistById(id) || createPlaylist({
         id,
         type: "grid",
+        storePlaylist: true,
         ...props
     });
 }
