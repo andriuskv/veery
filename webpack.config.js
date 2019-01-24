@@ -27,7 +27,7 @@ module.exports = function(env = {}) {
             swSrc: "./src/sw.js",
             swDest: "./sw.js",
             globDirectory: "./dist",
-            globPatterns: ["./assets/images/*", "./libs/dexie.min.js", "./ww.js", "./favicon.ico"]
+            globPatterns: ["./assets/images/*", "./libs/dexie.min.js", "./ww.js", "./favicon.png"]
         })
     ];
 
