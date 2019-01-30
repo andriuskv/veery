@@ -38,7 +38,7 @@ function updatePlaylistTab(id) {
     }
 
     if (pl.type === "list" && media.matches) {
-        changePlaylistType("grid", pl);
+        changePlaylistType(pl, "grid");
     }
     else {
         togglePlaylistTypeBtn(pl.type);
@@ -68,7 +68,7 @@ headerElement.addEventListener("click", ({ currentTarget, target }) => {
         });
     }
     else if ((item === "list" || item === "grid") && item !== pl.type) {
-        changePlaylistType(item, pl);
+        changePlaylistType(pl, item);
     }
     else if (item === "sorting") {
         togglePanel("js-sort-panel", createSortPanel, {
@@ -115,7 +115,7 @@ media.onchange = function({ matches }) {
     const pl = getVisiblePlaylist();
 
     if (matches && pl && pl.type === "list") {
-        changePlaylistType("grid", pl);
+        changePlaylistType(pl, "grid");
     }
 };
 

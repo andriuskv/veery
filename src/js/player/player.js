@@ -97,7 +97,7 @@ function beforeTrackStart(track, { scrollToTrack, startTime }) {
     showTrackDuration(track.duration, track.durationInSeconds);
     showTrackSlider();
     setPlaylistAsActive(track.playlistId);
-    setPlaybackIndex(track.index);
+    setPlaybackIndex(track.playlistId, track.index);
     setCurrentTrack(track);
 
     if (rendered && track.index !== -1) {

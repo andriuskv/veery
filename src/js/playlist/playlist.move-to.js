@@ -69,7 +69,7 @@ function moveTracks(playlistId) {
         .filter(track => indexes.includes(track.index) && !findTrack(playlistId, track.name))
         .map(track => ({ ...track, playlistId }));
 
-    addTracksToPlaylist(pl, selectedTracks, true);
+    addTracksToPlaylist(pl, selectedTracks);
     toggleRoute(`playlist/${pl.id}`);
 }
 

@@ -2,8 +2,8 @@ import { removeElement, getImage, getIcon } from "../utils.js";
 import { getTab } from "../tab.js";
 import { postMessageToWorker } from "../web-worker.js";
 import { togglePlayPauseBtn } from "../player/player.controls.js";
-import { getCurrentTrack, setPlaylistState, updatePlaylist, findTrack } from "./playlist.js";
-import { observePlaylist, reObservePlaylist, removePlaylistObserver, observeElements } from "./playlist.element-observer.js";
+import { getCurrentTrack, setPlaylistState, getPlaylistState } from "./playlist.js";
+import { observePlaylist, reObservePlaylist, removePlaylistObserver } from "./playlist.element-observer.js";
 
 function getPlaylistElement(id) {
     return document.getElementById(`js-${id}`);
@@ -16,19 +16,14 @@ function getTrackPlayPauseBtn({ element, index }) {
     return element.querySelector(".btn-icon");
 }
 
-function createListItem(item) {
-    const content = createListItemContent(item, { id: "play", title: "Play" });
-    return createListItemContainer(item, content);
+function createListItemContainer({ index }) {
+    return `<li class="list-item track" data-index="${index}" tabindex="0"></li>`;
 }
 
-function createListItemContainer({ index }, content = "") {
-    return `<li class="list-item track" data-index="${index}" tabindex="0">${content}</li>`;
-}
-
-function createListItemContent(item, { title, id }) {
+function createListItemContent(item, index, { title, id }) {
     return `
         <span class="list-item-first-col">
-            <span class="list-item-index">${item.index + 1}</span>
+            <span class="list-item-index">${index + 1}</span>
             <button class="btn-icon track-play-pause-btn" data-btn="play" title="${title}">
                 ${getIcon({ iconId: id })}
             </button>
@@ -53,13 +48,8 @@ function createList(id, items) {
     `;
 }
 
-function createGridItem(item) {
-    const content = createGridItemContent(item, { id: "play", title: "Play" });
-    return createGridItemContainer(item, content);
-}
-
-function createGridItemContainer({ index }, content = "") {
-    return `<li class="grid-item track" data-index="${index}" tabindex="0">${content}</li>`;
+function createGridItemContainer({ index }) {
+    return `<li class="grid-item track" data-index="${index}" tabindex="0"></li>`;
 }
 
 function createGridItemContent(item, { title, id }) {
@@ -75,32 +65,20 @@ function createGridItemContent(item, { title, id }) {
     `;
 }
 
-function getItemCreationCallback() {
-    let listItemCb = createListItem;
-    let gridItemCb = createGridItem;
-
-    if ("IntersectionObserver" in window) {
-        listItemCb = createListItemContainer;
-        gridItemCb = createGridItemContainer;
-    }
-    return { listItemCb, gridItemCb };
-}
-
 function createGrid(id, items) {
     return `<ul id="js-${id}" class="playlist-view grid-view">${items}</ul>`;
 }
 
-function createItems(tracks, cb) {
-    return tracks.reduce((items, track) => items + cb(track), "");
+function createItemContainers(tracks, sortOrder, cb) {
+    return sortOrder.reduce((items, index) => items + cb(tracks[index]), "");
 }
 
 function createPlaylist({ id, type, tracks }) {
-    const { listItemCb, gridItemCb } = getItemCreationCallback();
-
+    const { sortOrder } = getPlaylistState(id);
     if (type === "list") {
-        return createList(id, createItems(tracks, listItemCb));
+        return createList(id, createItemContainers(tracks, sortOrder, createListItemContainer));
     }
-    return createGrid(id, createItems(tracks, gridItemCb));
+    return createGrid(id, createItemContainers(tracks, sortOrder, createGridItemContainer));
 }
 
 function getPlaylistTemplate(pl) {
@@ -163,32 +141,6 @@ function updatePlaylistView(pl) {
     }
 }
 
-function addTracks(pl, tracks) {
-    const track = getCurrentTrack();
-    const element = getPlaylistElement(pl.id);
-
-    if (element) {
-        const { listItemCb, gridItemCb } = getItemCreationCallback();
-        const items = createItems(tracks, pl.type === "list" ? listItemCb : gridItemCb);
-
-        element.insertAdjacentHTML("beforeend", items);
-
-        // Add newly created elements to intersection observer
-        observeElements(pl.id, [...element.children].slice(-tracks.length));
-    }
-    else {
-        const element = getTab(pl.id);
-
-        element.innerHTML = getPlaylistTemplate(pl);
-        reObservePlaylist(pl.id);
-    }
-
-    if (track && track.playlistId === pl.id && findTrack(pl.id, track.name)) {
-        removePlayingClass(track.element);
-        setTrackElement(track);
-    }
-}
-
 function removePlaylistTab(id) {
     const element = getTab(id);
 
@@ -199,7 +151,10 @@ function removePlaylistTab(id) {
 }
 
 function setTrackElement(track) {
-    track.element = document.getElementById(`js-${track.playlistId}`).children[track.index];
+    const { sortOrder } = getPlaylistState(track.playlistId);
+    const index = sortOrder.indexOf(track.index);
+
+    track.element = document.getElementById(`js-${track.playlistId}`).children[index];
     track.element.classList.add("playing");
 }
 
@@ -250,8 +205,9 @@ function togglePlaylistTypeBtn(type) {
     }
 }
 
-function changePlaylistType(type, pl) {
-    updatePlaylist(pl.id, { type });
+function changePlaylistType(pl, type) {
+    pl.type = type;
+
     postMessageToWorker({
         action: "change-type",
         playlist: {
@@ -271,7 +227,6 @@ export {
     removePlaylistTab,
     updatePlaylistView,
     renderPlaylist,
-    addTracks,
     removePlayingClass,
     showTrack,
     toggleTrackPlayPauseBtn,

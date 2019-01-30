@@ -13,14 +13,15 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "focus-visible": "^4.1.5"
+    "focus-visible": "^4.1.5",
+    "intersection-observer": "^0.5.1"
   },
   "devDependencies": {
     "@babel/core": "^7.2.2",
     "@babel/plugin-syntax-dynamic-import": "^7.2.0",
     "@babel/polyfill": "^7.2.5",
     "@babel/preset-env": "^7.3.1",
-    "autoprefixer": "^9.4.6",
+    "autoprefixer": "^9.4.7",
     "babel-eslint": "^10.0.1",
     "babel-loader": "^8.0.5",
     "css-loader": "^2.1.0",
@@ -44,7 +45,6 @@
     "last 4 firefox versions",
     "last 1 edge versions",
     "last 1 and_chr versions",
-    "last 1 safari versions",
-    "last 1 ios versions"
+    "last 1 safari versions"
   ]
 }

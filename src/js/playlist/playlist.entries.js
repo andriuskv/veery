@@ -10,7 +10,7 @@ import { editSidebarEntryTitle } from "../sidebar.js";
 import { postMessageToWorker } from "../web-worker.js";
 import { togglePanel } from "../panels.js";
 import { initGoogleAPI } from "../google-auth.js";
-import { getPlaylistById, updatePlaylist, getPlaylistDuration } from "./playlist.js";
+import { getPlaylistById, getPlaylistDuration } from "./playlist.js";
 import { deletePlaylist } from "./playlist.manage.js";
 import { importPlaylist, resetImportOption } from "./playlist.import.js";
 
@@ -244,24 +244,25 @@ async function syncPlaylists(playlists) {
 
 function editPlaylistTitle({ currentTarget }) {
     const { attrValue: playlistId } = getElementByAttr("data-entry-id", currentTarget);
-    const { _id, title } = getPlaylistById(playlistId);
+    const pl = getPlaylistById(playlistId);
     const newTitle = currentTarget.value;
 
     currentTarget.removeEventListener("blur", editPlaylistTitle);
     currentTarget.removeEventListener("keyup", blurEntryInput);
 
     if (!newTitle) {
-        currentTarget.value = title;
+        currentTarget.value = pl.title;
         return;
     }
 
-    if (newTitle !== title) {
+    if (newTitle !== pl.title) {
+        pl.title = newTitle;
+
         editSidebarEntryTitle(playlistId, newTitle);
-        updatePlaylist(playlistId, { title: newTitle });
         postMessageToWorker({
             action: "change-title",
             playlist: {
-                _id,
+                _id: pl._id,
                 title: newTitle
             }
         });
