@@ -29,15 +29,14 @@ function addPlaylist(playlist) {
     });
 }
 
-function addTracks({ _id, tracks, lastTrackIndex }) {
-    getPlaylist(_id).modify((value, ref) => {
-        ref.value.lastTrackIndex = lastTrackIndex;
+function addTracks({ _id, tracks }) {
+    getPlaylist(_id).modify((_, ref) => {
         ref.value.tracks = ref.value.tracks.concat(tracks);
     });
 }
 
 function removeTracks(id, tracks) {
-    getPlaylist(id).modify((value, ref) => {
+    getPlaylist(id).modify((_, ref) => {
         ref.value.tracks = ref.value.tracks.filter(track => {
             for (const localTrack of tracks) {
                 if (localTrack.name === track.name) {
