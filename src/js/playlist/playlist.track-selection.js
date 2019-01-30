@@ -7,7 +7,9 @@ import {
 import {
     updateCurrentTrackIndex,
     resetTrackIndexes,
-    setPlaybackOrder
+    setPlaybackOrder,
+    getPlaylistState,
+    setSortOrder
 } from "./playlist.js";
 import { getSetting } from "../settings.js";
 import { getVisiblePlaylistId, getVisiblePlaylist, getTab } from "../tab.js";
@@ -408,21 +410,21 @@ function separatePlaylistTracks(tracks, indexes) {
 
     return {
         tracksToRemove,
-        tracksToKeep: resetTrackIndexes(tracksToKeep)
+        tracksToKeep
     };
 }
 
-function resetElementIndexes(id, startIndex) {
-    const elements = Array.from(getPlaylistElement(id).children).slice(startIndex);
+function resetElementIndexes(id) {
+    const { sortOrder } = getPlaylistState(id);
+    const elements = [...getPlaylistElement(id).children];
 
     elements.forEach((element, index) => {
         const indexElement = element.querySelector(".list-item-index");
-        const newIndex = startIndex + index;
 
         if (indexElement) {
-            indexElement.textContent = newIndex + 1;
+            indexElement.textContent = index + 1;
         }
-        element.setAttribute("data-index", newIndex);
+        element.setAttribute("data-index", sortOrder[index]);
     });
 }
 
@@ -434,7 +436,9 @@ function removeSelectedTracks() {
     pl.tracks = tracksToKeep;
 
     removeElements(elements);
-    resetElementIndexes(pl.id, indexes[0]);
+    resetTrackIndexes(pl);
+    resetElementIndexes(pl.id, tracksToKeep);
+    setSortOrder(pl);
     setPlaybackOrder(pl.id, getSetting("shuffle"));
     updateCurrentTrackIndex(pl.id);
     updatePlaylistEntry(pl.id, tracksToKeep);

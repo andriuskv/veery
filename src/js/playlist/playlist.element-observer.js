@@ -14,9 +14,10 @@ function handleIntersectingEntry(entry) {
     const icon = currentTrack && currentTrack.index === track.index ?
         getPlayPauseButtonIcon(paused) :
         getPlayPauseButtonIcon(true);
+    const index = [...entry.parentElement.children].indexOf(entry);
 
     entry.innerHTML = type === "list" ?
-        createListItemContent(track, icon) :
+        createListItemContent(track, index, icon) :
         createGridItemContent(track, icon);
 }
 
@@ -75,6 +76,5 @@ function removePlaylistObserver(id) {
 export {
     observePlaylist,
     reObservePlaylist,
-    removePlaylistObserver,
-    observeElements
+    removePlaylistObserver
 };

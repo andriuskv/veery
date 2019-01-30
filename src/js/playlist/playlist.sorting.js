@@ -1,7 +1,7 @@
 import { getVisiblePlaylist } from "./../tab.js";
 import { removePanel } from "./../panels.js";
 import { postMessageToWorker } from "../web-worker.js";
-import { resetTrackIndexes, updatePlaylist, updateCurrentTrackIndex } from "./playlist.js";
+import { updateCurrentTrackIndex, setSortOrder } from "./playlist.js";
 import { getPlaylistElement, updatePlaylistView } from "./playlist.view.js";
 import { filterTracks } from "./playlist.filter.js";
 
@@ -15,47 +15,16 @@ function toggleOrderBtn(order) {
     icon.setAttribute("href", `#${order === 1 ? "down" : "up"}-arrow`);
 }
 
-function getSortingValue(sortBy, track) {
-    if (sortBy === "index") {
-        return track.primaryIndex;
-    }
-
-    if (sortBy === "duration") {
-        return track.durationInSeconds;
-    }
-    return track[sortBy].toLowerCase();
-}
-
-function sortTracks(tracks, sortBy, order) {
-    tracks.sort((a, b) => {
-        const aValue = getSortingValue(sortBy, a);
-        const bValue = getSortingValue(sortBy, b);
-
-        if (aValue < bValue) {
-            return -order;
-        }
-
-        if (aValue > bValue) {
-            return order;
-        }
-        return 0;
-    });
-}
-
 function changePlaylistSorting(pl, sortBy) {
     const { value } = document.getElementById("js-filter-input");
-    const order = pl.sortedBy === sortBy && pl.order === 1 ? -1 : 1;
+    pl.order = pl.sortedBy === sortBy && pl.order === 1 ? -1 : 1;
+    pl.sortedBy = sortBy;
 
-    sortTracks(pl.tracks, sortBy, order);
-    updatePlaylist(pl.id, {
-        order,
-        sortedBy: sortBy,
-        tracks: resetTrackIndexes(pl.tracks)
-    });
+    setSortOrder(pl);
     postMessageToWorker({
         action: "change-sorting",
         playlist: {
-            order,
+            order : pl.order,
             _id: pl._id,
             sortedBy: sortBy
         }
@@ -130,6 +99,5 @@ function selectSortOption({ currentTarget, target }) {
 export {
     setSortOptions,
     createSortPanel,
-    sortTracks,
     changePlaylistOrder
 };

@@ -7,27 +7,23 @@ import {
     getCurrentTrack,
     updateCurrentTrackIndex,
     resetTrackIndexes,
-    setPlaybackOrder
+    setPlaybackOrder,
+    setSortOrder
 } from "./playlist.js";
 import { createPlaylistEntry, updatePlaylistEntry } from "./playlist.entries.js";
-import { removePlaylistTab, updatePlaylistView, addTracks, getPlaylistElement } from "./playlist.view.js";
+import { removePlaylistTab, updatePlaylistView, getPlaylistElement } from "./playlist.view.js";
 import { addRoute, removeRoute } from "../router.js";
 import { getSetting } from "../settings.js";
 import { postMessageToWorker } from "../web-worker.js";
 import { createSidebarEntry, removeSidebarEntry } from "../sidebar.js";
 import { stopPlayer } from "../player/player.js";
-import { sortTracks } from "./playlist.sorting.js";
-
-function updateTracks(pl) {
-    sortTracks(pl.tracks, pl.sortedBy, pl.order);
-    pl.tracks = resetTrackIndexes(pl.tracks);
-}
 
 function initPlaylist(pl) {
     setPlaylistState(pl.id, { initialized: true });
     createSidebarEntry(pl.title, pl.id);
     createPlaylistEntry(pl);
-    updateTracks(pl);
+    resetTrackIndexes(pl);
+    setSortOrder(pl);
     addRoute(`playlist/${pl.id}`);
 }
 
@@ -49,8 +45,6 @@ function addTracksToPlaylist(pl, tracks) {
     const { initialized, rendered } = getPlaylistState(pl.id);
 
     if (tracks.length) {
-        tracks = setPrimaryTackIndexes(tracks, pl.lastTrackIndex);
-        pl.lastTrackIndex = tracks[tracks.length - 1].primaryIndex + 1;
         pl.tracks = pl.tracks.concat(tracks);
     }
 
@@ -58,23 +52,18 @@ function addTracksToPlaylist(pl, tracks) {
         if (isPlaylistActive(pl.id)) {
             setPlaybackOrder(pl.id, getSetting("shuffle"));
         }
-        updateTracks(pl);
+        resetTrackIndexes(pl);
+        setSortOrder(pl);
         updateCurrentTrackIndex(pl.id);
         updatePlaylistEntry(pl.id, pl.tracks);
 
         if (rendered) {
-            if (tracks.length) {
-                addTracks(pl, tracks);
-            }
-            else {
-                updatePlaylistView(pl);
-            }
+            updatePlaylistView(pl);
         }
         postMessageToWorker({
             action: "add-tracks",
             playlist: {
                 _id: pl._id,
-                lastTrackIndex: pl.lastTrackIndex,
                 tracks
             }
         });
@@ -82,13 +71,12 @@ function addTracksToPlaylist(pl, tracks) {
     else {
         initPlaylist(pl);
 
-        if (!pl.storePlaylist) {
-            return;
+        if (pl.storePlaylist) {
+            postMessageToWorker({
+                action: "add",
+                playlist: pl
+            });
         }
-        postMessageToWorker({
-            action: "add",
-            playlist: pl
-        });
     }
 }
 
@@ -104,13 +92,6 @@ function clearPlaylistTracks({ id, _id, tracks }) {
         playlist: { _id, tracks }
     });
     tracks.length = 0;
-}
-
-function setPrimaryTackIndexes(tracks, lastIndex = 0) {
-    return tracks.map((track, index) => {
-        track.primaryIndex = lastIndex + index;
-        return track;
-    });
 }
 
 function onNewPlaylistFormSubmit(event) {
