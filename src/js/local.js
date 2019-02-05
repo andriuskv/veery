@@ -1,25 +1,9 @@
-/* global parse_audio_metadata */
-
-import { scriptLoader, formatTime, dispatchCustomEvent } from "./utils.js";
+import parseAudioMetadata from "parse-audio-metadata";
+import { formatTime, dispatchCustomEvent } from "./utils.js";
 import { getPlaylistById, createPlaylist } from "./playlist/playlist.js";
 import { addTracksToPlaylist } from "./playlist/playlist.manage.js";
 import { updateProgress, importSettings } from "./playlist/playlist.import.js";
 import { showPlayerMessage } from "./player/player.view.js";
-
-function getTrackDuration(track) {
-    return new Promise(resolve => {
-        let audioBlobURL = URL.createObjectURL(track);
-        let audio = new Audio(audioBlobURL);
-
-        audio.preload = "metadata";
-        audio.addEventListener("loadedmetadata", function onMetadata() {
-            resolve(Math.floor(audio.duration));
-            audio.removeEventListener("loadedmetadata", onMetadata);
-            audio = null;
-            audioBlobURL = URL.revokeObjectURL(audioBlobURL);
-        });
-    });
-}
 
 function removeFileType(fileName) {
     return fileName.slice(0, fileName.lastIndexOf("."));
@@ -65,39 +49,6 @@ function filterDuplicateTracks(tracks, existingTracks) {
     }, []);
 }
 
-async function parseAudioMetadata(track) {
-    await scriptLoader.load({ src: "libs/metadata-audio-parser.min.js" });
-
-    return Promise.all([
-        new Promise(resolve => { parse_audio_metadata(track, resolve); }),
-        getTrackDuration(track)
-    ]).then(([data, duration]) => ({ ...data, duration }));
-}
-
-async function getTrackMetadata(track) {
-    if (track.type === "audio/flac") {
-        const { default: parse } = await import("../modules/parseFlacMetadata.js");
-
-        return parse(track);
-    }
-    else if (track.type === "audio/ogg" || track.type === "video/ogg") {
-        const { default: parse } = await import("../modules/parseOggOpusMetadata.js");
-
-        return parse(track);
-    }
-    else if (track.type === "audio/mp3" || track.type === "audio/mpeg") {
-        const { default: parse } = await import("../modules/parseMp3Metadata.js");
-
-        return parse(track);
-    }
-    else if (track.type === "audio/x-m4a" || track.type === "audio/mp4") {
-        const { default: parse } = await import("../modules/parseM4aMetadata.js");
-
-        return parse(track);
-    }
-    return parseAudioMetadata(track);
-}
-
 async function getTrackAlbum(artist, title, album, picture) {
     if (album && picture) {
         return { album, picture };
@@ -133,8 +84,7 @@ async function parseTracks(tracks, id, parsedTracks = []) {
     const { audioTrack, name } = tracks[index];
 
     updateProgress(`Processing: ${name}`, index + 1, tracks.length);
-
-    let { artist, title, album, duration, picture } = await getTrackMetadata(audioTrack);
+    let { artist, title, album, duration, picture } = await parseAudioMetadata(audioTrack);
 
     if (navigator.onLine && artist && title) {
         ({ album, picture } = await getTrackAlbum(artist, title, album, picture));
@@ -212,7 +162,6 @@ function selectLocalFiles(files) {
 }
 
 export {
-    getTrackDuration,
     addTracks,
     selectLocalFiles
 };
