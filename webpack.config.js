@@ -117,7 +117,6 @@ module.exports = function(env = {}) {
         plugins,
         stats: {
             entrypoints: false,
-            warnings: false,
             children: false
         }
     };

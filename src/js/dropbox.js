@@ -1,7 +1,8 @@
 /* global Dropbox */
 
+import parseAudioMetadata from "parse-audio-metadata";
 import { scriptLoader, formatTime } from "./utils.js";
-import { getTrackDuration, addTracks } from "./local.js";
+import { addTracks } from "./local.js";
 import { getPlaylistById, createPlaylist } from "./playlist/playlist.js";
 import { importSettings } from "./playlist/playlist.import.js";
 
@@ -12,16 +13,16 @@ function getTrackBlob(link) {
 async function parseTracks(tracks, id, parsedTracks = []) {
     const track = tracks[parsedTracks.length];
     const audioTrack = await getTrackBlob(track.audioTrack.link);
-    const durationInSeconds = await getTrackDuration(audioTrack);
+    const { duration } = await parseAudioMetadata(audioTrack);
 
     parsedTracks.push({
         audioTrack,
-        durationInSeconds,
+        durationInSeconds: duration,
         title: track.name,
         artist: "",
         album: "",
         name: track.name,
-        duration: formatTime(durationInSeconds),
+        duration: formatTime(duration),
         thumbnail: "assets/images/album-art-placeholder.png",
         player: "native",
         playlistId: id
