@@ -44,6 +44,8 @@
     @include center-absolutely;
 
     display: none;
+    width: auto;
+    height: auto;
     padding: 2px;
     border: 2px solid currentColor;
     border-radius: 50%;

@@ -55,14 +55,17 @@
 }
 
 .artwork-container-btn {
-    @include center-absolutely;
-
     z-index: 1;
+    position: absolute;
     display: none;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
 
     svg {
-        width: 28px;
-        height: 28px;
+        width: 24px;
+        height: 24px;
     }
 }
 

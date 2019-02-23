@@ -79,19 +79,14 @@ function importPlaylist(option, { url, type }) {
 
 function createImportForm(container, item) {
     const id = "js-import-form";
-    const form = `
+
+    container.insertAdjacentHTML("afterend", `
         <form id=${id} class="import-form" data-for="${item}">
             <input type="text" name="url" class="input" placeholder="URL" required>
             <button class="btn">Import</button>
         </form>
-    `;
-
-    container.insertAdjacentHTML("afterend", form);
-
-    const element = document.getElementById(id);
-
-    element.elements.url.focus();
-    element.addEventListener("submit", handleImportFormSubmit);
+    `);
+    document.getElementById(id).addEventListener("submit", handleImportFormSubmit);
 }
 
 function removeImportForm() {
