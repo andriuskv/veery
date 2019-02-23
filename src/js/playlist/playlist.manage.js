@@ -49,10 +49,11 @@ function addTracksToPlaylist(pl, tracks) {
     }
 
     if (initialized) {
+        resetTrackIndexes(pl);
+
         if (isPlaylistActive(pl.id)) {
             setPlaybackOrder(pl.id, getSetting("shuffle"));
         }
-        resetTrackIndexes(pl);
         setSortOrder(pl);
         updateCurrentTrackIndex(pl.id);
         updatePlaylistEntry(pl.id, pl.tracks);

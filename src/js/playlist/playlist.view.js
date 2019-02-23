@@ -1,7 +1,8 @@
 import { removeElement, getImage, getIcon } from "../utils.js";
 import { getTab } from "../tab.js";
 import { postMessageToWorker } from "../web-worker.js";
-import { togglePlayPauseBtn } from "../player/player.controls.js";
+import { togglePlayPauseBtn, getPlayPauseButtonIcon } from "../player/player.controls.js";
+import { getPlayerState } from "../player/player.js";
 import { getCurrentTrack, setPlaylistState, getPlaylistState } from "./playlist.js";
 import { observePlaylist, reObservePlaylist, removePlaylistObserver } from "./playlist.element-observer.js";
 
@@ -10,17 +11,34 @@ function getPlaylistElement(id) {
 }
 
 function getTrackPlayPauseBtn({ element, index }) {
-    if (index === -1 || !element) {
-        return;
+    if (index >= 0 && element) {
+        return element.querySelector(".btn-icon");
     }
-    return element.querySelector(".btn-icon");
+}
+
+function getPlayPauseIcon(index) {
+    const currentTrack = getCurrentTrack();
+    const paused = getPlayerState();
+
+    return currentTrack && currentTrack.index === index ?
+        getPlayPauseButtonIcon(paused) :
+        getPlayPauseButtonIcon(true);
+}
+
+function creatItemContent(item, type) {
+    const icon = getPlayPauseIcon(item.index);
+
+    return type === "list" ? createListItemContent(item, icon) : createGridItemContent(item, icon);
 }
 
 function createListItemContainer({ index }) {
     return `<li class="list-item track" data-index="${index}" tabindex="0"></li>`;
 }
 
-function createListItemContent(item, index, { title, id }) {
+function createListItemContent(item, { title, id }) {
+    const { sortOrder } = getPlaylistState(item.playlistId);
+    const index = sortOrder.indexOf(item.index);
+
     return `
         <span class="list-item-first-col">
             <span class="list-item-index">${index + 1}</span>
@@ -222,8 +240,7 @@ function changePlaylistType(pl, type) {
 export {
     getPlaylistElement,
     getTrackPlayPauseBtn,
-    createListItemContent,
-    createGridItemContent,
+    creatItemContent,
     removePlaylistTab,
     updatePlaylistView,
     renderPlaylist,

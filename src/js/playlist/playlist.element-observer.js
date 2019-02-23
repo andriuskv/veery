@@ -1,24 +1,13 @@
 import { getTab, getVisiblePlaylist } from "../tab.js";
-import { getCurrentTrack } from "./playlist.js";
-import { getPlaylistElement, createListItemContent, createGridItemContent } from "./playlist.view.js";
-import { getPlayerState } from "../player/player.js";
-import { getPlayPauseButtonIcon } from "../player/player.controls.js";
+import { getPlaylistElement, creatItemContent } from "./playlist.view.js";
 
 const observers = {};
 
 function handleIntersectingEntry(entry) {
     const { tracks, type } = getVisiblePlaylist();
     const track = tracks[entry.getAttribute("data-index")];
-    const currentTrack = getCurrentTrack();
-    const paused = getPlayerState();
-    const icon = currentTrack && currentTrack.index === track.index ?
-        getPlayPauseButtonIcon(paused) :
-        getPlayPauseButtonIcon(true);
-    const index = [...entry.parentElement.children].indexOf(entry);
 
-    entry.innerHTML = type === "list" ?
-        createListItemContent(track, index, icon) :
-        createGridItemContent(track, icon);
+    entry.innerHTML = creatItemContent(track, type);
 }
 
 function cleanEntry(entry) {
