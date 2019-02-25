@@ -85,13 +85,10 @@ function updateCurrentTrackIndex(playlistId) {
 
     if (currentTrack && isPlaylistActive(playlistId)) {
         const track = findTrack(playlistId, currentTrack.name);
+        const index = track ? track.index : -1;
 
-        if (track) {
-            setPlaybackIndex(playlistId, currentTrack.index);
-        }
-        else {
-            updateCurrentTrack({ index: -1 });
-        }
+        updateCurrentTrack({ index });
+        setPlaybackIndex(playlistId, index);
     }
 }
 
