@@ -1,10 +1,12 @@
-import { getElementByAttr, removeElement, getImage } from "../utils.js";
+import { getElementByAttr, removeElement, getImage, setElementIconAndTitle } from "../utils.js";
 import { togglePlaying } from "./player.js";
 import { getCurrentTrack } from "../playlist/playlist.js";
 
 const nowPlayingElement = document.getElementById("js-now-playing");
+const mediaToggleBtn = document.getElementById("js-media-toggle-btn");
 const mediaElement = document.getElementById("js-media-container");
 let artwork = null;
+let mediaVisible = false;
 
 function handleClickOnMedia({ target }) {
     const element = getElementByAttr("data-item", target);
@@ -16,19 +18,24 @@ function handleClickOnMedia({ target }) {
 
 function hideMedia(event) {
     if (event.which === 27) {
+        mediaVisible = false;
         mediaElement.classList.remove("visible");
         window.removeEventListener("keydown", hideMedia);
+        setElementIconAndTitle(mediaToggleBtn, { title: "Expand", id: "expand" });
     }
 }
 
-function toggleMedia() {
+function toggleMedia({ currentTarget }) {
     mediaElement.classList.toggle("visible");
+    mediaVisible = !mediaVisible;
 
-    if (mediaElement.classList.contains("visible")) {
+    if (mediaVisible) {
         window.addEventListener("keydown", hideMedia);
+        setElementIconAndTitle(currentTarget, { title: "Collapse", id: "collapse" });
     }
     else {
         window.removeEventListener("keydown", hideMedia);
+        setElementIconAndTitle(currentTarget, { title: "Expand", id: "expand" });
     }
 }
 
@@ -110,8 +117,8 @@ function resetTrackInfo() {
     }
 }
 
+mediaToggleBtn.addEventListener("click", toggleMedia);
 mediaElement.addEventListener("click", handleClickOnMedia);
-document.getElementById("js-expand-media-btn").addEventListener("click", toggleMedia);
 
 export {
     showTrackInfo,
