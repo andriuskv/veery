@@ -49,6 +49,10 @@
     h1 {
         opacity: 0;
     }
+
+    @include breakpoint-small {
+        height: 80px;
+    }
 }
 
 .online-status {
@@ -68,7 +72,11 @@
 .sidebar-nav {
     display: flex;
     flex-direction: column;
-    flex-grow: 1;
+    height: calc(100% - 120px);
+
+    @include breakpoint-small {
+        height: calc(100% - 80px);
+    }
 }
 
 .sidebar-section-title {

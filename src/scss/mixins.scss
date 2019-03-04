@@ -72,3 +72,7 @@
 @mixin breakpoint-smallest {
     @media (max-width: 540px) { @content; }
 }
+
+@mixin sidebar-height-breakpoint {
+    @media (max-height: 500px) { @content; }
+}
