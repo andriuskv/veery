@@ -1,5 +1,5 @@
 import { removeElement, getElementByAttr, isOutsideElement, getIcon } from "./utils.js";
-import { togglePanel } from "./panels.js";
+import { togglePanel, removePanel } from "./panels.js";
 import { createNewPlaylistForm, onNewPlaylistFormSubmit } from "./playlist/playlist.manage.js";
 
 const sidebarContainerElement = document.getElementById("js-sidebar-container");
@@ -53,7 +53,12 @@ function createSidebarFormPanel(id, { element }) {
     `);
     const panel = document.getElementById(id);
 
-    createNewPlaylistForm("sidebar", panel, "beforeend", onNewPlaylistFormSubmit);
+    createNewPlaylistForm("sidebar", panel, "beforeend", formSubmitHandler);
+}
+
+function formSubmitHandler(event) {
+    onNewPlaylistFormSubmit(event);
+    removePanel();
 }
 
 sidebarContainerElement.addEventListener("click", ({ currentTarget, target }) => {
