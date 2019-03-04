@@ -1,10 +1,10 @@
-self.__precacheManifest = [
+self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "4add286f1f4e064108f0",
+    "revision": "cad1563e58e36e077e82",
     "url": "main.css"
   },
   {
-    "revision": "4add286f1f4e064108f0",
+    "revision": "cad1563e58e36e077e82",
     "url": "main.js"
   },
   {
@@ -39,4 +39,4 @@ self.__precacheManifest = [
     "revision": "36fa34850e332e4c67d8e0488ff09027",
     "url": "favicon.png"
   }
-];
+]);
