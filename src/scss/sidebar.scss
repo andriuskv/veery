@@ -50,7 +50,7 @@
         opacity: 0;
     }
 
-    @include breakpoint-small {
+    @include sidebar-height-breakpoint {
         height: 80px;
     }
 }
@@ -74,7 +74,7 @@
     flex-direction: column;
     height: calc(100% - 120px);
 
-    @include breakpoint-small {
+    @include sidebar-height-breakpoint {
         height: calc(100% - 80px);
     }
 }
