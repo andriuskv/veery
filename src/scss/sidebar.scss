@@ -51,7 +51,8 @@
     }
 
     @include sidebar-height-breakpoint {
-        height: 80px;
+        height: 40px;
+        margin: 8px 0;
     }
 }
 
@@ -75,7 +76,7 @@
     height: calc(100% - 120px);
 
     @include sidebar-height-breakpoint {
-        height: calc(100% - 80px);
+        height: calc(100% - 56px);
     }
 }
 
