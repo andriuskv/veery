@@ -14,7 +14,7 @@
 
     @include breakpoint-small {
         grid-template-rows: 32px 34px 1fr;
-        padding-bottom: 4px;
+        padding: 4px 8px;
     }
 }
 

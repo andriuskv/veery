@@ -23,8 +23,8 @@
     margin-right: 8px;
 
     @include breakpoint-smallest {
-        width:64px;
-        height: 64px;
+        width: 80px;
+        height: 80px;
     }
 }
 
@@ -93,10 +93,15 @@
     display: flex;
     align-items: center;
     margin-top: auto;
+
+    @include breakpoint-smallest {
+        flex-wrap: wrap;
+        margin-top: 8px;
+    }
 }
 
 .pl-entry-btn {
-    margin-left: 4px;
+    margin-right: 4px;
     color: $color-text-transparent;
 
     &:not(:disabled):hover {
@@ -118,6 +123,11 @@
     margin-right: auto;
     color: $color-text-transparent;
     font-size: 13px;
+
+    @include breakpoint-smallest {
+        width: 100%;
+        margin-bottom: 8px;
+    }
 }
 
 .pl-entry-stats-item {
@@ -144,6 +154,10 @@
     top: 24px;
     right: 0;
     width: 260px;
+
+    @include breakpoint-smallest {
+        transform: translateX(50%);
+    }
 }
 
 .pl-entry-setting {

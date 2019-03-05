@@ -149,10 +149,10 @@ svg {
 .player {
     display: grid;
     grid-template-columns: 200px 1fr;
-    grid-template-rows: calc(100vh - 80px) 80px;
+    grid-template-rows: calc(100% - 80px) 80px;
 
     @include breakpoint-small {
-        grid-template-rows: calc(100vh - 108px) 108px;
+        grid-template-rows: calc(100% - 108px) 108px;
     }
 }
 
