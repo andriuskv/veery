@@ -21,7 +21,12 @@ module.exports = function(env = {}) {
             filename: "[name].css"
         }),
         new HtmlWebpackPlugin({
-            template: "./src/index.html"
+            template: "./src/index.html",
+            minify: env.prod ? {
+                keepClosingSlash: true,
+                collapseWhitespace: true,
+                collapseInlineTagWhitespace: true
+            } : undefined
         }),
         new workboxPlugin.InjectManifest({
             swSrc: "./src/sw.js",
@@ -106,7 +111,8 @@ module.exports = function(env = {}) {
                         presets: [["@babel/preset-env", {
                             modules: false,
                             loose: true,
-                            useBuiltIns: "usage"
+                            useBuiltIns: "usage",
+                            corejs: 3
                         }]],
                         plugins: ["@babel/plugin-syntax-dynamic-import"]
                     }

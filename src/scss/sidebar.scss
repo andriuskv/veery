@@ -80,16 +80,20 @@
     }
 }
 
-.sidebar-section-title {
+.sidebar-section-title-container {
     position: relative;
     padding-top: 16px;
     padding-bottom: 16px;
     margin-top: 8px;
     border-top: $border-light;
+    text-align: center;
+}
+
+.sidebar-section-title {
     color: $color-text-transparent;
     font-size: 13px;
+    font-weight: bold;
     letter-spacing: 1px;
-    text-align: center;
 }
 
 .sidebar-form-container {
