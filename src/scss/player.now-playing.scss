@@ -82,16 +82,16 @@
 
 .media-container {
     z-index: 3;
+    overflow: hidden;
     position: absolute;
-    top: 0;
+    top: 100%;
     left: 0;
     bottom: 80px;
-    display: none;
-    width: 100%;
     background-color: $background-color-dark;
 
     &.visible {
-        display: block;
+        top: 0;
+        width: 100%;
     }
 
     @include breakpoint-small {
@@ -103,21 +103,17 @@
     width: 100%;
     height: 100%;
     object-fit: scale-down;
+
+    &.hidden {
+        display: none;
+    }
+
+    &:not(.hidden) ~ .yt-player {
+        display: none;
+    }
 }
 
 .yt-player {
     width: 100%;
     height: 100%;
-
-    &.hidden {
-        display: none;
-
-        & ~ .media-btn-container .yt-player-watch-btn {
-            display: none;
-        }
-    }
-
-    &:not(.hidden) ~ .media-image {
-        display: none;
-    }
 }

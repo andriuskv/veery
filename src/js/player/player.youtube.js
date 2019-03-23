@@ -149,7 +149,7 @@ function setVolume(volume) {
 function seekTo(currentTime) {
     if (initialized) {
         if (videoCued) {
-            // Cue video again at the different timestamp to prefent it from playing
+            // Cue video again at the different timestamp to prevent it from playing
             ytPlayer.cueVideoById(args.id, currentTime);
         }
         else {

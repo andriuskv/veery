@@ -26,16 +26,19 @@ function hideMedia(event) {
 }
 
 function toggleMedia({ currentTarget }) {
+    const ytPlayer = document.getElementById("js-yt-player");
     mediaElement.classList.toggle("visible");
     mediaVisible = !mediaVisible;
 
     if (mediaVisible) {
         window.addEventListener("keydown", hideMedia);
         setElementIconAndTitle(currentTarget, { title: "Collapse", id: "collapse" });
+        ytPlayer.removeAttribute("tabindex");
     }
     else {
         window.removeEventListener("keydown", hideMedia);
         setElementIconAndTitle(currentTarget, { title: "Expand", id: "expand" });
+        ytPlayer.setAttribute("tabindex", "-1");
     }
 }
 
@@ -71,17 +74,15 @@ function showNowPlaying(track, artwork) {
     renderNowPlaying(track, artwork);
 }
 
-function updateTrackMedia(track, artwork) {
-    const ytPlayer = document.getElementById("js-yt-player");
+function updateTrackMedia(player, artwork) {
+    const element = document.getElementById("js-media-image");
 
-    if (track.player === "youtube") {
-        ytPlayer.classList.remove("hidden");
+    if (player === "native") {
+        element.classList.remove("hidden");
+        element.src = artwork;
     }
     else {
-        const imageElement = document.getElementById("js-media-image");
-
-        ytPlayer.classList.add("hidden");
-        imageElement.src = artwork;
+        element.classList.add("hidden");
     }
 }
 
@@ -104,7 +105,7 @@ function showTrackInfo(track) {
     artwork = getImage(track.thumbnail);
 
     showNowPlaying(track, artwork);
-    updateTrackMedia(track, artwork);
+    updateTrackMedia(track.player, artwork);
 }
 
 function resetTrackInfo() {
