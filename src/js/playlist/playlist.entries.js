@@ -71,14 +71,18 @@ function parsePlaylistDuration(duration) {
     return `${hours} hr ${minutes} min`;
 }
 
-function getPlaylistThumbnailContent(tracks) {
+function getPlaylistThumbnail(tracks) {
     const images = getPlaylistThumbnailImages(tracks);
 
-    return images.map(image => `
-        <div class="pl-entry-thumb-image-container">
-            <img src="${getImage(image)}" class="pl-entry-thumb-image" alt="">
+    return `
+        <div class="pl-entry-thumbnail _${images.length}">
+            ${images.map(image => `
+                <div class="pl-entry-thumb-image-container">
+                    <img src="${getImage(image)}" class="pl-entry-thumb-image" alt="">
+                </div>
+            `).join("")}
         </div>
-    `).join("");
+    `;
 }
 
 function updatePlaylistStats(entry, tracks) {
@@ -89,9 +93,8 @@ function updatePlaylistStats(entry, tracks) {
 }
 
 function updatePlaylistThumbnail(entry, tracks) {
-    const thumbnail = entry.querySelector(".pl-entry-thumbnail");
-
-    thumbnail.innerHTML = getPlaylistThumbnailContent(tracks);
+    removeElement(entry.querySelector(".pl-entry-thumbnail"));
+    entry.insertAdjacentHTML("afterbegin", getPlaylistThumbnail(tracks));
 }
 
 function updatePlaylistEntry(id, tracks) {
@@ -148,9 +151,7 @@ function createPlaylistEntry(pl) {
 
     element.insertAdjacentHTML("beforeend", `
         <li class="pl-entry" data-entry-id=${pl.id}>
-            <div class="pl-entry-thumbnail">
-                ${getPlaylistThumbnailContent(pl.tracks)}
-            </div>
+            ${getPlaylistThumbnail(pl.tracks)}
             <div class="pl-entry-content">
                 <div class="pl-entry-input-container" data-action="edit">
                     <input type="text" class="input pl-entry-input" value="${pl.title}">
@@ -175,8 +176,12 @@ function createPlaylistEntry(pl) {
 
 function getPlaylistThumbnailImages(tracks) {
     const placeholder = "assets/images/album-art-placeholder.png";
-    const thumbnails = shuffleArray(tracks.map(track => track.thumbnail));
     const images = [];
+
+    if (!tracks.length) {
+        return [placeholder];
+    }
+    const thumbnails = shuffleArray(tracks.map(track => track.thumbnail));
 
     for (const thumbnail of thumbnails) {
         if (images.length === 4) {
@@ -185,10 +190,6 @@ function getPlaylistThumbnailImages(tracks) {
         else if (thumbnail !== placeholder) {
             images.push(thumbnail);
         }
-    }
-
-    while (images.length < 4) {
-        images.push(placeholder);
     }
     return images;
 }
