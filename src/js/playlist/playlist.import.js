@@ -80,9 +80,17 @@ function importPlaylist(option, { url, type }) {
 function createImportForm(container, item) {
     const id = "js-import-form";
 
-    container.insertAdjacentHTML("afterend", `
+    container.insertAdjacentHTML("beforeend", `
         <form id=${id} class="import-form" data-for="${item}">
-            <input type="text" name="url" class="input" placeholder="URL" required>
+            <div class="import-form-input-container">
+                <input type="text" name="url" class="input import-form-input" placeholder="URL" required>
+                <button type="button"
+                    class="btn-icon import-info-btn" data-item="youtube-info">
+                    <svg viewBox="0 0 24 24">
+                        <use href="#info"></use>
+                    </svg>
+                </button>
+            </div>
             <button class="btn">Import</button>
         </form>
     `);
@@ -231,7 +239,7 @@ function handleYouTubeOptionClick({ attrValue, elementRef }) {
 
         if (isNewImportOption(option)) {
             elementRef.classList.add("active");
-            createImportForm(elementRef, option);
+            createImportForm(elementRef.parentElement, option);
             setImportOption(option);
 
             if (!isGoogleAPIInitialized()) {
@@ -242,7 +250,7 @@ function handleYouTubeOptionClick({ attrValue, elementRef }) {
             resetImportOption();
         }
     }
-    else if (attrValue === "google-sign-in-or-out") {
+    else if (attrValue === "google-sign-in") {
         changeGoogleAuthState(elementRef);
     }
     else if (attrValue === "youtube-info") {

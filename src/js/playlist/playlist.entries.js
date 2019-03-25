@@ -146,7 +146,7 @@ function createPlaylistEntry(pl) {
     const statusIcon = pl.isPrivate ? getIcon({
         iconId: "lock",
         className: "pl-entry-stats-item",
-        title: "Private"
+        title: pl.user ? `Private to ${pl.user.name}` : "Private"
     }) : "";
 
     element.insertAdjacentHTML("beforeend", `

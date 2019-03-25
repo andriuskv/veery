@@ -4,7 +4,7 @@ import { dispatchCustomEvent, formatTime } from "./utils.js";
 import { addTracksToPlaylist, clearPlaylistTracks } from "./playlist/playlist.manage.js";
 import { getPlaylistById, createPlaylist, updatePlaylist } from "./playlist/playlist.js";
 import { showPlayerMessage } from "./player/player.view.js";
-import { isGoogleAPIInitializing } from "./google-auth.js";
+import { isGoogleAPIInitializing, isGoogleAPIInitialized, getGoogleUser } from "./google-auth.js";
 
 const fetchQueue = [];
 let accessToken = null;
@@ -149,11 +149,16 @@ function parseVideos(videos) {
 
 async function getPlaylistTitleAndStatus(id) {
     const { items } = await fetchYoutube("playlists", "snippet,status", "id", id);
-
-    return {
+    const isPrivate = items[0].status.privacyStatus === "private";
+    const data = {
         title: items[0].snippet.title,
-        isPrivate: items[0].status.privacyStatus === "private"
+        isPrivate
     };
+
+    if (isPrivate) {
+        data.user = getGoogleUser();
+    }
+    return data;
 }
 
 function getYouTubePlaylist(id, props) {
@@ -226,6 +231,9 @@ async function fetchYoutubeItem(url, type) {
         addItemToFetchQueue(url, type);
         return;
     }
+    else if (isGoogleAPIInitialized()) {
+        setAccessToken();
+    }
     const { videoId, playlistId } = parseUrl(url);
     const id = playlistId || "youtube";
 
@@ -238,7 +246,6 @@ async function fetchYoutubeItem(url, type) {
         showYouTubeMessage("Importing Watch Later playlist is not allowed");
         return;
     }
-    setAccessToken();
     dispatchCustomEvent("import", {
         importing: true,
         option: "youtube",
