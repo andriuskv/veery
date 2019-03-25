@@ -1,7 +1,9 @@
 /* global gapi */
 
-import { scriptLoader, dispatchCustomEvent } from "./utils.js";
+import { scriptLoader, dispatchCustomEvent, removeElement } from "./utils.js";
 
+const container = document.getElementById("js-google-sign-in");
+let user = null;
 let initialized = false;
 let initializing = false;
 
@@ -20,28 +22,34 @@ async function changeGoogleAuthState(element) {
     element.disabled = true;
 
     try {
+        if (!initialized) {
+            await initGoogleAPI(true);
+            return;
+        }
         const instance = gapi.auth2.getAuthInstance();
 
         if (instance.isSignedIn.get()) {
             await instance.signOut();
-            element.textContent = "Sign In";
+            onSignOut(element);
         }
         else {
             await instance.signIn();
-            element.textContent = "Sign Out";
+            onSignIn(element, instance);
         }
     }
     catch (e) {
         console.log(e);
     }
-    element.disabled = false;
+    finally {
+        element.disabled = false;
+    }
 }
 
-async function initGoogleAPI() {
+async function initGoogleAPI(signIn = false) {
     if (initialized || initializing) {
         return;
     }
-    const element = document.getElementById("js-google-sign-in-or-out-btn");
+    const element = document.getElementById("js-google-sign-in-btn");
     initializing = true;
     element.disabled = true;
 
@@ -54,9 +62,14 @@ async function initGoogleAPI() {
             discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest"],
             scope: "https://www.googleapis.com/auth/youtube.force-ssl"
         });
+        const instance = gapi.auth2.getAuthInstance();
 
-        if (gapi.auth2.getAuthInstance().isSignedIn.get()) {
-            element.textContent = "Sign Out";
+        if (instance.isSignedIn.get()) {
+            onSignIn(element, instance);
+        }
+        else if (signIn) {
+            await instance.signIn();
+            onSignIn(element, instance);
         }
         initialized = true;
         initializing = false;
@@ -72,9 +85,52 @@ async function initGoogleAPI() {
     }
 }
 
+function onSignIn(element, instance) {
+    element.textContent = "Sign Out";
+    container.classList.add("signed-in");
+    container.setAttribute("tabindex", "0");
+    setGoogleUser(instance);
+    renderGoogleUser();
+}
+
+function onSignOut(element) {
+    user = null;
+    element.textContent = "Sign In";
+    container.classList.remove("signed-in");
+    container.removeAttribute("tabindex");
+    removeElement(document.getElementById("js-google-user"));
+}
+
+function setGoogleUser(instance) {
+    const profile = instance.currentUser.get().getBasicProfile();
+
+    user = {
+        name: profile.getName(),
+        email: profile.getEmail(),
+        image: profile.getImageUrl()
+    };
+}
+
+function getGoogleUser() {
+    return user;
+}
+
+function renderGoogleUser() {
+    container.insertAdjacentHTML("afterbegin", `
+        <div id="js-google-user" class="google-user">
+            <img src="${user.image}" class="google-user-image" alt="">
+            <div class="google-user-details">
+                <div class="google-user-name">${user.name}</div>
+                <div class="google-user-email">${user.email}</div>
+            </div>
+        </div>
+    `);
+}
+
 export {
     isGoogleAPIInitialized,
     isGoogleAPIInitializing,
     changeGoogleAuthState,
-    initGoogleAPI
+    initGoogleAPI,
+    getGoogleUser
 };
