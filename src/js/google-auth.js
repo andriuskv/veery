@@ -1,6 +1,7 @@
 /* global gapi */
 
-import { scriptLoader, dispatchCustomEvent, removeElement } from "./utils.js";
+import { scriptLoader, dispatchCustomEvent } from "./utils.js";
+import { togglePanel, removePanel } from "./panels";
 
 const container = document.getElementById("js-google-sign-in");
 let user = null;
@@ -30,7 +31,7 @@ async function changeGoogleAuthState(element) {
 
         if (instance.isSignedIn.get()) {
             await instance.signOut();
-            onSignOut(element);
+            onSignOut();
         }
         else {
             await instance.signIn();
@@ -38,10 +39,8 @@ async function changeGoogleAuthState(element) {
         }
     }
     catch (e) {
-        console.log(e);
-    }
-    finally {
         element.disabled = false;
+        console.log(e);
     }
 }
 
@@ -77,28 +76,31 @@ async function initGoogleAPI(signIn = false) {
     }
     catch (e) {
         initializing = false;
+        element.disabled = false;
 
         console.log(e);
-    }
-    finally {
-        element.disabled = false;
     }
 }
 
 function onSignIn(element, instance) {
-    element.textContent = "Sign Out";
-    container.classList.add("signed-in");
-    container.setAttribute("tabindex", "0");
     setGoogleUser(instance);
-    renderGoogleUser();
+    element.remove();
+    container.insertAdjacentHTML("afterbegin", `
+        <button id="js-google-panel-toggle-btn" class="btn-icon google-panel-toggle-btn">
+            <img src="${user.image}" class="google-user-image" alt="">
+        </button>
+    `);
+    document.getElementById("js-google-panel-toggle-btn").addEventListener("click", toggleGooglePanel);
 }
 
-function onSignOut(element) {
+function onSignOut() {
     user = null;
-    element.textContent = "Sign In";
-    container.classList.remove("signed-in");
-    container.removeAttribute("tabindex");
-    removeElement(document.getElementById("js-google-user"));
+    document.getElementById("js-google-panel-toggle-btn").remove();
+    container.insertAdjacentHTML("beforeend", `
+        <button id="js-google-sign-in-btn" class="btn-icon google-sign-in-btn"
+            data-item="google-sign-in">Sign In</button>
+    `);
+    removePanel();
 }
 
 function setGoogleUser(instance) {
@@ -115,16 +117,27 @@ function getGoogleUser() {
     return user;
 }
 
-function renderGoogleUser() {
-    container.insertAdjacentHTML("afterbegin", `
-        <div id="js-google-user" class="google-user">
-            <img src="${user.image}" class="google-user-image" alt="">
-            <div class="google-user-details">
-                <div class="google-user-name">${user.name}</div>
-                <div class="google-user-email">${user.email}</div>
+function createGooglePanel(id, { element }) {
+    element.insertAdjacentHTML("afterend", `
+        <div id=${id} class="panel google-panel">
+            <div class="google-user">
+                <img src="${user.image}" class="google-user-image" alt="">
+                <div class="google-user-details">
+                    <div class="google-user-name">${user.name}</div>
+                    <div>${user.email}</div>
+                </div>
             </div>
+            <button id="js-google-sign-in-btn"
+                class="btn-icon google-sign-in-btn"
+                data-item="google-sign-in">Sign Out</button>
         </div>
     `);
+}
+
+function toggleGooglePanel({ currentTarget }) {
+    togglePanel("js-google-panel", createGooglePanel, {
+        element: currentTarget
+    });
 }
 
 export {
