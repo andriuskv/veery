@@ -4,6 +4,7 @@ const TerserPlugin = require("terser-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const workboxPlugin = require("workbox-webpack-plugin");
+const CleanWebpackPlugin = require("clean-webpack-plugin");
 
 module.exports = function(env = {}) {
     const mode = env.prod ? "production" : "development";
@@ -33,6 +34,9 @@ module.exports = function(env = {}) {
             swDest: "./sw.js",
             globDirectory: "./dist",
             globPatterns: ["./assets/images/*", "./libs/dexie.min.js", "./ww.js", "./favicon.png"]
+        }),
+        new CleanWebpackPlugin({
+            cleanOnceBeforeBuildPatterns: ["precache*"]
         })
     ];
 
