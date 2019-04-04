@@ -191,6 +191,10 @@ function getPlaylistThumbnailImages(tracks) {
             images.push(thumbnail);
         }
     }
+
+    if (!images.length) {
+        return [placeholder];
+    }
     return images;
 }
 

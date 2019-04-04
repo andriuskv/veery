@@ -53,28 +53,32 @@ async function getTrackAlbum(artist, title, album, picture) {
     if (album && picture) {
         return { album, picture };
     }
-    const key = process.env.LAST_FM_API_KEY;
-    const apiRootURL = "https://ws.audioscrobbler.com/2.0/";
-    const params = `?method=track.getInfo&api_key=${key}&artist=${artist}&track=${title}&format=json`;
-    const json = await fetch(apiRootURL + params).then(response => response.json());
+    try {
+        const key = process.env.LAST_FM_API_KEY;
+        const apiRootURL = "https://ws.audioscrobbler.com/2.0/";
+        const params = `?method=track.getInfo&api_key=${key}&artist=${artist}&track=${title}&format=json`;
+        const json = await fetch(apiRootURL + params).then(response => response.json());
 
-    if (json.track && json.track.album) {
-        const { title, image } = json.track.album;
+        if (json.track && json.track.album) {
+            const { title, image } = json.track.album;
 
-        if (!album && title) {
-            album = title;
-        }
+            if (!album && title) {
+                album = title;
+            }
 
-        if (!picture && image) {
-            const url = image[image.length - 1]["#text"];
+            if (!picture && image) {
+                const url = image[image.length - 1]["#text"];
 
-            if (url) {
-                const { origin, pathname } = new URL(url);
-                const [imageName] = pathname.split("/").slice(-1);
+                if (url) {
+                    const { origin, pathname } = new URL(url);
+                    const [imageName] = pathname.split("/").slice(-1);
 
-                picture = `${origin}/i/u/${imageName}`;
+                    picture = `${origin}/i/u/${imageName}`;
+                }
             }
         }
+    } catch(e) {
+        console.log(e);
     }
     return { album, picture };
 }
