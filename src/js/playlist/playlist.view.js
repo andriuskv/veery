@@ -76,7 +76,7 @@ function createGridItemContent(item, { title, id }) {
             <button class="btn-icon track-play-pause-btn artwork-container-btn" data-btn="play" title="${title}">
                 ${getIcon({ iconId: id })}
             </button>
-            <img src="${getImage(item.thumbnail)}" class="artwork" alt="">
+            <img src="${getImage(item.picture)}" class="artwork" alt="">
         </div>
         ${getTrackInfo(item)}
         <div class="grid-item-duration">${item.duration}</div>
@@ -168,11 +168,16 @@ function removePlaylistTab(id) {
     }
 }
 
-function setTrackElement(track) {
+function getTrackElement(track) {
     const { sortOrder } = getPlaylistState(track.playlistId);
     const index = sortOrder.indexOf(track.index);
 
-    track.element = document.getElementById(`js-${track.playlistId}`).children[index];
+    return document.getElementById(`js-${track.playlistId}`).children[index];
+}
+
+function setTrackElement(track) {
+    const element = getTrackElement(track);
+    track.element = element;
     track.element.classList.add("playing");
 }
 
@@ -246,6 +251,7 @@ export {
     renderPlaylist,
     removePlayingClass,
     showTrack,
+    getTrackElement,
     toggleTrackPlayPauseBtn,
     togglePlaylistTypeBtn,
     changePlaylistType

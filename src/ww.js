@@ -35,6 +35,12 @@ function addTracks({ _id, tracks }) {
     });
 }
 
+function updateTracks({ _id, tracks }) {
+    getPlaylist(_id).modify((_, ref) => {
+        ref.value.tracks = tracks;
+    });
+}
+
 function removeTracks(id, tracks) {
     getPlaylist(id).modify((_, ref) => {
         ref.value.tracks = ref.value.tracks.filter(track => {
@@ -66,6 +72,9 @@ self.onmessage = function({ data: { action, playlist } }) {
         }
         else if (action === "add-tracks") {
             addTracks(playlist);
+        }
+        else if (action === "update-tracks") {
+            updateTracks(playlist);
         }
         else if (action === "remove-tracks") {
             removeTracks(playlist._id, playlist.tracks);

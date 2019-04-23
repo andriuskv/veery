@@ -103,7 +103,7 @@ function parseItems(items, id) {
         title: track.snippet.title,
         artist: "",
         album: "",
-        thumbnail: track.snippet.thumbnails.medium.url,
+        picture: track.snippet.thumbnails.medium.url,
         player: "youtube",
         playlistId: id
     }));
