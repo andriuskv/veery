@@ -1,9 +1,16 @@
 import parseAudioMetadata from "parse-audio-metadata";
 import { formatTime, dispatchCustomEvent } from "./utils.js";
-import { getPlaylistById, createPlaylist } from "./playlist/playlist.js";
+import { getPlaylistById, createPlaylist, getCurrentTrack } from "./playlist/playlist.js";
 import { addTracksToPlaylist } from "./playlist/playlist.manage.js";
 import { updateProgress, importSettings } from "./playlist/playlist.import.js";
+import { creatItemContent, getTrackElement } from "./playlist/playlist.view.js";
+import { updatePlaylistEntry } from "./playlist/playlist.entries.js";
 import { showPlayerMessage } from "./player/player.view.js";
+import { showTrackInfo } from "./player/player.now-playing.js";
+import { getVisiblePlaylistId } from "./tab.js";
+import { postMessageToWorker } from "./web-worker.js";
+
+const placeholderImgUrl = "assets/images/album-art-placeholder.png";
 
 function removeFileType(fileName) {
     return fileName.slice(0, fileName.lastIndexOf("."));
@@ -49,8 +56,10 @@ function filterDuplicateTracks(tracks, existingTracks) {
     }, []);
 }
 
-async function getTrackAlbum(artist, title, album, picture) {
-    if (album && picture) {
+async function fetchTrackAlbum({ artist, title, album, picture }) {
+    const isPlaceholder = picture === placeholderImgUrl;
+
+    if (album && !isPlaceholder) {
         return { album, picture };
     }
     try {
@@ -66,7 +75,7 @@ async function getTrackAlbum(artist, title, album, picture) {
                 album = title;
             }
 
-            if (!picture && image) {
+            if (isPlaceholder && image) {
                 const url = image[image.length - 1]["#text"];
 
                 if (url) {
@@ -88,18 +97,16 @@ async function parseTracks(tracks, id, parsedTracks = []) {
     const { audioTrack, name } = tracks[index];
 
     updateProgress(`Processing: ${name}`, index + 1, tracks.length);
-    let { artist, title, album, duration, picture } = await parseAudioMetadata(audioTrack);
+    const { artist, title, album, duration, picture } = await parseAudioMetadata(audioTrack);
 
-    if (navigator.onLine && artist && title) {
-        ({ album, picture } = await getTrackAlbum(artist, title, album, picture));
-    }
     parsedTracks.push({
+        eligibleForMoreInfo: Boolean(artist && title),
         audioTrack,
         name,
         title: artist ? title : name,
         artist: artist || "",
         album: album || "",
-        thumbnail: picture || "assets/images/album-art-placeholder.png",
+        picture: picture || placeholderImgUrl,
         durationInSeconds: duration,
         duration: formatTime(duration),
         player: "native",
@@ -139,6 +146,10 @@ async function addTracks(importOption, pl, files, parseTracks) {
         const tracks = await parseTracks(newTracks, pl.id);
 
         addTracksToPlaylist(pl, tracks);
+
+        if (requestIdleCallback) {
+            requestIdleCallback(updateTrackInfo);
+        }
     }
     catch (e) {
         console.log(e);
@@ -149,6 +160,50 @@ async function addTracks(importOption, pl, files, parseTracks) {
             option: importOption,
             playlistId: pl.id
         });
+    }
+}
+
+async function updateTrackInfo() {
+    const pl = getPlaylistById("local-files");
+
+    if (!pl) {
+        return;
+    }
+    const track = pl.tracks.find(track => track.eligibleForMoreInfo);
+
+    if (!track) {
+        updatePlaylistEntry(pl.id, pl.tracks);
+        postMessageToWorker({
+            action: "update-tracks",
+            playlist: {
+                _id: pl._id,
+                tracks: pl.tracks
+            }
+        });
+        return;
+    }
+    try {
+        const { album, picture } = await fetchTrackAlbum(track);
+        track.album = album;
+        track.picture = picture;
+
+        if (pl.id === getVisiblePlaylistId()) {
+            const element = getTrackElement(track);
+            const currentTrack = getCurrentTrack();
+
+            element.innerHTML = creatItemContent(track, pl.type);
+
+            if (currentTrack && currentTrack.name === track.name) {
+                showTrackInfo(track);
+            }
+        }
+    }
+    catch (error) {
+        console.log(error);
+    }
+    finally {
+        delete track.eligibleForMoreInfo;
+        requestIdleCallback(updateTrackInfo);
     }
 }
 

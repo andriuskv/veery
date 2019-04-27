@@ -102,7 +102,7 @@ function showTrackInfo(track) {
     if (artwork) {
         URL.revokeObjectURL(artwork);
     }
-    artwork = getImage(track.thumbnail);
+    artwork = getImage(track.picture);
 
     showNowPlaying(track, artwork);
     updateTrackMedia(track.player, artwork);

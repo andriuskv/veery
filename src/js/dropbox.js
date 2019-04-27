@@ -23,7 +23,7 @@ async function parseTracks(tracks, id, parsedTracks = []) {
         album: "",
         name: track.name,
         duration: formatTime(duration),
-        thumbnail: "assets/images/album-art-placeholder.png",
+        picture: "assets/images/album-art-placeholder.png",
         player: "native",
         playlistId: id
     });

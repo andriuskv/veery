@@ -181,14 +181,14 @@ function getPlaylistThumbnailImages(tracks) {
     if (!tracks.length) {
         return [placeholder];
     }
-    const thumbnails = shuffleArray(tracks.map(track => track.thumbnail));
+    const pictures = shuffleArray(tracks.map(track => track.picture));
 
-    for (const thumbnail of thumbnails) {
+    for (const picture of pictures) {
         if (images.length === 4) {
             break;
         }
-        else if (thumbnail !== placeholder) {
-            images.push(thumbnail);
+        else if (picture !== placeholder) {
+            images.push(picture);
         }
     }
 
