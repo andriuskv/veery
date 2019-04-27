@@ -86,7 +86,7 @@ function onSignIn(element, instance) {
     setGoogleUser(instance);
     element.remove();
     container.insertAdjacentHTML("afterbegin", `
-        <button id="js-google-panel-toggle-btn" class="btn-icon google-panel-toggle-btn">
+        <button id="js-google-panel-toggle-btn" class="btn btn-icon google-panel-toggle-btn">
             <img src="${user.image}" class="google-user-image" alt="">
         </button>
     `);
@@ -97,7 +97,7 @@ function onSignOut() {
     user = null;
     document.getElementById("js-google-panel-toggle-btn").remove();
     container.insertAdjacentHTML("beforeend", `
-        <button id="js-google-sign-in-btn" class="btn-icon google-sign-in-btn"
+        <button id="js-google-sign-in-btn" class="btn btn-icon google-sign-in-btn"
             data-item="google-sign-in">Sign In</button>
     `);
     removePanel();
@@ -128,7 +128,7 @@ function createGooglePanel(id, { element }) {
                 </div>
             </div>
             <button id="js-google-sign-in-btn"
-                class="btn-icon google-sign-in-btn"
+                class="btn btn-icon google-sign-in-btn"
                 data-item="google-sign-in">Sign Out</button>
         </div>
     `);

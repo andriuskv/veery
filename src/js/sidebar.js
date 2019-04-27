@@ -1,6 +1,6 @@
 import { removeElement, getElementByAttr, isOutsideElement, getIcon } from "./utils.js";
 import { togglePanel, removePanel } from "./panels.js";
-import { createNewPlaylistForm, onNewPlaylistFormSubmit } from "./playlist/playlist.manage.js";
+import { onNewPlaylistFormSubmit } from "./playlist/playlist.manage.js";
 
 const sidebarContainerElement = document.getElementById("js-sidebar-container");
 
@@ -49,14 +49,21 @@ function removeActiveIcon() {
 
 function createSidebarFormPanel(id, { element }) {
     element.insertAdjacentHTML("afterend", `
-        <div id="${id}" class="panel sidebar-form-panel"></div>
+        <form id="${id}" class="panel sidebar-form">
+            <h3>Create Playlist</h3>
+            <div class="sidebar-form-input-container">
+                <input type="text" name="title" class="input sidebar-form-input"
+                    autocomplete="off" placeholder="Title" required>
+                <button class="btn">Create</button>
+            </div>
+        </form>
     `);
-    const panel = document.getElementById(id);
-
-    createNewPlaylistForm("sidebar", panel, "beforeend", formSubmitHandler);
+    const form = document.getElementById(id);
+    form.elements.title.focus();
+    form.addEventListener("submit", handleFormSubmit);
 }
 
-function formSubmitHandler(event) {
+function handleFormSubmit(event) {
     onNewPlaylistFormSubmit(event);
     removePanel();
 }

@@ -2,9 +2,7 @@
     box-sizing: border-box;
 }
 
-html,
-body {
-    overflow: hidden;
+html, body {
     height: 100%;
 }
 
@@ -26,6 +24,13 @@ h1, h2, h3 {
 
 a {
     text-decoration: none;
+}
+
+button, input {
+    border: none;
+    background-color: transparent;
+    color: inherit;
+    font-size: inherit;
 }
 
 ul {
@@ -59,46 +64,39 @@ svg {
   outline: 0;
 }
 
-%default-input-styles {
-    padding: 4px 8px;
-    border: none;
-    font-size: 14px;
-    color: $color-text;
-}
-
 .input {
-    @extend %default-input-styles;
-
+    padding: 6px 8px;
+    border-radius: 2px;
     background-color: $background-color-darkest;
 }
 
-%default-btn-styles {
-    @extend %default-input-styles;
-
+.btn {
+    padding: 6px 10px;
+    border-radius: 2px;
+    background-color: $background-color-darkest;
+    font-weight: bold;
     cursor: pointer;
 
-    &:hover,
+    &:hover {
+        color: $color-accent;
+    }
+
+    &:disabled {
+        cursor: default;
+    }
+}
+
+.btn-icon {
+    padding: 0;
+    background-color: transparent;
+
     &.active {
         color: $color-accent;
     }
 
     &:disabled {
-        color: $color-text-disabled;
-        cursor: default;
+        color: $color-text-darker;
     }
-}
-
-.btn {
-    @extend %default-btn-styles;
-
-    background-color: $background-color-light;
-}
-
-.btn-icon {
-    @extend %default-btn-styles;
-
-    padding: 0;
-    background-color: transparent;
 }
 
 .checkbox {
@@ -132,8 +130,9 @@ svg {
     z-index: 2;
     position: absolute;
     padding: 8px;
+    border-radius: 4px;
     background-color: $background-color-lightest;
-    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 1px 1px $color-black-20;
 }
 
 .panel-title {
@@ -172,7 +171,7 @@ svg {
 .player-message {
     padding: 16px;
     background-color: $background-color-lightest;
-    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 1px 1px $color-black-20;
 
     &:not(:last-of-type) {
         margin-bottom: 8px;

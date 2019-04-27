@@ -12,7 +12,7 @@ function createMoveToContainer() {
 
     element.insertAdjacentHTML("afterbegin", `
         <div id="${id}" class="playlist-tab-header-item" data-move-to>
-            <button class="btn-icon" data-item="move-to" title="Move to">
+            <button class="btn btn-icon" data-item="move-to" title="Move to">
                 ${getIcon({ iconId: "move-to" })}
             </button>
         </div>
@@ -78,7 +78,7 @@ function getPlaylistItems(id) {
         if (pl.id !== id) {
             str += `
                 <li data-panel-item="${pl.id}">
-                    <button class="btn-icon move-to-list-item-btn">${pl.title}</button>
+                    <button class="btn btn-icon move-to-list-item-btn">${pl.title}</button>
                 </li>
             `;
         }
@@ -99,7 +99,7 @@ function createMoveToPanel(panelId, { playlistId }) {
         <div id="${panelId}" class="panel move-to-panel">
             <h3 class="panel-title move-to-panel-title">Move to</h3>
             ${getPlaylistList(playlistId)}
-            <button class="btn-icon move-to-new-pl-btn" data-panel-item="btn">
+            <button class="btn btn-icon move-to-new-pl-btn" data-panel-item="btn">
                 ${getIcon({ iconId: "plus" })}
                 <span>Create new playlist</span>
             </button>

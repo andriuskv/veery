@@ -3,7 +3,7 @@
     display: grid;
     grid-template-columns: 40px repeat(3, 1fr) 62px;
     align-items: center;
-    height: 33px;
+    height: 35px;
 }
 
 .list-view-header {
@@ -13,7 +13,7 @@
     padding-left: 4px;
     padding-right: 4px;
     background-color: $background-color-darkest;
-    color: $color-text-transparent;
+    color: $color-text-dark;
     user-select: none;
 }
 
@@ -24,14 +24,10 @@
 .list-item-first-col {
     position: relative;
     text-align: center;
-
-    .track-play-pause-btn {
-        border-width: 1px;
-    }
 }
 
 .list-item-index {
-    color: $color-text-transparent;
+    color: $color-text-dark;
     font-size: 13px;
 }
 
