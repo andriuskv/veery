@@ -115,7 +115,7 @@ function onNewPlaylistFormSubmit(event) {
 function createNewPlaylistForm(id, element, insertPoint, handleSubmit) {
     element.insertAdjacentHTML(insertPoint, `
         <form id="js-${id}-form" class="${id}-form">
-            <input type="text" name="title" class="input" autocomplete="off" placeholder="Playlist title" required>
+            <input type="text" name="title" class="input" autocomplete="off" placeholder="Title" required>
             <button class="btn">Create</button>
         </form>
     `);

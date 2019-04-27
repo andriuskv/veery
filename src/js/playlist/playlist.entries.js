@@ -54,7 +54,7 @@ function getSyncBtn(id) {
 
 function getEntryBtn({ action, title, iconId }) {
     return `
-        <button class="btn-icon pl-entry-btn" data-action="${action}" title="${title}">
+        <button class="btn btn-icon pl-entry-btn" data-action="${action}" title="${title}">
             ${getIcon({ iconId })}
         </button>
     `;
@@ -114,7 +114,7 @@ function createPlaylistEntry(pl) {
     const duration = getPlaylistDuration(pl.tracks);
     const linkIcon = getIcon({ iconId: "link" });
     const linkBtn = pl.url ? `<a href="${pl.url}"
-            class="btn-icon pl-entry-btn" target="_blank"
+            class="btn btn-icon pl-entry-btn" target="_blank"
             title="Open playlist on YouTube">
             ${linkIcon}
         </a>

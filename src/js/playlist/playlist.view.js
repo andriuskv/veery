@@ -42,7 +42,7 @@ function createListItemContent(item, { title, id }) {
     return `
         <span class="list-item-first-col">
             <span class="list-item-index">${index + 1}</span>
-            <button class="btn-icon track-play-pause-btn" data-btn="play" title="${title}">
+            <button class="btn btn-icon track-play-pause-btn" data-btn="play" title="${title}">
                 ${getIcon({ iconId: id })}
             </button>
         </span>
@@ -73,7 +73,7 @@ function createGridItemContainer({ index }) {
 function createGridItemContent(item, { title, id }) {
     return `
         <div class="artwork-container grid-item-thumbnail" tabindex="-1">
-            <button class="btn-icon track-play-pause-btn artwork-container-btn" data-btn="play" title="${title}">
+            <button class="btn btn-icon track-play-pause-btn artwork-container-btn" data-btn="play" title="${title}">
                 ${getIcon({ iconId: id })}
             </button>
             <img src="${getImage(item.picture)}" class="artwork" alt="">

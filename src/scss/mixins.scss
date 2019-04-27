@@ -62,7 +62,7 @@
 @media (max-width: 540px) {/* */}
 
 @mixin home-tab-breakpoint {
-    @media (max-width: 1024px) { @content; }
+    @media (max-width: 1060px) { @content; }
 }
 
 @mixin breakpoint-small {

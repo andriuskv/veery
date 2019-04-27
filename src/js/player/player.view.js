@@ -43,7 +43,7 @@ function showServiceWorkerMessage() {
     element.insertAdjacentHTML("afterBegin", `
         <div class="player-message service-worker-message">
             <p class="player-message-body">Update is available, please refresh.</p>
-            <button id="js-player-message-btn" class="btn-icon player-message-btn">Refresh</button>
+            <button id="js-player-message-btn" class="btn btn-icon player-message-btn">Refresh</button>
         </div>
     `);
     document.getElementById("js-player-message-btn").addEventListener("click", refreshPage);

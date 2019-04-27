@@ -17,7 +17,7 @@
     &.playlist-tab-active {
         display: flex;
         background-color: $background-color-dark;
-        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 1px 4px $color-black-10;
 
         .playlist-tab-header-items {
             display: flex;
@@ -27,7 +27,7 @@
     @include breakpoint-small {
         display: flex;
         background-color: $background-color-dark;
-        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 1px 4px $color-black-10;
     }
 }
 
@@ -67,7 +67,7 @@
 .filter-input-container {
     position: relative;
     width: 100px;
-    box-shadow: $box-shadow-light;
+    box-shadow: 0 0 0 1px $background-color-light;
     transition: 0.2s width;
 
     &.active {
@@ -84,15 +84,14 @@
     @include center-vertically;
 
     left: 4px;
-    fill: $color-text-transparent;
+    fill: $color-text-dark;
     pointer-events: none;
 }
 
 .filter-input {
     user-select: none;
     width: 100%;
-    padding-left: 26px;
-    padding-right: 24px;
+    padding: 4px 24px 4px 26px;
 }
 
 .clear-input-btn {

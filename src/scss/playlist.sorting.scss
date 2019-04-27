@@ -4,12 +4,14 @@
     display: flex;
     flex-shrink: 0;
     width: 112px;
-    box-shadow: $box-shadow-light;
+    box-shadow: 0 0 0 1px $background-color-light;
 }
 
 .sort-panel-toggle-btn {
     flex-grow: 1;
+    padding: 4px 8px;
     background-color: $background-color-darkest;
+    font-weight: normal;
     text-transform: capitalize;
 }
 
@@ -29,6 +31,7 @@
     width: 100%;
     padding: 8px 10px;
     text-transform: capitalize;
+    font-weight: normal;
 
     &:hover {
         background-color: $background-color-light;
@@ -37,5 +40,9 @@
         &.active {
             color: $color-accent;
         }
+    }
+
+    &.active {
+        font-weight: bold;
     }
 }

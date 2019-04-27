@@ -1,17 +1,17 @@
+$font-family: "Open sans", sans-serif;
+
+$color-black-20: rgba(0, 0, 0, 0.2);
+$color-black-10: rgba(0, 0, 0, 0.1);
+
 $color-accent: #5BC0EB;
 
 $color-text: #f4f4f4;
-$color-text-dark: #a2a2a2;
-$color-text-transparent: transparentize($color-text, 0.4);
-$color-text-disabled: transparentize($color-text, 0.6);
-
-$font-family: "Open sans", sans-serif;
+$color-text-dark:#a6a8ac;
+$color-text-darker:#656c7b;
 
 $background-color-lightest: #494e5a;
 $background-color-light: #404552;
+$background-color: #3a3e4b;
 $background-color-dark: #353945;
 $background-color-darkest: #2f343f;
 $background-color-dark-80: transparentize($background-color-dark, 0.2);
-
-$border-light: 1px solid $background-color-light;
-$box-shadow-light: 0 0 0 1px $background-color-light;

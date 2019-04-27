@@ -85,13 +85,13 @@ function createImportForm(container, item) {
             <div class="import-form-input-container">
                 <input type="text" name="url" class="input import-form-input" placeholder="URL" required>
                 <button type="button"
-                    class="btn-icon import-info-btn" data-item="youtube-info">
+                    class="btn btn-icon import-info-btn" data-item="youtube-info">
                     <svg viewBox="0 0 24 24">
                         <use href="#info"></use>
                     </svg>
                 </button>
             </div>
-            <button class="btn">Import</button>
+            <button class="btn import-form-submit-btn">Import</button>
         </form>
     `);
     document.getElementById(id).addEventListener("submit", handleImportFormSubmit);

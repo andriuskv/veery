@@ -28,7 +28,7 @@
     width: 200px;
     height: 100%;
     background-color: $background-color-dark;
-    box-shadow: 1px 0 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 1px 0 4px $color-black-10;
     user-select: none;
 
     @include breakpoint-small {
@@ -61,7 +61,7 @@
     top: 30px;
     right: 16px;
     display: none;
-    color: $color-text-transparent;
+    color: $color-text-dark;
     font-style: italic;
     font-size: 13px;
 
@@ -85,12 +85,12 @@
     padding-top: 16px;
     padding-bottom: 16px;
     margin-top: 8px;
-    border-top: $border-light;
+    border-top: 1px solid $background-color-light;
     text-align: center;
 }
 
 .sidebar-section-title {
-    color: $color-text-transparent;
+    color: $color-text-dark;
     font-size: 13px;
     font-weight: bold;
     letter-spacing: 1px;
@@ -107,21 +107,24 @@
     display: block;
 }
 
-.sidebar-form-panel {
+.sidebar-form {
     top: 24px;
-    left: calc(100% - 32px);
+    left: 0;
+    padding-top: 16px;
 
     @include breakpoint-smallest {
-        left: -158px;
+        transform: translateX(-50%);
     }
 }
 
-.sidebar-form {
+.sidebar-form-input-container {
     display: flex;
+    margin-top: 16px;
+}
 
-    .input {
-        width: 160px;
-    }
+.sidebar-form-input {
+    width: 160px;
+    margin-right: 8px;
 }
 
 .sidebar-entries {

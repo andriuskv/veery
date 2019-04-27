@@ -59,7 +59,7 @@ function getSortOtions(sortedBy) {
         return `
             ${str}
             <li>
-                <button class="btn-icon sort-option-btn${activeClass}" data-sort="${option}">
+                <button class="btn btn-icon sort-option-btn${activeClass}" data-sort="${option}">
                     ${option}
                 </button>
             </li>
