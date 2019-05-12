@@ -50,7 +50,7 @@ function removeActiveIcon() {
 function createSidebarFormPanel(id, { element }) {
     element.insertAdjacentHTML("afterend", `
         <form id="${id}" class="panel sidebar-form">
-            <h3>Create Playlist</h3>
+            <h3 class="panel-title">Create Playlist</h3>
             <div class="sidebar-form-input-container">
                 <input type="text" name="title" class="input sidebar-form-input"
                     autocomplete="off" placeholder="Title" required>

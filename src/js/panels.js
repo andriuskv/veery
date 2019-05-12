@@ -8,7 +8,7 @@ function removePanel() {
     visiblePanel = null;
 }
 
-function createPanel(id, panelCreationCallback, params) {
+function createPanel(id, panelCreationCallback, params = {}) {
     panelCreationCallback(id, params);
     visiblePanel = {
         id,
@@ -39,8 +39,9 @@ function handleClick({ target }) {
         removePanel();
         return;
     }
-    const isOutsidePanel = isOutsideElement(target, visiblePanel.element);
-    const isOutsideInitiator = isOutsideElement(target, visiblePanel.initiator);
+    const { element, initiator } = visiblePanel;
+    const isOutsidePanel = isOutsideElement(target, element);
+    const isOutsideInitiator = initiator ? isOutsideElement(target, initiator) : false;
 
     if (isOutsidePanel && isOutsideInitiator) {
         removePanel();

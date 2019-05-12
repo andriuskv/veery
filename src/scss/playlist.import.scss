@@ -61,7 +61,7 @@
 
 .import-option-youtube {
     display: grid;
-    grid-template-columns: 1fr min-content;
+    grid-template-columns: 1fr max-content;
 }
 
 .import-option-btn {
@@ -137,20 +137,16 @@
     font-weight: bold;
 }
 
-.google-sign-in-btn {
-    padding: 8px;
-    margin-right: 8px;
-    margin-left: auto;
-    font-weight:  bold;
-    white-space: nowrap;
+.google-sign-in-btn:disabled {
+    position: relative;
 
-    &:disabled {
-        position: relative;
+    @include spinner {
+        @include center-absolutely;
+    };
+}
 
-        @include spinner {
-            @include center-absolutely;
-        };
-    }
+.google-sign-out-btn {
+    margin: 8px 8px 8px auto;
 }
 
 .import-form {
@@ -188,7 +184,6 @@
 .info-panel {
     top: 26px;
     right: 0;
-    width: 262px;
     transform: translateX(24px);
 }
 

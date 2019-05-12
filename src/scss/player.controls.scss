@@ -146,13 +146,14 @@
 }
 
 .slider-label {
+    position: absolute;
     left: 0;
     bottom: 26px;
     display: none;
     min-width: 40px;
     padding: 6px 10px;
     border-radius: 2px;
-    box-shadow: none;
+    background-color: $background-color-lightest;
     filter: drop-shadow(0 0 1px $color-black-20);
     font-size: 13px;
     text-align: center;

@@ -110,7 +110,6 @@
 .sidebar-form {
     top: 24px;
     left: 0;
-    padding-top: 16px;
 
     @include breakpoint-smallest {
         transform: translateX(-50%);
@@ -119,7 +118,6 @@
 
 .sidebar-form-input-container {
     display: flex;
-    margin-top: 16px;
 }
 
 .sidebar-form-input {
