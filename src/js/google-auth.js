@@ -71,14 +71,14 @@ async function initGoogleAPI(signIn = false) {
             onSignIn(element, instance);
         }
         initialized = true;
-        initializing = false;
         dispatchCustomEvent("google-api-initialized");
     }
     catch (e) {
+        console.log(e);
+    }
+    finally {
         initializing = false;
         element.disabled = false;
-
-        console.log(e);
     }
 }
 
@@ -97,7 +97,7 @@ function onSignOut() {
     user = null;
     document.getElementById("js-google-panel-toggle-btn").remove();
     container.insertAdjacentHTML("beforeend", `
-        <button id="js-google-sign-in-btn" class="btn btn-icon google-sign-in-btn"
+        <button id="js-google-sign-in-btn" class="btn btn-text"
             data-item="google-sign-in">Sign In</button>
     `);
     removePanel();
@@ -127,8 +127,7 @@ function createGooglePanel(id, { element }) {
                     <div>${user.email}</div>
                 </div>
             </div>
-            <button id="js-google-sign-in-btn"
-                class="btn btn-icon google-sign-in-btn"
+            <button class="btn btn-text google-sign-out-btn"
                 data-item="google-sign-in">Sign Out</button>
         </div>
     `);

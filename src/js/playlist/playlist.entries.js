@@ -8,11 +8,13 @@ import {
 } from "../utils.js";
 import { editSidebarEntryTitle } from "../sidebar.js";
 import { postMessageToWorker } from "../web-worker.js";
-import { togglePanel } from "../panels.js";
+import { togglePanel, removePanel } from "../panels.js";
 import { initGoogleAPI } from "../google-auth.js";
 import { getPlaylistById, getPlaylistDuration } from "./playlist.js";
 import { deletePlaylist } from "./playlist.manage.js";
 import { importPlaylist, resetImportOption } from "./playlist.import.js";
+
+let modalData = null;
 
 function createContainer(id) {
     document.getElementById("js-tab-home").insertAdjacentHTML("beforeend", `
@@ -280,6 +282,75 @@ function blurEntryInput({ currentTarget, which }) {
     }
 }
 
+function createPlaylistRemoveModal(id) {
+    document.getElementById("js-player").insertAdjacentHTML("beforeend", `
+        <div id="${id}" class="modal">
+            <div class="panel">
+                <div class="panel-title-container">
+                    ${getIcon({ iconId: "trash", className: "panel-icon" })}
+                    <h3 class="panel-title">Remove playlist?</h3>
+                </div>
+                <p>Are you sure you want to remove this playlist?<br>If you remove this playlist all your tracks will be lost.</p>
+                <div class="panel-button-container">
+                    <button class="btn btn-danger" data-type="remove">Remove</button>
+                    <button class="btn btn-text" data-type="cancel">Cancel</button>
+                </div>
+            </div>
+        </div>
+    `);
+    document.getElementById(id).addEventListener("click", handleModalClick);
+}
+
+function createPlaylistSyncModal(id) {
+    document.getElementById("js-player").insertAdjacentHTML("beforeend", `
+        <div id="${id}" class="modal">
+            <div class="panel">
+                <div class="panel-title-container">
+                    ${getIcon({ iconId: "sync", className: "panel-icon" })}
+                    <h3 class="panel-title">Syncronize playlist?</h3>
+                </div>
+                <p>Are you sure you want to synchronize this playlist with the playlist on YouTube? If you choose to synchronize you will lose all previously imported tracks.</p>
+                <div class="panel-button-container">
+                    <button class="btn btn-danger" data-type="sync">Synchronize</button>
+                    <button class="btn btn-text" data-type="cancel">Cancel</button>
+                </div>
+            </div>
+        </div>
+    `);
+    document.getElementById(id).addEventListener("click", handleModalClick);
+}
+
+function handleModalClick({ target, currentTarget }) {
+    if (target === currentTarget) {
+        removePanel();
+        modalData = null;
+        return;
+    }
+    const element = getElementByAttr("data-type", target);
+
+    if (!element) {
+        return;
+    }
+
+    if (element.attrValue === "remove") {
+        deletePlaylist(modalData.playlist);
+        removePlaylistEntry(modalData.entryElement);
+    }
+    else if (element.attrValue === "sync") {
+        syncPlaylists([modalData.playlist]);
+    }
+    removePanel();
+    modalData = null;
+}
+
+function showPlaylistRemoveModal() {
+    togglePanel("js-pl-remove-panel", createPlaylistRemoveModal);
+}
+
+function showPlaylistSyncModal() {
+    togglePanel("js-pl-sync-panel", createPlaylistSyncModal);
+}
+
 function handleContainerClick({ target }) {
     const entry = getElementByAttr("data-entry-id", target);
     const element = getElementByAttr("data-action", target);
@@ -291,11 +362,21 @@ function handleContainerClick({ target }) {
     const pl = getPlaylistById(entry.attrValue);
 
     if (attrValue === "remove") {
-        deletePlaylist(pl);
-        removePlaylistEntry(entry.elementRef);
+        if (pl.tracks.length) {
+            modalData = {
+                playlist: pl,
+                entryElement: entry.elementRef
+            };
+            showPlaylistRemoveModal();
+        }
+        else {
+            deletePlaylist(pl);
+            removePlaylistEntry(entry.elementRef);
+        }
     }
     else if (attrValue === "sync") {
-        syncPlaylists([pl]);
+        modalData = { playlist: pl };
+        showPlaylistSyncModal();
     }
     else if (attrValue === "settings") {
         togglePanel("js-pl-entry-panel", createSettingsPanel, {

@@ -24,7 +24,6 @@
 .move-to-list-item-btn,
 .move-to-new-pl-btn {
     width: 100%;
-    text-align: left;
 
     &:hover {
         background-color: $background-color-light;
@@ -36,12 +35,15 @@
     @include text-truncate;
 
     padding: 8px 10px;
+    text-align: left;
+    font-weight: normal;
 }
 
 .move-to-new-pl-btn {
     display: flex;
     align-items: center;
-    padding: 6px;
+    justify-content: center;
+    padding: 6px 10px;
 
     svg {
         width: 24px;
