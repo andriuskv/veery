@@ -128,7 +128,8 @@ function showCurrentTrack(id) {
     const track = getCurrentTrack();
 
     if (track && track.playlistId === id && track.index !== -1) {
-        showTrack(track, true);
+        setTrackElement(track);
+        scrollTrackIntoView(track.element, id);
     }
 }
 
@@ -168,11 +169,11 @@ function removePlaylistTab(id) {
     }
 }
 
-function getTrackElement(track) {
-    const { sortOrder } = getPlaylistState(track.playlistId);
-    const index = sortOrder.indexOf(track.index);
+function getTrackElement({ index, playlistId }) {
+    const { sortOrder } = getPlaylistState(playlistId);
+    const elementIndex = sortOrder.indexOf(index);
 
-    return document.getElementById(`js-${track.playlistId}`).children[index];
+    return document.getElementById(`js-${playlistId}`).children[elementIndex];
 }
 
 function setTrackElement(track) {
@@ -187,23 +188,25 @@ function removePlayingClass(element) {
     }
 }
 
-function showTrack(track, scrollToTrack) {
-    setTrackElement(track);
+function scrollCurrentTrackIntoView(id) {
+    const track = getCurrentTrack();
 
-    if (scrollToTrack) {
-        scrollToTrackElement(track.element, track.playlistId);
+    if (track && track.playlistId === id && track.index !== -1) {
+        scrollTrackIntoView(track.element, id);
     }
 }
 
-function scrollToTrackElement(element, id) {
-    const containerElement = getTab(id);
-    const { offsetHeight, offsetTop } = element;
-    const { clientHeight, scrollTop } = containerElement;
-    const offset = scrollTop + clientHeight;
+function scrollTrackIntoView(element, id) {
+    requestAnimationFrame(() => {
+        const containerElement = getTab(id);
+        const { offsetHeight, offsetTop } = element;
+        const { clientHeight, scrollTop } = containerElement;
+        const offset = scrollTop + clientHeight;
 
-    if (offsetTop - offsetHeight < scrollTop || offsetTop > offset) {
-        containerElement.scrollTop = offsetTop - clientHeight / 2;
-    }
+        if (offsetTop - offsetHeight < scrollTop || offsetTop > offset) {
+            containerElement.scrollTop = offsetTop - clientHeight / 2;
+        }
+    });
 }
 
 function toggleTrackPlayPauseBtn(track, paused) {
@@ -250,7 +253,9 @@ export {
     updatePlaylistView,
     renderPlaylist,
     removePlayingClass,
-    showTrack,
+    setTrackElement,
+    scrollCurrentTrackIntoView,
+    scrollTrackIntoView,
     getTrackElement,
     toggleTrackPlayPauseBtn,
     togglePlaylistTypeBtn,

@@ -26,7 +26,7 @@ import { getElementByAttr } from "../utils.js";
 import { getVisiblePlaylistId } from "../tab.js";
 import { getSetting } from "../settings.js";
 import { showActiveIcon, removeActiveIcon } from "../sidebar.js";
-import { showTrack, toggleTrackPlayPauseBtn, removePlayingClass } from "../playlist/playlist.view.js";
+import { scrollTrackIntoView, toggleTrackPlayPauseBtn, removePlayingClass, setTrackElement } from "../playlist/playlist.view.js";
 import { showTrackInfo, resetTrackInfo } from "./player.now-playing.js";
 import * as nPlayer from "./player.native.js";
 import * as ytPlayer from "./player.youtube.js";
@@ -101,7 +101,11 @@ function beforeTrackStart(track, { scrollToTrack, startTime }) {
     setCurrentTrack(track);
 
     if (rendered && track.index !== -1) {
-        showTrack(track, scrollToTrack);
+        setTrackElement(track);
+
+        if (scrollToTrack) {
+            scrollTrackIntoView(track.element, track.playlistId);
+        }
     }
 
     if (typeof startTime === "undefined") {
