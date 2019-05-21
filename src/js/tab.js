@@ -1,4 +1,9 @@
-import { renderPlaylist, changePlaylistType, togglePlaylistTypeBtn } from "./playlist/playlist.view.js";
+import {
+    renderPlaylist,
+    changePlaylistType,
+    togglePlaylistTypeBtn,
+    scrollCurrentTrackIntoView
+} from "./playlist/playlist.view.js";
 import { removeElementClass, getElementByAttr } from "./utils.js";
 import { getSidebarEntry } from "./sidebar.js";
 import { togglePanel } from "./panels.js";
@@ -35,6 +40,9 @@ function updatePlaylistTab(id) {
 
     if (!rendered) {
         renderPlaylist(pl);
+    }
+    else {
+        scrollCurrentTrackIntoView(id);
     }
 
     if (pl.type === "list" && media.matches) {
@@ -85,8 +93,7 @@ headerElement.addEventListener("click", ({ currentTarget, target }) => {
 });
 
 window.addEventListener("route-change", ({ detail: { isPlaylistTab, tabId } }) => {
-    const id = visiblePlaylistId;
-    const element = getTab(id);
+    const element = getTab(visiblePlaylistId);
 
     removeElementClass(".sidebar-entry.active", "active");
     removeElementClass(".tab.active", "active");
