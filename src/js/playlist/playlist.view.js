@@ -1,22 +1,30 @@
 import { removeElement, getImage, getIcon } from "../utils.js";
-import { getTab } from "../tab.js";
+import { getTab, getVisiblePlaylistId } from "../tab.js";
 import { postMessageToWorker } from "../web-worker.js";
 import { togglePlayPauseBtn, getPlayPauseButtonIcon } from "../player/player.controls.js";
 import { getPlayerState } from "../player/player.js";
-import { getCurrentTrack, setPlaylistState, getPlaylistState } from "./playlist.js";
+import { getCurrentTrack, setPlaylistState, getPlaylistState, getActivePlaylistId } from "./playlist.js";
 import { observePlaylist, reObservePlaylist, removePlaylistObserver } from "./playlist.element-observer.js";
+
+let trackElement = null;
 
 function getPlaylistElement(id) {
     return document.getElementById(`js-${id}`);
 }
 
-function getTrackPlayPauseBtn({ element, index }) {
-    if (index >= 0 && element) {
-        return element.querySelector(".btn-icon");
+function getTrackPlayPauseBtn() {
+    if (trackElement) {
+        return trackElement.querySelector(".btn-icon");
     }
 }
 
 function getPlayPauseIcon(index) {
+    const visibleId = getVisiblePlaylistId();
+    const activeId = getActivePlaylistId();
+
+    if (visibleId !== activeId) {
+        return getPlayPauseButtonIcon(true);
+    }
     const currentTrack = getCurrentTrack();
     const paused = getPlayerState();
 
@@ -25,19 +33,18 @@ function getPlayPauseIcon(index) {
         getPlayPauseButtonIcon(true);
 }
 
-function creatItemContent(item, type) {
-    const icon = getPlayPauseIcon(item.index);
-
-    return type === "list" ? createListItemContent(item, icon) : createGridItemContent(item, icon);
+function creatItemContent(item, id, type) {
+    return type === "list" ? createListItemContent(item, id) : createGridItemContent(item, id);
 }
 
 function createListItemContainer({ index }) {
     return `<li class="list-item track" data-index="${index}" tabindex="0"></li>`;
 }
 
-function createListItemContent(item, { title, id }) {
-    const { sortOrder } = getPlaylistState(item.playlistId);
+function createListItemContent(item, playlistId) {
+    const { sortOrder } = getPlaylistState(playlistId);
     const index = sortOrder.indexOf(item.index);
+    const { title, id } = getPlayPauseIcon(item.index);
 
     return `
         <span class="list-item-first-col">
@@ -70,7 +77,9 @@ function createGridItemContainer({ index }) {
     return `<li class="grid-item track" data-index="${index}" tabindex="0"></li>`;
 }
 
-function createGridItemContent(item, { title, id }) {
+function createGridItemContent(item) {
+    const { title, id } = getPlayPauseIcon(item.index);
+
     return `
         <div class="artwork-container grid-item-thumbnail" tabindex="-1">
             <button class="btn btn-icon track-play-pause-btn artwork-container-btn" data-btn="play" title="${title}">
@@ -125,11 +134,16 @@ function getTrackInfo(track) {
 }
 
 function showCurrentTrack(id) {
+    const playlistId = getActivePlaylistId();
+
+    if (playlistId !== id) {
+        return;
+    }
     const track = getCurrentTrack();
 
-    if (track && track.playlistId === id && track.index !== -1) {
-        setTrackElement(track);
-        scrollTrackIntoView(track.element, id);
+    if (track && track.index !== -1) {
+        setTrackElement(track.index, id);
+        scrollTrackIntoView(id);
     }
 }
 
@@ -169,37 +183,41 @@ function removePlaylistTab(id) {
     }
 }
 
-function getTrackElement({ index, playlistId }) {
+function getTrackElement(index, playlistId) {
     const { sortOrder } = getPlaylistState(playlistId);
     const elementIndex = sortOrder.indexOf(index);
 
     return document.getElementById(`js-${playlistId}`).children[elementIndex];
 }
 
-function setTrackElement(track) {
-    const element = getTrackElement(track);
-    track.element = element;
-    track.element.classList.add("playing");
+function setTrackElement(index, playlistId) {
+    trackElement = getTrackElement(index, playlistId);
+    trackElement.classList.add("playing");
 }
 
-function removePlayingClass(element) {
-    if (element) {
-        element.classList.remove("playing");
+function resetCurrentTrackElement() {
+    if (trackElement) {
+        trackElement.classList.remove("playing");
+        trackElement = null;
     }
 }
 
 function scrollCurrentTrackIntoView(id) {
-    const track = getCurrentTrack();
+    const playlistId = getActivePlaylistId();
 
-    if (track && track.playlistId === id && track.index !== -1) {
-        scrollTrackIntoView(track.element, id);
+    if (playlistId !== id) {
+        return;
+    }
+
+    if (trackElement) {
+        scrollTrackIntoView(id);
     }
 }
 
-function scrollTrackIntoView(element, id) {
+function scrollTrackIntoView(id) {
     requestAnimationFrame(() => {
         const containerElement = getTab(id);
-        const { offsetHeight, offsetTop } = element;
+        const { offsetHeight, offsetTop } = trackElement;
         const { clientHeight, scrollTop } = containerElement;
         const offset = scrollTop + clientHeight;
 
@@ -209,8 +227,8 @@ function scrollTrackIntoView(element, id) {
     });
 }
 
-function toggleTrackPlayPauseBtn(track, paused) {
-    const element = getTrackPlayPauseBtn(track);
+function toggleTrackPlayPauseBtn(paused) {
+    const element = getTrackPlayPauseBtn();
 
     if (element) {
         togglePlayPauseBtn(element, paused);
@@ -252,7 +270,7 @@ export {
     removePlaylistTab,
     updatePlaylistView,
     renderPlaylist,
-    removePlayingClass,
+    resetCurrentTrackElement,
     setTrackElement,
     scrollCurrentTrackIntoView,
     scrollTrackIntoView,

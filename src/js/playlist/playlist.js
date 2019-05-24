@@ -88,7 +88,7 @@ function updateCurrentTrackIndex(playlistId) {
         const index = track ? track.index : -1;
 
         updateCurrentTrack({ index });
-        setPlaybackIndex(playlistId, index);
+        setPlaybackIndex(index, playlistId);
     }
 }
 
@@ -98,7 +98,7 @@ function findTrack(id, trackId) {
     return pl ? pl.tracks.find(track => track.name === trackId) : null;
 }
 
-function setPlaybackIndex(id, trackIndex) {
+function setPlaybackIndex(trackIndex, id) {
     const { sortOrder } = playlistState[id];
     const index = sortOrder.indexOf(trackIndex);
     playbackIndex = playbackOrder.indexOf(index);
@@ -118,7 +118,7 @@ function setPlaybackOrder(id, shuffle) {
     playbackOrder = getPlaybackOrder(tracks, shuffle);
 
     if (currentTrack) {
-        setPlaybackIndex(id, currentTrack.index);
+        setPlaybackIndex(currentTrack.index, id);
     }
 }
 

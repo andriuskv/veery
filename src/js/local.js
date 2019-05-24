@@ -92,7 +92,7 @@ async function fetchTrackAlbum({ artist, title, album, picture }) {
     return { album, picture };
 }
 
-async function parseTracks(tracks, id, parsedTracks = []) {
+async function parseTracks(tracks, parsedTracks = []) {
     const index = parsedTracks.length;
     const { audioTrack, name } = tracks[index];
 
@@ -109,14 +109,13 @@ async function parseTracks(tracks, id, parsedTracks = []) {
         picture: picture || placeholderImgUrl,
         durationInSeconds: duration,
         duration: formatTime(duration),
-        player: "native",
-        playlistId: id
+        player: "native"
     });
 
     if (index + 1 === tracks.length) {
         return parsedTracks;
     }
-    return parseTracks(tracks, id, parsedTracks);
+    return parseTracks(tracks, parsedTracks);
 }
 
 async function addTracks(importOption, pl, files, parseTracks) {
@@ -143,7 +142,7 @@ async function addTracks(importOption, pl, files, parseTracks) {
     });
 
     try {
-        const tracks = await parseTracks(newTracks, pl.id);
+        const tracks = await parseTracks(newTracks);
 
         addTracksToPlaylist(pl, tracks);
 
