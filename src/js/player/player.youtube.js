@@ -4,7 +4,7 @@ import { scriptLoader, dispatchCustomEvent } from "../utils.js";
 import { updatePlayerState, playNextTrack, stopPlayer } from "./player.js";
 import { showPlayerMessage } from "./player.view.js";
 import { elapsedTime, showPlayPauseBtnSpinner, hidePlayPauseBtnSpinner } from "./player.controls.js";
-import { getCurrentTrack, getNextTrack } from "../playlist/playlist.js";
+import { getActivePlaylistId, getCurrentTrack, getNextTrack } from "../playlist/playlist.js";
 
 const PLAYING = 1;
 const PAUSED = 2;
@@ -24,24 +24,24 @@ function onPlayerStateChange({ data: state }) {
 
     if (state === PLAYING) {
         if (!stateUpdated) {
-            updatePlayerState(track, false);
+            updatePlayerState(false);
         }
         stateUpdated = false;
         dispatchCustomEvent("track-start", ytPlayer.getCurrentTime());
     }
     else if (state === PAUSED) {
         if (!stateUpdated) {
-            updatePlayerState(track, true);
+            updatePlayerState(true);
         }
         stateUpdated = false;
-        hidePlayPauseBtnSpinner(track);
+        hidePlayPauseBtnSpinner();
     }
     else if (state === BUFFERING) {
         elapsedTime.stop();
-        showPlayPauseBtnSpinner(track);
+        showPlayPauseBtnSpinner();
     }
     else {
-        hidePlayPauseBtnSpinner(track);
+        hidePlayPauseBtnSpinner();
     }
 }
 
@@ -71,8 +71,9 @@ function onError(error) {
     console.log(error);
 
     if (body) {
+        const id = getActivePlaylistId();
         const track = getCurrentTrack();
-        const { name } = getNextTrack(track.playlistId, 1);
+        const { name } = getNextTrack(id, 1);
 
         if (track.name === name) {
             stopPlayer(track);
@@ -132,9 +133,9 @@ function playTrack(id, volume, startTime) {
     scriptLoader.load({ src: "https://www.youtube.com/iframe_api" });
 }
 
-function stopTrack(track) {
+function stopTrack() {
     if (initialized) {
-        hidePlayPauseBtnSpinner(track);
+        hidePlayPauseBtnSpinner();
         ytPlayer.stopVideo();
         videoCued = false;
     }

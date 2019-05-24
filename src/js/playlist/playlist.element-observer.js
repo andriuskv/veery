@@ -4,10 +4,10 @@ import { getPlaylistElement, creatItemContent } from "./playlist.view.js";
 const observers = {};
 
 function handleIntersectingEntry(entry) {
-    const { tracks, type } = getVisiblePlaylist();
+    const { id, tracks, type } = getVisiblePlaylist();
     const track = tracks[entry.getAttribute("data-index")];
 
-    entry.innerHTML = creatItemContent(track, type);
+    entry.innerHTML = creatItemContent(track, id, type);
 }
 
 function cleanEntry(entry) {

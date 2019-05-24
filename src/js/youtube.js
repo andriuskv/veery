@@ -94,7 +94,7 @@ function filterInvalidItems(items) {
     });
 }
 
-function parseItems(items, id) {
+function parseItems(items) {
     return items.map(track => ({
         id: track.snippet.resourceId.videoId,
         durationInSeconds: track.durationInSeconds,
@@ -104,8 +104,7 @@ function parseItems(items, id) {
         artist: "",
         album: "",
         picture: track.snippet.thumbnails.medium.url,
-        player: "youtube",
-        playlistId: id
+        player: "youtube"
     }));
 }
 
@@ -127,7 +126,7 @@ async function fetchPlaylistItems(id, token) {
         handleError(error);
     }
     const validItems = await getVideoDuration(filterInvalidItems(items));
-    const tracks = parseItems(validItems, id);
+    const tracks = parseItems(validItems);
 
     if (nextPageToken) {
         const nextPageItems = await fetchPlaylistItems(id, nextPageToken);

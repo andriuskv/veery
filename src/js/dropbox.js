@@ -10,7 +10,7 @@ function getTrackBlob(link) {
     return fetch(link).then(response => response.blob());
 }
 
-async function parseTracks(tracks, id, parsedTracks = []) {
+async function parseTracks(tracks, parsedTracks = []) {
     const track = tracks[parsedTracks.length];
     const audioTrack = await getTrackBlob(track.audioTrack.link);
     const { duration } = await parseAudioMetadata(audioTrack);
@@ -24,14 +24,13 @@ async function parseTracks(tracks, id, parsedTracks = []) {
         name: track.name,
         duration: formatTime(duration),
         picture: "assets/images/album-art-placeholder.png",
-        player: "native",
-        playlistId: id
+        player: "native"
     });
 
     if (parsedTracks.length === tracks.length) {
         return parsedTracks;
     }
-    return parseTracks(tracks, id, parsedTracks);
+    return parseTracks(tracks, parsedTracks);
 }
 
 function showDropboxChooser() {

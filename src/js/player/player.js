@@ -26,7 +26,7 @@ import { getElementByAttr } from "../utils.js";
 import { getVisiblePlaylistId } from "../tab.js";
 import { getSetting } from "../settings.js";
 import { showActiveIcon, removeActiveIcon } from "../sidebar.js";
-import { scrollTrackIntoView, toggleTrackPlayPauseBtn, removePlayingClass, setTrackElement } from "../playlist/playlist.view.js";
+import { scrollTrackIntoView, toggleTrackPlayPauseBtn, resetCurrentTrackElement, setTrackElement } from "../playlist/playlist.view.js";
 import { showTrackInfo, resetTrackInfo } from "./player.now-playing.js";
 import * as nPlayer from "./player.native.js";
 import * as ytPlayer from "./player.youtube.js";
@@ -56,14 +56,15 @@ const storedTrack = (function() {
         if (!storedTrack) {
             return;
         }
-        const track = cloneTrack(findTrack(storedTrack.playlistId, storedTrack.name));
+        const { playlistId, currentTime, name } = storedTrack;
+        const track = cloneTrack(findTrack(playlistId, name));
 
         if (!track) {
             removeTrack();
             return;
         }
-        playNewTrack(track, { startTime: storedTrack.currentTime });
-        updateTrackSlider(track, storedTrack.currentTime);
+        playNewTrack(track, playlistId, { startTime: currentTime });
+        updateTrackSlider(track, currentTime);
     }
 
     return {
@@ -79,32 +80,32 @@ function getPlayerState() {
     return isPaused;
 }
 
-function updatePlayerState(track, state) {
+function updatePlayerState(state) {
     isPaused = typeof state === "boolean" ? state : !isPaused;
 
     if (isPaused) {
         removeActiveIcon();
         elapsedTime.stop();
     }
-    togglePlayPauseBtns(track, isPaused);
+    togglePlayPauseBtns(isPaused);
     updateDocumentTitle();
 }
 
-function beforeTrackStart(track, { scrollToTrack, startTime }) {
-    const { rendered } = getPlaylistState(track.playlistId);
+function beforeTrackStart(track, playlistId, { scrollToTrack, startTime }) {
+    const { rendered } = getPlaylistState(playlistId);
 
     showTrackInfo(track);
     showTrackDuration(track.duration, track.durationInSeconds);
     showTrackSlider();
-    setPlaylistAsActive(track.playlistId);
-    setPlaybackIndex(track.playlistId, track.index);
+    setPlaylistAsActive(playlistId);
+    setPlaybackIndex(track.index, playlistId);
     setCurrentTrack(track);
 
     if (rendered && track.index !== -1) {
-        setTrackElement(track);
+        setTrackElement(track.index, playlistId);
 
         if (scrollToTrack) {
-            scrollTrackIntoView(track.element, track.playlistId);
+            scrollTrackIntoView(playlistId);
         }
     }
 
@@ -112,35 +113,35 @@ function beforeTrackStart(track, { scrollToTrack, startTime }) {
         isPaused = false;
 
         updateDocumentTitle();
-        showPlayPauseBtnSpinner(track);
-        togglePlayPauseBtns(track, isPaused);
+        showPlayPauseBtnSpinner();
+        togglePlayPauseBtns(isPaused);
     }
     else {
         isPaused = true;
     }
 }
 
-function togglePlayPauseBtns(track, isPaused) {
+function togglePlayPauseBtns(isPaused) {
     const element = document.getElementById("js-play-btn");
 
     togglePlayPauseBtn(element, isPaused);
-    toggleTrackPlayPauseBtn(track, isPaused);
+    toggleTrackPlayPauseBtn(isPaused);
 }
 
-function togglePlaying(track) {
-    if (track.player === "native") {
+function togglePlaying({ player }) {
+    if (player === "native") {
         nPlayer.togglePlaying(isPaused);
     }
-    else if (track.player === "youtube") {
+    else if (player === "youtube") {
         ytPlayer.togglePlaying(isPaused);
     }
-    updatePlayerState(track);
+    updatePlayerState();
 }
 
-function playNewTrack(track, options = {}) {
+function playNewTrack(track, playlistId, options = {}) {
     const volume = getSetting("volume");
 
-    beforeTrackStart(track, options);
+    beforeTrackStart(track, playlistId, options);
 
     if (track.player === "native") {
         nPlayer.playTrack(track, volume, options.startTime);
@@ -171,9 +172,9 @@ function play(source, sourceValue, id) {
     let alreadyShuffled = false;
 
     if (currentTrack) {
-        removePlayingClass(currentTrack.element);
+        toggleTrackPlayPauseBtn(true);
+        resetCurrentTrackElement();
         resetTrackSlider();
-        toggleTrackPlayPauseBtn(currentTrack, true);
         stopTrack(currentTrack);
     }
 
@@ -188,13 +189,13 @@ function play(source, sourceValue, id) {
         if (!alreadyShuffled && shuffle) {
             setPlaybackOrder(id, shuffle);
         }
-        playNewTrack(cloneTrack(tracks[sourceValue]));
+        playNewTrack(cloneTrack(tracks[sourceValue]), id);
     }
     else if (source === "direction") {
         const track = getNextTrack(id, sourceValue);
 
         if (track) {
-            playNewTrack(track, { scrollToTrack: true });
+            playNewTrack(track, id, { scrollToTrack: true });
         }
         else {
             // If playlist is empty reset player
@@ -232,12 +233,12 @@ function playTrackFromElement({ currentTarget, detail, target }) {
     }
 }
 
-function stopTrack(track) {
-    if (track.player === "native") {
+function stopTrack({ player }) {
+    if (player === "native") {
         nPlayer.stopTrack();
     }
-    else if (track.player === "youtube") {
-        ytPlayer.stopTrack(track);
+    else if (player === "youtube") {
+        ytPlayer.stopTrack();
     }
 }
 
@@ -259,10 +260,10 @@ function resetPlayer(track) {
     removeActiveIcon();
 
     if (track) {
-        removePlayingClass(track.element);
+        togglePlayPauseBtns(isPaused);
+        resetCurrentTrackElement();
         resetTrackSlider();
-        hidePlayPauseBtnSpinner(track);
-        togglePlayPauseBtns(track, isPaused);
+        hidePlayPauseBtnSpinner();
     }
 }
 
@@ -304,19 +305,20 @@ function updateDocumentTitle(id = getVisiblePlaylistId()) {
 }
 
 window.addEventListener("track-start", ({ detail: startTime }) => {
-    const track = getCurrentTrack();
+    const id = getActivePlaylistId();
+    const { name, duration, durationInSeconds } = getCurrentTrack();
 
-    showActiveIcon(track.playlistId);
+    showActiveIcon(id);
     storedTrack.saveTrack({
-        name: track.name,
-        playlistId: track.playlistId
+        name,
+        playlistId: id
     });
     elapsedTime.start({
         currentTime: Math.floor(startTime),
-        duration: track.duration,
-        durationInSeconds: track.durationInSeconds
+        duration,
+        durationInSeconds
     });
-    hidePlayPauseBtnSpinner(track);
+    hidePlayPauseBtnSpinner();
 });
 
 window.addEventListener("track-end", () => {
@@ -329,7 +331,7 @@ window.addEventListener("track-end", () => {
     storedTrack.removeTrack();
 
     if (getSetting("repeat")) {
-        playNewTrack(track);
+        playNewTrack(track, getActivePlaylistId());
         return;
     }
     playNextTrack();

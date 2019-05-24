@@ -52,8 +52,8 @@ const elapsedTime = (function() {
     return { stop, start };
 })();
 
-function showPlayPauseBtnSpinner(track) {
-    const element = getTrackPlayPauseBtn(track);
+function showPlayPauseBtnSpinner() {
+    const element = getTrackPlayPauseBtn();
 
     if (element) {
         element.classList.add("show-spinner");
@@ -61,8 +61,8 @@ function showPlayPauseBtnSpinner(track) {
     document.getElementById("js-play-btn").classList.add("show-spinner");
 }
 
-function hidePlayPauseBtnSpinner(track) {
-    const element = getTrackPlayPauseBtn(track);
+function hidePlayPauseBtnSpinner() {
+    const element = getTrackPlayPauseBtn();
 
     if (element) {
         element.classList.remove("show-spinner");
