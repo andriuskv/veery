@@ -169,15 +169,13 @@ async function updateTrackInfo() {
         return;
     }
     const track = pl.tracks.find(track => track.eligibleForMoreInfo);
+    const { _id, id, tracks, type } = pl;
 
     if (!track) {
-        updatePlaylistEntry(pl.id, pl.tracks);
+        updatePlaylistEntry(id, tracks);
         postMessageToWorker({
             action: "update-tracks",
-            playlist: {
-                _id: pl._id,
-                tracks: pl.tracks
-            }
+            playlist: { _id, tracks }
         });
         return;
     }
@@ -186,11 +184,11 @@ async function updateTrackInfo() {
         track.album = album;
         track.picture = picture;
 
-        if (pl.id === getVisiblePlaylistId()) {
-            const element = getTrackElement(track);
+        if (id === getVisiblePlaylistId()) {
+            const element = getTrackElement(track.index, id);
             const currentTrack = getCurrentTrack();
 
-            element.innerHTML = creatItemContent(track, pl.type);
+            element.innerHTML = creatItemContent(track, id, type);
 
             if (currentTrack && currentTrack.name === track.name) {
                 showTrackInfo(track);
