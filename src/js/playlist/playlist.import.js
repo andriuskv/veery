@@ -1,14 +1,13 @@
-import { removeElement, removeElementClass, getElementByAttr } from "./../utils.js";
+import { getElementByAttr } from "./../utils.js";
 import { togglePanel } from "../panels.js";
-import { isGoogleAPIInitialized, changeGoogleAuthState, initGoogleAPI } from "../google-auth.js";
+import { changeGoogleAuthState } from "../google-auth.js";
 import { showDropboxChooser } from "../dropbox.js";
 import { selectLocalFiles } from "../local.js";
-import { fetchYoutubeItem } from "../youtube.js";
+import { fetchYoutubeItem, getYoutubeUserPlaylists, fetchYoutubeUserPlaylists } from "../youtube.js";
 import { getSidebarEntry } from "../sidebar.js";
 import { getSyncBtn } from "./playlist.entries.js";
 
 const importOptionsElement = document.getElementById("js-import-options");
-let importOption = "";
 
 const importSettings = (function() {
     const defaultSettings = {
@@ -37,25 +36,12 @@ const importSettings = (function() {
     return { setSetting, getSetting, getSettings };
 })();
 
-function setImportOption(option = "") {
-    importOption = option;
-}
-
-function isNewImportOption(option) {
-    return importOption !== option;
-}
-
 function changeImportOptionState({ children }, state) {
     Array.from(children).forEach(element => {
         if (element.hasAttribute("data-item")) {
             element.disabled = state;
         }
     });
-}
-
-function resetImportOption() {
-    setImportOption();
-    removeImportForm();
 }
 
 function toggleStatusIndicator(id, state) {
@@ -71,40 +57,63 @@ function toggleStatusIndicator(id, state) {
     }
 }
 
-function importPlaylist(option, { url, type }) {
-    if (option === "youtube") {
-        fetchYoutubeItem(url, type);
-    }
+function removeYoutubeModal(element) {
+    document.getElementById("js-import-form").removeEventListener("submit", handleImportFormSubmit);
+    element.removeEventListener("click", handleClickOnYoutubeModal);
+    element.remove();
 }
 
-function createImportForm(container, item) {
-    const id = "js-import-form";
+function handleClickOnYoutubeModal({ target, currentTarget }) {
+    if (target === currentTarget || getElementByAttr("data-cancel-btn", target, currentTarget)) {
+        removeYoutubeModal(currentTarget);
+        return;
+    }
+    const playlistImportBtn = getElementByAttr("data-id", target, currentTarget);
 
-    container.insertAdjacentHTML("beforeend", `
-        <form id=${id} class="import-form" data-for="${item}">
-            <div class="import-form-input-container">
-                <input type="text" name="url" class="input import-form-input" placeholder="URL" required>
-                <button type="button"
-                    class="btn btn-icon import-info-btn" data-item="youtube-info">
-                    <svg viewBox="0 0 24 24">
-                        <use href="#info"></use>
-                    </svg>
-                </button>
+    if (playlistImportBtn) {
+        fetchYoutubeItem(`https://youtube.com/playlist?list=${playlistImportBtn.attrValue}`);
+        removeYoutubeModal(currentTarget);
+        return;
+    }
+    const inputInfoBtn = getElementByAttr("data-info-btn", target, currentTarget);
+
+    if (inputInfoBtn) {
+        const { elementRef } = inputInfoBtn;
+
+        togglePanel("js-youtube-info-panel", createYouTubeInfoPanel, { element: elementRef });
+    }
+}
+function createYoutubeModal() {
+    const containerId = "js-youtube-modal";
+    const formId = "js-import-form";
+    const playlistsTemplate = getYoutubeUserPlaylistsTemplate();
+
+    importOptionsElement.insertAdjacentHTML("beforeend", `
+        <div id="${containerId}" class="youtube-modal-container">
+            <div class="youtube-modal">
+                <h3 class="youtube-modal-title">YouTube Import</h3>
+                <form id="${formId}" class="youtube-modal-form">
+                    <div class="youtube-modal-form-input-container">
+                        <input type="text" name="url" class="input youtube-modal-form-input" placeholder="URL" required>
+                        <button type="button"
+                            class="btn btn-icon youtube-modal-form-info-btn" data-info-btn>
+                            <svg viewBox="0 0 24 24">
+                                <use href="#info"></use>
+                            </svg>
+                        </button>
+                    </div>
+                    <button class="btn youtube-modal-form-submit-btn">Import</button>
+                </form>
+                ${playlistsTemplate}
+                <div class="youtube-modal-footer">
+                    <button class="btn btn-text" data-cancel-btn>Cancel</button>
+                </div>
             </div>
-            <button class="btn import-form-submit-btn">Import</button>
-        </form>
+        </div>
     `);
-    document.getElementById(id).addEventListener("submit", handleImportFormSubmit);
-}
 
-function removeImportForm() {
-    const form = document.getElementById("js-import-form");
-
-    if (form) {
-        form.removeEventListener("submit", handleImportFormSubmit);
-        removeElement(form);
-        removeElementClass(".import-option-btn.active", "active");
-    }
+    document.getElementById(containerId).addEventListener("click", handleClickOnYoutubeModal);
+    document.getElementById(formId).addEventListener("submit", handleImportFormSubmit);
 }
 
 function createImportProgressContainer() {
@@ -120,7 +129,7 @@ function createImportProgressContainer() {
 }
 
 function removeImportProgressContainer() {
-    removeElement(document.getElementById("js-import-progress"));
+    document.getElementById("js-import-progress").remove();
 }
 
 function setImportProgressLabel(label = "") {
@@ -137,7 +146,7 @@ function handleChangeOnFileInput({ target }) {
     selectLocalFiles([...target.files]);
     target.value = "";
     target.removeEventListener("change", handleChangeOnFileInput);
-    removeElement(target);
+    target.remove();
 }
 
 function createFileInput() {
@@ -174,10 +183,7 @@ function handleImportFormSubmit(event) {
     const url = event.target.elements.url.value.trim();
 
     if (url) {
-        const option = event.target.getAttribute("data-for");
-
-        resetImportOption();
-        importPlaylist(option, { url });
+        fetchYoutubeItem(url);
     }
     event.preventDefault();
 }
@@ -233,29 +239,51 @@ function handleSettingChange({ target }) {
     importSettings.setSetting(id, "storePlaylist", target.checked);
 }
 
-function handleYouTubeOptionClick({ attrValue, elementRef }) {
+async function handleYouTubeOptionClick({ attrValue, elementRef }) {
     if (attrValue === "form-toggle") {
-        const option = "youtube";
+        const element = document.getElementById("js-ab-modal");
 
-        if (isNewImportOption(option)) {
-            elementRef.classList.add("active");
-            createImportForm(elementRef.parentElement, option);
-            setImportOption(option);
-
-            if (!isGoogleAPIInitialized()) {
-                initGoogleAPI();
-            }
+        if (element) {
+            element.remove();
         }
         else {
-            resetImportOption();
+            elementRef.disabled = true;
+            await fetchYoutubeUserPlaylists();
+            createYoutubeModal();
+            elementRef.disabled = false;
         }
     }
     else if (attrValue === "google-sign-in") {
         changeGoogleAuthState(elementRef);
     }
-    else if (attrValue === "youtube-info") {
-        togglePanel(`js-${attrValue}-panel`, createYouTubeInfoPanel, { element: elementRef });
+}
+
+function getYoutubeUserPlaylistsTemplate() {
+    const playlists = getYoutubeUserPlaylists();
+
+    if (!playlists) {
+        return "";
     }
+    const items = playlists.reduce((str, pl) => {
+        return `
+            ${str}
+            <li class="youtube-modal-playlist">
+                <div class="youtube-modal-playlist-thumb-container">
+                    <img src="${pl.thumbnail}" alt="" class="youtube-modal-playlist-thumb">
+                </div>
+                <div class="youtube-modal-playlist-content">
+                    <div>${pl.title}</div>
+                    <div class="youtube-modal-playlist-info">${pl.itemCount} item${pl.itemCount === 1 ? "" : "s"}</div>
+                </div>
+                <button class="btn btn-text youtube-modal-playlist-import-btn" data-id="${pl.id}">Import</button>
+            </li>
+        `;
+    }, "");
+
+    return `
+        <h4 class="youtube-modal-section-title">Your YouTube Playlists</h4>
+        <ul class="youtube-modal-playlists">${items}</ul>
+    `;
 }
 
 importOptionsElement.addEventListener("click", ({ currenTarget, target }) => {
@@ -302,7 +330,5 @@ window.addEventListener("import", ({ detail }) => {
 
 export {
     importSettings,
-    importPlaylist,
-    resetImportOption,
     updateProgress
 };

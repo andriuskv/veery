@@ -16,7 +16,7 @@ body {
     scrollbar-track-color: $background-color-light;
 }
 
-h1, h2, h3 {
+h1, h2, h3, h4 {
     margin-top: 0;
     margin-bottom: 0;
     font-weight: normal;
@@ -203,31 +203,34 @@ svg {
 }
 
 .player {
+    --controls-height: 80px;
+
     display: grid;
     grid-template-columns: 200px 1fr;
-    grid-template-rows: calc(100% - 80px) 80px;
+    grid-template-rows: calc(100% - var(--controls-height)) var(--controls-height);
 
     @include breakpoint-small {
-        grid-template-rows: calc(100% - 108px) 108px;
+         --controls-height: 108px;
     }
 }
 
 .player-messages {
+    z-index: 4;
     position: absolute;
-    bottom: 88px;
+    bottom: calc(var(--controls-height) + 8px);
     right: 8px;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
 
     @include breakpoint-small {
-        bottom: 116px;
         max-width: calc(100% - 16px);
     }
 }
 
 .player-message {
     padding: 16px;
+    border-radius: 4px;
     background-color: $background-color-lightest;
     box-shadow: 0 1px 1px $color-black-20;
 

@@ -4,17 +4,11 @@ import { scriptLoader, dispatchCustomEvent } from "./utils.js";
 import { togglePanel, removePanel } from "./panels";
 
 const container = document.getElementById("js-google-sign-in");
+let accessToken = null;
 let user = null;
+let signedIn = false;
 let initialized = false;
 let initializing = false;
-
-function isGoogleAPIInitialized() {
-    return initialized;
-}
-
-function isGoogleAPIInitializing() {
-    return initializing;
-}
 
 async function changeGoogleAuthState(element) {
     if (element.disabled) {
@@ -35,7 +29,7 @@ async function changeGoogleAuthState(element) {
         }
         else {
             await instance.signIn();
-            onSignIn(element, instance);
+            onSignIn(element, instance.currentUser.get());
         }
     }
     catch (e) {
@@ -46,7 +40,7 @@ async function changeGoogleAuthState(element) {
 
 async function initGoogleAPI(signIn = false) {
     if (initialized || initializing) {
-        return;
+        return signedIn;
     }
     const element = document.getElementById("js-google-sign-in-btn");
     initializing = true;
@@ -64,14 +58,14 @@ async function initGoogleAPI(signIn = false) {
         const instance = gapi.auth2.getAuthInstance();
 
         if (instance.isSignedIn.get()) {
-            onSignIn(element, instance);
+            onSignIn(element, instance.currentUser.get());
         }
         else if (signIn) {
             await instance.signIn();
-            onSignIn(element, instance);
+            onSignIn(element, instance.currentUser.get());
         }
         initialized = true;
-        dispatchCustomEvent("google-api-initialized");
+        return signedIn;
     }
     catch (e) {
         console.log(e);
@@ -82,8 +76,10 @@ async function initGoogleAPI(signIn = false) {
     }
 }
 
-function onSignIn(element, instance) {
-    setGoogleUser(instance);
+function onSignIn(element, currentUser) {
+    signedIn = true;
+    accessToken = currentUser.getAuthResponse().access_token;
+    setGoogleUser(currentUser);
     element.remove();
     container.insertAdjacentHTML("afterbegin", `
         <button id="js-google-panel-toggle-btn" class="btn btn-icon google-panel-toggle-btn">
@@ -94,6 +90,8 @@ function onSignIn(element, instance) {
 }
 
 function onSignOut() {
+    signedIn = false;
+    accessToken = null;
     user = null;
     document.getElementById("js-google-panel-toggle-btn").remove();
     container.insertAdjacentHTML("beforeend", `
@@ -101,10 +99,15 @@ function onSignOut() {
             data-item="google-sign-in">Sign In</button>
     `);
     removePanel();
+    dispatchCustomEvent("google-sign-out");
 }
 
-function setGoogleUser(instance) {
-    const profile = instance.currentUser.get().getBasicProfile();
+function getAccessToken() {
+    return accessToken;
+}
+
+function setGoogleUser(currentUser) {
+    const profile = currentUser.getBasicProfile();
 
     user = {
         name: profile.getName(),
@@ -140,9 +143,8 @@ function toggleGooglePanel({ currentTarget }) {
 }
 
 export {
-    isGoogleAPIInitialized,
-    isGoogleAPIInitializing,
     changeGoogleAuthState,
     initGoogleAPI,
+    getAccessToken,
     getGoogleUser
 };
