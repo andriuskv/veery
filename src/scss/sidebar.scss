@@ -6,7 +6,7 @@
         top: 0;
         left: 0;
         width: 100%;
-        height: calc(100% - 108px);
+        height: calc(100% - var(--controls-height));
         background-color: $background-color-dark-80;
         transition: 0.1s opacity, 0.1s visibility;
 

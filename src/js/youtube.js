@@ -1,30 +1,16 @@
-/* global gapi */
-
 import { dispatchCustomEvent, formatTime } from "./utils.js";
 import { addTracksToPlaylist, clearPlaylistTracks } from "./playlist/playlist.manage.js";
 import { getPlaylistById, createPlaylist, updatePlaylist } from "./playlist/playlist.js";
 import { showPlayerMessage } from "./player/player.view.js";
-import { isGoogleAPIInitializing, isGoogleAPIInitialized, getGoogleUser } from "./google-auth.js";
+import { initGoogleAPI, getAccessToken, getGoogleUser } from "./google-auth.js";
 
-const fetchQueue = [];
-let accessToken = null;
+let userPlaylists = null;
 
 function showYouTubeMessage(message) {
     showPlayerMessage({
         title: "YouTube",
         body: message
     });
-}
-
-function setAccessToken() {
-    const instance = gapi.auth2.getAuthInstance();
-
-    if (instance.isSignedIn.get()) {
-        accessToken = instance.currentUser.get().getAuthResponse().access_token;
-    }
-    else {
-        accessToken = null;
-    }
 }
 
 function parseDuration(duration) {
@@ -62,6 +48,7 @@ async function getVideoDuration(items) {
 }
 
 function fetchYoutube(path, part, filter, id, token) {
+    const accessToken = getAccessToken();
     let params = `part=${part}&${filter}=${id}&maxResults=50&key=${process.env.YOUTUBE_API_KEY}`;
 
     if (token) {
@@ -226,13 +213,6 @@ function parseUrl(url) {
 }
 
 async function fetchYoutubeItem(url, type) {
-    if (isGoogleAPIInitializing()) {
-        addItemToFetchQueue(url, type);
-        return;
-    }
-    else if (isGoogleAPIInitialized()) {
-        setAccessToken();
-    }
     const { videoId, playlistId } = parseUrl(url);
     const id = playlistId || "youtube";
 
@@ -242,7 +222,7 @@ async function fetchYoutubeItem(url, type) {
     }
 
     if (playlistId === "WL") {
-        showYouTubeMessage("Importing Watch Later playlist is not allowed");
+        showYouTubeMessage("Importing <b>Watch Later</b> playlist is not allowed");
         return;
     }
     dispatchCustomEvent("import", {
@@ -271,19 +251,41 @@ async function fetchYoutubeItem(url, type) {
     }
 }
 
-function addItemToFetchQueue(url, type) {
-    if (!fetchQueue.some(item => item.url === url)) {
-        fetchQueue.push({ url, type });
+function parseYoutubeUserPlaylists(items) {
+    return items.map(item => ({
+        id: item.id,
+        itemCount: item.contentDetails.itemCount,
+        title: item.snippet.title,
+        thumbnail: item.snippet.thumbnails.medium.url
+    }));
+}
+
+function getYoutubeUserPlaylists() {
+    return userPlaylists;
+}
+
+async function fetchYoutubeUserPlaylists() {
+    const signedIn = await initGoogleAPI();
+
+    if (!signedIn || userPlaylists) {
+        return;
+    }
+
+    try {
+        const response = await fetchYoutube("playlists", "snippet,contentDetails", "mine", true);
+        userPlaylists = parseYoutubeUserPlaylists(response.items);
+    }
+    catch (e) {
+        console.log(e);
     }
 }
 
-window.addEventListener("google-api-initialized", () => {
-    fetchQueue.forEach(({ url, type }) => {
-        fetchYoutubeItem(url, type);
-    });
-    fetchQueue.length = 0;
+window.addEventListener("google-sign-out", () => {
+    userPlaylists = null;
 });
 
 export {
-    fetchYoutubeItem
+    fetchYoutubeItem,
+    getYoutubeUserPlaylists,
+    fetchYoutubeUserPlaylists
 };

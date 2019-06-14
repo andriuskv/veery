@@ -10,9 +10,9 @@ import { editSidebarEntryTitle } from "../sidebar.js";
 import { postMessageToWorker } from "../web-worker.js";
 import { togglePanel, removePanel } from "../panels.js";
 import { initGoogleAPI } from "../google-auth.js";
+import { fetchYoutubeItem } from "../youtube.js";
 import { getPlaylistById, getPlaylistDuration } from "./playlist.js";
 import { deletePlaylist } from "./playlist.manage.js";
-import { importPlaylist, resetImportOption } from "./playlist.import.js";
 
 let modalData = null;
 
@@ -230,7 +230,6 @@ async function syncPlaylists(playlists) {
     if (!playlists.length) {
         return;
     }
-    resetImportOption();
     playlists.forEach(({ id }) => {
         dispatchCustomEvent("import", {
             importing: true,
@@ -242,10 +241,7 @@ async function syncPlaylists(playlists) {
     await initGoogleAPI();
 
     playlists.forEach(({ url }) => {
-        importPlaylist("youtube", {
-            url,
-            type: "sync"
-        });
+        fetchYoutubeItem(url, "sync");
     });
 }
 
