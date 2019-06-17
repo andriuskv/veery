@@ -1,6 +1,6 @@
 import { getElementByAttr } from "../utils.js";
 import { getVisiblePlaylistId } from "../tab.js";
-import { getPlaylistById } from "./playlist.js";
+import { getPlaylistById, getPlaylistState } from "./playlist.js";
 import { getPlaylistElement } from "./playlist.view.js";
 
 const filterInput = document.getElementById("js-filter-input");
@@ -8,16 +8,13 @@ const filterInputContainer = filterInput.parentElement;
 let timeout = 0;
 let filteredPlaylistId = "";
 
-function filterTracks(tracks, trackElements, query) {
+function filterTracks(id, tracks, trackElements, query) {
     const regex = new RegExp(query, "i");
+    const { sortOrder } = getPlaylistState(id);
 
     tracks.forEach(track => {
-        const element = trackElements[track.index];
-        const filterString = `
-            ${track.title}
-            ${track.artist}
-            ${track.album}
-        `;
+        const element = trackElements[sortOrder.indexOf(track.index)];
+        const filterString = `${track.title}\n${track.artist}\n${track.album}`;
 
         element.classList.toggle("hidden", !regex.test(filterString));
     });
@@ -36,7 +33,7 @@ function filterPlaylist(id, query = "") {
     const { children } = getPlaylistElement(id);
 
     filteredPlaylistId = query ? id : "";
-    filterTracks(tracks, children, query);
+    filterTracks(id, tracks, children, query);
     toggleClearInputBtn(query);
 }
 
