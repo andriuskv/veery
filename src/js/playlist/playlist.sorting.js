@@ -35,7 +35,7 @@ function changePlaylistSorting(pl, sortBy) {
     if (value) {
         const { children } = getPlaylistElement(pl.id);
 
-        filterTracks(pl.tracks, children, value);
+        filterTracks(pl.id, pl.tracks, children, value);
     }
 }
 
