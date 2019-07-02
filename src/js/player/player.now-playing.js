@@ -16,6 +16,16 @@ function handleClickOnMedia({ target }) {
     }
 }
 
+function blurIframe() {
+    const element = document.activeElement;
+
+    if (element instanceof HTMLIFrameElement) {
+        requestAnimationFrame(() => {
+            element.blur();
+        });
+    }
+}
+
 function hideMedia(event) {
     if (event.which === 27) {
         mediaVisible = false;
@@ -31,12 +41,16 @@ function toggleMedia({ currentTarget }) {
     mediaVisible = !mediaVisible;
 
     if (mediaVisible) {
+        mediaElement.addEventListener("click", handleClickOnMedia);
         window.addEventListener("keydown", hideMedia);
+        window.addEventListener("blur", blurIframe);
         setElementIconAndTitle(currentTarget, { title: "Collapse", id: "collapse" });
         ytPlayer.removeAttribute("tabindex");
     }
     else {
+        mediaElement.removeEventListener("click", handleClickOnMedia);
         window.removeEventListener("keydown", hideMedia);
+        window.removeEventListener("blur", blurIframe);
         setElementIconAndTitle(currentTarget, { title: "Expand", id: "expand" });
         ytPlayer.setAttribute("tabindex", "-1");
     }
@@ -119,7 +133,6 @@ function resetTrackInfo() {
 }
 
 mediaToggleBtn.addEventListener("click", toggleMedia);
-mediaElement.addEventListener("click", handleClickOnMedia);
 
 export {
     showTrackInfo,
