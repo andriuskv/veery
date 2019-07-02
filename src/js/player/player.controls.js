@@ -317,42 +317,45 @@ function unmutePlayer() {
     }
 }
 
-function getMouseEnterHandler(slider) {
-    return function({ pageX }) {
-        const label = document.getElementById(`js-${slider}-slider-label`);
-        const viewportWidth = window.innerWidth;
-        const halfLabelWidth = label.offsetWidth / 2;
+function toggleMute() {
+    const value = !getSetting("mute");
+    const element = document.getElementById("js-volume-btn");
 
-        if (pageX + halfLabelWidth + 8 > viewportWidth) {
-            const percent = getPosInPercentage(slider, viewportWidth - halfLabelWidth - 8);
-            label.style.left = getLabelOffset(percent, halfLabelWidth);
-        }
-        else if (pageX - halfLabelWidth - 8 < 0) {
-            const percent = getPosInPercentage(slider, halfLabelWidth + 8);
-            label.style.left = getLabelOffset(percent, halfLabelWidth);
-        }
-    };
+    mutePlayer(value);
+    toggleVolumeBtn(element, value);
+    setSetting("mute", value);
 }
 
-trackSlider.addEventListener("mousedown", event => {
-    if (event.which !== 1 || !getCurrentTrack()) {
-        return;
+function updateVolumeOnKeyDown(key) {
+    let volume = getSetting("volume");
+
+    if (volume < 1 && key === "ArrowUp") {
+        if (!volume) {
+            unmutePlayer();
+        }
+        volume += 0.05;
+
+        if (volume > 1) {
+            volume = 1;
+        }
     }
-    seeking = true;
+    else if (volume && key === "ArrowDown") {
+        volume -= 0.05;
 
-    onTrackSliderMousemove(event);
-    trackSlider.removeEventListener("mousemove", onLocalTrackSliderMousemove);
-    window.addEventListener("mousemove", onTrackSliderMousemove);
-    window.addEventListener("mouseup", onTrackSliderMouseup);
-});
+        if (volume <= 0) {
+            volume = 0;
 
-trackSlider.addEventListener("mousemove", onLocalTrackSliderMousemove);
-trackSlider.addEventListener("mouseenter", getMouseEnterHandler("track"));
-
-trackSlider.addEventListener("keydown", ({ key }) => {
-    if (!key.startsWith("Arrow")) {
-        return;
+            updateSetting({
+                attrValue: "mute",
+                elementRef: document.getElementById("js-volume-btn")
+            });
+            return;
+        }
     }
+    updateVolume(volume);
+}
+
+function updateCurrentTimeOnKeyDown(key) {
     const track = getCurrentTrack();
 
     if (!track) {
@@ -378,6 +381,74 @@ trackSlider.addEventListener("keydown", ({ key }) => {
     updateTrackSlider(track, currentTime);
     seekTo(track.player, currentTime);
     storedTrack.updateTrack({ currentTime });
+}
+
+function getMouseEnterHandler(slider) {
+    return function({ pageX }) {
+        const label = document.getElementById(`js-${slider}-slider-label`);
+        const viewportWidth = window.innerWidth;
+        const halfLabelWidth = label.offsetWidth / 2;
+
+        if (pageX + halfLabelWidth + 8 > viewportWidth) {
+            const percent = getPosInPercentage(slider, viewportWidth - halfLabelWidth - 8);
+            label.style.left = getLabelOffset(percent, halfLabelWidth);
+        }
+        else if (pageX - halfLabelWidth - 8 < 0) {
+            const percent = getPosInPercentage(slider, halfLabelWidth + 8);
+            label.style.left = getLabelOffset(percent, halfLabelWidth);
+        }
+    };
+}
+
+window.addEventListener("keydown", event => {
+    const modifierKeyPressed = event.ctrlKey || event.shiftKey || event.altKey || event.metaKey;
+
+    if (event.target instanceof HTMLInputElement || modifierKeyPressed) {
+        return;
+    }
+    const { key } = event;
+
+    if (key === "p") {
+        playTrack();
+    }
+    else if (key === "m") {
+        toggleMute();
+    }
+    else if (key === "o") {
+        playNextTrack();
+    }
+    else if (key === "[") {
+        playPreviousTrack();
+    }
+    else if (key.startsWith("Arrow") && event.target.role !== "slider") {
+        if (key === "ArrowUp" || key === "ArrowDown") {
+            updateVolumeOnKeyDown(key);
+        }
+        else if (key === "ArrowRight" || key === "ArrowLeft") {
+            updateCurrentTimeOnKeyDown(key);
+        }
+    }
+});
+
+trackSlider.addEventListener("mousedown", event => {
+    if (event.which !== 1 || !getCurrentTrack()) {
+        return;
+    }
+    seeking = true;
+
+    onTrackSliderMousemove(event);
+    trackSlider.removeEventListener("mousemove", onLocalTrackSliderMousemove);
+    window.addEventListener("mousemove", onTrackSliderMousemove);
+    window.addEventListener("mouseup", onTrackSliderMouseup);
+});
+
+trackSlider.addEventListener("mousemove", onLocalTrackSliderMousemove);
+trackSlider.addEventListener("mouseenter", getMouseEnterHandler("track"));
+
+trackSlider.addEventListener("keydown", ({ key }) => {
+    if (key.startsWith("Arrow")) {
+        updateCurrentTimeOnKeyDown(key);
+    }
 });
 
 volumeSlider.addEventListener("mousedown", event => {
@@ -394,35 +465,9 @@ volumeSlider.addEventListener("mousemove", onLocalVolumeSliderMousemove);
 volumeSlider.addEventListener("mouseenter", getMouseEnterHandler("volume"));
 
 volumeSlider.addEventListener("keydown", ({ key }) => {
-    if (!key.startsWith("Arrow")) {
-        return;
+    if (key.startsWith("Arrow")) {
+        updateVolumeOnKeyDown(key);
     }
-    let volume = getSetting("volume");
-
-    if (volume < 1 && (key === "ArrowRight" || key === "ArrowUp")) {
-        if (!volume) {
-            unmutePlayer();
-        }
-        volume += 0.05;
-
-        if (volume > 1) {
-            volume = 1;
-        }
-    }
-    else if (volume && (key === "ArrowLeft" || key === "ArrowDown")) {
-        volume -= 0.05;
-
-        if (volume <= 0) {
-            volume = 0;
-
-            updateSetting({
-                attrValue: "mute",
-                elementRef: document.getElementById("js-volume-btn")
-            });
-            return;
-        }
-    }
-    updateVolume(volume);
 });
 
 document.getElementById("js-main-controls").addEventListener("click", ({ target }) => {
