@@ -217,6 +217,16 @@ function selectLocalFiles(files) {
     addTracks("local", pl, supportedFiles, parseTracks);
 }
 
+window.addEventListener("drop", event => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "copy";
+    selectLocalFiles([...event.dataTransfer.files]);
+});
+
+window.addEventListener("dragover", event => {
+    event.preventDefault();
+});
+
 export {
     addTracks,
     selectLocalFiles
