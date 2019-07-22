@@ -13,6 +13,7 @@ const volumeSlider = document.getElementById("js-volume-slider");
 const trackSlider = document.getElementById("js-track-slider");
 const controlsElement = document.getElementById("js-controls");
 let seeking = false;
+let lastSpinnerElement = null;
 
 const elapsedTime = (function() {
     let timeout = 0;
@@ -56,6 +57,7 @@ function showPlayPauseBtnSpinner() {
     const element = getTrackPlayPauseBtn();
 
     if (element) {
+        lastSpinnerElement = element;
         element.classList.add("show-spinner");
     }
     document.getElementById("js-play-btn").classList.add("show-spinner");
@@ -63,6 +65,11 @@ function showPlayPauseBtnSpinner() {
 
 function hidePlayPauseBtnSpinner() {
     const element = getTrackPlayPauseBtn();
+
+    if (lastSpinnerElement) {
+        lastSpinnerElement.classList.remove("show-spinner");
+        lastSpinnerElement = null;
+    }
 
     if (element) {
         element.classList.remove("show-spinner");
@@ -414,10 +421,10 @@ window.addEventListener("keydown", event => {
     else if (key === "m") {
         toggleMute();
     }
-    else if (key === "o") {
+    else if (key === "[") {
         playNextTrack();
     }
-    else if (key === "[") {
+    else if (key === "o") {
         playPreviousTrack();
     }
     else if (key.startsWith("Arrow") && event.target.role !== "slider") {
