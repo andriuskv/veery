@@ -24,7 +24,7 @@ function filterUnsupportedFiles(files) {
         if (audio.canPlayType(file.type)) {
             files.push(file);
         }
-        else {
+        else if (file.type.startsWith("audio")) {
             const { name } = file;
 
             unsupportedTypes.push(name.slice(name.lastIndexOf(".")));
@@ -218,9 +218,14 @@ function selectLocalFiles(files) {
 }
 
 window.addEventListener("drop", event => {
+    const { files } = event.dataTransfer;
+
     event.preventDefault();
     event.dataTransfer.dropEffect = "copy";
-    selectLocalFiles([...event.dataTransfer.files]);
+
+    if (files.length) {
+        selectLocalFiles([...files]);
+    }
 });
 
 window.addEventListener("dragover", event => {
