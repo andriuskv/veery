@@ -24,7 +24,7 @@ const scriptLoader = (function() {
 })();
 
 function removeElement(element) {
-    element.parentElement.removeChild(element);
+    element.remove();
 }
 
 function removeElements(elements) {
