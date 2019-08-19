@@ -437,8 +437,8 @@ function removeSelectedTracks() {
 
     removeElements(elements);
     resetTrackIndexes(pl);
-    resetElementIndexes(pl.id, tracksToKeep);
     setSortOrder(pl);
+    resetElementIndexes(pl.id);
     setPlaybackOrder(pl.id, getSetting("shuffle"));
     updateCurrentTrackIndex(pl.id);
     updatePlaylistEntry(pl.id, tracksToKeep);

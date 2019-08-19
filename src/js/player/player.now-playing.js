@@ -101,15 +101,17 @@ function updateTrackMedia(player, artwork) {
 }
 
 function getTrackInfo(track, id) {
+    let elementTitle = track.name;
     let trackName = `<div>${track.name}</div>`;
 
     if (track.artist && track.title) {
+        elementTitle = `${track.artist} - ${track.title}${track.album ? ` - ${track.album}` : ""}`;
         trackName = `
             <div class="track-title">${track.title}</div>
-            <div>${track.artist} ${track.album ? `- ${track.album}` : ""}</div>
+            <div>${track.artist}${track.album ? ` - ${track.album}` : ""}</div>
         `;
     }
-    return `<div id="${id}" class="track-info fade-right">${trackName}</div> `;
+    return `<div id="${id}" class="track-info fade-right" title="${elementTitle}">${trackName}</div> `;
 }
 
 function showTrackInfo(track) {

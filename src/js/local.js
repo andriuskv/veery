@@ -188,7 +188,9 @@ async function updateTrackInfo() {
             const element = getTrackElement(track.index, id);
             const currentTrack = getCurrentTrack();
 
-            element.innerHTML = creatItemContent(track, id, type);
+            if (element) {
+                element.innerHTML = creatItemContent(track, id, type);
+            }
 
             if (currentTrack && currentTrack.name === track.name) {
                 showTrackInfo(track);
