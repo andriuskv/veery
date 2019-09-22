@@ -79,7 +79,7 @@
     padding: 2px 0;
     font-size: 13px;
 
-    @supports (display: -webkit-box) {
+    @supports not (display: -webkit-box) {
         @include text-truncate;
     }
 }
