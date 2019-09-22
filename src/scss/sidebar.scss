@@ -1,4 +1,6 @@
 .sidebar-container {
+    z-index: 2;
+
     @include breakpoint-small {
         z-index: 3;
         overflow: hidden;
@@ -156,6 +158,8 @@
 }
 
 .sidebar-link {
+    @include text-truncate;
+
     display: block;
     padding: 12px 8px;
     color: inherit;

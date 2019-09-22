@@ -32,6 +32,8 @@
 }
 
 .list-item-col {
+    @include text-truncate;
+
     padding: 2px 0;
     margin-right: 8px;
 }

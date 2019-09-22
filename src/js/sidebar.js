@@ -13,9 +13,7 @@ function createSidebarEntry(title, id) {
 
     element.insertAdjacentHTML("beforeend", `
         <li id="js-sidebar-entry-${id}" class="sidebar-entry">
-            <a href="./#/playlist/${id}" class="sidebar-link" data-link>
-                <div class="fade-right">${title}</div>
-            </a>
+            <a href="./#/playlist/${id}" class="sidebar-link" data-link>${title}</a>
         </li>
     `);
 }
