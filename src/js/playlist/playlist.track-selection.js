@@ -135,7 +135,7 @@ function showMoveTo() {
 
         createMoveToContainer();
         addClickHandler();
-        window.addEventListener("keypress", onKeypress);
+        window.addEventListener("keydown", handleKeydown);
     }
 }
 
@@ -145,7 +145,7 @@ function hideMoveTo() {
 
         removeMoveToContainer();
         window.removeEventListener("click", onClick, true);
-        window.removeEventListener("keypress", onKeypress);
+        window.removeEventListener("keydown", handleKeydown);
     }
 }
 
@@ -376,7 +376,7 @@ function onMousedown({ currentTarget, target, which, clientX, clientY }) {
     }
 }
 
-function onKeypress({ key, keyCode }) {
+function handleKeydown({ key, keyCode }) {
     if (key === "Delete" || keyCode === 127) {
         removeSelectedTracks();
         hideMoveTo();

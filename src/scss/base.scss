@@ -9,6 +9,7 @@ html, body {
 body {
     background-color: $background-color-darkest;
     text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
     font-family: $font-family;
     font-size: 14px;
     color: $color-text;
@@ -72,6 +73,10 @@ svg {
     padding: 6px 8px;
     border-radius: 2px;
     background-color: $background-color-darkest;
+
+    &::placeholder {
+        color: $color-text-darker;
+    }
 }
 
 .btn {
@@ -258,22 +263,4 @@ svg {
 
 .service-worker-message {
     display: flex;
-}
-
-.fade-right {
-    position: relative;
-    overflow: hidden;
-    white-space: nowrap;
-
-    &::after {
-        position: absolute;
-        right: 0;
-        top: 0;
-        content: "";
-        display: block;
-        width: 16px;
-        height: 100%;
-        box-shadow: inset -8px 0 10px 0 var(--background-color);
-        pointer-events: none;
-    }
 }

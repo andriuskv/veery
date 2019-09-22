@@ -70,14 +70,29 @@
 }
 
 .track-info {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    white-space: normal;
     flex-grow: 1;
     padding: 2px 0;
     font-size: 13px;
+
+    @supports (display: -webkit-box) {
+        @include text-truncate;
+    }
 }
 
 .track-title {
+    @include text-truncate;
+
     margin-bottom: 2px;
     font-size: 14px;
+}
+
+.track-artist {
+    @include text-truncate;
 }
 
 .media-container {
