@@ -51,6 +51,17 @@ function getElementByAttr(attr, element, endElement = null) {
     }
 }
 
+function getElementByNodeName(nodeName, element, endElement = null) {
+    while (element && element !== endElement) {
+        if (element.nodeName === nodeName) {
+            return {
+                elementRef: element
+            };
+        }
+        element = element.parentElement;
+    }
+}
+
 function isOutsideElement(element, targetElement) {
     return targetElement ? !targetElement.contains(element) : false;
 }
@@ -126,6 +137,7 @@ export {
     removeElements,
     removeElementClass,
     getElementByAttr,
+    getElementByNodeName,
     isOutsideElement,
     formatTime,
     dispatchCustomEvent,
