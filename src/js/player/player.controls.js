@@ -249,9 +249,9 @@ function onTrackSliderMouseup({ pageX }) {
         seekTo(track.player, currentTime);
         storedTrack.updateTrack({ currentTime });
     }
-    window.removeEventListener("mousemove", onTrackSliderMousemove);
-    window.removeEventListener("mouseup", onTrackSliderMouseup);
-    trackSlider.addEventListener("mousemove", onLocalTrackSliderMousemove);
+    window.removeEventListener("pointermove", onTrackSliderMousemove);
+    window.removeEventListener("pointerup", onTrackSliderMouseup);
+    trackSlider.addEventListener("pointermove", onLocalTrackSliderMousemove);
 }
 
 function onVolumeSliderMousemove({ pageX }) {
@@ -279,9 +279,9 @@ function onLocalVolumeSliderMousemove({ pageX }) {
 }
 
 function onVolumeSliderMouseup() {
-    window.removeEventListener("mousemove", onVolumeSliderMousemove);
-    window.removeEventListener("mouseup", onVolumeSliderMouseup);
-    volumeSlider.addEventListener("mousemove", onLocalVolumeSliderMousemove);
+    window.removeEventListener("pointermove", onVolumeSliderMousemove);
+    window.removeEventListener("pointerup", onVolumeSliderMouseup);
+    volumeSlider.addEventListener("pointermove", onLocalVolumeSliderMousemove);
 }
 
 function updateSetting({ attrValue, elementRef }) {
@@ -437,20 +437,20 @@ window.addEventListener("keydown", event => {
     }
 });
 
-trackSlider.addEventListener("mousedown", event => {
+trackSlider.addEventListener("pointerdown", event => {
     if (event.which !== 1 || !getCurrentTrack()) {
         return;
     }
     seeking = true;
 
     onTrackSliderMousemove(event);
-    trackSlider.removeEventListener("mousemove", onLocalTrackSliderMousemove);
-    window.addEventListener("mousemove", onTrackSliderMousemove);
-    window.addEventListener("mouseup", onTrackSliderMouseup);
+    trackSlider.removeEventListener("pointermove", onLocalTrackSliderMousemove);
+    window.addEventListener("pointermove", onTrackSliderMousemove);
+    window.addEventListener("pointerup", onTrackSliderMouseup);
 });
 
-trackSlider.addEventListener("mousemove", onLocalTrackSliderMousemove);
-trackSlider.addEventListener("mouseenter", getMouseEnterHandler("track"));
+trackSlider.addEventListener("pointermove", onLocalTrackSliderMousemove);
+trackSlider.addEventListener("pointerenter", getMouseEnterHandler("track"));
 
 trackSlider.addEventListener("keydown", ({ key }) => {
     if (key.startsWith("Arrow")) {
@@ -458,18 +458,18 @@ trackSlider.addEventListener("keydown", ({ key }) => {
     }
 });
 
-volumeSlider.addEventListener("mousedown", event => {
+volumeSlider.addEventListener("pointerdown", event => {
     if (event.which !== 1) {
         return;
     }
     onVolumeSliderMousemove(event);
-    volumeSlider.removeEventListener("mousemove", onLocalVolumeSliderMousemove);
-    window.addEventListener("mousemove", onVolumeSliderMousemove);
-    window.addEventListener("mouseup", onVolumeSliderMouseup);
+    volumeSlider.removeEventListener("pointermove", onLocalVolumeSliderMousemove);
+    window.addEventListener("pointermove", onVolumeSliderMousemove);
+    window.addEventListener("pointerup", onVolumeSliderMouseup);
 });
 
-volumeSlider.addEventListener("mousemove", onLocalVolumeSliderMousemove);
-volumeSlider.addEventListener("mouseenter", getMouseEnterHandler("volume"));
+volumeSlider.addEventListener("pointermove", onLocalVolumeSliderMousemove);
+volumeSlider.addEventListener("pointerenter", getMouseEnterHandler("volume"));
 
 volumeSlider.addEventListener("keydown", ({ key }) => {
     if (key.startsWith("Arrow")) {
