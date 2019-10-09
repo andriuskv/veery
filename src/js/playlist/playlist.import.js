@@ -281,7 +281,7 @@ function getYoutubeUserPlaylistsTemplate() {
     }, "");
 
     return `
-        <h4 class="youtube-modal-section-title">Your YouTube Playlists</h4>
+        <h4 class="youtube-modal-section-title">Your Playlists</h4>
         <ul class="youtube-modal-playlists">${items}</ul>
     `;
 }
