@@ -1,4 +1,4 @@
-import { getElementByAttr } from "./../utils.js";
+import { getElementByAttr, dispatchCustomEvent } from "./../utils.js";
 import { togglePanel } from "../panels.js";
 import { changeGoogleAuthState } from "../google-auth.js";
 import { showDropboxChooser } from "../dropbox.js";

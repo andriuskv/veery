@@ -102,6 +102,7 @@
     display: flex;
     align-items: center;
     height: 20px;
+    touch-action: none;
 
     &.visible {
         cursor: pointer;
