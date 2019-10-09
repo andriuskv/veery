@@ -240,21 +240,22 @@ function handleSettingChange({ target }) {
 }
 
 async function handleYouTubeOptionClick({ attrValue, elementRef }) {
-    if (attrValue === "form-toggle") {
-        const element = document.getElementById("js-ab-modal");
-
-        if (element) {
-            element.remove();
-        }
-        else {
-            elementRef.disabled = true;
-            await fetchYoutubeUserPlaylists();
-            createYoutubeModal();
-            elementRef.disabled = false;
-        }
+    if (attrValue === "modal-toggle") {
+        elementRef.disabled = true;
+        await fetchYoutubeUserPlaylists();
+        createYoutubeModal();
+        elementRef.disabled = false;
     }
     else if (attrValue === "google-sign-in") {
-        changeGoogleAuthState(elementRef);
+        dispatchCustomEvent("import", {
+            importing: true,
+            option: "youtube"
+        });
+        await changeGoogleAuthState(elementRef);
+        dispatchCustomEvent("import", {
+            importing: false,
+            option: "youtube"
+        });
     }
 }
 
