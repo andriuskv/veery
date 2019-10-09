@@ -97,25 +97,33 @@ async function parseTracks(tracks, parsedTracks = []) {
     const { audioTrack, name } = tracks[index];
 
     updateProgress(`Processing: ${name}`, index + 1, tracks.length);
-    const { artist, title, album, duration, picture } = await parseAudioMetadata(audioTrack);
 
-    parsedTracks.push({
-        eligibleForMoreInfo: Boolean(artist && title),
-        audioTrack,
-        name,
-        title: artist ? title : name,
-        artist: artist || "",
-        album: album || "",
-        picture: picture || placeholderImgUrl,
-        durationInSeconds: duration,
-        duration: formatTime(duration),
-        player: "native"
-    });
+    try {
+        const { artist, title, album, duration, picture } = await parseAudioMetadata(audioTrack);
 
-    if (index + 1 === tracks.length) {
-        return parsedTracks;
+        parsedTracks.push({
+            eligibleForMoreInfo: Boolean(artist && title),
+            audioTrack,
+            name,
+            title: artist ? title : name,
+            artist: artist || "",
+            album: album || "",
+            picture: picture || placeholderImgUrl,
+            durationInSeconds: duration,
+            duration: formatTime(duration),
+            player: "native"
+        });
+    } catch (e) {
+        console.log(e);
+
+        // If file cannot be parsed skip it
+        tracks.splice(index, 1);
+    } finally {
+        if (index + 1 === tracks.length) {
+            return parsedTracks;
+        }
+        return parseTracks(tracks, parsedTracks);
     }
-    return parseTracks(tracks, parsedTracks);
 }
 
 async function addTracks(importOption, pl, files, parseTracks) {
