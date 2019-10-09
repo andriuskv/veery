@@ -12,7 +12,7 @@ import {
 } from "./playlist.js";
 import { createPlaylistEntry, updatePlaylistEntry } from "./playlist.entries.js";
 import { removePlaylistTab, updatePlaylistView, getPlaylistElement } from "./playlist.view.js";
-import { addRoute, removeRoute } from "../router.js";
+import { addRoute, removeRoute, showCurrentRoute, isRouteActive } from "../router.js";
 import { getSetting } from "../settings.js";
 import { postMessageToWorker } from "../web-worker.js";
 import { createSidebarEntry, removeSidebarEntry } from "../sidebar.js";
@@ -71,6 +71,10 @@ function addTracksToPlaylist(pl, tracks) {
     }
     else {
         initPlaylist(pl);
+
+        if (isRouteActive("local-files") && !rendered) {
+            showCurrentRoute();
+        }
 
         if (pl.storePlaylist) {
             postMessageToWorker({
