@@ -21,10 +21,12 @@ function cleanEntry(entry) {
 
 function callback(entries) {
     entries.forEach(({ isIntersecting, target }) => {
-        if (isIntersecting) {
+        const isEmpty = !target.childElementCount;
+
+        if (isIntersecting && isEmpty) {
             handleIntersectingEntry(target);
         }
-        else if (target.childElementCount) {
+        else if (!isIntersecting && !isEmpty && !target.contains(document.activeElement)) {
             cleanEntry(target);
         }
     });
