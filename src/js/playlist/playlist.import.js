@@ -116,32 +116,6 @@ function createYoutubeModal() {
     document.getElementById(formId).addEventListener("submit", handleImportFormSubmit);
 }
 
-function createImportProgressContainer() {
-    importOptionsElement.insertAdjacentHTML("afterend", `
-        <div id="js-import-progress" class="import-progress">
-            <p id="js-import-progress-label" class="import-progress-label"></p>
-            <div class="import-progress-bar">
-                <div id="js-import-progress-bar-inner" class="import-progress-bar-inner"></div>
-                <div id="js-import-progress-bar-label" class="import-progress-bar-label"></div>
-            </div>
-        </div>
-    `);
-}
-
-function removeImportProgressContainer() {
-    document.getElementById("js-import-progress").remove();
-}
-
-function setImportProgressLabel(label = "") {
-    document.getElementById("js-import-progress-label").textContent = label;
-}
-
-function updateProgress(label, current, total) {
-    setImportProgressLabel(label);
-    document.getElementById("js-import-progress-bar-inner").style.transform = `scaleX(${current / total})`;
-    document.getElementById("js-import-progress-bar-label").textContent = `${current}/${total}`;
-}
-
 function handleChangeOnFileInput({ target }) {
     selectLocalFiles([...target.files]);
     target.value = "";
@@ -318,18 +292,8 @@ window.addEventListener("import", ({ detail }) => {
 
     changeImportOptionState(element, importing);
     toggleStatusIndicator(playlistId, importing);
-
-    if (option === "local") {
-        if (importing) {
-            createImportProgressContainer();
-        }
-        else {
-            removeImportProgressContainer();
-        }
-    }
 });
 
 export {
-    importSettings,
-    updateProgress
+    importSettings
 };

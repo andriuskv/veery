@@ -19,15 +19,17 @@ import {
     setCurrentTrack,
     getCurrentTrack,
     setPlaybackIndex,
-    cloneTrack,
     getNextTrack
 } from "../playlist/playlist.js";
 import { getElementByAttr } from "../utils.js";
 import { getVisiblePlaylistId } from "../tab.js";
 import { getSetting } from "../settings.js";
 import { showActiveIcon, removeActiveIcon } from "../sidebar.js";
-import { scrollTrackIntoView, toggleTrackPlayPauseBtn, resetCurrentTrackElement, setTrackElement } from "../playlist/playlist.view.js";
+import { scrollTrackIntoView, toggleTrackPlayPauseBtn, resetCurrentTrackElement, getTrackElement, setTrackElement, creatItemContent } from "../playlist/playlist.view.js";
+import { updatePlaylistEntry } from "../playlist/playlist.entries.js";
 import { showTrackInfo, resetTrackInfo } from "./player.now-playing.js";
+import { parseMetadata } from "../local.js";
+import { postMessageToWorker } from "../web-worker.js";
 import * as nPlayer from "./player.native.js";
 import * as ytPlayer from "./player.youtube.js";
 
@@ -57,7 +59,7 @@ const storedTrack = (function() {
             return;
         }
         const { playlistId, currentTime, name } = storedTrack;
-        const track = cloneTrack(findTrack(playlistId, name));
+        const track = findTrack(playlistId, name);
 
         if (!track) {
             removeTrack();
@@ -91,9 +93,22 @@ function updatePlayerState(state) {
     updateDocumentTitle();
 }
 
-function beforeTrackStart(track, playlistId, { scrollToTrack, startTime }) {
+async function beforeTrackStart(track, playlistId, { scrollToTrack, startTime }) {
     const { rendered } = getPlaylistState(playlistId);
 
+    if (track.needsMetadata) {
+        showPlayPauseBtnSpinner();
+        await parseMetadata(track);
+        const { _id, tracks, type } = getPlaylistById(playlistId);
+        const trackElement = getTrackElement(track.index, playlistId);
+        trackElement.innerHTML = creatItemContent(track, playlistId, type);
+        updatePlaylistEntry(document.querySelector("[data-entry-id=local-files]"), tracks);
+        postMessageToWorker({
+            action: "update-tracks",
+            playlist: { _id, tracks }
+        });
+        delete track.needsMetadata;
+    }
     showTrackInfo(track);
     showTrackDuration(track.duration, track.durationInSeconds);
     showTrackSlider();
@@ -138,10 +153,10 @@ function togglePlaying({ player }) {
     updatePlayerState();
 }
 
-function playNewTrack(track, playlistId, options = {}) {
+async function playNewTrack(track, playlistId, options = {}) {
     const volume = getSetting("volume");
 
-    beforeTrackStart(track, playlistId, options);
+    await beforeTrackStart(track, playlistId, options);
 
     if (track.player === "native") {
         nPlayer.playTrack(track, volume, options.startTime);
@@ -189,7 +204,7 @@ function play(source, sourceValue, id) {
         if (!alreadyShuffled && shuffle) {
             setPlaybackOrder(id, shuffle);
         }
-        playNewTrack(cloneTrack(tracks[sourceValue]), id);
+        playNewTrack(tracks[sourceValue], id);
     }
     else if (source === "direction") {
         const track = getNextTrack(id, sourceValue);
