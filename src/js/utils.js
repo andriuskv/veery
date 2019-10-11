@@ -51,15 +51,15 @@ function getElementByAttr(attr, element, endElement = null) {
     }
 }
 
-function getElementByNodeName(nodeName, element, endElement = null) {
-    while (element && element !== endElement) {
-        if (element.nodeName === nodeName) {
-            return {
-                elementRef: element
-            };
-        }
-        element = element.parentElement;
+function getScrollParent(element) {
+    if (!element) {
+        return;
     }
+
+    if (element.scrollHeight > element.clientHeight) {
+        return element;
+    }
+    return getScrollParent(element.parentElement);
 }
 
 function isOutsideElement(element, targetElement) {
@@ -137,7 +137,7 @@ export {
     removeElements,
     removeElementClass,
     getElementByAttr,
-    getElementByNodeName,
+    getScrollParent,
     isOutsideElement,
     formatTime,
     dispatchCustomEvent,
