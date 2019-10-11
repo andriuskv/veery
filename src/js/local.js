@@ -2,7 +2,7 @@ import parseAudioMetadata from "parse-audio-metadata";
 import { formatTime, dispatchCustomEvent } from "./utils.js";
 import { getPlaylistById, createPlaylist, getCurrentTrack } from "./playlist/playlist.js";
 import { addTracksToPlaylist } from "./playlist/playlist.manage.js";
-import { updateProgress, importSettings } from "./playlist/playlist.import.js";
+import { importSettings } from "./playlist/playlist.import.js";
 import { creatItemContent, getTrackElement } from "./playlist/playlist.view.js";
 import { updatePlaylistEntry } from "./playlist/playlist.entries.js";
 import { showPlayerMessage } from "./player/player.view.js";
@@ -56,23 +56,23 @@ function filterDuplicateTracks(tracks, existingTracks) {
     }, []);
 }
 
-async function fetchTrackAlbum({ artist, title, album, picture }) {
-    const isPlaceholder = picture === placeholderImgUrl;
+async function fetchTrackAlbum(track) {
+    const isPlaceholder = track.picture === placeholderImgUrl;
 
-    if (album && !isPlaceholder) {
-        return { album, picture };
+    if (track.album && !isPlaceholder) {
+        return;
     }
     try {
         const key = process.env.LAST_FM_API_KEY;
         const apiRootURL = "https://ws.audioscrobbler.com/2.0/";
-        const params = `?method=track.getInfo&api_key=${key}&artist=${artist}&track=${title}&format=json`;
+        const params = `?method=track.getInfo&api_key=${key}&artist=${track.artist}&track=${track.title}&format=json`;
         const json = await fetch(apiRootURL + params).then(response => response.json());
 
         if (json.track && json.track.album) {
             const { title, image } = json.track.album;
 
-            if (!album && title) {
-                album = title;
+            if (!track.album && title) {
+                track.album = title;
             }
 
             if (isPlaceholder && image) {
@@ -82,48 +82,28 @@ async function fetchTrackAlbum({ artist, title, album, picture }) {
                     const { origin, pathname } = new URL(url);
                     const [imageName] = pathname.split("/").slice(-1);
 
-                    picture = `${origin}/i/u/${imageName}`;
+                    track.picture = `${origin}/i/u/${imageName}`;
                 }
             }
         }
     } catch(e) {
         console.log(e);
     }
-    return { album, picture };
 }
 
-async function parseTracks(tracks, parsedTracks = []) {
-    const index = parsedTracks.length;
-    const { audioTrack, name } = tracks[index];
-
-    updateProgress(`Processing: ${name}`, index + 1, tracks.length);
-
-    try {
-        const { artist, title, album, duration, picture } = await parseAudioMetadata(audioTrack);
-
-        parsedTracks.push({
-            eligibleForMoreInfo: Boolean(artist && title),
-            audioTrack,
-            name,
-            title: artist ? title : name,
-            artist: artist || "",
-            album: album || "",
-            picture: picture || placeholderImgUrl,
-            durationInSeconds: duration,
-            duration: formatTime(duration),
-            player: "native"
-        });
-    } catch (e) {
-        console.log(e);
-
-        // If file cannot be parsed skip it
-        tracks.splice(index, 1);
-    } finally {
-        if (index + 1 === tracks.length) {
-            return parsedTracks;
-        }
-        return parseTracks(tracks, parsedTracks);
-    }
+function parseTracks(tracks) {
+    return tracks.map(track => ({
+        needsMetadata: true,
+        audioTrack: track.audioTrack,
+        name: track.name,
+        title: track.name,
+        artist: "",
+        album: "",
+        picture: placeholderImgUrl,
+        durationInSeconds: 0,
+        duration: "",
+        player: "native"
+    }));
 }
 
 async function addTracks(importOption, pl, files, parseTracks) {
@@ -170,13 +150,25 @@ async function addTracks(importOption, pl, files, parseTracks) {
     }
 }
 
+async function parseMetadata(track) {
+    const { artist, title, album, duration, picture } = await parseAudioMetadata(track.audioTrack);
+
+    track.title = title || track.name;
+    track.artist = artist || "";
+    track.album = album || "";
+    track.durationInSeconds = duration;
+    track.picture = picture || placeholderImgUrl;
+    track.duration = formatTime(duration);
+    await fetchTrackAlbum(track);
+}
+
 async function updateTrackInfo() {
     const pl = getPlaylistById("local-files");
 
     if (!pl) {
         return;
     }
-    const track = pl.tracks.find(track => track.eligibleForMoreInfo);
+    const track = pl.tracks.find(track => track.needsMetadata);
     const { _id, id, tracks, type } = pl;
 
     if (!track) {
@@ -188,9 +180,7 @@ async function updateTrackInfo() {
         return;
     }
     try {
-        const { album, picture } = await fetchTrackAlbum(track);
-        track.album = album;
-        track.picture = picture;
+        await parseMetadata(track);
 
         if (id === getVisiblePlaylistId()) {
             const element = getTrackElement(track.index, id);
@@ -209,7 +199,7 @@ async function updateTrackInfo() {
         console.log(error);
     }
     finally {
-        delete track.eligibleForMoreInfo;
+        delete track.needsMetadata;
         requestIdleCallback(updateTrackInfo);
     }
 }
@@ -244,5 +234,6 @@ window.addEventListener("dragover", event => {
 
 export {
     addTracks,
-    selectLocalFiles
+    selectLocalFiles,
+    parseMetadata
 };

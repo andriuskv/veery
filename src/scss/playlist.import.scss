@@ -153,63 +153,6 @@
     display: none;
 }
 
-.import-progress {
-    overflow: hidden;
-    padding: 0 8px;
-    animation-name: expand-import-progress, reveal;
-    animation-delay: 0s, 0.2s;
-    animation-duration: 0.2s;
-    animation-fill-mode: both;
-}
-
-.import-progress-bar {
-    position: relative;
-    height: 18px;
-    padding: 2px;
-    background-color: $background-color-lightest;
-}
-
-.import-progress-label {
-    @include text-truncate;
-
-    margin: 0;
-    padding: 8px 4px;
-}
-
-.import-progress-bar-inner {
-    height: 100%;
-    background-color: $color-accent;
-    transform-origin: left;
-    transition: transform 0.1s;
-    will-change: transform;
-}
-
-.import-progress-bar-label {
-    @include center-absolutely;
-
-    font-size: 13px;
-    font-weight: bold;
-    color: $background-color-darkest;
-}
-
-@keyframes reveal {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
-@keyframes expand-import-progress {
-    from {
-        height: 0;
-    }
-    to {
-        height: 50px;
-    }
-}
-
 .youtube-modal-container {
     z-index: 4;
     position: fixed;
