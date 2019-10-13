@@ -18,7 +18,10 @@ import {
     findTrack,
     setCurrentTrack,
     getCurrentTrack,
+    swapFirstPlaybackOrderItem,
     setPlaybackIndex,
+    getPlaybackIndex,
+    getPlaybackOrder,
     getNextTrack
 } from "../playlist/playlist.js";
 import { getElementByAttr } from "../utils.js";
@@ -200,11 +203,15 @@ function play(source, sourceValue, id) {
 
     if (source === "index") {
         const { tracks } = getPlaylistById(id);
+        const track = tracks[sourceValue];
 
-        if (!alreadyShuffled && shuffle) {
-            setPlaybackOrder(id, shuffle);
+        if (alreadyShuffled) {
+            swapFirstPlaybackOrderItem(track.index);
         }
-        playNewTrack(tracks[sourceValue], id);
+        else if (!alreadyShuffled && shuffle) {
+            setPlaybackOrder(id, shuffle, track.index);
+        }
+        playNewTrack(track, id);
     }
     else if (source === "direction") {
         const track = getNextTrack(id, sourceValue);
@@ -338,14 +345,20 @@ window.addEventListener("track-start", ({ detail: startTime }) => {
 
 window.addEventListener("track-end", () => {
     const track = getCurrentTrack();
+    const mode = getSetting("playback");
 
-    if (getSetting("once")) {
+    if (mode === "track-once") {
+        stopPlayer(track);
+        return;
+    }
+
+    if (mode === "playlist-once" && getPlaybackIndex() === getPlaybackOrder().length - 1) {
         stopPlayer(track);
         return;
     }
     storedTrack.removeTrack();
 
-    if (getSetting("repeat")) {
+    if (mode === "repeat") {
         playNewTrack(track, getActivePlaylistId());
         return;
     }
