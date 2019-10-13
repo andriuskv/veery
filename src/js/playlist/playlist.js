@@ -105,17 +105,33 @@ function setPlaybackIndex(trackIndex, id) {
     playbackIndex = playbackIndex < 0 ? 0 : playbackIndex;
 }
 
-function getPlaybackOrder(tracks, shuffle) {
-    const playbackOrder = tracks.map(({ index }) => index);
-
-    return shuffle ? shuffleArray(playbackOrder) : playbackOrder;
+function getPlaybackIndex() {
+    return playbackIndex;
 }
 
-function setPlaybackOrder(id, shuffle) {
+function getPlaybackOrder() {
+    return playbackOrder;
+}
+
+function swapFirstPlaybackOrderItem(index) {
+    for (let i = 0; i < playbackOrder.length; i++) {
+        if (playbackOrder[i] === index) {
+            [playbackOrder[0], playbackOrder[i]] = [index, playbackOrder[0]];
+            break;
+        }
+    }
+}
+
+function setPlaybackOrder(id, shuffle, firstTrackIndex = -1) {
     const currentTrack = getCurrentTrack();
     const { tracks } = playlists[id];
+    const trackIndexes = tracks.map(({ index }) => index);
     playlistState[id].shuffled = shuffle;
-    playbackOrder = getPlaybackOrder(tracks, shuffle);
+    playbackOrder = shuffle ? shuffleArray(trackIndexes) : trackIndexes;
+
+    if (firstTrackIndex >= 0) {
+        swapFirstPlaybackOrderItem(firstTrackIndex);
+    }
 
     if (currentTrack) {
         setPlaybackIndex(currentTrack.index, id);
@@ -201,7 +217,9 @@ export {
     updateCurrentTrackIndex,
     findTrack,
     getNextTrack,
+    swapFirstPlaybackOrderItem,
     setPlaybackIndex,
+    getPlaybackIndex,
     getPlaybackOrder,
     setPlaybackOrder,
     resetTrackIndexes,

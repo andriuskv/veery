@@ -285,7 +285,80 @@ function onVolumeSliderMouseup() {
     volumeSlider.addEventListener("pointermove", onLocalVolumeSliderMousemove);
 }
 
+let timeout = 0;
+
+function setPlaybackMode(element, initMode) {
+    let mode = element.getAttribute("data-mode");
+    const modes = {
+        "normal": {
+            name: "repeat",
+            nextTitle: "Play track once",
+            currentTitle: "Repeat track",
+            iconId: "repeat"
+        },
+        "repeat": {
+            name: "track-once",
+            nextTitle: "Play playlist once",
+            currentTitle: "Play track once",
+            iconId: "repeat-once"
+        },
+        "track-once": {
+            name: "playlist-once",
+            nextTitle: "Repeat playlist",
+            currentTitle: "Play playlist once",
+            iconId: "repeat-once"
+        },
+        "playlist-once": {
+            name: "normal",
+            nextTitle: "Repeat track",
+            currentTitle: "Repeat playlist",
+            iconId: "repeat"
+        }
+    };
+
+    if (initMode) {
+        for (const [key, value] of Object.entries(modes)) {
+            if (initMode === value.name) {
+                mode = key;
+                break;
+            }
+        }
+    }
+    else {
+        const a = document.getElementById("js-control-btn-label");
+
+        if (a) {
+            a.remove();
+        }
+        element.parentElement.insertAdjacentHTML("afterbegin", `
+            <div id="js-control-btn-label" class="control-btn-label">${modes[mode].currentTitle}</div>
+        `);
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+            document.getElementById("js-control-btn-label").remove();
+        }, 1000);
+    }
+    const { name, nextTitle, iconId } = modes[mode];
+
+    if (name === "normal") {
+        element.classList.remove("active");
+        element.setAttribute("aria-checked", false);
+    }
+    else {
+        element.setAttribute("aria-checked", true);
+        element.classList.add("active");
+    }
+    element.setAttribute("data-mode", name);
+    element.setAttribute("title", nextTitle);
+    element.querySelector("use").setAttribute("href", `#${iconId}`);
+    setSetting("playback", name);
+}
+
 function updateSetting({ attrValue, elementRef }) {
+    if (attrValue === "playback") {
+        setPlaybackMode(elementRef);
+        return;
+    }
     const value = !getSetting(attrValue);
 
     elementRef.setAttribute("aria-checked", value);
@@ -524,6 +597,10 @@ document.getElementById("js-control-toggle-btn").addEventListener("click", () =>
         const setting = getSetting(item);
 
         if (setting) {
+            if (item === "playback") {
+                setPlaybackMode(element, setting);
+                return;
+            }
             element.setAttribute("aria-checked", true);
 
             if (item === "mute") {

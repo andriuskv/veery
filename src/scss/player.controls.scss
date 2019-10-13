@@ -196,6 +196,26 @@
     }
 }
 
+.control-btn-label {
+    z-index: 1;
+    position: absolute;
+    top: -32px;
+    left: 50%;
+    padding: 8px;
+    border-radius: 2px;
+    background-color: $background-color-lightest;
+    filter: drop-shadow(0 0 1px $color-black-20);
+    font-size: 13px;
+    white-space: nowrap;
+    animation-name: control-btn-label-reveal;
+    animation-duration: 0.2s;
+    animation-fill-mode: forwards;
+}
+
+.control-btn-wrapper {
+    position: relative;
+}
+
 .control-btn {
     position: relative;
     margin-right: 4px;
@@ -238,5 +258,16 @@
 
     @include breakpoint-smallest {
         display: flex;
+    }
+}
+
+@keyframes control-btn-label-reveal {
+    from {
+        opacity: 0;
+        transform: translate(-50%, 4px);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0);
     }
 }

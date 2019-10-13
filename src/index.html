@@ -90,7 +90,12 @@
         <symbol id="settings" viewBox="0 0 24 24">
             <path d="M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5 3.5 3.5 0 0 1 15.5 12 3.5 3.5 0 0 1 12 15.5M19.4 13C19.5 12.7 19.5 12.3 19.5 12 19.5 11.7 19.5 11.3 19.4 11L21.5 9.4C21.7 9.2 21.8 9 21.7 8.7L19.7 5.3C19.5 5.1 19.3 5 19.1 5.1L16.6 6.1C16 5.7 15.5 5.3 14.9 5.1L14.5 2.4C14.5 2.2 14.3 2 14 2H10C9.8 2 9.5 2.2 9.5 2.4L9.1 5.1C8.5 5.3 8 5.7 7.4 6.1L5 5.1C4.7 5 4.5 5.1 4.3 5.3L2.3 8.7C2.2 9 2.3 9.2 2.5 9.4L4.6 11C4.5 11.3 4.5 11.7 4.5 12 4.5 12.3 4.5 12.7 4.6 13L2.5 14.6C2.3 14.8 2.2 15.1 2.3 15.3L4.3 18.7C4.5 19 4.7 19 5 19L7.4 17.9C8 18.3 8.5 18.7 9.1 18.9L9.5 21.6C9.5 21.8 9.8 22 10 22H14C14.3 22 14.5 21.8 14.5 21.6L14.9 18.9C15.5 18.7 16 18.3 16.6 17.9L19.1 19C19.3 19 19.5 19 19.7 18.7L21.7 15.3C21.8 15.1 21.7 14.8 21.5 14.6L19.4 13Z"/>
         </symbol>
-
+        <symbol id="repeat" viewBox="0 0 24 24">
+            <path d="M17,17H7V14L3,18L7,22V19H19V13H17M7,7H17V10L21,6L17,2V5H5V11H7V7Z">
+        </symbol>
+        <symbol id="repeat-once" viewBox="0 0 24 24">
+            <path d="M13,15V9H12L10,10V11H11.5V15M17,17H7V14L3,18L7,22V19H19V13H17M7,7H17V10L21,6L17,2V5H5V11H7V7Z">
+        </symbol>
     </svg>
     <div id="js-sidebar-container" class="sidebar-container hidden">
         <div id="js-sidebar" class="sidebar">
@@ -271,22 +276,18 @@
             </button>
         </div>
         <div id="js-controls" class="controls">
-            <div role="checkbox" aria-checked="false" class="btn btn-icon control-btn" data-item="repeat" title="Repeat" tabindex="0">
-                <svg viewBox="0 0 24 24">
-                    <path d="M17,17H7V14L3,18L7,22V19H19V13H17M7,7H17V10L21,6L17,2V5H5V11H7V7Z">
-                </svg>
+            <div class="control-btn-wrapper">
+                <div role="checkbox" aria-checked="false" class="btn btn-icon control-btn" data-item="playback" data-mode="normal" title="Repeat track" tabindex="0">
+                    <svg viewBox="0 0 24 24">
+                        <use href="#repeat"></use>
+                    </svg>
+                </div>
             </div>
             <div role="checkbox" aria-checked="false" class="btn btn-icon control-btn" data-item="shuffle" title="Shuffle" tabindex="0">
                 <svg viewBox="0 0 24 24">
                     <path d="M14.83,13.41L13.42,14.82L16.55,17.95L14.5,20H20V14.5L17.96,
                         16.54L14.83,13.41M14.5,4L16.54,6.04L4,18.59L5.41,20L17.96,7.46L20,
                         9.5V4M10.59,9.17L5.41,4L4,5.41L9.17,10.58L10.59,9.17Z">
-                </svg>
-            </div>
-            <div role="checkbox" aria-checked="false" class="btn btn-icon control-btn" data-item="once" title="Play once" tabindex="0">
-                <svg viewBox="0 0 24 24">
-                    <path d="M13,15V9H12L10,10V11H11.5V15M17,17H7V14L3,18L7,22V19H19V13H17M7,
-                        7H17V10L21,6L17,2V5H5V11H7V7Z">
                 </svg>
             </div>
             <div class="volume-controls">

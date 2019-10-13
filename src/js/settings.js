@@ -1,7 +1,6 @@
 const settings = Object.assign({
-    repeat: false,
+    playback: "normal",
     shuffle: false,
-    once: false,
     mute: false,
     volume: 0.4
 }, JSON.parse(localStorage.getItem("settings")) || {});

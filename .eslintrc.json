@@ -70,7 +70,6 @@
         "prefer-rest-params": 2,
         "prefer-arrow-callback": 2,
         "padded-blocks": [2, "never"],
-        "quote-props": [2, "as-needed"],
         "quotes": [2, "double", {
             "avoidEscape": true,
             "allowTemplateLiterals": true
