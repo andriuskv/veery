@@ -29,7 +29,7 @@ function showPlayerMessage({ title, body }) {
 
     element.insertAdjacentHTML("afterBegin", `
         <div class="player-message">
-            <h3 class="player-message-title">${title}</h3>
+            ${title ? `<h3 class="player-message-title">${title}</h3>` : ""}
             <p class="player-message-body">${body}</p>
         </div>
     `);
@@ -70,5 +70,6 @@ window.addEventListener("offline", emitConnectivityStatus);
 window.addEventListener("load", emitConnectivityStatus);
 
 export {
-    showPlayerMessage
+    showPlayerMessage,
+    emitConnectivityStatus
 };

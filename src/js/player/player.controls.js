@@ -501,7 +501,7 @@ window.addEventListener("keydown", event => {
     else if (key === "o") {
         playPreviousTrack();
     }
-    else if (key.startsWith("Arrow") && event.target.role !== "slider" && !getScrollParent(event.target)) {
+    else if (key.startsWith("Arrow") && event.target.getAttribute("role") !== "slider" && !getScrollParent(event.target)) {
         if (key === "ArrowUp" || key === "ArrowDown") {
             updateVolumeOnKeyDown(key);
         }

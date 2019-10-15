@@ -91,6 +91,7 @@
         "valid-jsdoc": 2,
         "wrap-iife": [2, "inside"],
         "require-atomic-updates": 0,
-        "no-unsafe-finally": 0
+        "no-unsafe-finally": 0,
+        "no-constant-condition": 0
     }
 }

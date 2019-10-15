@@ -409,6 +409,18 @@ function handleSettingChange({ target }) {
     });
 }
 
+window.addEventListener("connectivity-status", ({ detail: status }) => {
+    const entriesElement = document.getElementById("js-pl-entries");
+
+    if (entriesElement) {
+        const syncBtns = entriesElement.querySelectorAll("[data-action=sync]");
+
+        syncBtns.forEach(element => {
+            element.disabled = !status;
+        });
+    }
+});
+
 export {
     createPlaylistEntry,
     updatePlaylistEntry,

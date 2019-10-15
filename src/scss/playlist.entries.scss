@@ -120,7 +120,7 @@
         color: $color-text;
     }
 
-    &:disabled {
+    &.spinner {
         position: relative;
 
         @include spinner {
