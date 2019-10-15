@@ -9,7 +9,7 @@
     user-select: none;
     cursor: default;
 
-    &:hover, &:focus-within, &.playing {
+    &:not(.disabled):hover, &:not(.disabled):focus-within, &:not(.disabled).playing {
         .list-item-index {
             opacity: 0;
         }
@@ -29,6 +29,10 @@
 
     &.playing {
         color: $color-accent;
+    }
+
+    &.disabled {
+        color: $color-text-dark;
     }
 
     &.hidden {

@@ -3,7 +3,7 @@ import { getTab, getVisiblePlaylistId } from "../tab.js";
 import { postMessageToWorker } from "../web-worker.js";
 import { togglePlayPauseBtn, getPlayPauseButtonIcon } from "../player/player.controls.js";
 import { getPlayerState } from "../player/player.js";
-import { getCurrentTrack, setPlaylistState, getPlaylistState, getActivePlaylistId } from "./playlist.js";
+import { getPlaylistArray, getCurrentTrack, setPlaylistState, getPlaylistState, getActivePlaylistId } from "./playlist.js";
 import { observePlaylist, reObservePlaylist, removePlaylistObserver } from "./playlist.element-observer.js";
 
 let trackElement = null;
@@ -37,8 +37,8 @@ function creatItemContent(item, id, type) {
     return type === "list" ? createListItemContent(item, id) : createGridItemContent(item, id);
 }
 
-function createListItemContainer({ index }) {
-    return `<li class="list-item track" data-index="${index}" tabindex="0"></li>`;
+function createListItemContainer({ index, player }) {
+    return `<li class="list-item track${player === "youtube" && !navigator.onLine ? " disabled" : ""}" data-index="${index}" tabindex="0"></li>`;
 }
 
 function createListItemContent(item, playlistId) {
@@ -73,8 +73,8 @@ function createList(id, items) {
     `;
 }
 
-function createGridItemContainer({ index }) {
-    return `<li class="grid-item track" data-index="${index}" tabindex="0"></li>`;
+function createGridItemContainer({ index, player }) {
+    return `<li class="grid-item track${player === "youtube" && !navigator.onLine ? " disabled" : ""}" data-index="${index}" tabindex="0"></li>`;
 }
 
 function createGridItemContent(item) {
@@ -262,6 +262,27 @@ function changePlaylistType(pl, type) {
     updatePlaylistView(pl);
     togglePlaylistTypeBtn(type);
 }
+
+window.addEventListener("connectivity-status", ({ detail: status }) => {
+    const playlists = getPlaylistArray();
+
+    playlists.forEach(playlist => {
+        const playlistElement = getPlaylistElement(playlist.id);
+        const { sortOrder } = getPlaylistState(playlist.id);
+
+        if (!playlistElement) {
+            return;
+        }
+        playlist.tracks.forEach(track => {
+            if (track.player === "youtube") {
+                const elementIndex = sortOrder.indexOf(track.index);
+                const element = playlistElement.children[elementIndex];
+
+                element.classList.toggle("disabled", !status);
+            }
+        });
+    });
+});
 
 export {
     getPlaylistElement,

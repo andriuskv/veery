@@ -3,6 +3,7 @@ import { updatePlaylist, createPlaylist } from "./playlist/playlist.js";
 import { initPlaylist } from "./playlist/playlist.manage.js";
 import { syncPlaylists } from "./playlist/playlist.entries.js";
 import { storedTrack } from "./player/player.js";
+import { emitConnectivityStatus } from "./player/player.view";
 
 const worker = new Worker("./ww.js");
 
@@ -14,6 +15,7 @@ worker.onmessage = function({ data: { action, payload } }) {
         syncPlaylists(payload.filter(pl => pl.syncOnInit));
         storedTrack.initTrack();
         showCurrentRoute();
+        emitConnectivityStatus();
     }
     else if (action === "update") {
         updatePlaylist(payload.id, payload);

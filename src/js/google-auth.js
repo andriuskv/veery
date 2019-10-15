@@ -9,12 +9,7 @@ let signedIn = false;
 let initialized = false;
 let initializing = false;
 
-async function changeGoogleAuthState(element) {
-    if (element.disabled) {
-        return;
-    }
-    element.disabled = true;
-
+async function changeGoogleAuthState() {
     try {
         if (!initialized) {
             await initGoogleAPI(true);
@@ -28,11 +23,10 @@ async function changeGoogleAuthState(element) {
         }
         else {
             await instance.signIn();
-            onSignIn(element, instance.currentUser.get());
+            onSignIn(instance.currentUser.get());
         }
     }
     catch (e) {
-        element.disabled = false;
         console.log(e);
     }
 }
@@ -41,9 +35,7 @@ async function initGoogleAPI(signIn = false) {
     if (initialized || initializing) {
         return signedIn;
     }
-    const element = document.getElementById("js-google-sign-in-btn");
     initializing = true;
-    element.disabled = true;
 
     try {
         await scriptLoader.load({ src: "https://apis.google.com/js/api.js" });
@@ -57,11 +49,11 @@ async function initGoogleAPI(signIn = false) {
         const instance = gapi.auth2.getAuthInstance();
 
         if (instance.isSignedIn.get()) {
-            onSignIn(element, instance.currentUser.get());
+            onSignIn(instance.currentUser.get());
         }
         else if (signIn) {
             await instance.signIn();
-            onSignIn(element, instance.currentUser.get());
+            onSignIn(instance.currentUser.get());
         }
         initialized = true;
         return signedIn;
@@ -71,16 +63,18 @@ async function initGoogleAPI(signIn = false) {
     }
     finally {
         initializing = false;
-        element.disabled = false;
     }
 }
 
-function onSignIn(element, currentUser) {
+function onSignIn(currentUser) {
+    const element = document.getElementById("js-google-sign-in-btn");
     signedIn = true;
+
     setGoogleUser(currentUser);
     element.remove();
     container.insertAdjacentHTML("afterbegin", `
-        <button id="js-google-panel-toggle-btn" class="btn btn-icon google-panel-toggle-btn">
+        <button id="js-google-panel-toggle-btn" class="btn btn-icon google-panel-toggle-btn"
+            data-disable>
             <img src="${user.image}" class="google-user-image" alt="">
         </button>
     `);
@@ -93,7 +87,7 @@ function onSignOut() {
     document.getElementById("js-google-panel-toggle-btn").remove();
     container.insertAdjacentHTML("beforeend", `
         <button id="js-google-sign-in-btn" class="btn btn-text"
-            data-item="google-sign-in">Sign In</button>
+            data-item="google-sign-in" data-disable>Sign In</button>
     `);
     removePanel();
     dispatchCustomEvent("google-sign-out");

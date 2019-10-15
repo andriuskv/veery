@@ -1,4 +1,4 @@
-import { getElementByAttr, dispatchCustomEvent } from "./../utils.js";
+import { getElementByAttr } from "./../utils.js";
 import { togglePanel } from "../panels.js";
 import { changeGoogleAuthState } from "../google-auth.js";
 import { showDropboxChooser } from "../dropbox.js";
@@ -38,8 +38,18 @@ const importSettings = (function() {
 
 function changeImportOptionState({ children }, state) {
     Array.from(children).forEach(element => {
+        let itemELement = null;
+
         if (element.hasAttribute("data-item")) {
-            element.disabled = state;
+            itemELement = element;
+        }
+        else if (element.querySelector("[data-item]")) {
+            itemELement = element.querySelector("[data-item]");
+        }
+
+        if (itemELement) {
+            itemELement.classList.toggle("spinner", state);
+            itemELement.disabled = state;
         }
     });
 }
@@ -54,6 +64,7 @@ function toggleStatusIndicator(id, state) {
 
     if (btn) {
         btn.disabled = state;
+        btn.classList.toggle("spinner", state);
     }
 }
 
@@ -213,24 +224,17 @@ function handleSettingChange({ target }) {
     importSettings.setSetting(id, "storePlaylist", target.checked);
 }
 
-async function handleYouTubeOptionClick({ attrValue, elementRef }) {
+async function handleYouTubeOptionClick(attrValue, optionElement) {
+    changeImportOptionState(optionElement, true);
+
     if (attrValue === "modal-toggle") {
-        elementRef.disabled = true;
         await fetchYoutubeUserPlaylists();
         createYoutubeModal();
-        elementRef.disabled = false;
     }
     else if (attrValue === "google-sign-in") {
-        dispatchCustomEvent("import", {
-            importing: true,
-            option: "youtube"
-        });
-        await changeGoogleAuthState(elementRef);
-        dispatchCustomEvent("import", {
-            importing: false,
-            option: "youtube"
-        });
+        await changeGoogleAuthState();
     }
+    changeImportOptionState(optionElement, false);
 }
 
 function getYoutubeUserPlaylistsTemplate() {
@@ -267,7 +271,7 @@ importOptionsElement.addEventListener("click", ({ currenTarget, target }) => {
     if (!element || element.elementRef.disabled) {
         return;
     }
-    const { attrValue } = getElementByAttr("data-option", target, currenTarget);
+    const { attrValue, elementRef: optionElement } = getElementByAttr("data-option", target, currenTarget);
 
     if (attrValue === "local") {
         showFilePicker(element.attrValue);
@@ -276,7 +280,7 @@ importOptionsElement.addEventListener("click", ({ currenTarget, target }) => {
         showDropboxChooser();
     }
     else if (attrValue === "youtube") {
-        handleYouTubeOptionClick(element);
+        handleYouTubeOptionClick(element.attrValue, optionElement);
     }
 });
 
@@ -292,6 +296,20 @@ window.addEventListener("import", ({ detail }) => {
 
     changeImportOptionState(element, importing);
     toggleStatusIndicator(playlistId, importing);
+});
+
+window.addEventListener("connectivity-status", ({ detail: status }) => {
+    if (!status) {
+        const b = document.getElementById("js-youtube-modal");
+
+        if (b) {
+            removeYoutubeModal(b);
+        }
+    }
+
+    importOptionsElement.querySelectorAll("[data-disable]").forEach(element => {
+        element.disabled = !status;
+    });
 });
 
 export {

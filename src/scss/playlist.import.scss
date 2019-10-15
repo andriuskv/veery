@@ -78,7 +78,7 @@
         }
     }
 
-    &:disabled {
+    &.spinner {
         @include spinner {
             margin-left: 8px;
         }
@@ -111,6 +111,10 @@
 
 .google-panel-toggle-btn {
     padding: 0 8px;
+
+    &:disabled {
+        opacity: 0.4;
+    }
 }
 
 .google-panel {
@@ -137,7 +141,7 @@
     font-weight: bold;
 }
 
-.google-sign-in-btn:disabled {
+.google-sign-in-btn.spinner {
     position: relative;
 
     @include spinner {

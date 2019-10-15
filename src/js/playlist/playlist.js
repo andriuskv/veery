@@ -17,6 +17,7 @@ function getPlaylistById(id) {
 
 function createPlaylist(pl) {
     playlistState[pl.id] = {
+        shuffled: false,
         sortOrder: []
     };
     playlists[pl.id] = {
@@ -129,7 +130,7 @@ function setPlaybackOrder(id, shuffle, firstTrackIndex = -1) {
     playlistState[id].shuffled = shuffle;
     playbackOrder = shuffle ? shuffleArray(trackIndexes) : trackIndexes;
 
-    if (firstTrackIndex >= 0) {
+    if (shuffle && firstTrackIndex >= 0) {
         swapFirstPlaybackOrderItem(firstTrackIndex);
     }
 

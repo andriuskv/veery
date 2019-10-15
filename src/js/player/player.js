@@ -33,6 +33,7 @@ import { updatePlaylistEntry } from "../playlist/playlist.entries.js";
 import { showTrackInfo, resetTrackInfo } from "./player.now-playing.js";
 import { parseMetadata } from "../local.js";
 import { postMessageToWorker } from "../web-worker.js";
+import { showPlayerMessage } from "./player.view.js";
 import * as nPlayer from "./player.native.js";
 import * as ytPlayer from "./player.youtube.js";
 
@@ -68,6 +69,7 @@ const storedTrack = (function() {
             removeTrack();
             return;
         }
+        setPlaybackOrder(playlistId, getSetting("shuffle"), track.index);
         playNewTrack(track, playlistId, { startTime: currentTime });
         updateTrackSlider(track, currentTime);
     }
@@ -187,7 +189,6 @@ function play(source, sourceValue, id) {
     const shuffle = getSetting("shuffle");
     const currentTrack = getCurrentTrack();
     const { shuffled } = getPlaylistState(id);
-    let alreadyShuffled = false;
 
     if (currentTrack) {
         toggleTrackPlayPauseBtn(true);
@@ -196,27 +197,56 @@ function play(source, sourceValue, id) {
         stopTrack(currentTrack);
     }
 
-    if (id !== getActivePlaylistId() || shuffled !== shuffle) {
-        alreadyShuffled = true;
-        setPlaybackOrder(id, shuffle);
-    }
-
     if (source === "index") {
         const { tracks } = getPlaylistById(id);
         const track = tracks[sourceValue];
 
-        if (alreadyShuffled) {
-            swapFirstPlaybackOrderItem(track.index);
-        }
-        else if (!alreadyShuffled && shuffle) {
-            setPlaybackOrder(id, shuffle, track.index);
-        }
+        setPlaybackOrder(id, shuffle, track.index);
         playNewTrack(track, id);
     }
     else if (source === "direction") {
-        const track = getNextTrack(id, sourceValue);
+        let track = null;
+        let swapFirstTrack = false;
+
+        if (!getPlaybackOrder().length || shuffled !== shuffle) {
+            setPlaybackOrder(id, shuffle);
+
+            if (shuffle) {
+                swapFirstTrack = true;
+            }
+        }
+
+        if (!navigator.onLine) {
+            const checkedTracks = [];
+
+            while (true) {
+                const tempTrack = getNextTrack(id, sourceValue === 0 ? 1 : sourceValue);
+
+                if (checkedTracks.includes(tempTrack.index)) {
+                    showPlayerMessage({
+                        body: "Can't play tracks from YouTube white offline"
+                    });
+                    break;
+                }
+
+                if (tempTrack.player === "youtube") {
+                    checkedTracks.push(tempTrack.index);
+                    setPlaybackIndex(tempTrack.index, id);
+                }
+                else {
+                    track = tempTrack;
+                    break;
+                }
+            }
+        }
+        else {
+            track = getNextTrack(id, sourceValue);
+        }
 
         if (track) {
+            if (swapFirstTrack) {
+                swapFirstPlaybackOrderItem(track.index);
+            }
             playNewTrack(track, id, { scrollToTrack: true });
         }
         else {
@@ -239,14 +269,19 @@ function playTrackFromElement({ currentTarget, detail, target }) {
     const element = getElementByAttr("data-btn", target, currentTarget);
     const trackElement = getElementByAttr("data-index", target, currentTarget);
 
+    if (trackElement && trackElement.elementRef.classList.contains("disabled")) {
+        return;
+    }
+
     if (detail === 2 && trackElement && !element) {
         play("index", trackElement.attrValue, id);
     }
     else if (element) {
         const index = parseInt(trackElement.attrValue, 10);
         const track = getCurrentTrack();
+        const playlistId = getActivePlaylistId();
 
-        if (!track || track.playlistId !== id || index !== track.index) {
+        if (!track || playlistId !== id || index !== track.index) {
             play("index", index, id);
         }
         else {
