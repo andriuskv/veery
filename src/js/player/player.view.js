@@ -1,4 +1,4 @@
-import { dispatchCustomEvent, removeElement } from "../utils.js";
+import { dispatchCustomEvent } from "../utils.js";
 
 function createMessageContainer() {
     const div = document.createElement("div");
@@ -15,26 +15,37 @@ function getMessageContainer() {
 }
 
 function removePlayerMessage() {
-    const element = getMessageContainer();
+    const container = getMessageContainer();
 
-    removeElement(element.lastElementChild);
+    if (container) {
+        const elements = [...container.children].reverse();
 
-    if (!element.childElementCount) {
-        removeElement(element);
+        for (const element of elements) {
+            if (!element.id) {
+                element.remove();
+
+                if (elements.length - 1 === 0) {
+                    container.remove();
+                }
+                break;
+            }
+        }
     }
 }
 
-function showPlayerMessage({ title, body }) {
+function showPlayerMessage({ title, body, id }) {
     const element = getMessageContainer();
 
     element.insertAdjacentHTML("afterBegin", `
-        <div class="player-message">
+        <div ${id ? `id=${id} ` : ""}class="player-message">
             ${title ? `<h3 class="player-message-title">${title}</h3>` : ""}
-            <p class="player-message-body">${body}</p>
+            <div class="player-message-body">${body}</div>
         </div>
     `);
 
-    setTimeout(removePlayerMessage, 6000);
+    if (!id) {
+        setTimeout(removePlayerMessage, 6000);
+    }
 }
 
 function showServiceWorkerMessage() {
