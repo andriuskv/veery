@@ -261,6 +261,16 @@ svg {
     font-weight: bold;
 }
 
+.upload-notice {
+    display: flex;
+    align-items: center;
+
+    img {
+        width: 20px;
+        margin-right: 8px;
+    }
+}
+
 .service-worker-message {
     display: flex;
 }

@@ -217,14 +217,83 @@ function selectLocalFiles(files) {
     addTracks("local", pl, supportedFiles, parseTracks);
 }
 
+function readFile(entry) {
+    return new Promise(resolve => {
+        entry.file(resolve);
+    });
+}
+
+function readDirectory(dir) {
+    return new Promise(resolve => {
+        const reader = dir.createReader();
+        const items = [];
+
+        function readEntries() {
+            reader.readEntries(async entries => {
+                if (entries.length > 0) {
+                    for (const entry of entries) {
+                        if (entry.isFile) {
+                            const file = await readFile(entry);
+                            items.push(file);
+                        }
+                        else if (entry.isDirectory) {
+                            const files = await readDirectory(entry);
+                            items.push(...files);
+                        }
+                    }
+                    // Only 100 entries can be read at a time, so call readEntries recursively
+                    // until entries.length becomes 0.
+                    readEntries();
+                } else {
+                    resolve(items);
+                }
+            });
+        }
+        readEntries();
+    });
+}
+
 window.addEventListener("drop", event => {
-    const { files } = event.dataTransfer;
+    const { files, items } = event.dataTransfer;
 
     event.preventDefault();
-    event.dataTransfer.dropEffect = "copy";
 
     if (files.length) {
-        selectLocalFiles([...files]);
+        if (items && items.length && items[0].webkitGetAsEntry) {
+            const result = [];
+            const promises = [];
+
+            showPlayerMessage({
+                id: "js-upload-notice",
+                body: `
+                    <div class="upload-notice">
+                        <img src="./assets/images/ring-alt.svg" alt="">
+                        <span>Uploading...</span>
+                    </div>
+                `
+            });
+
+            for (const item of items) {
+                const entry = item.webkitGetAsEntry();
+
+                if (entry.isDirectory) {
+                    promises.push(readDirectory(entry));
+                }
+                else if (entry.isFile) {
+                    result.push(item.getAsFile());
+                }
+            }
+            Promise.all(promises).then(items => {
+                selectLocalFiles([...items.flat().concat(result)]);
+            }).catch(e => {
+                console.log(e);
+            }).finally(() => {
+                document.getElementById("js-upload-notice").remove();
+            });
+        }
+        else {
+            selectLocalFiles([...files]);
+        }
     }
 });
 
