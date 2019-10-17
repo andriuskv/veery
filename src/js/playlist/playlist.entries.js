@@ -54,9 +54,10 @@ function getSyncBtn(id) {
     return null;
 }
 
-function getEntryBtn({ action, title, iconId }) {
+function getEntryBtn({ action, title, iconId, disabled }) {
     return `
-        <button class="btn btn-icon pl-entry-btn" data-action="${action}" title="${title}">
+        <button class="btn btn-icon pl-entry-btn" data-action="${action}"
+            title="${title}"${disabled ? " disabled" : ""}>
             ${getIcon({ iconId })}
         </button>
     `;
@@ -122,6 +123,7 @@ function createPlaylistEntry(pl) {
         </a>
     ` : "";
     const syncBtn = pl.url ? getEntryBtn({
+        disabled: !navigator.onLine,
         action: "sync",
         title: "Synchronize playlist",
         iconId: "sync"

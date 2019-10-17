@@ -7,7 +7,7 @@
     "start": "npm run dist && npm run watch & live-server dist",
     "build": "npm run dist && npm run webpack -- --env.prod",
     "watch": "npm run webpack -- --watch",
-    "dist": "rm -rf dist && mkdir dist && cp -R src/assets src/libs src/favicon.png src/ww.js dist",
+    "dist": "rm -rf dist && mkdir dist && cp -R src/manifest.json src/assets src/*.png src/favicon.ico src/libs src/ww.js dist",
     "webpack": "if which config/env; then source config/env; fi; webpack --progress --colors"
   },
   "author": "",
