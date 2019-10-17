@@ -300,13 +300,12 @@ window.addEventListener("import", ({ detail }) => {
 
 window.addEventListener("connectivity-status", ({ detail: status }) => {
     if (!status) {
-        const b = document.getElementById("js-youtube-modal");
+        const element = document.getElementById("js-youtube-modal");
 
-        if (b) {
-            removeYoutubeModal(b);
+        if (element) {
+            removeYoutubeModal(element);
         }
     }
-
     importOptionsElement.querySelectorAll("[data-disable]").forEach(element => {
         element.disabled = !status;
     });

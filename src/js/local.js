@@ -267,7 +267,7 @@ window.addEventListener("drop", event => {
                 id: "js-upload-notice",
                 body: `
                     <div class="upload-notice">
-                        <img src="./assets/images/ring-alt.svg" alt="">
+                        <img src="./assets/images/spinner.svg" alt="">
                         <span>Uploading...</span>
                     </div>
                 `

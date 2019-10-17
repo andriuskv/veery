@@ -33,7 +33,7 @@ module.exports = function(env = {}) {
             swSrc: "./src/sw.js",
             swDest: "./sw.js",
             globDirectory: "./dist",
-            globPatterns: ["./assets/images/*", "./libs/dexie.min.js", "./ww.js", "./favicon.png"]
+            globPatterns: ["./libs/dexie.min.js", "./ww.js", "./assets/images/*", "*.png", "*.ico"]
         }),
         new CleanWebpackPlugin({
             cleanOnceBeforeBuildPatterns: ["precache*"]
