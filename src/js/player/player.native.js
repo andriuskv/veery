@@ -1,8 +1,10 @@
 import { dispatchCustomEvent } from "../utils.js";
 import { stopPlayer, playNextTrack } from "./player.js";
+import { hidePlayPauseBtnSpinner } from "./player.controls.js";
 import { showPlayerMessage } from "./player.view.js";
-import { getNextTrack, getCurrentTrack, getActivePlaylistId } from "../playlist/playlist.js";
+import { getCurrentTrack } from "../playlist/playlist.js";
 
+const invalidFiles = [];
 let audioBlobURL;
 let audio;
 
@@ -14,14 +16,15 @@ function playTrack(track, volume, startTime) {
     };
 
     audio.onerror = function(error) {
-        const id = getActivePlaylistId();
         const track = getCurrentTrack();
-        const { name } = getNextTrack(id, 1);
 
-        if (track.name === name) {
+        if (invalidFiles.includes(track.name)) {
             stopPlayer(track);
+            invalidFiles.length = 0;
         }
         else {
+            hidePlayPauseBtnSpinner();
+            invalidFiles.push(track.name);
             playNextTrack();
         }
         showPlayerMessage({

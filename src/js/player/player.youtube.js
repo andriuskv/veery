@@ -159,7 +159,6 @@ function seekTo(currentTime) {
     }
 }
 
-
 export {
     playTrack,
     stopTrack,
