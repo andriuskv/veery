@@ -182,7 +182,7 @@ function playTrack() {
     }
 }
 
-function play(source, sourceValue, id) {
+function play(source, sourceValue, id, mode) {
     if (!id) {
         return;
     }
@@ -247,7 +247,7 @@ function play(source, sourceValue, id) {
             if (swapFirstTrack) {
                 swapFirstPlaybackOrderItem(track.index);
             }
-            playNewTrack(track, id, { scrollToTrack: true });
+            playNewTrack(track, id, { scrollToTrack: mode !== "auto" });
         }
         else {
             // If playlist is empty reset player
@@ -256,8 +256,8 @@ function play(source, sourceValue, id) {
     }
 }
 
-function playNextTrack() {
-    play("direction", 1, getActivePlaylistId());
+function playNextTrack(mode) {
+    play("direction", 1, getActivePlaylistId(), mode);
 }
 
 function playPreviousTrack() {
@@ -397,7 +397,7 @@ window.addEventListener("track-end", () => {
         playNewTrack(track, getActivePlaylistId());
         return;
     }
-    playNextTrack();
+    playNextTrack("auto");
 });
 
 export {

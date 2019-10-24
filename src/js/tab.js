@@ -41,9 +41,7 @@ function updatePlaylistTab(id) {
     if (!rendered) {
         renderPlaylist(pl);
     }
-    else {
-        scrollCurrentTrackIntoView(id);
-    }
+    scrollCurrentTrackIntoView(id);
 
     if (pl.type === "list" && media.matches) {
         changePlaylistType(pl, "grid");

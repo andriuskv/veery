@@ -143,7 +143,6 @@ function showCurrentTrack(id) {
 
     if (track && track.index !== -1) {
         setTrackElement(track.index, id);
-        scrollTrackIntoView(id);
     }
 }
 
