@@ -18,18 +18,18 @@
     "parse-audio-metadata": "^1.0.4"
   },
   "devDependencies": {
-    "@babel/core": "^7.6.4",
+    "@babel/core": "^7.7.2",
     "@babel/plugin-syntax-dynamic-import": "^7.2.0",
-    "@babel/preset-env": "^7.6.3",
-    "autoprefixer": "^9.6.5",
+    "@babel/preset-env": "^7.7.1",
+    "autoprefixer": "^9.7.1",
     "babel-eslint": "^10.0.3",
     "babel-loader": "^8.0.6",
     "clean-webpack-plugin": "^3.0.0",
-    "core-js": "^3.3.3",
+    "core-js": "^3.4.0",
     "css-loader": "^3.2.0",
     "css-mqpacker": "^7.0.0",
     "cssnano": "^4.1.10",
-    "eslint": "^6.5.1",
+    "eslint": "^6.6.0",
     "html-webpack-plugin": "^3.2.0",
     "live-server": "^1.2.1",
     "mini-css-extract-plugin": "^0.8.0",
@@ -39,7 +39,7 @@
     "style-loader": "^1.0.0",
     "terser-webpack-plugin": "^2.2.1",
     "webpack": "^4.41.2",
-    "webpack-cli": "^3.3.9",
+    "webpack-cli": "^3.3.10",
     "workbox-webpack-plugin": "^4.3.1"
   },
   "browserslist": [

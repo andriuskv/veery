@@ -5,6 +5,7 @@ import { togglePlayPauseBtn, getPlayPauseButtonIcon } from "../player/player.con
 import { getPlayerState } from "../player/player.js";
 import { getPlaylistArray, getCurrentTrack, setPlaylistState, getPlaylistState, getActivePlaylistId } from "./playlist.js";
 import { observePlaylist, reObservePlaylist, removePlaylistObserver } from "./playlist.element-observer.js";
+import { enableTrackSelection } from "./playlist.track-selection";
 
 let trackElement = null;
 
@@ -127,7 +128,7 @@ function getTrackInfo(track) {
     if (track.artist && track.title) {
         trackName = `
             <div class="track-title">${track.title}</div>
-            <div>${track.artist} ${track.album ? `- ${track.album}` : ""}</div>
+            <div class="track-artist">${track.artist} ${track.album ? `- ${track.album}` : ""}</div>
         `;
     }
     return `<div class="track-info">${trackName}</div> `;
@@ -167,6 +168,7 @@ function updatePlaylistView(pl) {
     if (pl.tracks.length) {
         showCurrentTrack(pl.id);
         reObservePlaylist(pl.id);
+        enableTrackSelection(pl);
     }
     else {
         removePlaylistObserver(pl.id);
