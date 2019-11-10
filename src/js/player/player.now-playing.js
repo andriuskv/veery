@@ -1,8 +1,12 @@
 import { getElementByAttr, removeElement, getImage, setElementIconAndTitle } from "../utils.js";
+import { toggleRoute } from "../router.js";
 import { togglePlaying } from "./player.js";
-import { getCurrentTrack } from "../playlist/playlist.js";
+import { getCurrentTrack, getActivePlaylistId } from "../playlist/playlist.js";
+import { scrollCurrentTrackIntoView } from "../playlist/playlist.view.js";
+import { getVisiblePlaylistId } from "../tab.js";
 
 const nowPlayingElement = document.getElementById("js-now-playing");
+const jumpToTrackBtn = document.getElementById("js-jump-to-track-btn");
 const mediaToggleBtn = document.getElementById("js-media-toggle-btn");
 const mediaElement = document.getElementById("js-media-container");
 let artwork = null;
@@ -71,7 +75,7 @@ function setArtwork(artwork = "./assets/images/album-art-placeholder.png") {
 function renderNowPlaying(track, artwork) {
     setArtwork(artwork);
     nowPlayingElement.classList.remove("inactive");
-    nowPlayingElement.insertAdjacentHTML("beforeend", getTrackInfo(track, "js-track-info"));
+    jumpToTrackBtn.insertAdjacentHTML("beforebegin", getTrackInfo(track, "js-track-info"));
 }
 
 function resetNowPlaying() {
@@ -134,6 +138,20 @@ function resetTrackInfo() {
     }
 }
 
+function jumpToTrack() {
+    const id = getActivePlaylistId();
+
+    if (id) {
+        if (id !== getVisiblePlaylistId()) {
+            toggleRoute(`playlist/${id}`);
+        }
+        else {
+            scrollCurrentTrackIntoView(id);
+        }
+    }
+}
+
+jumpToTrackBtn.addEventListener("click", jumpToTrack);
 mediaToggleBtn.addEventListener("click", toggleMedia);
 
 export {

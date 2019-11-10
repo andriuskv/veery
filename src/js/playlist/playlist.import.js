@@ -169,6 +169,7 @@ function handleImportFormSubmit(event) {
 
     if (url) {
         fetchYoutubeItem(url);
+        removeYoutubeModal(document.getElementById("js-youtube-modal"));
     }
     event.preventDefault();
 }
