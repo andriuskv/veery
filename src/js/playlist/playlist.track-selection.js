@@ -28,6 +28,7 @@ let trackElements = [];
 let intervalId = 0;
 let updating = false;
 let isMoveToVisible = false;
+let seletectTrackIndex = -1;
 
 function enableTrackSelection({ id, tracks }) {
     if (playlistElement) {
@@ -236,7 +237,8 @@ function update(ctrlKey) {
     });
 }
 
-function scrollDown(ctrlKey, playlistElement, { scrollHeight, height }) {
+function scrollDown(ctrlKey) {
+    const { scrollHeight, height } = playlistElementRect;
     playlistElement.scrollTop += 36;
     mousePos.y = playlistElement.scrollTop + height;
 
@@ -250,7 +252,7 @@ function scrollDown(ctrlKey, playlistElement, { scrollHeight, height }) {
     }
 }
 
-function scrollUp(ctrlKey, playlistElement) {
+function scrollUp(ctrlKey) {
     playlistElement.scrollTop -= 36;
     mousePos.y = playlistElement.scrollTop;
 
@@ -306,17 +308,18 @@ function onMousemove(event) {
         else {
             return;
         }
-        intervalId = setInterval(scrollDirection, 40, event.ctrlKey, playlistElement, playlistElementRect);
+        intervalId = setInterval(scrollDirection, 40, event.ctrlKey);
     }
 }
 
-function onMouseup({ target, ctrlKey }) {
+function onMouseup({ target, ctrlKey, shiftKey }) {
     if (intervalId) {
         stopScrolling();
     }
 
     if (selectionElement) {
         const elements = getSelectedElements();
+        seletectTrackIndex = -1;
 
         resetSelection();
 
@@ -331,14 +334,40 @@ function onMouseup({ target, ctrlKey }) {
         const element = getElementByAttr("data-index", target, playlistElement);
 
         if (element) {
-            selectTrackElement(element.elementRef, ctrlKey);
+            const newSeletectTrackIndex = parseInt(element.attrValue, 10);
+
+            if (!shiftKey) {
+                seletectTrackIndex = newSeletectTrackIndex;
+                selectTrackElement(element.elementRef, ctrlKey);
+            }
+            else if (seletectTrackIndex >= 0 && seletectTrackIndex !== newSeletectTrackIndex) {
+                selectTrackElementRange(seletectTrackIndex, newSeletectTrackIndex, ctrlKey);
+            }
         }
         else if (!ctrlKey) {
+            seletectTrackIndex = -1;
             deselectTrackElements();
         }
     }
     window.removeEventListener("mousemove", onMousemove);
     window.removeEventListener("mouseup", onMouseup);
+}
+
+function selectTrackElementRange(start, end, ctrlKey) {
+    const { children } = getPlaylistElement(getVisiblePlaylistId());
+
+    if (start > end) {
+        [start, end] = [end, start];
+    }
+    const elementRange = [...children].slice(start, end + 1);
+
+    if (!ctrlKey) {
+        removeSelectedElementClass();
+    }
+
+    for (const element of elementRange) {
+        element.classList.add("selected");
+    }
 }
 
 function addClickHandler() {
@@ -455,6 +484,29 @@ function removeSelectedTracks() {
         }
     });
 }
+
+window.addEventListener("keydown", event => {
+    const modifierKeyPressed = event.shiftKey || event.altKey || event.metaKey;
+    const id = getVisiblePlaylistId();
+
+    if (event.target instanceof HTMLInputElement || modifierKeyPressed || !id) {
+        return;
+    }
+    const playlistElement = getPlaylistElement(id);
+
+    if (!playlistElement || !playlistElement.children.length) {
+        return;
+    }
+
+    if (event.ctrlKey && event.key === "a") {
+        event.preventDefault();
+        showMoveTo();
+
+        for (const element of playlistElement.children) {
+            element.classList.add("selected");
+        }
+    }
+});
 
 export {
     enableTrackSelection,
