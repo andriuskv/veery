@@ -93,11 +93,14 @@ function showNowPlaying(track, artwork) {
 }
 
 function updateTrackMedia(player, artwork) {
-    const element = document.getElementById("js-media-image");
+    const element = document.getElementById("js-media-image-container");
 
     if (player === "native") {
+        const [background, image] = element.children;
+
         element.classList.remove("hidden");
-        element.src = artwork;
+        image.src = artwork;
+        background.style.backgroundImage = `url(${artwork})`;
     }
     else {
         element.classList.add("hidden");
