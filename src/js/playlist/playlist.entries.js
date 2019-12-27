@@ -191,7 +191,7 @@ function getPlaylistThumbnailImages(tracks) {
         if (images.length === 4) {
             break;
         }
-        else if (picture !== placeholder) {
+        else if (picture !== placeholder && !images.includes(picture)) {
             images.push(picture);
         }
     }

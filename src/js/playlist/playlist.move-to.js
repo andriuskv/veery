@@ -66,7 +66,8 @@ function moveTracks(playlistId) {
     const { tracks } = getVisiblePlaylist();
     const pl = getPlaylistById(playlistId);
     const selectedTracks = tracks
-        .filter(track => indexes.includes(track.index) && !findTrack(playlistId, track.name));
+        .filter(track => indexes.includes(track.index) && !findTrack(playlistId, track.name))
+        .map(track => ({ ...track }));
 
     addTracksToPlaylist(pl, selectedTracks);
     toggleRoute(`playlist/${pl.id}`);

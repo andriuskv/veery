@@ -1,12 +1,11 @@
 import parseAudioMetadata from "parse-audio-metadata";
 import { formatTime, dispatchCustomEvent } from "./utils.js";
-import { getPlaylistById, createPlaylist, getCurrentTrack } from "./playlist/playlist.js";
+import { getPlaylistById, createPlaylist } from "./playlist/playlist.js";
 import { addTracksToPlaylist } from "./playlist/playlist.manage.js";
 import { importSettings } from "./playlist/playlist.import.js";
 import { creatItemContent, getTrackElement } from "./playlist/playlist.view.js";
 import { updatePlaylistEntry } from "./playlist/playlist.entries.js";
 import { showPlayerMessage } from "./player/player.view.js";
-import { showTrackInfo } from "./player/player.now-playing.js";
 import { getVisiblePlaylistId } from "./tab.js";
 import { postMessageToWorker } from "./web-worker.js";
 
@@ -184,14 +183,9 @@ async function updateTrackInfo() {
 
         if (id === getVisiblePlaylistId()) {
             const element = getTrackElement(track.index, id);
-            const currentTrack = getCurrentTrack();
 
-            if (element) {
+            if (element && element.childElementCount) {
                 element.innerHTML = creatItemContent(track, id, type);
-            }
-
-            if (currentTrack && currentTrack.name === track.name) {
-                showTrackInfo(track);
             }
         }
     }
