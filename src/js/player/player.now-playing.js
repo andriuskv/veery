@@ -97,7 +97,10 @@ function updateTrackMedia(player, artwork) {
 
     if (player === "native") {
         const [background, image] = element.children;
+        const isPlaceholder = artwork.includes("placeholder");
 
+        background.classList.toggle("hidden", isPlaceholder);
+        image.classList.toggle("shadow", !isPlaceholder);
         element.classList.remove("hidden");
         image.src = artwork;
         background.style.backgroundImage = `url(${artwork})`;

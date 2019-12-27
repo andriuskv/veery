@@ -36,6 +36,7 @@ function enableTrackSelection({ id, tracks }) {
     }
 
     if (tracks.length) {
+        seletectTrackIndex = -1;
         playlistElement = getTab(id);
         playlistElement.addEventListener("mousedown", onMousedown);
     }
@@ -336,7 +337,7 @@ function onMouseup({ target, ctrlKey, shiftKey }) {
         if (element) {
             const newSeletectTrackIndex = parseInt(element.attrValue, 10);
 
-            if (!shiftKey) {
+            if (!shiftKey || seletectTrackIndex === -1) {
                 seletectTrackIndex = newSeletectTrackIndex;
                 selectTrackElement(element.elementRef, ctrlKey);
             }
@@ -463,6 +464,7 @@ function removeSelectedTracks() {
     const indexes = getElementIndexes(elements);
     const { tracksToKeep, tracksToRemove } = separatePlaylistTracks(pl.tracks, indexes);
     pl.tracks = tracksToKeep;
+    seletectTrackIndex = -1;
 
     removeElements(elements);
     resetTrackIndexes(pl);
