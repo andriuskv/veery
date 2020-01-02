@@ -1,7 +1,6 @@
 import {
     removeElement,
     getElementByAttr,
-    getImage,
     shuffleArray,
     dispatchCustomEvent,
     getIcon
@@ -10,6 +9,7 @@ import { editSidebarEntryTitle } from "../sidebar.js";
 import { postMessageToWorker } from "../web-worker.js";
 import { togglePanel, removePanel } from "../panels.js";
 import { initGoogleAPI } from "../google-auth.js";
+import { getArtwork } from "../artworks";
 import { fetchYoutubeItem } from "../youtube.js";
 import { getPlaylistById, getPlaylistDuration } from "./playlist.js";
 import { deletePlaylist } from "./playlist.manage.js";
@@ -81,7 +81,7 @@ function getPlaylistThumbnail(tracks) {
         <div class="pl-entry-thumbnail _${images.length}">
             ${images.map(image => `
                 <div class="pl-entry-thumb-image-container">
-                    <img src="${getImage(image)}" class="pl-entry-thumb-image" alt="">
+                    <img src="${image}" class="pl-entry-thumb-image" alt="">
                 </div>
             `).join("")}
         </div>
@@ -100,13 +100,16 @@ function updatePlaylistThumbnail(entry, tracks) {
     entry.insertAdjacentHTML("afterbegin", getPlaylistThumbnail(tracks));
 }
 
-function updatePlaylistEntry(id, tracks) {
+function updatePlaylistEntry(id, tracks, updateThumbnail = true) {
     const { children } = document.getElementById("js-pl-entries");
 
     for (const entry of children) {
         if (id === entry.getAttribute("data-entry-id")) {
             updatePlaylistStats(entry, tracks);
-            updatePlaylistThumbnail(entry, tracks);
+
+            if (updateThumbnail) {
+                updatePlaylistThumbnail(entry, tracks);
+            }
             break;
         }
     }
@@ -179,27 +182,32 @@ function createPlaylistEntry(pl) {
 }
 
 function getPlaylistThumbnailImages(tracks) {
-    const placeholder = "assets/images/album-art-placeholder.png";
-    const images = [];
+  const placeholder = "assets/images/album-art-placeholder.png";
 
-    if (!tracks.length) {
-        return [placeholder];
+  if (!tracks.length) {
+    return [placeholder];
+  }
+  const tracksWithArtwork = tracks.reduce((tracks, track) => {
+    if (track.artworkId) {
+      tracks.push(track);
     }
-    const pictures = shuffleArray(tracks.map(track => track.picture));
+    return tracks;
+  }, []);
 
-    for (const picture of pictures) {
-        if (images.length === 4) {
-            break;
-        }
-        else if (picture !== placeholder && !images.includes(picture)) {
-            images.push(picture);
-        }
-    }
+  if (!tracksWithArtwork.length) {
+    return [placeholder];
+  }
+  const ids = [];
 
-    if (!images.length) {
-        return [placeholder];
+  for (const track of shuffleArray(tracksWithArtwork)) {
+    if (ids.length === 4) {
+      break;
     }
-    return images;
+    else if (!ids.includes(track.artworkId)) {
+      ids.push(track.artworkId);
+    }
+  }
+  return ids.map(id => getArtwork({ artworkId: id }));
 }
 
 function createSettingsPanel(id, { element, pl }) {
@@ -264,13 +272,16 @@ function editPlaylistTitle({ currentTarget }) {
         pl.title = newTitle;
 
         editSidebarEntryTitle(playlistId, newTitle);
-        postMessageToWorker({
-            action: "change-title",
-            playlist: {
-                _id: pl._id,
-                title: newTitle
-            }
-        });
+
+        if (pl.storePlaylist) {
+            postMessageToWorker({
+                action: "change-title",
+                playlist: {
+                    id: pl.id,
+                    title: newTitle
+                }
+            });
+        }
     }
 }
 
@@ -402,13 +413,15 @@ function handleSettingChange({ target }) {
 
     pl.syncOnInit = target.checked;
 
-    postMessageToWorker({
-        action: "change-sync",
-        playlist: {
-            _id: pl._id,
-            syncOnInit: pl.syncOnInit
-        }
-    });
+    if (pl.storePlaylist) {
+        postMessageToWorker({
+            action: "change-sync",
+            playlist: {
+                id: pl.id,
+                syncOnInit: pl.syncOnInit
+            }
+        });
+    }
 }
 
 window.addEventListener("connectivity-status", ({ detail: status }) => {

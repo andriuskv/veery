@@ -17,6 +17,7 @@ import { getSetting } from "../settings.js";
 import { postMessageToWorker } from "../web-worker.js";
 import { createSidebarEntry, removeSidebarEntry } from "../sidebar.js";
 import { stopPlayer } from "../player/player.js";
+import { getArtworks } from "../artworks";
 
 function initPlaylist(pl) {
     setPlaylistState(pl.id, { initialized: true });
@@ -27,7 +28,7 @@ function initPlaylist(pl) {
     addRoute(`playlist/${pl.id}`);
 }
 
-function deletePlaylist({ id, _id }) {
+function deletePlaylist({ id, storePlaylist }) {
     if (isPlaylistActive(id)) {
         stopPlayer(getCurrentTrack());
     }
@@ -35,13 +36,16 @@ function deletePlaylist({ id, _id }) {
     removePlaylist(id);
     removeSidebarEntry(id);
     removeRoute(id);
-    postMessageToWorker({
-        action: "remove",
-        playlist: { _id }
-    });
+
+    if (storePlaylist) {
+        postMessageToWorker({
+            action: "delete-playlist",
+            playlist: { id }
+        });
+    }
 }
 
-function addTracksToPlaylist(pl, tracks) {
+function addTracksToPlaylist(pl, tracks, { type } = {}) {
     const { initialized, rendered } = getPlaylistState(pl.id);
 
     if (tracks.length) {
@@ -61,13 +65,17 @@ function addTracksToPlaylist(pl, tracks) {
         if (rendered) {
             updatePlaylistView(pl);
         }
-        postMessageToWorker({
-            action: "add-tracks",
-            playlist: {
-                _id: pl._id,
-                tracks
-            }
-        });
+
+        if (pl.storePlaylist) {
+            postMessageToWorker({
+                action: type === "sync" ? "update-tracks" : "add-tracks",
+                artworks: getArtworks(),
+                playlist: {
+                    id: pl.id,
+                    tracks
+                }
+            });
+        }
     }
     else {
         initPlaylist(pl);
@@ -78,24 +86,21 @@ function addTracksToPlaylist(pl, tracks) {
 
         if (pl.storePlaylist) {
             postMessageToWorker({
-                action: "add",
+                action: "create-playlist",
+                artworks: getArtworks(),
                 playlist: pl
             });
         }
     }
 }
 
-function clearPlaylistTracks({ id, _id, tracks }) {
+function clearPlaylistTracks({ id, tracks }) {
     const { rendered } = getPlaylistState(id);
     const element = getPlaylistElement(id);
 
     if (rendered && element) {
         element.innerHTML = "";
     }
-    postMessageToWorker({
-        action: "remove-tracks",
-        playlist: { _id, tracks }
-    });
     tracks.length = 0;
 }
 
@@ -109,7 +114,7 @@ function onNewPlaylistFormSubmit(event) {
 
     initPlaylist(pl);
     postMessageToWorker({
-        action: "add",
+        action: "create-playlist",
         playlist: pl
     });
     event.preventDefault();

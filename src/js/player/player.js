@@ -28,12 +28,12 @@ import { getElementByAttr } from "../utils.js";
 import { getVisiblePlaylistId } from "../tab.js";
 import { getSetting } from "../settings.js";
 import { showActiveIcon, removeActiveIcon } from "../sidebar.js";
-import { scrollTrackIntoView, toggleTrackPlayPauseBtn, resetCurrentTrackElement, getTrackElement, setTrackElement, creatItemContent } from "../playlist/playlist.view.js";
-import { updatePlaylistEntry } from "../playlist/playlist.entries.js";
+import { scrollTrackIntoView, toggleTrackPlayPauseBtn, resetCurrentTrackElement, setTrackElement } from "../playlist/playlist.view.js";
 import { showTrackInfo, resetTrackInfo } from "./player.now-playing.js";
-import { parseMetadata } from "../local.js";
 import { postMessageToWorker } from "../web-worker.js";
 import { showPlayerMessage } from "./player.view.js";
+import { updateTrackWithMetadata } from "../local";
+import { getArtworks } from "../artworks";
 import * as nPlayer from "./player.native.js";
 import * as ytPlayer from "./player.youtube.js";
 
@@ -102,17 +102,21 @@ async function beforeTrackStart(track, playlistId, { scrollToTrack, startTime })
     const { rendered } = getPlaylistState(playlistId);
 
     if (track.needsMetadata) {
+        const pl = getPlaylistById(playlistId);
+
         showPlayPauseBtnSpinner();
-        await parseMetadata(track);
-        const { _id, tracks, type } = getPlaylistById(playlistId);
-        const trackElement = getTrackElement(track.index, playlistId);
-        trackElement.innerHTML = creatItemContent(track, playlistId, type);
-        updatePlaylistEntry(document.querySelector("[data-entry-id=local-files]"), tracks);
-        postMessageToWorker({
-            action: "update-tracks",
-            playlist: { _id, tracks }
-        });
-        delete track.needsMetadata;
+        await updateTrackWithMetadata(track, pl);
+
+        if (pl.storePlaylist) {
+            postMessageToWorker({
+                action: "update-tracks",
+                artworks: getArtworks(),
+                playlist: {
+                    id: pl.id,
+                    tracks: pl.tracks
+                }
+            });
+        }
     }
     showTrackInfo(track);
     showTrackDuration(track.duration, track.durationInSeconds);

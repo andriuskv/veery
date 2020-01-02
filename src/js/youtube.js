@@ -3,6 +3,7 @@ import { addTracksToPlaylist, clearPlaylistTracks } from "./playlist/playlist.ma
 import { getPlaylistById, createPlaylist, updatePlaylist } from "./playlist/playlist.js";
 import { showPlayerMessage } from "./player/player.view.js";
 import { initGoogleAPI, getAccessToken, getGoogleUser } from "./google-auth.js";
+import { setArtwork } from "./artworks";
 
 let userPlaylists = null;
 
@@ -82,17 +83,22 @@ function filterInvalidItems(items) {
 }
 
 function parseItems(items) {
-    return items.map(track => ({
-        id: track.snippet.resourceId.videoId,
-        durationInSeconds: track.durationInSeconds,
-        duration: formatTime(track.durationInSeconds),
-        name: track.snippet.title,
-        title: track.snippet.title,
-        artist: "",
-        album: "",
-        picture: track.snippet.thumbnails.medium.url,
-        player: "youtube"
-    }));
+  return items.map(track => {
+    const id = track.snippet.resourceId.videoId;
+
+    setArtwork(id, { url: track.snippet.thumbnails.medium.url });
+    return {
+      id,
+      durationInSeconds: track.durationInSeconds,
+      duration: formatTime(track.durationInSeconds),
+      name: track.snippet.title,
+      title: track.snippet.title,
+      artist: "",
+      album: "",
+      artworkId: id,
+      player: "youtube"
+    };
+  });
 }
 
 function handleError({ code, message }) {
@@ -181,7 +187,7 @@ async function addPlaylist(url, id, type) {
     if (!pl.title) {
         updatePlaylist(pl.id, await getPlaylistTitleAndStatus(id));
     }
-    addTracksToPlaylist(pl, filterDuplicateTracks(tracks, pl.tracks));
+    addTracksToPlaylist(pl, filterDuplicateTracks(tracks, pl.tracks), { type: "sync" });
 }
 
 function parseUrl(url) {
