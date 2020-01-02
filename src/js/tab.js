@@ -1,8 +1,8 @@
 import {
-    renderPlaylist,
-    changePlaylistType,
-    togglePlaylistTypeBtn,
-    scrollCurrentTrackIntoView
+  renderPlaylist,
+  changePlaylistType,
+  togglePlaylistTypeBtn,
+  scrollCurrentTrackIntoView
 } from "./playlist/playlist.view.js";
 import { removeElementClass, getElementByAttr } from "./utils.js";
 import { getSidebarEntry } from "./sidebar.js";
@@ -19,114 +19,114 @@ const media = matchMedia("(max-width: 540px)");
 let visiblePlaylistId = "";
 
 function setVisiblePlaylistId(id = "") {
-    visiblePlaylistId = id;
+  visiblePlaylistId = id;
 }
 
 function getVisiblePlaylistId() {
-    return visiblePlaylistId;
+  return visiblePlaylistId;
 }
 
 function getVisiblePlaylist() {
-    return getPlaylistById(visiblePlaylistId);
+  return getPlaylistById(visiblePlaylistId);
 }
 
 function getTab(id) {
-    return document.getElementById(`js-tab-${id}`);
+  return document.getElementById(`js-tab-${id}`);
 }
 
 function updatePlaylistTab(id) {
-    const pl = getPlaylistById(id);
-    const { rendered } = getPlaylistState(id);
+  const pl = getPlaylistById(id);
+  const { rendered } = getPlaylistState(id);
 
-    if (!rendered) {
-        renderPlaylist(pl);
-    }
-    scrollCurrentTrackIntoView(id);
+  if (!rendered) {
+    renderPlaylist(pl);
+  }
+  scrollCurrentTrackIntoView(id);
 
-    if (pl.type === "list" && media.matches) {
-        changePlaylistType(pl, "grid");
-    }
-    else {
-        togglePlaylistTypeBtn(pl.type);
-    }
-    setSortOptions(pl);
-    enableTrackSelection(pl);
-    resetFilteredPlaylist();
+  if (pl.type === "list" && media.matches) {
+    changePlaylistType(pl, "grid");
+  }
+  else {
+    togglePlaylistTypeBtn(pl.type);
+  }
+  setSortOptions(pl);
+  enableTrackSelection(pl);
+  resetFilteredPlaylist();
 
-    if (pl.tracks.length) {
-        getTab(id).addEventListener("click", playTrackFromElement);
-    }
+  if (pl.tracks.length) {
+    getTab(id).addEventListener("click", playTrackFromElement);
+  }
 }
 
 headerElement.addEventListener("click", ({ currentTarget, target }) => {
-    const element = getElementByAttr("data-item", target, currentTarget);
+  const element = getElementByAttr("data-item", target, currentTarget);
 
-    if (!element) {
-        return;
-    }
-    const pl = getVisiblePlaylist();
-    const item = element.attrValue;
+  if (!element) {
+    return;
+  }
+  const pl = getVisiblePlaylist();
+  const item = element.attrValue;
 
-    if (item === "move-to") {
-        togglePanel("js-move-to-panel", createMoveToPanel, {
-            playlistId: pl.id,
-            element: element.elementRef
-        });
-    }
-    else if ((item === "list" || item === "grid") && item !== pl.type) {
-        changePlaylistType(pl, item);
-    }
-    else if (item === "sorting") {
-        togglePanel("js-sort-panel", createSortPanel, {
-            sortedBy: pl.sortedBy,
-            element: element.elementRef
-        });
-    }
-    else if (item === "order" && pl.sortedBy) {
-        changePlaylistOrder(pl);
-    }
-    else if (item === "sidebar") {
-        document.getElementById("js-sidebar-container").classList.remove("hidden");
-    }
+  if (item === "move-to") {
+    togglePanel("js-move-to-panel", createMoveToPanel, {
+      playlistId: pl.id,
+      element: element.elementRef
+    });
+  }
+  else if ((item === "list" || item === "grid") && item !== pl.type) {
+    changePlaylistType(pl, item);
+  }
+  else if (item === "sorting") {
+    togglePanel("js-sort-panel", createSortPanel, {
+      sortedBy: pl.sortedBy,
+      element: element.elementRef
+    });
+  }
+  else if (item === "order" && pl.sortedBy) {
+    changePlaylistOrder(pl);
+  }
+  else if (item === "sidebar") {
+    document.getElementById("js-sidebar-container").classList.remove("hidden");
+  }
 });
 
 window.addEventListener("route-change", ({ detail: { isPlaylistTab, tabId } }) => {
-    const element = getTab(visiblePlaylistId);
+  const element = getTab(visiblePlaylistId);
 
-    removeElementClass(".sidebar-entry.active", "active");
-    removeElementClass(".tab.active", "active");
-    setVisiblePlaylistId(isPlaylistTab ? tabId : "");
+  removeElementClass(".sidebar-entry.active", "active");
+  removeElementClass(".tab.active", "active");
+  setVisiblePlaylistId(isPlaylistTab ? tabId : "");
 
-    if (element) {
-        element.removeEventListener("click", playTrackFromElement);
-    }
+  if (element) {
+    element.removeEventListener("click", playTrackFromElement);
+  }
 
-    if (isPlaylistTab) {
-        updatePlaylistTab(tabId);
-        headerElement.classList.add("playlist-tab-active");
-    }
-    else {
-        headerElement.classList.remove("playlist-tab-active");
-    }
-    updateDocumentTitle(tabId);
-    getTab(tabId).classList.add("active");
+  if (isPlaylistTab) {
+    updatePlaylistTab(tabId);
+    headerElement.classList.add("playlist-tab-active");
+  }
+  else {
+    headerElement.classList.remove("playlist-tab-active");
+  }
+  updateDocumentTitle(tabId);
+  getTab(tabId).classList.add("active");
 
-    if (tabId !== "not-found") {
-        getSidebarEntry(tabId).classList.add("active");
-    }
+  if (tabId !== "not-found") {
+    getSidebarEntry(tabId).classList.add("active");
+  }
 });
 
 media.onchange = function({ matches }) {
-    const pl = getVisiblePlaylist();
+  const pl = getVisiblePlaylist();
 
-    if (matches && pl && pl.type === "list") {
-        changePlaylistType(pl, "grid");
-    }
+  if (matches && pl && pl.type === "list") {
+    changePlaylistType(pl, "grid");
+  }
 };
 
 export {
-    setVisiblePlaylistId,
-    getVisiblePlaylistId,
-    getVisiblePlaylist,
-    getTab
+  setVisiblePlaylistId,
+  getVisiblePlaylistId,
+  getVisiblePlaylist,
+  getTab
 };

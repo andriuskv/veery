@@ -1,99 +1,99 @@
 .playlist-view {
-    padding: 4px;
+  padding: 4px;
 }
 
 .track {
-    --background-color: #{$background-color-darkest};
+  --background-color: #{$background-color-darkest};
 
-    background-color: var(--background-color);
-    user-select: none;
-    cursor: default;
+  background-color: var(--background-color);
+  user-select: none;
+  cursor: default;
 
-    &:not(.disabled):hover, &:not(.disabled):focus-within, &:not(.disabled).playing {
-        .list-item-index {
-            opacity: 0;
-        }
-
-        .track-play-pause-btn {
-            display: flex;
-        }
-
-        .artwork {
-            opacity: 0.4;
-        }
+  &:not(.disabled):hover, &:not(.disabled):focus-within, &:not(.disabled).playing {
+    .list-item-index {
+      opacity: 0;
     }
 
-    &:hover, &:focus-within {
-        --background-color: #{$background-color-dark};
+    .track-play-pause-btn {
+      display: flex;
     }
 
-    &.playing {
-        color: $color-accent;
+    .artwork {
+      opacity: 0.4;
     }
+  }
 
-    &.disabled {
-        color: $color-text-dark;
-    }
+  &:hover, &:focus-within {
+    --background-color: #{$background-color-dark};
+  }
 
-    &.hidden {
-        display: none;
-    }
+  &.playing {
+    color: $color-accent;
+  }
 
-    &.selected {
-        --background-color: #{$background-color-light};
-     }
- }
+  &.disabled {
+    color: $color-text-dark;
+  }
+
+  &.hidden {
+    display: none;
+  }
+
+  &.selected {
+    --background-color: #{$background-color-light};
+  }
+}
 
 .track-play-pause-btn {
-    @include center-absolutely;
+  @include center-absolutely;
 
-    display: none;
-    width: auto;
-    height: auto;
-    padding: 2px;
-    border: 2px solid currentColor;
-    border-radius: 50%;
-    color: inherit;
+  display: none;
+  width: auto;
+  height: auto;
+  padding: 2px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  color: inherit;
 
-    &.show-spinner {
-        @include spinner {
-            @include center-absolutely;
+  &.show-spinner {
+    @include spinner {
+      @include center-absolutely;
 
-            width: 100%;
-            height: 100%;
-        }
+      width: 100%;
+      height: 100%;
     }
- }
+  }
+}
 
 .selection-area {
-    z-index: 1;
-    position: absolute;
-    border: 1px solid $color-accent;
-    background-color: transparentize($color-accent, 0.8);
-    will-change: top, left, width, height;
+  z-index: 1;
+  position: absolute;
+  border: 1px solid $color-accent;
+  background-color: transparentize($color-accent, 0.8);
+  will-change: top, left, width, height;
 
-    & ~ .playlist-view .track:hover {
-        &:not(.selected) {
-            background-color: transparent;
-        }
-
-        &:not(.playing) {
-            .track-play-pause-btn {
-                display: none;
-            }
-
-            .list-item-index, .artwork {
-                opacity: 1;
-            }
-        }
+  & ~ .playlist-view .track:hover {
+    &:not(.selected) {
+      background-color: transparent;
     }
+
+    &:not(.playing) {
+      .track-play-pause-btn {
+        display: none;
+      }
+
+      .list-item-index, .artwork {
+        opacity: 1;
+      }
+    }
+  }
 }
 
 .playlist-message {
-    @include center-absolutely;
+  @include center-absolutely;
 
-    min-width: 300px;
-    margin: 0;
-    font-size: 28px;
-    text-align: center;
+  min-width: 300px;
+  margin: 0;
+  font-size: 28px;
+  text-align: center;
 }

@@ -1,66 +1,66 @@
 .move-to-panel {
-    top: 36px;
-    width: 240px;
-    padding: 8px 0;
+  top: 36px;
+  width: 240px;
+  padding: 8px 0;
 }
 
 .move-to-panel-title {
-    padding: 8px 0 16px 16px;
-    border-bottom: 1px solid $background-color-dark;
+  padding: 8px 0 16px 16px;
+  border-bottom: 1px solid $background-color-dark;
 }
 
 .move-to-list {
-    overflow-y: auto;
-    max-height: 200px;
-    padding-bottom: 8px;
-    margin-bottom: 8px;
-    border-bottom: 1px solid $background-color-dark;
+  overflow-y: auto;
+  max-height: 200px;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid $background-color-dark;
 
-    &::-webkit-scrollbar-thumb {
-        background: $background-color-dark;
-    }
+  &::-webkit-scrollbar-thumb {
+    background: $background-color-dark;
+  }
 }
 
 .move-to-list-item-btn,
 .move-to-new-pl-btn {
-    width: 100%;
+  width: 100%;
 
-    &:hover {
-        background-color: $background-color-light;
-        color: $color-text;
-    }
+  &:hover {
+    background-color: $background-color-light;
+    color: $color-text;
+  }
 }
 
 .move-to-list-item-btn {
-    @include text-truncate;
+  @include text-truncate;
 
-    padding: 8px 10px;
-    text-align: left;
-    font-weight: normal;
+  padding: 8px 10px;
+  text-align: left;
+  font-weight: normal;
 }
 
 .move-to-new-pl-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 6px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
 
-    svg {
-        width: 24px;
-        height: 24px;
-        margin-right: 4px;
-    }
+  svg {
+    width: 24px;
+    height: 24px;
+    margin-right: 4px;
+  }
 }
 
 .move-to-form {
-    display: flex;
-    padding: 4px 0;
-    margin-left: 8px;
-    margin-right: 8px;
+  display: flex;
+  padding: 4px 0;
+  margin-left: 8px;
+  margin-right: 8px;
 
-    .input {
-        flex-grow: 1;
-        min-width: 0;
-        margin-right: 8px;
-    }
+  .input {
+    flex-grow: 1;
+    min-width: 0;
+    margin-right: 8px;
+  }
 }

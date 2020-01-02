@@ -1,188 +1,188 @@
 .sidebar-container {
-    z-index: 2;
+  z-index: 2;
 
-    @include breakpoint-small {
-        z-index: 3;
-        overflow: hidden;
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: calc(100% - var(--controls-height));
-        background-color: $background-color-dark-80;
-        transition: 0.1s opacity, 0.1s visibility;
+  @include breakpoint-small {
+    z-index: 3;
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: calc(100% - var(--controls-height));
+    background-color: $background-color-dark-80;
+    transition: 0.1s opacity, 0.1s visibility;
 
-        &.hidden {
-            opacity: 0;
-            visibility: hidden;
-            transition-delay: 0.1s;
+    &.hidden {
+      opacity: 0;
+      visibility: hidden;
+      transition-delay: 0.1s;
 
-            .sidebar {
-                transform: translateX(calc(-100% - 10px));
-            }
-        }
+      .sidebar {
+        transform: translateX(calc(-100% - 10px));
+      }
     }
+  }
 }
 
 .sidebar {
-    display: flex;
-    flex-direction: column;
-    width: 200px;
-    height: 100%;
-    background-color: $background-color-dark;
-    box-shadow: 1px 0 4px $color-black-10;
-    user-select: none;
+  display: flex;
+  flex-direction: column;
+  width: 200px;
+  height: 100%;
+  background-color: $background-color-dark;
+  box-shadow: 1px 0 4px $color-black-10;
+  user-select: none;
 
-    @include breakpoint-small {
-        transform: translateX(0);
-        transition: 0.2s transform;
-    }
+  @include breakpoint-small {
+    transform: translateX(0);
+    transition: 0.2s transform;
+  }
 }
 
 .sidebar-header {
-    position: relative;
-    flex-shrink: 0;
-    height: 120px;
-    background-image: url("./assets/images/logo.png");
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
+  position: relative;
+  flex-shrink: 0;
+  height: 120px;
+  background-image: url("./assets/images/logo.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 
-    h1 {
-        opacity: 0;
-    }
+  h1 {
+    opacity: 0;
+  }
 
-    @include sidebar-height-breakpoint {
-        height: 40px;
-        margin: 8px 0;
-    }
+  @include sidebar-height-breakpoint {
+    height: 40px;
+    margin: 8px 0;
+  }
 }
 
 .online-status {
-    position: absolute;
-    top: 30px;
-    right: 16px;
-    display: none;
-    color: $color-text-dark;
-    font-style: italic;
-    font-size: 13px;
+  position: absolute;
+  top: 30px;
+  right: 16px;
+  display: none;
+  color: $color-text-dark;
+  font-style: italic;
+  font-size: 13px;
 
-    &.visible {
-        display: block;
-    }
+  &.visible {
+    display: block;
+  }
 }
 
 .sidebar-nav {
-    display: flex;
-    flex-direction: column;
-    height: calc(100% - 120px);
+  display: flex;
+  flex-direction: column;
+  height: calc(100% - 120px);
 
-    @include sidebar-height-breakpoint {
-        height: calc(100% - 56px);
-    }
+  @include sidebar-height-breakpoint {
+    height: calc(100% - 56px);
+  }
 }
 
 .sidebar-section-title-container {
-    position: relative;
-    padding-top: 16px;
-    padding-bottom: 16px;
-    margin-top: 8px;
-    border-top: 1px solid $background-color-light;
-    text-align: center;
+  position: relative;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  margin-top: 8px;
+  border-top: 1px solid $background-color-light;
+  text-align: center;
 }
 
 .sidebar-section-title {
-    color: $color-text-dark;
-    font-size: 13px;
-    font-weight: bold;
-    letter-spacing: 1px;
+  color: $color-text-dark;
+  font-size: 13px;
+  font-weight: bold;
+  letter-spacing: 1px;
 }
 
 .sidebar-form-container {
-    @include center-vertically;
+  @include center-vertically;
 
-    z-index: 3;
-    right: 8px;
+  z-index: 3;
+  right: 8px;
 }
 
 .sidebar-form-toggle-btn {
-    display: block;
+  display: block;
 }
 
 .sidebar-form {
-    top: 24px;
-    left: 0;
+  top: 24px;
+  left: 0;
 
-    @include breakpoint-smallest {
-        transform: translateX(-50%);
-    }
+  @include breakpoint-smallest {
+    transform: translateX(-50%);
+  }
 }
 
 .sidebar-form-input-container {
-    display: flex;
+  display: flex;
 }
 
 .sidebar-form-input {
-    width: 160px;
-    margin-right: 8px;
+  width: 160px;
+  margin-right: 8px;
 }
 
 .sidebar-entries {
-    overflow-y: auto;
-    flex-grow: 1;
+  overflow-y: auto;
+  flex-grow: 1;
 }
 
 .sidebar-entry {
-    --background-color: #{$background-color-dark};
+  --background-color: #{$background-color-dark};
 
-    position: relative;
-    background-color: var(--background-color);
+  position: relative;
+  background-color: var(--background-color);
 
-    &.active {
-        color: $color-accent;
+  &.active {
+    color: $color-accent;
+  }
+
+  &:hover {
+    --background-color: #{$background-color-light};
+  }
+
+  &.show-spinner {
+    @include spinner {
+      @include center-vertically;
+
+      right: 5px;
+      width: 26px;
+      height: 26px;
     }
-
-    &:hover {
-        --background-color: #{$background-color-light};
-    }
-
-    &.show-spinner {
-        @include spinner {
-            @include center-vertically;
-
-            right: 5px;
-            width: 26px;
-            height: 26px;
-        }
-    }
+  }
 }
 
 .sidebar-link {
-    @include text-truncate;
+  @include text-truncate;
 
-    display: block;
-    padding: 12px 8px;
-    color: inherit;
-    text-align: center;
+  display: block;
+  padding: 12px 8px;
+  color: inherit;
+  text-align: center;
 }
 
 .sidebar-home-link {
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    padding: 10px 8px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 10px 8px;
 
-    svg {
-        margin-right: 4px;
-    }
+  svg {
+    margin-right: 4px;
+  }
 }
 
 .active-playlist-icon {
-    @include center-vertically;
+  @include center-vertically;
 
-    right: 8px;
-    box-shadow: -2px 0 4px 2px var(--background-color);
-    background-color: inherit;
-    fill: $color-text;
-    pointer-events: none;
+  right: 8px;
+  box-shadow: -2px 0 4px 2px var(--background-color);
+  background-color: inherit;
+  fill: $color-text;
+  pointer-events: none;
 }

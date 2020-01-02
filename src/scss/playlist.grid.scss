@@ -1,29 +1,29 @@
 .grid-view {
-    --min-grid-item-width: 320px;
+  --min-grid-item-width: 320px;
 
-    display: grid;
-    grid-gap: 4px;
-    grid-template-columns: repeat(auto-fill, minmax(var(--min-grid-item-width), 1fr));
+  display: grid;
+  grid-gap: 4px;
+  grid-template-columns: repeat(auto-fill, minmax(var(--min-grid-item-width), 1fr));
 
-    @include breakpoint-small {
-        --min-grid-item-width: 302px;
-    }
+  @include breakpoint-small {
+    --min-grid-item-width: 302px;
+  }
 }
 
 .grid-item {
-    display: flex;
-    align-items: center;
-    height: 60px;
-    padding-right: 8px;
+  display: flex;
+  align-items: center;
+  height: 60px;
+  padding-right: 8px;
 }
 
 .grid-item-thumbnail {
-    width: 60px;
-    height: 100%;
+  width: 60px;
+  height: 100%;
 }
 
 .grid-item-duration {
-    margin-left: 8px;
-    color: $color-text-dark;
-    font-size: 13px;
+  margin-left: 8px;
+  color: $color-text-dark;
+  font-size: 13px;
 }

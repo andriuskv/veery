@@ -1,54 +1,54 @@
-import { removeElement, isOutsideElement } from "./utils.js";
+import { isOutsideElement } from "./utils.js";
 
 let visiblePanel = null;
 
 function removePanel() {
-    window.removeEventListener("click", handleClick, true);
-    removeElement(visiblePanel.element);
-    visiblePanel = null;
+  window.removeEventListener("click", handleClick, true);
+  visiblePanel.element.remove();
+  visiblePanel = null;
 }
 
 function createPanel(id, panelCreationCallback, params = {}) {
-    panelCreationCallback(id, params);
-    visiblePanel = {
-        id,
-        element: document.getElementById(id),
-        removeOnClick: params.removeOnClick,
-        initiator: params.element
-    };
-    window.addEventListener("click", handleClick, true);
+  panelCreationCallback(id, params);
+  visiblePanel = {
+    id,
+    element: document.getElementById(id),
+    removeOnClick: params.removeOnClick,
+    initiator: params.element
+  };
+  window.addEventListener("click", handleClick, true);
 }
 
 function togglePanel(id, panelCreationCallback, params) {
-    if (visiblePanel) {
-        const panelId = visiblePanel.id;
+  if (visiblePanel) {
+    const panelId = visiblePanel.id;
 
-        removePanel();
+    removePanel();
 
-        if (panelId !== id) {
-            createPanel(id, panelCreationCallback, params);
-        }
+    if (panelId !== id) {
+      createPanel(id, panelCreationCallback, params);
     }
-    else {
-        createPanel(id, panelCreationCallback, params);
-    }
+  }
+  else {
+    createPanel(id, panelCreationCallback, params);
+  }
 }
 
 function handleClick({ target }) {
-    if (visiblePanel.removeOnClick) {
-        removePanel();
-        return;
-    }
-    const { element, initiator } = visiblePanel;
-    const isOutsidePanel = isOutsideElement(target, element);
-    const isOutsideInitiator = initiator ? isOutsideElement(target, initiator) : false;
+  if (visiblePanel.removeOnClick) {
+    removePanel();
+    return;
+  }
+  const { element, initiator } = visiblePanel;
+  const isOutsidePanel = isOutsideElement(target, element);
+  const isOutsideInitiator = initiator ? isOutsideElement(target, initiator) : false;
 
-    if (isOutsidePanel && isOutsideInitiator) {
-        removePanel();
-    }
+  if (isOutsidePanel && isOutsideInitiator) {
+    removePanel();
+  }
 }
 
 export {
-    removePanel,
-    togglePanel
+  removePanel,
+  togglePanel
 };
