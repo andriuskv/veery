@@ -21,14 +21,6 @@ function changePlaylistSorting(pl, sortBy) {
     pl.sortedBy = sortBy;
 
     setSortOrder(pl);
-    postMessageToWorker({
-        action: "change-sorting",
-        playlist: {
-            order : pl.order,
-            _id: pl._id,
-            sortedBy: sortBy
-        }
-    });
     updateCurrentTrackIndex(pl.id);
     updatePlaylistView(pl);
 
@@ -36,6 +28,17 @@ function changePlaylistSorting(pl, sortBy) {
         const { children } = getPlaylistElement(pl.id);
 
         filterTracks(pl.id, pl.tracks, children, value);
+    }
+
+    if (pl.storePlaylist) {
+        postMessageToWorker({
+            action: "change-sorting",
+            playlist: {
+                order : pl.order,
+                id: pl.id,
+                sortedBy: sortBy
+            }
+        });
     }
 }
 

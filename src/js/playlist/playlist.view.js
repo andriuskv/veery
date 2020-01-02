@@ -1,8 +1,9 @@
-import { removeElement, getImage, getIcon } from "../utils.js";
+import { removeElement, getIcon } from "../utils.js";
 import { getTab, getVisiblePlaylistId } from "../tab.js";
 import { postMessageToWorker } from "../web-worker.js";
 import { togglePlayPauseBtn, getPlayPauseButtonIcon } from "../player/player.controls.js";
 import { getPlayerState } from "../player/player.js";
+import { getArtwork } from "../artworks";
 import { getPlaylistArray, getCurrentTrack, setPlaylistState, getPlaylistState, getActivePlaylistId } from "./playlist.js";
 import { observePlaylist, reObservePlaylist, removePlaylistObserver } from "./playlist.element-observer.js";
 import { enableTrackSelection } from "./playlist.track-selection";
@@ -86,7 +87,7 @@ function createGridItemContent(item) {
             <button class="btn btn-icon track-play-pause-btn artwork-container-btn" data-btn="play" title="${title}">
                 ${getIcon({ iconId: id })}
             </button>
-            <img src="${getImage(item.picture)}" class="artwork" alt="">
+            <img src="${getArtwork(item)}" class="artwork" alt="">
         </div>
         ${getTrackInfo(item)}
         <div class="grid-item-duration">${item.duration}</div>
@@ -253,15 +254,18 @@ function togglePlaylistTypeBtn(type) {
 function changePlaylistType(pl, type) {
     pl.type = type;
 
-    postMessageToWorker({
-        action: "change-type",
-        playlist: {
-            _id: pl._id,
-            type
-        }
-    });
     updatePlaylistView(pl);
     togglePlaylistTypeBtn(type);
+
+    if (pl.storePlaylist) {
+        postMessageToWorker({
+            action: "change-type",
+            playlist: {
+                id: pl.id,
+                type
+            }
+        });
+    }
 }
 
 window.addEventListener("connectivity-status", ({ detail: status }) => {

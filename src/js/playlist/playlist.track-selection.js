@@ -478,13 +478,16 @@ function removeSelectedTracks() {
         disableTrackSelection();
         updatePlaylistView(pl);
     }
-    postMessageToWorker({
-        action: "remove-tracks",
-        playlist: {
-            _id: pl._id,
-            tracks: tracksToRemove
-        }
-    });
+
+    if (pl.storePlaylist) {
+        postMessageToWorker({
+            action: "remove-tracks",
+            playlist: {
+                id: pl.id,
+                tracks: tracksToRemove
+            }
+        });
+    }
 }
 
 window.addEventListener("keydown", event => {

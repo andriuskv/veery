@@ -97,10 +97,6 @@ function dispatchCustomEvent(eventName, data) {
     window.dispatchEvent(event);
 }
 
-function getImage(image) {
-    return typeof image === "object" ? URL.createObjectURL(image) : image;
-}
-
 function setElementIconAndTitle(element, { id, title }) {
     element.setAttribute("title", title);
     element.querySelector("use").setAttribute("href", `#${id}`);
@@ -141,7 +137,6 @@ export {
     isOutsideElement,
     formatTime,
     dispatchCustomEvent,
-    getImage,
     setElementIconAndTitle,
     shuffleArray,
     getIcon

@@ -6,10 +6,9 @@ import { importSettings } from "./playlist/playlist.import.js";
 import { creatItemContent, getTrackElement } from "./playlist/playlist.view.js";
 import { updatePlaylistEntry } from "./playlist/playlist.entries.js";
 import { showPlayerMessage } from "./player/player.view.js";
+import { getArtworks, setArtwork, hashFile, hashString } from "./artworks";
 import { getVisiblePlaylistId } from "./tab.js";
 import { postMessageToWorker } from "./web-worker.js";
-
-const placeholderImgUrl = "assets/images/album-art-placeholder.png";
 
 function removeFileType(fileName) {
     return fileName.slice(0, fileName.lastIndexOf("."));
@@ -56,9 +55,7 @@ function filterDuplicateTracks(tracks, existingTracks) {
 }
 
 async function fetchTrackAlbum(track) {
-    const isPlaceholder = track.picture === placeholderImgUrl;
-
-    if (track.album && !isPlaceholder) {
+    if (track.album && track.artworkId) {
         return;
     }
     try {
@@ -74,14 +71,15 @@ async function fetchTrackAlbum(track) {
                 track.album = title;
             }
 
-            if (isPlaceholder && image) {
+            if (!track.artworkId && image) {
                 const url = image[image.length - 1]["#text"];
 
                 if (url) {
                     const { origin, pathname } = new URL(url);
                     const [imageName] = pathname.split("/").slice(-1);
-
-                    track.picture = `${origin}/i/u/${imageName}`;
+                    const hash = await hashString(`${origin}/i/u/${imageName}`);
+                    track.artworkId = hash;
+                    setArtwork(hash, { url: `${origin}/i/u/${imageName}` });
                 }
             }
         }
@@ -98,7 +96,6 @@ function parseTracks(tracks) {
         title: track.name,
         artist: "",
         album: "",
-        picture: placeholderImgUrl,
         durationInSeconds: 0,
         duration: "",
         player: "native"
@@ -151,13 +148,18 @@ async function addTracks(importOption, pl, files, parseTracks) {
 
 async function parseMetadata(track) {
     const { artist, title, album, duration, picture } = await parseAudioMetadata(track.audioTrack);
+    const hash = await hashFile(picture);
 
     track.title = title || track.name;
     track.artist = artist || "";
     track.album = album || "";
     track.durationInSeconds = duration;
-    track.picture = picture || placeholderImgUrl;
     track.duration = formatTime(duration);
+
+    if (hash) {
+        track.artworkId = hash;
+        setArtwork(hash, { file: picture });
+    }
     await fetchTrackAlbum(track);
 }
 
@@ -168,34 +170,45 @@ async function updateTrackInfo() {
         return;
     }
     const track = pl.tracks.find(track => track.needsMetadata);
-    const { _id, id, tracks, type } = pl;
 
     if (!track) {
-        updatePlaylistEntry(id, tracks);
-        postMessageToWorker({
-            action: "update-tracks",
-            playlist: { _id, tracks }
-        });
+        updatePlaylistEntry(pl.id, pl.tracks);
+
+        if (pl.storePlaylist) {
+            postMessageToWorker({
+                action: "update-tracks",
+                artworks: getArtworks(),
+                playlist: {
+                    id: pl.id,
+                    tracks: pl.tracks
+                }
+            });
+        }
         return;
     }
     try {
-        await parseMetadata(track);
-
-        if (id === getVisiblePlaylistId()) {
-            const element = getTrackElement(track.index, id);
-
-            if (element && element.childElementCount) {
-                element.innerHTML = creatItemContent(track, id, type);
-            }
-        }
+        await updateTrackWithMetadata(track, pl);
     }
     catch (error) {
         console.log(error);
     }
     finally {
-        delete track.needsMetadata;
         requestIdleCallback(updateTrackInfo);
     }
+}
+
+async function updateTrackWithMetadata(track, { id, type, tracks }) {
+    delete track.needsMetadata;
+    await parseMetadata(track);
+
+    if (id === getVisiblePlaylistId()) {
+        const element = getTrackElement(track.index, id);
+
+        if (element && element.childElementCount) {
+            element.innerHTML = creatItemContent(track, id, type);
+        }
+    }
+    updatePlaylistEntry(id, tracks, false);
 }
 
 function selectLocalFiles(files) {
@@ -298,5 +311,5 @@ window.addEventListener("dragover", event => {
 export {
     addTracks,
     selectLocalFiles,
-    parseMetadata
+    updateTrackWithMetadata
 };

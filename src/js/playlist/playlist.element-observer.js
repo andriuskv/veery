@@ -10,15 +10,6 @@ function handleIntersectingEntry(entry) {
     entry.innerHTML = creatItemContent(track, id, type);
 }
 
-function cleanEntry(entry) {
-    const artwork = entry.querySelector(".artwork");
-
-    if (artwork) {
-        URL.revokeObjectURL(artwork.src);
-    }
-    entry.innerHTML = "";
-}
-
 function callback(entries) {
     entries.forEach(({ isIntersecting, target }) => {
         const isEmpty = !target.childElementCount;
@@ -27,7 +18,7 @@ function callback(entries) {
             handleIntersectingEntry(target);
         }
         else if (!isIntersecting && !isEmpty && !target.contains(document.activeElement)) {
-            cleanEntry(target);
+            target.innerHTML = "";
         }
     });
 }

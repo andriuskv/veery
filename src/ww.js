@@ -2,87 +2,97 @@
 
 importScripts("./libs/dexie.min.js");
 
-const db = new Dexie("playlists");
+const db = new Dexie("veery");
+db.version(1).stores({ playlists: "id", artworks: "id" });
 
-db.version(1).stores({ playlists: "++_id" });
+(async function init() {
+  const [playlists, artworks] = await Promise.all([db.playlists.toArray(), db.artworks.toArray()]);
 
-db.playlists.toArray().then(playlists => {
-    postMessage({
-        action: "init",
-        payload: playlists
-    });
-});
+  postMessage({ artworks, playlists });
+})();
 
 function getPlaylist(id) {
-    return db.playlists.where("_id").equals(id);
+  return db.playlists.where("id").equals(id);
 }
 
-function addPlaylist(playlist) {
-    db.playlists.put(playlist).then(() => {
-        postMessage({
-            action: "update",
-            payload: {
-                _id: playlist._id,
-                id: playlist.id
-            }
-        });
-    });
+function createPlaylist(playlist) {
+  db.playlists.put(playlist);
 }
 
-function addTracks({ _id, tracks }) {
-    getPlaylist(_id).modify((_, ref) => {
-        ref.value.tracks = ref.value.tracks.concat(tracks);
-    });
+function addTracks({ id, tracks }) {
+  getPlaylist(id).modify((_, ref) => {
+    ref.value.tracks = ref.value.tracks.concat(tracks);
+  });
 }
 
-function updateTracks({ _id, tracks }) {
-    getPlaylist(_id).modify((_, ref) => {
-        ref.value.tracks = tracks;
-    });
+function updateTracks({ id, tracks }) {
+  getPlaylist(id).modify((_, ref) => {
+    ref.value.tracks = tracks;
+  });
 }
 
-function removeTracks(id, tracks) {
-    getPlaylist(id).modify((_, ref) => {
-        ref.value.tracks = ref.value.tracks.filter(track => {
-            for (const localTrack of tracks) {
-                if (localTrack.name === track.name) {
-                    return false;
-                }
-            }
-            return true;
-        });
+function removeTracks({ id, tracks }) {
+  getPlaylist(id).modify((_, ref) => {
+    ref.value.tracks = ref.value.tracks.filter(track => {
+      return !tracks.some(({ name }) => name === track.name);
     });
+  });
 }
 
-function updatePlaylistProps(id, props) {
-    getPlaylist(id).modify((value, ref) => {
-        Object.keys(props).forEach(key => {
-            ref.value[key] = props[key];
-        });
+function updatePlaylistProps(playlist) {
+  getPlaylist(playlist.id).modify((_, ref) => {
+    Object.keys(playlist).forEach(key => {
+      ref.value[key] = playlist[key];
     });
+  });
 }
 
-self.onmessage = function({ data: { action, playlist } }) {
-    db.transaction("rw", db.playlists, () => {
-        if (action === "add") {
-            addPlaylist(playlist);
+async function syncArtworks() {
+  const [artworks, playlists] = await Promise.all([ db.artworks.toArray(), db.playlists.toArray()]);
+  const occurences = playlists.reduce((tracks, pl) => tracks.concat(pl.tracks), [])
+    .map(track => track.artworkId)
+    .reduce((occurences, id) => {
+      occurences[id] = occurences[id] ? occurences[id] + 1 : 1;
+      return occurences;
+    }, {});
+  const orphans = artworks.filter(artwork => !occurences[artwork.id]).map(artwork => artwork.id);
+
+  db.artworks.bulkDelete(orphans);
+}
+
+self.onmessage = function({ data: { action, artworks, playlist } }) {
+  db.transaction("rw", db.artworks, db.playlists, () => {
+    if (action === "create-playlist") {
+      createPlaylist(playlist);
+    }
+    else if (action === "delete-playlist") {
+      getPlaylist(playlist.id).delete();
+    }
+    else if (action === "add-tracks") {
+      addTracks(playlist);
+    }
+    else if (action === "update-tracks") {
+      updateTracks(playlist);
+    }
+    else if (action === "remove-tracks") {
+      removeTracks(playlist);
+    }
+    else {
+      updatePlaylistProps(playlist);
+    }
+
+    if (artworks) {
+      db.artworks.bulkPut(Object.keys(artworks).map(key => {
+        const item = artworks[key];
+
+        if (item.file) {
+          delete item.url;
         }
-        else if (action === "remove") {
-            getPlaylist(playlist._id).delete();
-        }
-        else if (action === "add-tracks") {
-            addTracks(playlist);
-        }
-        else if (action === "update-tracks") {
-            updateTracks(playlist);
-        }
-        else if (action === "remove-tracks") {
-            removeTracks(playlist._id, playlist.tracks);
-        }
-        else {
-            updatePlaylistProps(playlist._id, playlist);
-        }
-    }).catch(e => {
-        console.log(e);
-    });
+        return item;
+      }));
+    }
+    syncArtworks();
+  }).catch(e => {
+    console.log(e);
+  });
 };
