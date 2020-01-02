@@ -44,19 +44,19 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "libs/dexie.min.js"
   },
   {
-    "revision": "6e3ce11da41445d6c16f",
+    "revision": "4fd24057c0b35deac700",
     "url": "main.css"
   },
   {
-    "revision": "6e3ce11da41445d6c16f",
+    "revision": "4fd24057c0b35deac700",
     "url": "main.js"
   },
   {
-    "revision": "2ec6dec0472262c925d6",
+    "revision": "74a9bdaec545c8590e61",
     "url": "vendor.js"
   },
   {
-    "revision": "8fac9c0c51a60fb49c4c031d4c961f50",
+    "revision": "9d6676e8d95a8786bb94e8bfe7e66f7f",
     "url": "ww.js"
   }
 ]);
