@@ -1,148 +1,148 @@
 .tabs {
-    overflow: hidden;
+  overflow: hidden;
 
-    @include breakpoint-small {
-        grid-column: 1 / 3;
-    }
+  @include breakpoint-small {
+    grid-column: 1 / 3;
+  }
 }
 
 .tab-header {
-    z-index: 2;
-    position: relative;
-    display: none;
-    align-items: center;
-    height: 40px;
-    padding: 8px;
+  z-index: 2;
+  position: relative;
+  display: none;
+  align-items: center;
+  height: 40px;
+  padding: 8px;
 
-    &.playlist-tab-active {
-        display: flex;
-        background-color: $background-color-dark;
-        box-shadow: 0 1px 4px $color-black-10;
+  &.playlist-tab-active {
+    display: flex;
+    background-color: $background-color-dark;
+    box-shadow: 0 1px 4px $color-black-10;
 
-        .playlist-tab-header-items {
-            display: flex;
-        }
+    .playlist-tab-header-items {
+      display: flex;
     }
+  }
 
-    @include breakpoint-small {
-        display: flex;
-        background-color: $background-color-dark;
-        box-shadow: 0 1px 4px $color-black-10;
-    }
+  @include breakpoint-small {
+    display: flex;
+    background-color: $background-color-dark;
+    box-shadow: 0 1px 4px $color-black-10;
+  }
 }
 
 .sidebar-show-btn {
-    display: none;
+  display: none;
 
-    @include breakpoint-small {
-        display: block;
-    }
+  @include breakpoint-small {
+    display: block;
+  }
 
-    @include breakpoint-smallest  {
-        margin-right: 8px;
-    }
+  @include breakpoint-smallest  {
+    margin-right: 8px;
+  }
 }
 
 .playlist-tab-header-items {
-    display: none;
-    justify-content: flex-end;
-    align-items: center;
-    flex-grow: 1;
-    margin-left: auto;
+  display: none;
+  justify-content: flex-end;
+  align-items: center;
+  flex-grow: 1;
+  margin-left: auto;
 }
 
 .playlist-tab-header-separator {
-    display: none;
-    width: 1px;
-    height: 24px;
-    margin-left: 8px;
-    margin-right: 8px;
-    background-color: $background-color-light;
+  display: none;
+  width: 1px;
+  height: 24px;
+  margin-left: 8px;
+  margin-right: 8px;
+  background-color: $background-color-light;
 }
 
 .playlist-tab-header-item + .playlist-tab-header-separator {
-    display: block;
+  display: block;
 }
 
 .filter-input-container {
-    position: relative;
-    width: 100px;
-    box-shadow: 0 0 0 1px $background-color-light;
-    transition: 0.2s width;
+  position: relative;
+  width: 100px;
+  box-shadow: 0 0 0 1px $background-color-light;
+  transition: 0.2s width;
 
-    &.active {
-        width: 200px;
+  &.active {
+    width: 200px;
 
-        @include breakpoint-smallest {
-            width: 100%;
-            transition-delay: 0.1s;
-        }
+    @include breakpoint-smallest {
+      width: 100%;
+      transition-delay: 0.1s;
     }
+  }
 }
 
 .filter-input-icon {
-    @include center-vertically;
+  @include center-vertically;
 
-    left: 4px;
-    fill: $color-text-dark;
-    pointer-events: none;
+  left: 4px;
+  fill: $color-text-dark;
+  pointer-events: none;
 }
 
 .filter-input {
-    user-select: none;
-    width: 100%;
-    padding: 4px 24px 4px 26px;
+  user-select: none;
+  width: 100%;
+  padding: 4px 24px 4px 26px;
 }
 
 .clear-input-btn {
-    @include center-vertically;
+  @include center-vertically;
 
-    right: 2px;
-    display: none;
-    background-color: $background-color-darkest;
+  right: 2px;
+  display: none;
+  background-color: $background-color-darkest;
 
-    &.visible {
-        display: block;
-    }
+  &.visible {
+    display: block;
+  }
 }
 
 .playlist-type-btns {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 
-    @include breakpoint-smallest {
-        display: none;
+  @include breakpoint-smallest {
+    display: none;
 
-        & + .playlist-tab-header-separator {
-            display: none;
-        }
+    & + .playlist-tab-header-separator {
+      display: none;
     }
+  }
 }
 
 .list-type-btn {
-    margin-right: 8px;
+  margin-right: 8px;
 }
 
 .tab {
-    backface-visibility: hidden;
-    position: relative;
-    display: none;
-    height: calc(100% - 40px);
-    overflow-y: auto;
+  backface-visibility: hidden;
+  position: relative;
+  display: none;
+  height: calc(100% - 40px);
+  overflow-y: auto;
 
-    &.active {
-        display: block;
-        will-change: scroll-position;
-    }
+  &.active {
+    display: block;
+    will-change: scroll-position;
+  }
 }
 
 .tab-title {
-    padding-top: 20px;
-    margin-top: 0;
-    margin-bottom: 20px;
-    text-align: center;
+  padding-top: 20px;
+  margin-top: 0;
+  margin-bottom: 20px;
+  text-align: center;
 }
 
 .tab-not-found-title {
-    @include center-absolutely;
+  @include center-absolutely;
 }

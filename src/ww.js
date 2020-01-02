@@ -15,10 +15,6 @@ function getPlaylist(id) {
   return db.playlists.where("id").equals(id);
 }
 
-function createPlaylist(playlist) {
-  db.playlists.put(playlist);
-}
-
 function addTracks({ id, tracks }) {
   getPlaylist(id).modify((_, ref) => {
     ref.value.tracks = ref.value.tracks.concat(tracks);
@@ -49,13 +45,13 @@ function updatePlaylistProps(playlist) {
 
 async function syncArtworks() {
   const [artworks, playlists] = await Promise.all([ db.artworks.toArray(), db.playlists.toArray()]);
-  const occurences = playlists.reduce((tracks, pl) => tracks.concat(pl.tracks), [])
+  const occurrences = playlists.reduce((tracks, pl) => tracks.concat(pl.tracks), [])
     .map(track => track.artworkId)
-    .reduce((occurences, id) => {
-      occurences[id] = occurences[id] ? occurences[id] + 1 : 1;
-      return occurences;
+    .reduce((occurrences, id) => {
+      occurrences[id] = occurrences[id] ? occurrences[id] + 1 : 1;
+      return occurrences;
     }, {});
-  const orphans = artworks.filter(artwork => !occurences[artwork.id]).map(artwork => artwork.id);
+  const orphans = artworks.filter(artwork => !occurrences[artwork.id]).map(artwork => artwork.id);
 
   db.artworks.bulkDelete(orphans);
 }
@@ -63,7 +59,7 @@ async function syncArtworks() {
 self.onmessage = function({ data: { action, artworks, playlist } }) {
   db.transaction("rw", db.artworks, db.playlists, () => {
     if (action === "create-playlist") {
-      createPlaylist(playlist);
+      db.playlists.put(playlist);
     }
     else if (action === "delete-playlist") {
       getPlaylist(playlist.id).delete();

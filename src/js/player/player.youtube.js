@@ -16,153 +16,153 @@ let args = null;
 let stateUpdated = false;
 
 function onPlayerStateChange({ data: state }) {
-    const track = getCurrentTrack();
+  const track = getCurrentTrack();
 
-    if (!track || track.player !== "youtube") {
-        return;
-    }
+  if (!track || track.player !== "youtube") {
+    return;
+  }
 
-    if (state === PLAYING) {
-        if (!stateUpdated) {
-            updatePlayerState(false);
-        }
-        stateUpdated = false;
-        dispatchCustomEvent("track-start", ytPlayer.getCurrentTime());
+  if (state === PLAYING) {
+    if (!stateUpdated) {
+      updatePlayerState(false);
     }
-    else if (state === PAUSED) {
-        if (!stateUpdated) {
-            updatePlayerState(true);
-        }
-        stateUpdated = false;
-        hidePlayPauseBtnSpinner();
+    stateUpdated = false;
+    dispatchCustomEvent("track-start", ytPlayer.getCurrentTime());
+  }
+  else if (state === PAUSED) {
+    if (!stateUpdated) {
+      updatePlayerState(true);
     }
-    else if (state === BUFFERING) {
-        elapsedTime.stop();
-        showPlayPauseBtnSpinner();
-    }
-    else {
-        hidePlayPauseBtnSpinner();
-    }
+    stateUpdated = false;
+    hidePlayPauseBtnSpinner();
+  }
+  else if (state === BUFFERING) {
+    elapsedTime.stop();
+    showPlayPauseBtnSpinner();
+  }
+  else {
+    hidePlayPauseBtnSpinner();
+  }
 }
 
 function onPlayerReady() {
-    const { id, volume, startTime } = args;
-    initialized = true;
+  const { id, volume, startTime } = args;
+  initialized = true;
 
-    if (typeof startTime === "number") {
-        setVolume(volume);
-        ytPlayer.cueVideoById(id, startTime);
-        videoCued = true;
-    }
-    else {
-        playTrack(id, volume);
-    }
+  if (typeof startTime === "number") {
+    setVolume(volume);
+    ytPlayer.cueVideoById(id, startTime);
+    videoCued = true;
+  }
+  else {
+    playTrack(id, volume);
+  }
 }
 
 function onError(error) {
-    let body = "";
+  let body = "";
 
-    if (error.data === 100) {
-        body = "Video is either removed or marked as private";
-    }
-    else if (error.data === 101 || error.data === 150) {
-        body = "The owner of the requested video does not allow it to be played in embedded players";
-    }
-    console.log(error);
+  if (error.data === 100) {
+    body = "Video is either removed or marked as private";
+  }
+  else if (error.data === 101 || error.data === 150) {
+    body = "The owner of the requested video does not allow it to be played in embedded players";
+  }
+  console.log(error);
 
-    if (body) {
-        const id = getActivePlaylistId();
-        const track = getCurrentTrack();
-        const { name } = getNextTrack(id, 1);
+  if (body) {
+    const id = getActivePlaylistId();
+    const track = getCurrentTrack();
+    const { name } = getNextTrack(id, 1);
 
-        if (track.name === name) {
-            stopPlayer(track);
-        }
-        else {
-            playNextTrack();
-        }
-        showPlayerMessage({
-            title: `Cannot play ${track.name}`,
-            body
-        });
+    if (track.name === name) {
+      stopPlayer(track);
     }
+    else {
+      playNextTrack();
+    }
+    showPlayerMessage({
+      title: `Cannot play ${track.name}`,
+      body
+    });
+  }
 }
 
 function initPlayer() {
-    ytPlayer = new YT.Player("js-yt-player", {
-        playerVars: {
-            autoplay: 0,
-            disablekb: 1,
-            controls: 0,
-            fs: 0,
+  ytPlayer = new YT.Player("js-yt-player", {
+    playerVars: {
+      autoplay: 0,
+      disablekb: 1,
+      controls: 0,
+      fs: 0,
 
-            // Hide annotations
-            iv_load_policy: 3
-        },
-        events: {
-            onReady: onPlayerReady,
-            onStateChange: onPlayerStateChange,
-            onError
-        }
-    });
+      // Hide annotations
+      iv_load_policy: 3
+    },
+    events: {
+      onReady: onPlayerReady,
+      onStateChange: onPlayerStateChange,
+      onError
+    }
+  });
 }
 
 function togglePlaying(paused) {
-    if (!initialized) {
-        return;
-    }
-    stateUpdated = true;
-    videoCued = false;
+  if (!initialized) {
+    return;
+  }
+  stateUpdated = true;
+  videoCued = false;
 
-    if (paused) {
-        ytPlayer.playVideo();
-    }
-    else {
-        ytPlayer.pauseVideo();
-    }
+  if (paused) {
+    ytPlayer.playVideo();
+  }
+  else {
+    ytPlayer.pauseVideo();
+  }
 }
 
 function playTrack(id, volume, startTime) {
-    if (initialized) {
-        setVolume(volume);
-        ytPlayer.loadVideoById(id, startTime);
-        return;
-    }
-    args = { id, volume, startTime };
-    window.onYouTubeIframeAPIReady = initPlayer;
-    scriptLoader.load({ src: "https://www.youtube.com/iframe_api" });
+  if (initialized) {
+    setVolume(volume);
+    ytPlayer.loadVideoById(id, startTime);
+    return;
+  }
+  args = { id, volume, startTime };
+  window.onYouTubeIframeAPIReady = initPlayer;
+  scriptLoader.load({ src: "https://www.youtube.com/iframe_api" });
 }
 
 function stopTrack() {
-    if (initialized) {
-        hidePlayPauseBtnSpinner();
-        ytPlayer.stopVideo();
-        videoCued = false;
-    }
+  if (initialized) {
+    hidePlayPauseBtnSpinner();
+    ytPlayer.stopVideo();
+    videoCued = false;
+  }
 }
 
 function setVolume(volume) {
-    if (initialized) {
-        ytPlayer.setVolume(volume * 100);
-    }
+  if (initialized) {
+    ytPlayer.setVolume(volume * 100);
+  }
 }
 
 function seekTo(currentTime) {
-    if (initialized) {
-        if (videoCued) {
-            // Cue video again at the different timestamp to prevent it from playing
-            ytPlayer.cueVideoById(args.id, currentTime);
-        }
-        else {
-            ytPlayer.seekTo(currentTime, true);
-        }
+  if (initialized) {
+    if (videoCued) {
+      // Cue video again at the different timestamp to prevent it from playing
+      ytPlayer.cueVideoById(args.id, currentTime);
     }
+    else {
+      ytPlayer.seekTo(currentTime, true);
+    }
+  }
 }
 
 export {
-    playTrack,
-    stopTrack,
-    togglePlaying,
-    seekTo,
-    setVolume
+  playTrack,
+  stopTrack,
+  togglePlaying,
+  seekTo,
+  setVolume
 };

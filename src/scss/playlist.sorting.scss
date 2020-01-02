@@ -1,48 +1,48 @@
 .sort-panel-container {
-    user-select: none;
-    position: relative;
-    display: flex;
-    flex-shrink: 0;
-    width: 112px;
-    box-shadow: 0 0 0 1px $background-color-light;
+  user-select: none;
+  position: relative;
+  display: flex;
+  flex-shrink: 0;
+  width: 112px;
+  box-shadow: 0 0 0 1px $background-color-light;
 }
 
 .sort-panel-toggle-btn {
-    flex-grow: 1;
-    padding: 4px 8px;
-    background-color: $background-color-darkest;
-    font-weight: normal;
-    text-transform: capitalize;
+  flex-grow: 1;
+  padding: 4px 8px;
+  background-color: $background-color-darkest;
+  font-weight: normal;
+  text-transform: capitalize;
 }
 
 .sort-panel-order-btn {
-    padding: 2px 4px;
-    background-color: $background-color-light;
+  padding: 2px 4px;
+  background-color: $background-color-light;
 }
 
 .sort-panel {
-    top: 28px;
-    left: 0;
-    right: 0;
-    padding: 8px 0;
+  top: 28px;
+  left: 0;
+  right: 0;
+  padding: 8px 0;
 }
 
 .sort-option-btn {
-    width: 100%;
-    padding: 8px 10px;
-    text-transform: capitalize;
-    font-weight: normal;
+  width: 100%;
+  padding: 8px 10px;
+  text-transform: capitalize;
+  font-weight: normal;
 
-    &:hover {
-        background-color: $background-color-light;
-        color: $color-text;
-
-        &.active {
-            color: $color-accent;
-        }
-    }
+  &:hover {
+    background-color: $background-color-light;
+    color: $color-text;
 
     &.active {
-        font-weight: bold;
+      color: $color-accent;
     }
+  }
+
+  &.active {
+    font-weight: bold;
+  }
 }
