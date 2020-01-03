@@ -206,7 +206,7 @@ function getPlaylistThumbnailImages(tracks) {
       ids.push(track.artworkId);
     }
   }
-  return ids.map(id => getArtwork({ artworkId: id }));
+  return ids.map(id => getArtwork(id).url);
 }
 
 function createSettingsPanel(id, { element, pl }) {

@@ -79,13 +79,25 @@ async function fetchTrackAlbum(track) {
           const [imageName] = pathname.split("/").slice(-1);
           const hash = await hashString(`${origin}/i/u/${imageName}`);
           track.artworkId = hash;
-          setArtwork(hash, { url: `${origin}/i/u/${imageName}` });
+          setArtwork(hash, {
+            url: `${origin}/i/u/${imageName}`,
+            type: getFileType(imageName)
+          });
         }
       }
     }
   } catch(e) {
     console.log(e);
   }
+}
+
+function getFileType(name) {
+  const ext = name.split(".")[1];
+
+  if (ext === "jpg") {
+    return "image/jpeg";
+  }
+  return `image/${ext}`;
 }
 
 function parseTracks(tracks) {
@@ -158,7 +170,10 @@ async function parseMetadata(track) {
 
   if (hash) {
     track.artworkId = hash;
-    setArtwork(hash, { file: picture });
+    setArtwork(hash, {
+      file: picture,
+      type: picture.type
+    });
   }
   await fetchTrackAlbum(track);
 }

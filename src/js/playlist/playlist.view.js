@@ -87,7 +87,7 @@ function createGridItemContent(item) {
     <button class="btn btn-icon track-play-pause-btn artwork-container-btn" data-btn="play" title="${title}">
       ${getIcon({ iconId: id })}
     </button>
-    <img src="${getArtwork(item)}" class="artwork" alt="">
+    <img src="${getArtwork(item.artworkId).url}" class="artwork" alt="">
   </div>
   ${getTrackInfo(item)}
   <div class="grid-item-duration">${item.duration}</div>
