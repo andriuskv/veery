@@ -15,17 +15,16 @@ function setArtwork(id, value) {
   artworks[id] = value;
 }
 
-function getArtwork({ artworkId }) {
-  if (artworkId) {
-    const artwork = artworks[artworkId];
+function getArtwork(id) {
+  if (id) {
+    const artwork = artworks[id];
 
-    if (artwork.url) {
-      return artwork.url;
+    if (!artwork.url) {
+      artwork.url = URL.createObjectURL(artwork.file);
     }
-    artwork.url = URL.createObjectURL(artwork.file);
-    return artwork.url;
+    return artwork;
   }
-  return "assets/images/album-art-placeholder.png";
+  return { url: "assets/images/album-art-placeholder.png" };
 }
 
 async function hashFile(blob) {

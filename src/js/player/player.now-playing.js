@@ -115,10 +115,24 @@ function getTrackInfo(track) {
 }
 
 function showTrackInfo(track) {
-  const artwork = getArtwork(track);
+  const { url, type } = getArtwork(track.artworkId);
+  const isPlaceholder = url.includes("placeholder");
 
-  showNowPlaying(track, artwork);
-  updateTrackMedia(track.player, artwork);
+  showNowPlaying(track, url);
+  updateTrackMedia(track.player, url);
+
+  if ("mediaSession" in navigator && track.player !== "youtube") {
+    /* global MediaMetadata */
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: track.title,
+      artist: track.artist,
+      album: track.album,
+      artwork: [isPlaceholder ?
+        { src: "./android-chrome-512x512.png", sizes: "512x512", type: "image/png" } :
+        { src: url, sizes: "512x512", type }
+      ]
+    });
+  }
 }
 
 function resetTrackInfo() {

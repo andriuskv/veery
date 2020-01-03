@@ -404,6 +404,13 @@ window.addEventListener("track-end", () => {
   playNextTrack("auto");
 });
 
+if ("mediaSession" in navigator) {
+  navigator.mediaSession.setActionHandler("play", playTrack);
+  navigator.mediaSession.setActionHandler("pause", playTrack);
+  navigator.mediaSession.setActionHandler("previoustrack", playPreviousTrack);
+  navigator.mediaSession.setActionHandler("nexttrack", playNextTrack);
+}
+
 export {
   getPlayerState,
   updatePlayerState,
