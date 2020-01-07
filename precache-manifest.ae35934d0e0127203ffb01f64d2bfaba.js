@@ -36,7 +36,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "favicon.ico"
   },
   {
-    "revision": "c684e8f1119249ebacab6dde5c19c130",
+    "revision": "a7a8483bc55f4df5c27e0ab0ad9cd380",
     "url": "index.html"
   },
   {
@@ -44,15 +44,15 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "libs/dexie.min.js"
   },
   {
-    "revision": "d132720346a3711de4bf",
+    "revision": "3b4d0d7aed424ab09e98",
     "url": "main.css"
   },
   {
-    "revision": "d132720346a3711de4bf",
+    "revision": "3b4d0d7aed424ab09e98",
     "url": "main.js"
   },
   {
-    "revision": "f08a26231204c51b8d9e",
+    "revision": "d2acc9a428423f7b67c3",
     "url": "vendor.js"
   },
   {
