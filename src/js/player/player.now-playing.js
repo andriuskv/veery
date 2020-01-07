@@ -7,10 +7,12 @@ import { getVisiblePlaylistId } from "../tab.js";
 import { getArtwork } from "../artworks";
 
 const nowPlayingElement = document.getElementById("js-now-playing");
-const jumpToTrackBtn = document.getElementById("js-jump-to-track-btn");
-const mediaToggleBtn = document.getElementById("js-media-toggle-btn");
 const mediaElement = document.getElementById("js-media-container");
 let mediaVisible = false;
+
+function isMediaVisible() {
+  return mediaVisible;
+}
 
 function handleClickOnMedia({ target }) {
   const element = getElementByAttr("data-item", target);
@@ -35,28 +37,37 @@ function hideMedia(event) {
     mediaVisible = false;
     mediaElement.classList.remove("visible");
     window.removeEventListener("keydown", hideMedia);
-    setElementIconAndTitle(mediaToggleBtn, { title: "Expand", id: "expand" });
+    setElementIconAndTitle(document.getElementById("js-media-toggle-btn"), { title: "Expand", id: "expand" });
   }
 }
 
-function toggleMedia({ currentTarget }) {
+function toggleMedia(toggleBtn) {
   const ytPlayer = document.getElementById("js-yt-player");
   mediaElement.classList.toggle("visible");
   mediaVisible = !mediaVisible;
 
   if (mediaVisible) {
+    const track = getCurrentTrack();
+
     mediaElement.addEventListener("click", handleClickOnMedia);
     window.addEventListener("keydown", hideMedia);
     window.addEventListener("blur", blurIframe);
-    setElementIconAndTitle(currentTarget, { title: "Collapse", id: "collapse" });
+    setElementIconAndTitle(toggleBtn, { title: "Collapse", id: "collapse" });
     ytPlayer.removeAttribute("tabindex");
+
+    if (track.player === "native") {
+      document.getElementById("js-player-controls").classList.add("transparent");
+      mediaElement.classList.add("image");
+    }
   }
   else {
     mediaElement.removeEventListener("click", handleClickOnMedia);
     window.removeEventListener("keydown", hideMedia);
     window.removeEventListener("blur", blurIframe);
-    setElementIconAndTitle(currentTarget, { title: "Expand", id: "expand" });
+    setElementIconAndTitle(toggleBtn, { title: "Expand", id: "expand" });
     ytPlayer.setAttribute("tabindex", "-1");
+    document.getElementById("js-player-controls").classList.remove("transparent");
+    mediaElement.classList.remove("image");
   }
 }
 
@@ -76,7 +87,7 @@ function showNowPlaying(track, artwork) {
   removeTrackInfoElement();
   setArtwork(artwork);
   nowPlayingElement.classList.remove("inactive");
-  jumpToTrackBtn.insertAdjacentHTML("beforebegin", getTrackInfo(track));
+  nowPlayingElement.insertAdjacentHTML("beforeend", getTrackInfo(track));
 }
 
 function updateTrackMedia(player, artwork) {
@@ -102,14 +113,17 @@ function updateTrackMedia(player, artwork) {
 
 function getTrackInfo(track) {
   let elementTitle = track.name;
-  let info = track.name;
+  let info = null;
 
   if (track.artist && track.title) {
     elementTitle = `${track.artist} - ${track.title}${track.album ? ` - ${track.album}` : ""}`;
     info = `
-      <div class="track-title">${track.title}</div>
-      <div class="track-artist">${track.artist}${track.album ? ` - ${track.album}` : ""}</div>
+      <div class="track-info-item track-title" data-action="reveal-track">${track.title}</div>
+      <div class="track-info-item">${track.artist}${track.album ? ` - ${track.album}` : ""}</div>
     `;
+  }
+  else {
+    info = `<div class="track-info-item track-name" data-action="reveal-track">${track.name}</div>`;
   }
   return `<div id="js-track-info" class="track-info" title="${elementTitle}">${info}</div> `;
 }
@@ -156,12 +170,28 @@ function jumpToTrack() {
   else {
     scrollCurrentTrackIntoView(id);
   }
+
+  if (mediaVisible) {
+    toggleMedia(document.getElementById("js-media-toggle-btn"));
+  }
 }
 
-jumpToTrackBtn.addEventListener("click", jumpToTrack);
-mediaToggleBtn.addEventListener("click", toggleMedia);
+nowPlayingElement.addEventListener("click", event => {
+  const element = getElementByAttr("data-action", event.target);
+
+  if (!element) {
+    return;
+  }
+  else if (element.attrValue === "toggle-media") {
+    toggleMedia(element.elementRef);
+  }
+  else if (element.attrValue === "reveal-track") {
+    jumpToTrack();
+  }
+});
 
 export {
+  isMediaVisible,
   showTrackInfo,
   resetTrackInfo
 };

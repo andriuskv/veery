@@ -12,9 +12,10 @@ import { storedTrack, setVolume, seekTo, playPreviousTrack, playTrack, playNextT
 
 const volumeSlider = document.getElementById("js-volume-slider");
 const trackSlider = document.getElementById("js-track-slider");
-const controlsElement = document.getElementById("js-controls");
+const controlsElement = document.getElementById("js-player-controls");
 let seeking = false;
 let lastSpinnerElement = null;
+let playbackBtnLabelTimeout = 0;
 
 const elapsedTime = (function() {
   let timeout = 0;
@@ -265,10 +266,7 @@ function onVolumeSliderMousemove({ pageX }) {
   updateVolumeSliderLabel(percentage, pageX);
 
   if (!volume) {
-    updateSetting({
-      attrValue: "mute",
-      elementRef: document.getElementById("js-volume-btn")
-    });
+    toggleMute(true);
     return;
   }
   unmutePlayer();
@@ -284,8 +282,6 @@ function onVolumeSliderMouseup() {
   window.removeEventListener("pointerup", onVolumeSliderMouseup);
   volumeSlider.addEventListener("pointermove", onLocalVolumeSliderMousemove);
 }
-
-let timeout = 0;
 
 function setPlaybackMode(element, initMode) {
   let mode = element.getAttribute("data-mode");
@@ -325,16 +321,16 @@ function setPlaybackMode(element, initMode) {
     }
   }
   else {
-    const a = document.getElementById("js-control-btn-label");
+    const labelElement = document.getElementById("js-control-btn-label");
 
-    if (a) {
-      a.remove();
+    if (labelElement) {
+      labelElement.remove();
     }
     element.parentElement.insertAdjacentHTML("afterbegin", `
     <div id="js-control-btn-label" class="control-btn-label">${modes[mode].currentTitle}</div>
     `);
-    clearTimeout(timeout);
-    timeout = setTimeout(() => {
+    clearTimeout(playbackBtnLabelTimeout);
+    playbackBtnLabelTimeout = setTimeout(() => {
       document.getElementById("js-control-btn-label").remove();
     }, 1000);
   }
@@ -342,35 +338,14 @@ function setPlaybackMode(element, initMode) {
 
   if (name === "normal") {
     element.classList.remove("active");
-    element.setAttribute("aria-checked", false);
   }
   else {
-    element.setAttribute("aria-checked", true);
     element.classList.add("active");
   }
   element.setAttribute("data-mode", name);
   element.setAttribute("title", nextTitle);
   element.querySelector("use").setAttribute("href", `#${iconId}`);
   setSetting("playback", name);
-}
-
-function updateSetting({ attrValue, elementRef }) {
-  if (attrValue === "playback") {
-    setPlaybackMode(elementRef);
-    return;
-  }
-  const value = !getSetting(attrValue);
-
-  elementRef.setAttribute("aria-checked", value);
-  setSetting(attrValue, value);
-
-  if (attrValue === "mute") {
-    mutePlayer(value);
-    toggleVolumeBtn(elementRef, value);
-  }
-  else {
-    elementRef.classList.toggle("active");
-  }
 }
 
 function mutePlayer(muted) {
@@ -398,13 +373,44 @@ function unmutePlayer() {
   }
 }
 
-function toggleMute() {
-  const value = !getSetting("mute");
+function toggleMute(value = !getSetting("mute")) {
   const element = document.getElementById("js-volume-btn");
 
+  element.setAttribute("aria-checked", value);
   mutePlayer(value);
   toggleVolumeBtn(element, value);
   setSetting("mute", value);
+}
+
+function toggleShuffle(element) {
+  const value = !getSetting("shuffle");
+
+  element.setAttribute("aria-checked", value);
+  setSetting("shuffle", value);
+  element.classList.toggle("active");
+}
+
+function handleControls({ attrValue, elementRef }) {
+  switch (attrValue) {
+    case "play":
+      playTrack();
+      break;
+    case "next":
+      playNextTrack();
+      break;
+    case "previous":
+      playPreviousTrack();
+      break;
+    case "playback":
+      setPlaybackMode(elementRef);
+      break;
+    case "mute":
+      toggleMute();
+      break;
+    case "shuffle":
+      toggleShuffle(elementRef);
+      break;
+  }
 }
 
 function updateVolumeOnKeyDown(key) {
@@ -425,11 +431,7 @@ function updateVolumeOnKeyDown(key) {
 
     if (volume <= 0) {
       volume = 0;
-
-      updateSetting({
-        attrValue: "mute",
-        elementRef: document.getElementById("js-volume-btn")
-      });
+      toggleMute(true);
       return;
     }
   }
@@ -551,42 +553,29 @@ volumeSlider.addEventListener("keydown", ({ key }) => {
   }
 });
 
-document.getElementById("js-main-controls").addEventListener("click", ({ target }) => {
-  const element = getElementByAttr("data-item", target);
-
-  if (element) {
-    switch (element.attrValue) {
-      case "previous":
-        playPreviousTrack();
-        break;
-      case "play":
-        playTrack();
-        break;
-      case "next":
-        playNextTrack();
-        break;
-    }
-  }
-});
-
 controlsElement.addEventListener("click", ({ target }) => {
   const element = getElementByAttr("data-item", target);
 
   if (element) {
-    updateSetting(element);
+    handleControls(element);
   }
 });
 
-controlsElement.addEventListener("keyup", ({ which, target }) => {
+controlsElement.addEventListener("keyup", ({ target, key }) => {
   const element = getElementByAttr("data-item", target);
 
-  if (element && (which === 32 || which === 13)) {
-    updateSetting(element);
+  if (!element || element.elementRef.nodeName === "BUTTON") {
+    return;
+  }
+
+  if (key === "Enter" || key === " ") {
+    handleControls(element);
   }
 });
 
-document.getElementById("js-control-toggle-btn").addEventListener("click", () => {
-  controlsElement.classList.toggle("visible");
+document.getElementById("js-volume-toggle-btn").addEventListener("click", ({ currentTarget }) => {
+  currentTarget.classList.toggle("active");
+  document.getElementById("js-volume-controls").classList.toggle("visible");
 });
 
 (function() {

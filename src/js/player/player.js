@@ -29,7 +29,7 @@ import { getVisiblePlaylistId } from "../tab.js";
 import { getSetting } from "../settings.js";
 import { showActiveIcon, removeActiveIcon } from "../sidebar.js";
 import { scrollTrackIntoView, toggleTrackPlayPauseBtn, resetCurrentTrackElement, setTrackElement } from "../playlist/playlist.view.js";
-import { showTrackInfo, resetTrackInfo } from "./player.now-playing.js";
+import { isMediaVisible, showTrackInfo, resetTrackInfo } from "./player.now-playing.js";
 import { postMessageToWorker } from "../web-worker.js";
 import { showPlayerMessage } from "./player.view.js";
 import { updateTrackWithMetadata } from "../local";
@@ -251,7 +251,9 @@ function play(source, sourceValue, id, mode) {
       if (swapFirstTrack) {
         swapFirstPlaybackOrderItem(track.index);
       }
-      playNewTrack(track, id, { scrollToTrack: mode !== "auto" });
+      playNewTrack(track, id, {
+        scrollToTrack: mode !== "auto" && !isMediaVisible()
+      });
     }
     else {
       // If playlist is empty reset player
