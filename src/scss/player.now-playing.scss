@@ -1,8 +1,8 @@
 .now-playing {
   display: flex;
   align-items: center;
-  grid-row: 1 / 4;
-  grid-column: 1;
+  grid-row: 1 / 3;
+  grid-column: 1 / 2;
   max-width: 340px;
   padding-right: 8px;
 
@@ -16,42 +16,47 @@
         opacity: 0.4;
       }
     }
-
-    .jump-to-track-btn {
-      display: block;
-    }
-
-    &:hover .jump-to-track-btn {
-      opacity: 1;
-    }
   }
 
   .track-info {
     flex-grow: 0;
   }
 
-  @include breakpoint-small {
-    grid-row: 1;
-    grid-column: 1 / 3;
-    min-width: 0;
+  .track-title, .track-name {
+    &:hover {
+      text-decoration: underline;
+      cursor: pointer;
+    }
   }
 
-  @include breakpoint-smallest {
-    grid-column: 1 / 5;
+  @include breakpoint-small {
+    grid-row: 1 / 2;
+    grid-column: 1 / 6;
+    min-width: 0;
     max-width: none;
-    padding-right: 28px;
+    padding-right: 40px;
+
+    .track-info {
+      margin: 0 auto;
+      text-align: center;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .track-title {
+      margin-bottom: 0;
+    }
   }
 }
 
 .now-playing-art-container {
-  width: 64px;
-  height: 64px;
+  width: 68px;
+  height: 68px;
   border-radius: 4px;
 
   @include breakpoint-small {
     width: 32px;
     height: 32px;
-    margin-right: 4px;
     border-radius: 2px;
   }
 }
@@ -64,10 +69,11 @@
 }
 
 .artwork {
-  @include center-horizontally;
-
+  position: absolute;
   top: 0;
+  left: 50%;
   height: 100%;
+  transform: translateX(-50%);
   pointer-events: none;
 }
 
@@ -79,50 +85,31 @@
   align-items: center;
   width: 100%;
   height: 100%;
-
-  svg {
-    width: 24px;
-    height: 24px;
-  }
 }
 
 .track-info {
+  overflow: hidden;
+  flex-grow: 1;
+  font-size: 13px;
+}
+
+.track-info-item {
+  @include text-truncate;
+
+  padding-bottom: 1px;
+}
+
+.track-title {
+  margin-bottom: 2px;
+  font-size: 14px;
+}
+
+.track-name {
   overflow: hidden;
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   white-space: normal;
-  flex-grow: 1;
-  padding: 2px 0;
-  font-size: 13px;
-
-  @supports not (display: -webkit-box) {
-    @include text-truncate;
-  }
-}
-
-.track-title {
-  @include text-truncate;
-
-  margin-bottom: 2px;
-  padding-bottom: 1px;
-  font-size: 14px;
-}
-
-.track-artist {
-  @include text-truncate;
-
-  padding-bottom: 1px;
-}
-
-.jump-to-track-btn {
-  display: none;
-  margin-left: 8px;
-  opacity: 0;
-
-  &.focus-visible {
-    opacity: 1;
-  }
 }
 
 .media-container {
@@ -131,7 +118,7 @@
   position: absolute;
   top: 100%;
   left: 0;
-  bottom: 80px;
+  bottom: var(--controls-height);
   background-color: $background-color-dark;
 
   &.visible {
@@ -140,7 +127,9 @@
   }
 
   @include breakpoint-small {
-    bottom: 108px;
+    &.image {
+      bottom: 0;
+    }
   }
 }
 
@@ -166,7 +155,7 @@
   height: 100%;
   background-size: cover;
   background-position: center;
-  filter: blur(32px);
+  filter: brightness(0.72) blur(32px);
 
   &.hidden {
     display: none;
@@ -174,17 +163,25 @@
 }
 
 .media-image {
+  position: absolute;
+  top: 50%;
+  left: 50%;
   display: block;
   max-width: calc(100% - 32px);
-  max-height: calc(100% - 32px);
-  margin: auto;
+  max-height: calc(100% - 64px);
   border-radius: 8px;
+  transform: translate(-50%, -50%);
 
   &.shadow {
     box-shadow: 0 2px 2px 0 $color-black-10,
                 0 2px 4px 0 $color-black-10,
                 0 2px 8px 0 $color-black-10,
                 0 2px 16px 0 $color-black-10;
+  }
+
+  @include breakpoint-small {
+     max-height: calc(100% - calc(var(--controls-height) + 108px));
+     transform: translate(-50%, calc(-50% - 74px));
   }
 }
 

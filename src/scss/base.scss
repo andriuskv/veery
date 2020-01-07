@@ -208,19 +208,20 @@ svg {
 }
 
 .player {
-  --controls-height: 80px;
+  --controls-height: 84px;
 
+  overflow: hidden;
   display: grid;
   grid-template-columns: 200px 1fr;
   grid-template-rows: calc(100% - var(--controls-height)) var(--controls-height);
 
   @include breakpoint-small {
-    --controls-height: 108px;
+    --controls-height: 102px;
   }
 }
 
 .player-messages {
-  z-index: 4;
+  z-index: 5;
   position: absolute;
   bottom: calc(var(--controls-height) + 8px);
   right: 8px;

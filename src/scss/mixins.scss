@@ -17,12 +17,6 @@
   transform: translateY(-50%);
 }
 
-@mixin center-horizontally {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
 @mixin popup-arrow {
   &::before {
     content: "";
