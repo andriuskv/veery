@@ -13,7 +13,7 @@
 
   @include breakpoint-small {
     padding: 8px 16px;
-    grid-template-rows: 32px 16px 40px;
+    grid-template-rows: 32px 20px 40px;
     grid-template-columns: 1fr 1fr min-content 1fr 1fr;
 
     &.transparent {
@@ -55,7 +55,7 @@
       }
 
       .volume-controls {
-        --offset: 58px;
+        --offset: 54px;
       }
     }
   }
@@ -275,7 +275,7 @@
 }
 
 .volume-controls {
-  --offset: 16px;
+  --offset: 8px;
 
   display: flex;
   align-items: center;

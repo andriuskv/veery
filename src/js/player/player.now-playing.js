@@ -1,6 +1,6 @@
 import { getElementByAttr, setElementIconAndTitle } from "../utils.js";
 import { toggleRoute } from "../router.js";
-import { togglePlaying } from "./player.js";
+import { getPlayerState, togglePlaying } from "./player.js";
 import { getCurrentTrack, getActivePlaylistId } from "../playlist/playlist.js";
 import { scrollCurrentTrackIntoView } from "../playlist/playlist.view.js";
 import { getVisiblePlaylistId } from "../tab.js";
@@ -9,16 +9,32 @@ import { getArtwork } from "../artworks";
 const nowPlayingElement = document.getElementById("js-now-playing");
 const mediaElement = document.getElementById("js-media-container");
 let mediaVisible = false;
+let iconTimeout = 0;
 
 function isMediaVisible() {
   return mediaVisible;
 }
 
-function handleClickOnMedia({ target }) {
+function handleClickOnMedia({ currentTarget, target }) {
   const element = getElementByAttr("data-item", target);
 
   if (element && element.attrValue === "image") {
+    const iconElement = document.getElementById("js-media-state-icon");
+
     togglePlaying(getCurrentTrack());
+
+    if (iconElement) {
+      iconElement.remove();
+    }
+    currentTarget.insertAdjacentHTML("beforeend", `
+      <svg viewBox="0 0 24 24" id="js-media-state-icon" class="media-state-icon">
+        <use href="#${getPlayerState() ? "pause" : "play"}"/>
+      </svg>
+    `);
+    clearTimeout(iconTimeout);
+    iconTimeout = setTimeout(() => {
+      document.getElementById("js-media-state-icon").remove();
+    }, 1000);
   }
 }
 
@@ -95,16 +111,21 @@ function updateTrackMedia(player, artwork) {
 
   if (player === "native") {
     const [background, image] = element.children;
-    const isPlaceholder = artwork.includes("placeholder");
-
-    background.classList.toggle("hidden", isPlaceholder);
-    image.classList.toggle("shadow", !isPlaceholder);
-    element.classList.remove("hidden");
 
     if (artwork !== image.src) {
-      image.src = artwork;
-      background.style.backgroundImage = `url(${artwork})`;
+      const isPlaceholder = artwork.includes("placeholder");
+      const artworkClone = image.cloneNode();
+
+      artworkClone.onload = function() {
+        background.classList.toggle("hidden", isPlaceholder);
+        artworkClone.classList.toggle("shadow", !isPlaceholder);
+        element.replaceChild(artworkClone, image);
+        background.style.backgroundImage = `url(${artwork})`;
+        artworkClone.onload = null;
+      };
+      artworkClone.src = artwork;
     }
+    element.classList.remove("hidden");
   }
   else {
     element.classList.add("hidden");

@@ -216,7 +216,7 @@ svg {
   grid-template-rows: calc(100% - var(--controls-height)) var(--controls-height);
 
   @include breakpoint-small {
-    --controls-height: 102px;
+    --controls-height: 110px;
   }
 }
 
