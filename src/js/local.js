@@ -219,7 +219,7 @@ async function updateTrackWithMetadata(track, { id, type, tracks }) {
   if (id === getVisiblePlaylistId()) {
     const element = getTrackElement(track.index, id);
 
-    if (element && element.childElementCount) {
+    if (element) {
       element.innerHTML = creatItemContent(track, id, type);
     }
   }

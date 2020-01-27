@@ -28,7 +28,8 @@ function observePlaylist(id) {
     return;
   }
   observers[id] = new IntersectionObserver(callback, {
-    root: getTab(id)
+    root: getTab(id),
+    rootMargin: "120px 0px"
   });
   const { children } = getPlaylistElement(id);
 
