@@ -65,17 +65,10 @@ function isPlaylistActive(id) {
   return id === activePlaylistId;
 }
 
-function cloneTrack(track) {
-  return track ? { ...track } : null;
-}
-
 function setCurrentTrack(track) {
   currentTrack = track;
 }
 
-function updateCurrentTrack(data) {
-  Object.assign(currentTrack, data);
-}
 
 function getCurrentTrack() {
   return currentTrack;
@@ -88,7 +81,7 @@ function updateCurrentTrackIndex(playlistId) {
     const track = findTrack(playlistId, currentTrack.name);
     const index = track ? track.index : -1;
 
-    updateCurrentTrack({ index });
+    currentTrack.index = index;
     setPlaybackIndex(index, playlistId);
   }
 }
@@ -158,7 +151,7 @@ function getNextTrack(id, direction) {
   const { sortOrder } = playlistState[id];
   const sortIndex = sortOrder[trackIndex];
 
-  return cloneTrack(tracks[sortIndex]);
+  return tracks[sortIndex];
 }
 
 function resetTrackIndexes(pl) {
@@ -211,10 +204,8 @@ export {
   getPlaylistDuration,
   isPlaylistActive,
   getActivePlaylistId,
-  cloneTrack,
   setCurrentTrack,
   getCurrentTrack,
-  updateCurrentTrack,
   updateCurrentTrackIndex,
   findTrack,
   getNextTrack,
