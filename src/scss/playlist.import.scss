@@ -15,16 +15,8 @@
   width: 210px;
 }
 
-.import-setting {
-  display: flex;
-
-  &:not(:last-of-type) {
-    margin-bottom: 8px;
-  }
-}
-
-.import-setting-label {
-  margin-left: 8px;
+.import-setting:not(:last-of-type) {
+  margin-bottom: 8px;
 }
 
 .import-setting-message {

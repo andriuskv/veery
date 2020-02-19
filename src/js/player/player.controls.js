@@ -96,7 +96,8 @@ function togglePlayPauseBtn(element, state) {
   setElementIconAndTitle(element, getPlayPauseButtonIcon(state));
 }
 
-function toggleVolumeBtn(element, state) {
+function updateVolumeIcon(state) {
+  const element = document.getElementById("js-volume-icon");
   const data = {
     on: {
       id: "volume-off",
@@ -364,30 +365,23 @@ function unmutePlayer() {
   const muted = getSetting("mute");
 
   if (muted) {
-    const element = document.getElementById("js-volume-btn");
-
     removeSetting("volumeBeforeMute");
     setSetting("mute", !muted);
-    toggleVolumeBtn(element, !muted);
-    element.classList.remove("active");
+    updateVolumeIcon(!muted);
   }
 }
 
 function toggleMute(value = !getSetting("mute")) {
-  const element = document.getElementById("js-volume-btn");
-
-  element.setAttribute("aria-checked", value);
   mutePlayer(value);
-  toggleVolumeBtn(element, value);
   setSetting("mute", value);
+  updateVolumeIcon(value);
 }
 
 function toggleShuffle(element) {
   const value = !getSetting("shuffle");
 
-  element.setAttribute("aria-checked", value);
   setSetting("shuffle", value);
-  element.classList.toggle("active");
+  element.parentElement.classList.toggle("active");
 }
 
 function handleControls({ attrValue, elementRef }) {
@@ -564,11 +558,7 @@ controlsElement.addEventListener("click", ({ target }) => {
 controlsElement.addEventListener("keyup", ({ target, key }) => {
   const element = getElementByAttr("data-item", target);
 
-  if (!element || element.elementRef.nodeName === "BUTTON") {
-    return;
-  }
-
-  if (key === "Enter" || key === " ") {
+  if (element?.elementRef.nodeName === "INPUT" && key === "Enter") {
     handleControls(element);
   }
 });
@@ -581,22 +571,19 @@ document.getElementById("js-volume-toggle-btn").addEventListener("click", ({ cur
 (function() {
   updateVolumeSlider(getSetting("volume"));
 
-  Array.from(document.querySelectorAll(".control-btn")).forEach(element => {
+  Array.from(controlsElement.querySelectorAll("[data-item]")).forEach(element => {
     const item = element.getAttribute("data-item");
     const setting = getSetting(item);
 
     if (setting) {
       if (item === "playback") {
         setPlaybackMode(element, setting);
-        return;
       }
-      element.setAttribute("aria-checked", true);
-
-      if (item === "mute") {
-        toggleVolumeBtn(element, setting);
+      else if (item === "mute") {
+        updateVolumeIcon(setting);
       }
-      else {
-        element.classList.add("active");
+      else if (item === "shuffle") {
+        element.parentElement.classList.add("active");
       }
     }
   });

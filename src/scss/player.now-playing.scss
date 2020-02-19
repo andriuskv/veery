@@ -9,7 +9,7 @@
   &:not(.inactive) {
     .artwork-container:hover {
       .artwork-container-btn {
-        display: flex;
+        opacity: 1;
       }
 
       .artwork {
@@ -80,11 +80,22 @@
 .artwork-container-btn {
   z-index: 1;
   position: absolute;
-  display: none;
+  opacity: 0;
+  display: flex;
   justify-content: center;
   align-items: center;
-  width: 100%;
-  height: 100%;
+  width: calc(100% - 2px);
+  height: calc(100% - 2px);
+  margin: 1px;
+
+  &.focus-visible {
+    opacity: 1;
+    box-shadow: 0 0 1px 1px $color-accent;
+
+    & + .artwork {
+      opacity: 0.4;
+    }
+  }
 }
 
 .track-info {

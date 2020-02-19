@@ -40,7 +40,7 @@ function creatItemContent(item, id, type) {
 }
 
 function createListItemContainer({ index, player }) {
-  return `<li class="list-item track${player === "youtube" && !navigator.onLine ? " disabled" : ""}" data-index="${index}" tabindex="0"></li>`;
+  return `<li class="list-item track${player === "youtube" && !navigator.onLine ? " disabled" : ""}" data-index="${index}"></li>`;
 }
 
 function createListItemContent(item, playlistId) {
@@ -76,14 +76,14 @@ function createList(id, items) {
 }
 
 function createGridItemContainer({ index, player }) {
-  return `<li class="grid-item track${player === "youtube" && !navigator.onLine ? " disabled" : ""}" data-index="${index}" tabindex="0"></li>`;
+  return `<li class="grid-item track${player === "youtube" && !navigator.onLine ? " disabled" : ""}" data-index="${index}"></li>`;
 }
 
 function createGridItemContent(item) {
   const { title, id } = getPlayPauseIcon(item.index);
 
   return `
-  <div class="artwork-container grid-item-thumbnail" tabindex="-1">
+  <div class="artwork-container grid-item-thumbnail">
     <button class="btn btn-icon track-play-pause-btn artwork-container-btn" data-btn="play" title="${title}">
       ${getIcon({ iconId: id })}
     </button>
@@ -120,7 +120,7 @@ function getPlaylistTemplate(pl) {
 function createPlaylistTab(pl) {
   const template = getPlaylistTemplate(pl);
 
-  return `<div id="js-tab-${pl.id}" class="tab" tabindex="0">${template}</div>`;
+  return `<div id="js-tab-${pl.id}" class="tab">${template}</div>`;
 }
 
 function getTrackInfo(track) {

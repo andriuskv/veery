@@ -213,12 +213,12 @@ function createSettingsPanel(id, { element, pl }) {
   element.insertAdjacentHTML("afterend", `
     <div id="${id}" class="panel pl-entry-panel">
       <h3 class="panel-title">Playlist settings</h3>
-      <label class="pl-entry-setting">
-        <input type="checkbox" class="checkbox-input" ${pl.syncOnInit ? "checked" : ""}>
+      <label class="checkbox-container">
+        <input type="checkbox" class="sr-only checkbox-input" ${pl.syncOnInit ? "checked" : ""}>
         <div class="checkbox">
           <div class="checkbox-tick"></div>
         </div>
-        <span>Synchronize playlist on startup</span>
+        <span class="checkbox-label">Synchronize playlist on startup</span>
       </label>
     </div>
   `);

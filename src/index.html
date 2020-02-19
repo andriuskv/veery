@@ -260,13 +260,15 @@
       </div>
       <div id="js-track-duration" class="track-time">0:00</div>
     </div>
-    <div role="checkbox" aria-checked="false" class="btn btn-icon control-btn shuffle-btn" data-item="shuffle" title="Shuffle" tabindex="0">
-      <svg viewBox="0 0 24 24">
+    <label class="btn btn-icon control-btn shuffle-btn">
+      <input type="checkbox" class="sr-only checkbox-input" data-item="shuffle">
+      <svg viewBox="0 0 24 24" class="checkbox">
+        <title>Shuffle</title>
         <path d="M14.83,13.41L13.42,14.82L16.55,17.95L14.5,20H20V14.5L17.96,
         16.54L14.83,13.41M14.5,4L16.54,6.04L4,18.59L5.41,20L17.96,7.46L20,
         9.5V4M10.59,9.17L5.41,4L4,5.41L9.17,10.58L10.59,9.17Z"/>
       </svg>
-    </div>
+    </label>
     <div class="main-controls">
       <button class="btn btn-icon main-control-btn" data-item="previous" title="Previous">
         <svg viewBox="0 0 24 24">
@@ -292,11 +294,13 @@
       </button>
     </div>
     <div id="js-volume-controls" class="volume-controls">
-      <div role="checkbox" aria-checked="false" id="js-volume-btn" class="btn btn-icon control-btn mute-btn" data-item="mute" title="Mute" tabindex="0">
-        <svg viewBox="0 0 24 24">
+      <label class="btn btn-icon control-btn mute-btn">
+        <input type="checkbox" class="sr-only checkbox-input" data-item="mute">
+        <svg viewBox="0 0 24 24" id="js-volume-icon" class="checkbox">
+          <title>Mute</title>
           <use href="#volume"/>
         </svg>
-      </div>
+      </label>
       <div class="control-slider-container volume-slider-container">
         <div id="js-volume-slider" class="control-slider visible" role="slider" aria-label="Volume slider" aria-valuemin="0" aria-valuenow="0" aria-valuemax="100" tabindex="0">
           <div class="slider-inner">
