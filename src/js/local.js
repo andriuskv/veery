@@ -141,10 +141,7 @@ async function addTracks(importOption, pl, files, parseTracks) {
     const tracks = await parseTracks(newTracks);
 
     addTracksToPlaylist(pl, tracks);
-
-    if (requestIdleCallback) {
-      requestIdleCallback(updateTrackInfo);
-    }
+    initTrackParser(pl, tracks);
   }
   catch (e) {
     console.log(e);
@@ -155,6 +152,18 @@ async function addTracks(importOption, pl, files, parseTracks) {
       option: importOption,
       playlistId: pl.id
     });
+  }
+}
+
+async function initTrackParser(pl, tracks) {
+  const length = Math.min(tracks.length, 20);
+
+  for (let i = 0; i < length; i += 1) {
+    await updateTrackWithMetadata(tracks[i], pl);
+  }
+
+  if (requestIdleCallback) {
+    requestIdleCallback(updateTrackInfo);
   }
 }
 
