@@ -162,6 +162,9 @@
 
   display: block;
   padding: 12px 8px;
+
+  // Gives space to show outline
+  margin: 1px;
   color: inherit;
   text-align: center;
 }

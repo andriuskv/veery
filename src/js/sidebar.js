@@ -80,6 +80,14 @@ sidebarContainerElement.addEventListener("click", ({ currentTarget, target }) =>
   }
 });
 
+sidebarContainerElement.addEventListener("keyup", ({ currentTarget, target, key }) => {
+  const element = getElementByAttr("data-link", target, currentTarget);
+
+  if (element && key === " ") {
+    element.elementRef.click();
+  }
+});
+
 window.addEventListener("connectivity-status", ({ detail: status }) => {
   const statusElement = document.getElementById("js-online-status");
 

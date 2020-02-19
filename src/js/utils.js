@@ -98,7 +98,12 @@ function dispatchCustomEvent(eventName, data) {
 }
 
 function setElementIconAndTitle(element, { id, title }) {
-  element.setAttribute("title", title);
+  if (element.nodeName === "svg") {
+    element.querySelector("title").textContent = title;
+  }
+  else {
+    element.setAttribute("title", title);
+  }
   element.querySelector("use").setAttribute("href", `#${id}`);
 }
 

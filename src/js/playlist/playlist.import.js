@@ -192,21 +192,21 @@ function createSettingsPanel(id, { element }) {
   element.insertAdjacentHTML("afterend", `
     <div id="${id}" class="panel import-settings-panel">
       <h3 class="panel-title">Settings</h3>
-      <label class="import-setting">
-        <input type="checkbox" class="checkbox-input"
+      <label class="checkbox-container import-setting">
+        <input type="checkbox" class="sr-only checkbox-input"
           ${settings["local-files"].storePlaylist ? "checked" : ""} data-id="local-files">
         <div class="checkbox">
           <div class="checkbox-tick"></div>
         </div>
-        <span class="import-setting-label">Store <b>Local files</b> playlist</span>
+        <span class="checkbox-label">Store <b>Local files</b> playlist</span>
       </label>
-      <label class="import-setting">
-        <input type="checkbox" class="checkbox-input"
+      <label class="checkbox-container import-setting">
+        <input type="checkbox" class="sr-only checkbox-input"
           ${settings.dropbox.storePlaylist ? "checked" : ""} data-id="dropbox">
         <div class="checkbox">
           <div class="checkbox-tick"></div>
         </div>
-        <span class="import-setting-label">Store <b>Dropbox</b> playlist</span>
+        <span class="checkbox-label">Store <b>Dropbox</b> playlist</span>
       </label>
       <div class="import-setting-message">
         <svg viewBox="0 0 24 24">
