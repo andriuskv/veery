@@ -196,6 +196,8 @@ async function updateTrackInfo() {
   const track = pl.tracks.find(track => track.needsMetadata);
 
   if (!track) {
+    updatePlaylistEntry(pl.id, pl.tracks);
+
     if (pl.storePlaylist) {
       postMessageToWorker({
         action: "update-tracks",

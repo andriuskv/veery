@@ -18,6 +18,10 @@
     }
   }
 
+  &.inactive .artwork-container-btn {
+    display: none;
+  }
+
   .track-info {
     flex-grow: 0;
   }
