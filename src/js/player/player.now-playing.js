@@ -71,7 +71,7 @@ function toggleMedia(toggleBtn) {
     setElementIconAndTitle(toggleBtn, { title: "Collapse", id: "collapse" });
     ytPlayer.removeAttribute("tabindex");
 
-    if (track.player === "native") {
+    if (track?.player === "native") {
       document.getElementById("js-player-controls").classList.add("transparent");
       mediaElement.classList.add("image");
     }
