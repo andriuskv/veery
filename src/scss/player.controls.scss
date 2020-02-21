@@ -11,53 +11,54 @@
   background-color: var(--background-color);
   box-shadow: 0 -1px 4px $color-black-10;
 
+  &.transparent {
+    --background-color: transparent;
+
+    position: static;
+    box-shadow: none;
+
+    .now-playing {
+      padding-right: 0;
+    }
+
+    .artwork {
+      display: none;
+    }
+
+    .track-info {
+      position: absolute;
+      left: 50%;
+      bottom: calc(var(--controls-height) + 8px);
+      max-width: 100%;
+      padding: 0 16px;
+      transform: translateX(-50%);
+      text-align: center;
+      font-size: 14px;
+      font-weight: bold;
+      text-shadow: 0 1px 2px $color-black-20;
+    }
+
+    .track-title {
+      font-size: 18px;
+    }
+
+    .artwork-container-btn {
+      opacity: 1;
+    }
+
+    .slider-inner {
+      background-color: $color-white-20;
+    }
+
+    .volume-controls {
+      --offset: 54px;
+    }
+  }
+
   @include breakpoint-small {
     padding: 8px 16px;
     grid-template-rows: 32px 20px 40px;
     grid-template-columns: 1fr 1fr min-content 1fr 1fr;
-
-    &.transparent {
-      --background-color: transparent;
-
-      position: static;
-      box-shadow: none;
-
-      .now-playing {
-        padding-right: 0;
-      }
-
-      .artwork {
-        display: none;
-      }
-
-      .track-info {
-        position: absolute;
-        left: 50%;
-        bottom: calc(var(--controls-height) + 8px);
-        max-width: 100%;
-        padding: 0 16px;
-        transform: translateX(-50%);
-        text-align: center;
-        font-size: 14px;
-        text-shadow: 0 1px 2px $color-black-20;
-      }
-
-      .track-title {
-        font-size: 18px;
-      }
-
-      .artwork-container-btn {
-        display: flex;
-      }
-
-      .slider-inner {
-        background-color: $color-white-20;
-      }
-
-      .volume-controls {
-        --offset: 54px;
-      }
-    }
   }
 }
 
@@ -298,7 +299,9 @@
     left: 8px;
     right: 8px;
     display: none;
+    max-width: 400px;
     padding: 8px 16px;
+    margin: 0 auto;
     border-radius: 8px;
     background-color: $background-color-light;
 

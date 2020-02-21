@@ -49,15 +49,13 @@ function blurIframe() {
 }
 
 function hideMedia(event) {
-  if (event.which === 27) {
-    mediaVisible = false;
-    mediaElement.classList.remove("visible");
-    window.removeEventListener("keydown", hideMedia);
-    setElementIconAndTitle(document.getElementById("js-media-toggle-btn"), { title: "Expand", id: "expand" });
+  if (event.which === 27 && mediaVisible) {
+    toggleMedia();
   }
 }
 
-function toggleMedia(toggleBtn) {
+function toggleMedia() {
+  const toggleBtn = document.getElementById("js-media-toggle-btn");
   const ytPlayer = document.getElementById("js-yt-player");
   mediaElement.classList.toggle("visible");
   mediaVisible = !mediaVisible;
@@ -193,7 +191,7 @@ function jumpToTrack() {
   }
 
   if (mediaVisible) {
-    toggleMedia(document.getElementById("js-media-toggle-btn"));
+    toggleMedia();
   }
 }
 
@@ -204,7 +202,7 @@ nowPlayingElement.addEventListener("click", event => {
     return;
   }
   else if (element.attrValue === "toggle-media") {
-    toggleMedia(element.elementRef);
+    toggleMedia();
   }
   else if (element.attrValue === "reveal-track") {
     jumpToTrack();
