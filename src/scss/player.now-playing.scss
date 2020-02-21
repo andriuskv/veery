@@ -141,10 +141,8 @@
     width: 100%;
   }
 
-  @include breakpoint-small {
-    &.image {
-      bottom: 0;
-    }
+  &.image {
+    bottom: 0;
   }
 }
 
@@ -183,20 +181,15 @@
   left: 50%;
   display: block;
   max-width: calc(100% - 32px);
-  max-height: calc(100% - 64px);
+  max-height: calc(100% - calc(var(--controls-height) + 110px));
   border-radius: 8px;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, calc(-50% - 78px));
 
   &.shadow {
     box-shadow: 0 2px 2px 0 $color-black-10,
                 0 2px 4px 0 $color-black-10,
                 0 2px 8px 0 $color-black-10,
                 0 2px 16px 0 $color-black-10;
-  }
-
-  @include breakpoint-small {
-     max-height: calc(100% - calc(var(--controls-height) + 110px));
-     transform: translate(-50%, calc(-50% - 78px));
   }
 }
 
