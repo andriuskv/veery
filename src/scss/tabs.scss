@@ -67,6 +67,7 @@
 .filter-input-container {
   position: relative;
   width: 100px;
+  border-radius: 2px;
   box-shadow: 0 0 0 1px $background-color-light;
   transition: 0.2s width;
 

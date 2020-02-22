@@ -88,13 +88,12 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  width: calc(100% - 2px);
-  height: calc(100% - 2px);
-  margin: 1px;
+  width: calc(100% - 4px);
+  height: calc(100% - 4px);
+  margin: 2px;
 
   &.focus-visible {
     opacity: 1;
-    box-shadow: 0 0 1px 1px $color-accent;
 
     & + .artwork {
       opacity: 0.4;
@@ -181,7 +180,7 @@
   left: 50%;
   display: block;
   max-width: calc(100% - 32px);
-  max-height: calc(100% - calc(var(--controls-height) + 110px));
+  max-height: calc(100% - calc(var(--controls-height) + 136px));
   border-radius: 8px;
   transform: translate(-50%, calc(-50% - 78px));
 
@@ -190,6 +189,10 @@
                 0 2px 4px 0 $color-black-10,
                 0 2px 8px 0 $color-black-10,
                 0 2px 16px 0 $color-black-10;
+  }
+
+  @include breakpoint-small {
+    transform: translate(-50%, calc(-50% - 90px));
   }
 }
 
@@ -201,7 +204,7 @@
 .media-state-icon {
   z-index: 1;
   position: absolute;
-  top: 50%;
+  top: calc(50% - 78px);
   left: 50%;
   opacity: 1;
   width: 80px;
@@ -214,10 +217,6 @@
   animation-name: scale-icon-up;
   animation-duration: 0.8s;
   animation-fill-mode: forwards;
-
-  @include breakpoint-small {
-     top: calc(50% - 78px);
-  }
 }
 
 @keyframes scale-icon-up {

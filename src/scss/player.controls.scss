@@ -28,18 +28,27 @@
     .track-info {
       position: absolute;
       left: 50%;
-      bottom: calc(var(--controls-height) + 8px);
+      bottom: calc(var(--controls-height) + 32px);
       max-width: 100%;
       padding: 0 16px;
       transform: translateX(-50%);
       text-align: center;
-      font-size: 14px;
+      font-size: 16px;
       font-weight: bold;
       text-shadow: 0 1px 2px $color-black-20;
+
+       @include breakpoint-small {
+         font-size: 14px;
+       }
     }
 
     .track-title {
-      font-size: 18px;
+      margin-bottom: 2px;
+      font-size: 20px;
+
+       @include breakpoint-small {
+         font-size: 18px;
+       }
     }
 
     .artwork-container-btn {
@@ -178,7 +187,7 @@
 
   &.focus-visible {
     outline: none;
-    box-shadow: 0 0 1px 1px $color-accent;
+    box-shadow: 0 0 0 2px $color-accent;
   }
 }
 
