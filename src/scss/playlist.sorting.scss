@@ -4,19 +4,22 @@
   display: flex;
   flex-shrink: 0;
   width: 112px;
+  border-radius: 2px;
+  background-color: $background-color-darkest;
   box-shadow: 0 0 0 1px $background-color-light;
 }
 
 .sort-panel-toggle-btn {
   flex-grow: 1;
   padding: 4px 8px;
-  background-color: $background-color-darkest;
+  margin-right: 2px;
   font-weight: normal;
   text-transform: capitalize;
 }
 
 .sort-panel-order-btn {
   padding: 2px 4px;
+  border-radius: 0;
   background-color: $background-color-light;
 }
 
@@ -30,6 +33,7 @@
 .sort-option-btn {
   width: 100%;
   padding: 8px 10px;
+  border-radius: 0;
   text-transform: capitalize;
   font-weight: normal;
 
