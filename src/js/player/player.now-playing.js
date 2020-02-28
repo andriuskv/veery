@@ -50,17 +50,17 @@ function blurIframe() {
 
 function hideMedia(event) {
   if (event.which === 27 && mediaVisible) {
-    toggleMedia();
+    toggleMedia(false);
   }
 }
 
-function toggleMedia() {
+function toggleMedia(visible = !mediaVisible) {
   const toggleBtn = document.getElementById("js-media-toggle-btn");
   const ytPlayer = document.getElementById("js-yt-player");
-  mediaElement.classList.toggle("visible");
-  mediaVisible = !mediaVisible;
+  mediaElement.classList.toggle("visible", visible);
+  mediaVisible = visible;
 
-  if (mediaVisible) {
+  if (visible) {
     const track = getCurrentTrack();
 
     mediaElement.addEventListener("click", handleClickOnMedia);
@@ -170,11 +170,10 @@ function showTrackInfo(track) {
 
 function resetTrackInfo() {
   document.title = "Veery";
-
+  nowPlayingElement.classList.add("inactive");
   setArtwork();
   removeTrackInfoElement();
-  nowPlayingElement.classList.add("inactive");
-  mediaElement.classList.remove("visible");
+  toggleMedia(false);
 }
 
 function jumpToTrack() {
@@ -191,7 +190,7 @@ function jumpToTrack() {
   }
 
   if (mediaVisible) {
-    toggleMedia();
+    toggleMedia(false);
   }
 }
 
