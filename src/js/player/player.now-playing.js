@@ -149,7 +149,6 @@ function getTrackInfo(track) {
 
 function showTrackInfo(track) {
   const { url, type } = getArtwork(track.artworkId);
-  const isPlaceholder = url.includes("placeholder");
 
   showNowPlaying(track, url);
   updateTrackMedia(track.player, url);
@@ -160,10 +159,7 @@ function showTrackInfo(track) {
       title: track.title,
       artist: track.artist,
       album: track.album,
-      artwork: [isPlaceholder ?
-        { src: "./android-chrome-512x512.png", sizes: "512x512", type: "image/png" } :
-        { src: url, sizes: "512x512", type }
-      ]
+      artwork: [{ src: url, sizes: "512x512", type }]
     });
   }
 }

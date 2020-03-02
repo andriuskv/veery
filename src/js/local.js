@@ -161,10 +161,7 @@ async function initTrackParser(pl, tracks) {
   for (let i = 0; i < length; i += 1) {
     await updateTrackWithMetadata(tracks[i], pl);
   }
-
-  if (requestIdleCallback) {
-    requestIdleCallback(updateTrackInfo);
-  }
+  updateTrackInfo();
 }
 
 async function parseMetadata(track) {
@@ -217,7 +214,7 @@ async function updateTrackInfo() {
     console.log(error);
   }
   finally {
-    requestIdleCallback(updateTrackInfo);
+    requestAnimationFrame(updateTrackInfo);
   }
 }
 
@@ -228,7 +225,7 @@ async function updateTrackWithMetadata(track, { id, type, tracks }) {
   if (id === getVisiblePlaylistId()) {
     const element = getTrackElement(track.index, id);
 
-    if (element) {
+    if (element && element.childElementCount) {
       element.innerHTML = creatItemContent(track, id, type);
     }
   }
