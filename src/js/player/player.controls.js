@@ -211,6 +211,14 @@ function getCurrentTime(offset, duration) {
   };
 }
 
+function showSliderLabel(slider) {
+  document.getElementById(`js-${slider}-slider-label`).classList.add("visible");
+}
+
+function hideSliderLabel(slider) {
+  document.getElementById(`js-${slider}-slider-label`).classList.remove("visible");
+}
+
 function updateTrackSliderLabel(percentage, currentTime, pageX) {
   const label = document.getElementById("js-track-slider-label");
   label.textContent = formatTime(currentTime);
@@ -252,6 +260,7 @@ function onTrackSliderMouseup({ pageX }) {
     seekTo(track.player, currentTime);
     storedTrack.updateTrack({ currentTime });
   }
+  hideSliderLabel("track");
   window.removeEventListener("pointermove", onTrackSliderMousemove);
   window.removeEventListener("pointerup", onTrackSliderMouseup);
   trackSlider.addEventListener("pointermove", onLocalTrackSliderMousemove);
@@ -279,6 +288,7 @@ function onLocalVolumeSliderMousemove({ pageX }) {
 }
 
 function onVolumeSliderMouseup() {
+  hideSliderLabel("volume");
   window.removeEventListener("pointermove", onVolumeSliderMousemove);
   window.removeEventListener("pointerup", onVolumeSliderMouseup);
   volumeSlider.addEventListener("pointermove", onLocalVolumeSliderMousemove);
@@ -512,7 +522,7 @@ trackSlider.addEventListener("pointerdown", event => {
     return;
   }
   seeking = true;
-
+  showSliderLabel("track");
   onTrackSliderMousemove(event);
   trackSlider.removeEventListener("pointermove", onLocalTrackSliderMousemove);
   window.addEventListener("pointermove", onTrackSliderMousemove);
@@ -532,6 +542,7 @@ volumeSlider.addEventListener("pointerdown", event => {
   if (event.which !== 1) {
     return;
   }
+  showSliderLabel("volume");
   onVolumeSliderMousemove(event);
   volumeSlider.removeEventListener("pointermove", onLocalVolumeSliderMousemove);
   window.addEventListener("pointermove", onVolumeSliderMousemove);

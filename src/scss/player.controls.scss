@@ -60,7 +60,7 @@
     }
 
     .volume-controls {
-      --offset: 54px;
+      --offset: 76px;
     }
   }
 
@@ -234,6 +234,10 @@
   font-size: 13px;
   text-align: center;
   will-change: left;
+
+  &.visible {
+    display: block;
+  }
 
   @include popup-arrow {
     bottom: -4px;
