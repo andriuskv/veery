@@ -332,18 +332,7 @@ function setPlaybackMode(element, initMode) {
     }
   }
   else {
-    const labelElement = document.getElementById("js-control-btn-label");
-
-    if (labelElement) {
-      labelElement.remove();
-    }
-    element.parentElement.insertAdjacentHTML("afterbegin", `
-    <div id="js-control-btn-label" class="control-btn-label">${modes[mode].currentTitle}</div>
-    `);
-    clearTimeout(playbackBtnLabelTimeout);
-    playbackBtnLabelTimeout = setTimeout(() => {
-      document.getElementById("js-control-btn-label").remove();
-    }, 1000);
+    showControlBtnLabel(element, modes[mode].currentTitle);
   }
   const { name, nextTitle, iconId } = modes[mode];
 
@@ -357,6 +346,21 @@ function setPlaybackMode(element, initMode) {
   element.setAttribute("title", nextTitle);
   element.querySelector("use").setAttribute("href", `#${iconId}`);
   setSetting("playback", name);
+}
+
+function showControlBtnLabel(element, label) {
+  const labelElement = document.getElementById("js-control-btn-label");
+
+  if (labelElement) {
+    labelElement.remove();
+  }
+  element.parentElement.insertAdjacentHTML("afterbegin", `
+    <div id="js-control-btn-label" class="control-btn-label">${label}</div>
+  `);
+  clearTimeout(playbackBtnLabelTimeout);
+  playbackBtnLabelTimeout = setTimeout(() => {
+    document.getElementById("js-control-btn-label").remove();
+  }, 1000);
 }
 
 function mutePlayer(muted) {
@@ -391,7 +395,9 @@ function toggleShuffle(element) {
   const value = !getSetting("shuffle");
 
   setSetting("shuffle", value);
-  element.parentElement.classList.toggle("active");
+  showControlBtnLabel(element, value ? "Shuffle" : "No shuffle");
+  element.classList.toggle("active");
+  element.querySelector("title").textContent = value ? "No shuffle" : "Shuffle";
 }
 
 function handleControls({ attrValue, elementRef }) {
@@ -412,7 +418,7 @@ function handleControls({ attrValue, elementRef }) {
       toggleMute();
       break;
     case "shuffle":
-      toggleShuffle(elementRef);
+      toggleShuffle(elementRef.parentElement);
       break;
   }
 }
