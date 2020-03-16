@@ -71,17 +71,6 @@
   }
 }
 
-.shuffle-btn {
-  grid-row: 2 / 3;
-  grid-column: 2 / 3;
-  justify-self: flex-end;
-  align-self: center;
-
-  @include breakpoint-small {
-    grid-row: 3 / 4;
-  }
-}
-
 .main-controls {
   display: flex;
   align-items: center;
@@ -263,7 +252,19 @@
   animation-fill-mode: forwards;
 }
 
-.control-btn-wrapper {
+.shuffle-btn-wrapper {
+  position: relative;
+  grid-row: 2 / 3;
+  grid-column: 2 / 3;
+  align-self: center;
+  justify-self: flex-end;
+
+  @include breakpoint-small {
+    grid-row: 3 / 4;
+  }
+}
+
+.playback-btn-wrapper {
   position: relative;
   grid-row: 2 / 3;
   grid-column: 4 / 5;
@@ -277,6 +278,7 @@
 
 .control-btn {
   position: relative;
+  display: block;
 
   &.active::before {
     content: "";
