@@ -120,7 +120,7 @@ function getPlaylistTemplate(pl) {
 function createPlaylistTab(pl) {
   const template = getPlaylistTemplate(pl);
 
-  return `<div id="js-tab-${pl.id}" class="tab">${template}</div>`;
+  return `<div id="js-tab-${pl.id}" class="tab" tabindex="0">${template}</div>`;
 }
 
 function getTrackInfo(track) {

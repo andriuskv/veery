@@ -1,7 +1,6 @@
 import { getElementByAttr } from "./../utils.js";
 import { togglePanel } from "../panels.js";
 import { changeGoogleAuthState } from "../google-auth.js";
-import { showDropboxChooser } from "../dropbox.js";
 import { selectLocalFiles } from "../local.js";
 import { fetchYoutubeItem, getYoutubeUserPlaylists, fetchYoutubeUserPlaylists } from "../youtube.js";
 import { getSidebarEntry } from "../sidebar.js";
@@ -268,7 +267,7 @@ function getYoutubeUserPlaylistsTemplate() {
   `;
 }
 
-importOptionsElement.addEventListener("click", ({ currenTarget, target }) => {
+importOptionsElement.addEventListener("click", async ({ currenTarget, target }) => {
   const element = getElementByAttr("data-item", target, currenTarget);
 
   if (!element || element.elementRef.disabled) {
@@ -280,6 +279,7 @@ importOptionsElement.addEventListener("click", ({ currenTarget, target }) => {
     showFilePicker(element.attrValue);
   }
   else if (attrValue === "dropbox") {
+    const { showDropboxChooser } = await import("../dropbox.js");
     showDropboxChooser();
   }
   else if (attrValue === "youtube") {

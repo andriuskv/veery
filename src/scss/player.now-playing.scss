@@ -88,9 +88,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  width: calc(100% - 4px);
-  height: calc(100% - 4px);
-  margin: 2px;
+  width: calc(100% - 2px);
+  height: calc(100% - 2px);
+  margin: 1px;
 
   &.focus-visible {
     opacity: 1;

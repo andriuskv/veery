@@ -21,7 +21,7 @@ module.exports = function(env = {}) {
       filename: "[name].css"
     }),
     new HtmlWebpackPlugin({
-      template: "./src/index.html",
+      template: "./public/index.html",
       minify: env.prod ? {
         keepClosingSlash: true,
         collapseWhitespace: true,
@@ -30,11 +30,8 @@ module.exports = function(env = {}) {
     }),
     new CopyPlugin([
       { from: "./src/libs", to: "./libs"},
-      { from: "./src/ww.js"},
       { from: "./src/assets", to: "./assets"},
-      { from: "./src/*.png", to: "[name].[ext]" },
-      { from: "./src/*.ico", to: "[name].[ext]" },
-      { from: "./src/manifest.json"}
+      { from: "./public" }
     ]),
     new workboxPlugin.GenerateSW({
       swDest:  "./sw.js",
@@ -119,6 +116,7 @@ module.exports = function(env = {}) {
             presets: [["@babel/preset-env", {
               modules: false,
               loose: true,
+              bugfixes: true,
               useBuiltIns: "usage",
               corejs: 3
             }]]
