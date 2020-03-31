@@ -1,7 +1,7 @@
 import "focus-visible";
 import "intersection-observer";
 
-import "../scss/normalize.css";
+import "normalize.css";
 import "../scss/index.scss";
 
 import "./utils.js";
