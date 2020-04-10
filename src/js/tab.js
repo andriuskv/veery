@@ -7,6 +7,7 @@ import {
 import { removeElementClass, getElementByAttr } from "./utils.js";
 import { getSidebarEntry } from "./sidebar.js";
 import { togglePanel } from "./panels.js";
+import { refreshPlaylistThumbnail } from "./local.js";
 import { getPlaylistById, getPlaylistState } from "./playlist/playlist.js";
 import { enableTrackSelection } from "./playlist/playlist.track-selection.js";
 import { setSortOptions, createSortPanel, changePlaylistOrder } from "./playlist/playlist.sorting.js";
@@ -107,6 +108,10 @@ window.addEventListener("route-change", ({ detail: { isPlaylistTab, tabId } }) =
   }
   else {
     headerElement.classList.remove("playlist-tab-active");
+
+    if (tabId === "home") {
+      refreshPlaylistThumbnail();
+    }
   }
   updateDocumentTitle(tabId);
   getTab(tabId).classList.add("active");

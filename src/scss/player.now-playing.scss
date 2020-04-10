@@ -217,6 +217,10 @@
   animation-name: scale-icon-up;
   animation-duration: 0.8s;
   animation-fill-mode: forwards;
+
+  @include breakpoint-small {
+    top: calc(50% - 90px);
+  }
 }
 
 @keyframes scale-icon-up {
