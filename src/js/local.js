@@ -10,6 +10,8 @@ import { getArtworks, setArtwork, hashFile, hashString } from "./artworks";
 import { getVisiblePlaylistId } from "./tab.js";
 import { postMessageToWorker } from "./web-worker.js";
 
+let tracksParsed = false;
+
 function removeFileType(fileName) {
   return fileName.slice(0, fileName.lastIndexOf("."));
 }
@@ -115,6 +117,8 @@ function parseTracks(tracks) {
 }
 
 async function addTracks(importOption, pl, files, parseTracks) {
+  tracksParsed = false;
+
   if (!files.length) {
     showPlayerMessage({
       title: `${importOption} files`,
@@ -193,6 +197,7 @@ async function updateTrackInfo() {
   const track = pl.tracks.find(track => track.needsMetadata);
 
   if (!track) {
+    tracksParsed = true;
     updatePlaylistEntry(pl.id, pl.tracks);
 
     if (pl.storePlaylist) {
@@ -214,7 +219,7 @@ async function updateTrackInfo() {
     console.log(error);
   }
   finally {
-    requestAnimationFrame(updateTrackInfo);
+    updateTrackInfo();
   }
 }
 
@@ -230,6 +235,20 @@ async function updateTrackWithMetadata(track, { id, type, tracks }) {
     }
   }
   updatePlaylistEntry(id, tracks, false);
+}
+
+function refreshPlaylistThumbnail() {
+  const pl = getPlaylistById("local-files");
+
+  if (pl && !tracksParsed) {
+    const track = pl.tracks.find(track => track.needsMetadata);
+
+    if (track) {
+      requestAnimationFrame(() => {
+        updatePlaylistEntry(pl.id, pl.tracks);
+      });
+    }
+  }
 }
 
 function selectLocalFiles(files) {
@@ -332,5 +351,6 @@ window.addEventListener("dragover", event => {
 export {
   addTracks,
   selectLocalFiles,
-  updateTrackWithMetadata
+  updateTrackWithMetadata,
+  refreshPlaylistThumbnail
 };
