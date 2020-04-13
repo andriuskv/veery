@@ -6,11 +6,12 @@ import { importSettings } from "./playlist/playlist.import.js";
 import { creatItemContent, getTrackElement } from "./playlist/playlist.view.js";
 import { updatePlaylistEntry } from "./playlist/playlist.entries.js";
 import { showPlayerMessage } from "./player/player.view.js";
+import { isRouteActive } from "./router";
 import { getArtworks, setArtwork, hashFile, hashString } from "./artworks";
 import { getVisiblePlaylistId } from "./tab.js";
-import { postMessageToWorker } from "./web-worker.js";
+import { postMessageToWorker } from "./web-worker";
 
-let tracksParsed = false;
+let needsPlaylistThumbnailRefresh = false;
 
 function removeFileType(fileName) {
   return fileName.slice(0, fileName.lastIndexOf("."));
@@ -57,9 +58,6 @@ function filterDuplicateTracks(tracks, existingTracks) {
 }
 
 async function fetchTrackAlbum(track) {
-  if (track.album && track.artworkId) {
-    return;
-  }
   try {
     const key = process.env.LAST_FM_API_KEY;
     const apiRootURL = "https://ws.audioscrobbler.com/2.0/";
@@ -117,12 +115,10 @@ function parseTracks(tracks) {
 }
 
 async function addTracks(importOption, pl, files, parseTracks) {
-  tracksParsed = false;
-
   if (!files.length) {
     showPlayerMessage({
       title: `${importOption} files`,
-      body: "No valid audio file found"
+      body: "No valid audio file found."
     });
     return;
   }
@@ -145,7 +141,7 @@ async function addTracks(importOption, pl, files, parseTracks) {
     const tracks = await parseTracks(newTracks);
 
     addTracksToPlaylist(pl, tracks);
-    initTrackParser(pl, tracks);
+    updateTracksWithMetadata();
   }
   catch (e) {
     console.log(e);
@@ -157,15 +153,6 @@ async function addTracks(importOption, pl, files, parseTracks) {
       playlistId: pl.id
     });
   }
-}
-
-async function initTrackParser(pl, tracks) {
-  const length = Math.min(tracks.length, 20);
-
-  for (let i = 0; i < length; i += 1) {
-    await updateTrackWithMetadata(tracks[i], pl);
-  }
-  updateTrackInfo();
 }
 
 async function parseMetadata(track) {
@@ -185,20 +172,76 @@ async function parseMetadata(track) {
       type: picture.type
     });
   }
-  await fetchTrackAlbum(track);
+  else if (!track.album) {
+    track.needsAlbum = true;
+  }
 }
 
-async function updateTrackInfo() {
+function updateTrackElement(track, pl) {
+  const element = getTrackElement(track.index, pl.id);
+  needsPlaylistThumbnailRefresh = true;
+
+  if (element && element.childElementCount) {
+    element.innerHTML = creatItemContent(track, pl.id, pl.type);
+  }
+}
+
+async function updateTrackWithAlbumInfo(track, pl) {
+  if (track.needsAlbum) {
+    delete track.needsAlbum;
+    await fetchTrackAlbum(track);
+
+    if (pl.id === getVisiblePlaylistId()) {
+      updateTrackElement(track, pl);
+    }
+  }
+}
+
+async function updateTracksWithMetadata() {
+  await updateTrackInfo(updateTrackWithMetadata);
+  await updateTrackInfo(updateTrackWithAlbumInfo);
+}
+
+async function updateTrackInfo(callback) {
   const pl = getPlaylistById("local-files");
 
-  if (!pl) {
-    return;
-  }
-  const track = pl.tracks.find(track => track.needsMetadata);
+  for (const track of pl.tracks) {
+    try {
+      await callback(track, pl);
+    } catch (e) {
+      console.log(e);
 
-  if (!track) {
-    tracksParsed = true;
+      if (!getPlaylistById("local-files")) {
+        return;
+      }
+    }
+  }
+
+  if (isRouteActive("")) {
     updatePlaylistEntry(pl.id, pl.tracks);
+  }
+  else {
+    needsPlaylistThumbnailRefresh = true;
+  }
+
+  if (pl.storePlaylist) {
+    postMessageToWorker({
+      action: "update-tracks",
+      artworks: getArtworks(),
+      playlist: {
+        id: pl.id,
+        tracks: pl.tracks
+      }
+    });
+  }
+}
+
+async function updateTrackWithMetadata(track, pl, isCurrentTrack = false) {
+  delete track.needsMetadata;
+  await parseMetadata(track);
+
+  if (isCurrentTrack && (!track.album || !track.artworkId)) {
+    await fetchTrackAlbum(track);
 
     if (pl.storePlaylist) {
       postMessageToWorker({
@@ -210,45 +253,25 @@ async function updateTrackInfo() {
         }
       });
     }
-    return;
   }
-  try {
-    await updateTrackWithMetadata(track, pl);
-  }
-  catch (error) {
-    console.log(error);
-  }
-  finally {
-    updateTrackInfo();
-  }
-}
 
-async function updateTrackWithMetadata(track, { id, type, tracks }) {
-  delete track.needsMetadata;
-  await parseMetadata(track);
-
-  if (id === getVisiblePlaylistId()) {
-    const element = getTrackElement(track.index, id);
-
-    if (element && element.childElementCount) {
-      element.innerHTML = creatItemContent(track, id, type);
-    }
+  if (pl.id === getVisiblePlaylistId()) {
+    updateTrackElement(track, pl);
   }
-  updatePlaylistEntry(id, tracks, false);
+  else if (isRouteActive("")) {
+    updatePlaylistEntry(pl.id, pl.tracks, isCurrentTrack);
+  }
 }
 
 function refreshPlaylistThumbnail() {
   const pl = getPlaylistById("local-files");
 
-  if (pl && !tracksParsed) {
-    const track = pl.tracks.find(track => track.needsMetadata);
-
-    if (track) {
-      requestAnimationFrame(() => {
-        updatePlaylistEntry(pl.id, pl.tracks);
-      });
-    }
+  if (needsPlaylistThumbnailRefresh && pl) {
+    requestAnimationFrame(() => {
+      updatePlaylistEntry(pl.id, pl.tracks);
+    });
   }
+  needsPlaylistThumbnailRefresh = false;
 }
 
 function selectLocalFiles(files) {
