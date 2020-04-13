@@ -105,7 +105,7 @@ async function beforeTrackStart(track, playlistId, { scrollToTrack, startTime })
     const pl = getPlaylistById(playlistId);
 
     showPlayPauseBtnSpinner();
-    await updateTrackWithMetadata(track, pl);
+    await updateTrackWithMetadata(track, pl, true);
 
     if (pl.storePlaylist) {
       postMessageToWorker({
