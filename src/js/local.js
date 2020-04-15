@@ -77,11 +77,20 @@ async function fetchTrackAlbum(track) {
         if (url) {
           const { origin, pathname } = new URL(url);
           const [imageName] = pathname.split("/").slice(-1);
-          const hash = await hashString(`${origin}/i/u/${imageName}`);
+          const directUrl = `${origin}/i/u/${imageName}`;
+          const type = getFileType(imageName);
+          const [hash, image] = await Promise.all([
+            hashString(directUrl),
+            resizeImage(directUrl, type)
+          ]);
           track.artworkId = hash;
+
           setArtwork(hash, {
-            url: `${origin}/i/u/${imageName}`,
-            type: getFileType(imageName)
+            image: {
+              original: { url: directUrl },
+              small: { blob: image }
+            },
+            type
           });
         }
       }
@@ -157,7 +166,6 @@ async function addTracks(importOption, pl, files, parseTracks) {
 
 async function parseMetadata(track) {
   const { artist, title, album, duration, picture } = await parseAudioMetadata(track.audioTrack);
-  const hash = await hashFile(picture);
 
   track.title = title || track.name;
   track.artist = artist || "";
@@ -165,14 +173,11 @@ async function parseMetadata(track) {
   track.durationInSeconds = duration;
   track.duration = formatTime(duration);
 
-  if (hash) {
-    track.artworkId = hash;
-    setArtwork(hash, {
-      file: picture,
-      type: picture.type
-    });
+  if (picture) {
+    track.picture = picture;
   }
-  else if (!track.album) {
+
+  if (!track.album || !picture) {
     track.needsAlbum = true;
   }
 }
@@ -183,6 +188,58 @@ function updateTrackElement(track, pl) {
 
   if (element && element.childElementCount) {
     element.innerHTML = creatItemContent(track, pl.id, pl.type);
+  }
+}
+
+function resizeImage(image, imageType = image.type) {
+  return new Promise((resolve) => {
+    const canvasImage = new Image();
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    canvasImage.crossOrigin = "anonymous";
+
+    canvasImage.onload = function() {
+      let { width, height } = canvasImage;
+      const minSize = Math.min(width, height, 256);
+
+      if (width < height) {
+        height = minSize / canvasImage.width * height;
+        width = minSize;
+      }
+      else {
+        width = minSize / canvasImage.height * width;
+        height = minSize;
+      }
+      canvas.width = width;
+      canvas.height = height;
+      ctx.drawImage(canvasImage, 0, 0, width, height);
+      canvas.toBlob(resolve, imageType, 0.72);
+
+      if (typeof image === "object") {
+        URL.revokeObjectURL(canvasImage.src);
+      }
+    };
+    canvasImage.src = typeof image === "string" ? image : URL.createObjectURL(image);
+  });
+}
+
+async function updateTrackWithImage(track, pl) {
+  if (track.picture) {
+    const [hash, image] = await Promise.all([hashFile(track.picture), resizeImage(track.picture)]);
+    track.artworkId = hash;
+
+    setArtwork(hash, {
+      image: {
+        original: { blob: track.picture },
+        small: { blob: image }
+      },
+      type: track.picture.type
+    });
+
+    if (pl.id === getVisiblePlaylistId()) {
+      updateTrackElement(track, pl);
+    }
+    delete track.picture;
   }
 }
 
@@ -199,7 +256,9 @@ async function updateTrackWithAlbumInfo(track, pl) {
 
 async function updateTracksWithMetadata() {
   await updateTrackInfo(updateTrackWithMetadata);
-  await updateTrackInfo(updateTrackWithAlbumInfo);
+  updateTrackInfo(updateTrackWithImage);
+  updateTrackInfo(updateTrackWithAlbumInfo);
+
 }
 
 async function updateTrackInfo(callback) {

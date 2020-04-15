@@ -104,24 +104,24 @@ function showNowPlaying(track, artwork) {
   nowPlayingElement.insertAdjacentHTML("beforeend", getTrackInfo(track));
 }
 
-function updateTrackMedia(player, artwork) {
+function updateTrackMedia(player, { original, small }) {
   const element = document.getElementById("js-media-image-container");
 
   if (player === "native") {
     const [background, image] = element.children;
 
-    if (artwork !== image.src) {
-      const isPlaceholder = artwork.includes("placeholder");
+    if (original.url !== image.src) {
       const artworkClone = image.cloneNode();
 
       artworkClone.onload = function() {
+        const isPlaceholder = original.url.includes("placeholder");
         background.classList.toggle("hidden", isPlaceholder);
         artworkClone.classList.toggle("shadow", !isPlaceholder);
         element.replaceChild(artworkClone, image);
-        background.style.backgroundImage = `url(${artwork})`;
+        background.style.backgroundImage = `url(${small.url})`;
         artworkClone.onload = null;
       };
-      artworkClone.src = artwork;
+      artworkClone.src = original.url;
     }
     element.classList.remove("hidden");
   }
@@ -148,10 +148,10 @@ function getTrackInfo(track) {
 }
 
 function showTrackInfo(track) {
-  const { url, type } = getArtwork(track.artworkId);
+  const { image, type } = getArtwork(track.artworkId);
 
-  showNowPlaying(track, url);
-  updateTrackMedia(track.player, url);
+  showNowPlaying(track, image.small.url);
+  updateTrackMedia(track.player, image);
 
   if ("mediaSession" in navigator && track.player !== "youtube") {
     /* global MediaMetadata */
@@ -159,7 +159,7 @@ function showTrackInfo(track) {
       title: track.title,
       artist: track.artist,
       album: track.album,
-      artwork: [{ src: url, sizes: "512x512", type }]
+      artwork: [{ src: image.original.url, sizes: "512x512", type }]
     });
   }
 }
@@ -170,6 +170,10 @@ function resetTrackInfo() {
   setArtwork();
   removeTrackInfoElement();
   toggleMedia(false);
+
+  if ("mediaSession" in navigator) {
+    navigator.mediaSession.metadata = null;
+  }
 }
 
 function jumpToTrack() {

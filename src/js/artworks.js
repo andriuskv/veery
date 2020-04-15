@@ -18,13 +18,28 @@ function setArtwork(id, value) {
 function getArtwork(id) {
   if (id) {
     const artwork = artworks[id];
+    const { original, small } = artwork.image;
 
-    if (!artwork.url) {
-      artwork.url = URL.createObjectURL(artwork.file);
+    if (original.blob && !original.url) {
+      original.url = URL.createObjectURL(original.blob);
+    }
+
+    if (!small) {
+      artwork.image.small = { url: original.url };
+    }
+    else if (small.blob && !small.url) {
+      small.url = URL.createObjectURL(small.blob);
     }
     return artwork;
   }
-  return { url: "assets/images/album-art-placeholder.png" };
+  const placeholder = "assets/images/album-art-placeholder.png";
+
+  return {
+    image: {
+      original: { url: placeholder },
+      small: { url: placeholder }
+    }
+  };
 }
 
 async function hashFile(blob) {
