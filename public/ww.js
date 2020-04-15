@@ -81,8 +81,17 @@ self.onmessage = function({ data: { action, artworks, playlist } }) {
       db.artworks.bulkPut(Object.keys(artworks).map(key => {
         const item = artworks[key];
 
-        if (item.file) {
-          delete item.url;
+        if (item.image.original.blob) {
+          delete item.image.original.url;
+        }
+
+        if (item.image.small) {
+          if (item.image.small.blob) {
+            delete item.image.small.url;
+          }
+          else {
+            delete item.image.small;
+          }
         }
         return item;
       }));

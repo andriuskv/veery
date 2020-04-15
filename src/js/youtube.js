@@ -86,7 +86,11 @@ function parseItems(items) {
   return items.map(track => {
     const id = track.snippet.resourceId.videoId;
 
-    setArtwork(id, { url: track.snippet.thumbnails.medium.url });
+    setArtwork(id, {
+      image: {
+        original: { url: track.snippet.thumbnails.medium.url }
+      }
+    });
     return {
       id,
       durationInSeconds: track.durationInSeconds,
