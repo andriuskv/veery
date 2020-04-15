@@ -223,23 +223,27 @@ function resizeImage(image, imageType = image.type) {
   });
 }
 
+async function parseTrackImage(track) {
+  const [hash, image] = await Promise.all([hashFile(track.picture), resizeImage(track.picture)]);
+  track.artworkId = hash;
+
+  setArtwork(hash, {
+    image: {
+      original: { blob: track.picture },
+      small: { blob: image }
+    },
+    type: track.picture.type
+  });
+  delete track.picture;
+}
+
 async function updateTrackWithImage(track, pl) {
   if (track.picture) {
-    const [hash, image] = await Promise.all([hashFile(track.picture), resizeImage(track.picture)]);
-    track.artworkId = hash;
-
-    setArtwork(hash, {
-      image: {
-        original: { blob: track.picture },
-        small: { blob: image }
-      },
-      type: track.picture.type
-    });
+    await parseTrackImage(track);
 
     if (pl.id === getVisiblePlaylistId()) {
       updateTrackElement(track, pl);
     }
-    delete track.picture;
   }
 }
 
@@ -258,7 +262,6 @@ async function updateTracksWithMetadata() {
   await updateTrackInfo(updateTrackWithMetadata);
   updateTrackInfo(updateTrackWithImage);
   updateTrackInfo(updateTrackWithAlbumInfo);
-
 }
 
 async function updateTrackInfo(callback) {
@@ -299,8 +302,14 @@ async function updateTrackWithMetadata(track, pl, isCurrentTrack = false) {
   delete track.needsMetadata;
   await parseMetadata(track);
 
-  if (isCurrentTrack && (!track.album || !track.artworkId)) {
-    await fetchTrackAlbum(track);
+  if (isCurrentTrack) {
+    if (track.picture) {
+      await parseTrackImage(track);
+    }
+    else if (track.needsAlbum) {
+      delete track.needsAlbum;
+      await fetchTrackAlbum(track);
+    }
 
     if (pl.storePlaylist) {
       postMessageToWorker({
