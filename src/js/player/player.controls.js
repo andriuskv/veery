@@ -82,12 +82,12 @@ function hidePlayPauseBtnSpinner() {
 function getPlayPauseButtonIcon(state) {
   if (state) {
     return {
-      id: "play",
+      id: "play-circle",
       title: "Play"
     };
   }
   return {
-    id: "pause",
+    id: "pause-circle",
     title: "Pause"
   };
 }

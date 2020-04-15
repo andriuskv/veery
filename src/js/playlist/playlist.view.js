@@ -52,7 +52,7 @@ function createListItemContent(item, playlistId) {
     <span class="list-item-first-col">
     <span class="list-item-index">${index + 1}</span>
     <button class="btn btn-icon track-play-pause-btn" data-btn="play" title="${title}">
-      ${getIcon({ iconId: id })}
+      ${getIcon({ iconId: id, className: "list-item-btn-icon" })}
     </button>
     </span>
     <span class="list-item-col">${item.title}</span>
@@ -85,7 +85,7 @@ function createGridItemContent(item) {
   return `
   <div class="artwork-container grid-item-thumbnail">
     <button class="btn btn-icon track-play-pause-btn artwork-container-btn" data-btn="play" title="${title}">
-      ${getIcon({ iconId: id })}
+      ${getIcon({ iconId: id, className: "grid-item-btn-icon" })}
     </button>
     <img src="${getArtwork(item.artworkId).image.small.url}" class="artwork" alt="">
   </div>
