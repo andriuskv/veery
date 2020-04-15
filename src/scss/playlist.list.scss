@@ -31,6 +31,11 @@
   font-size: 13px;
 }
 
+.list-item-btn-icon {
+  width: 24px;
+  height: 24px;
+}
+
 .list-item-col {
   @include text-truncate;
 

@@ -23,14 +23,6 @@ const scriptLoader = (function() {
   };
 })();
 
-// function removeElement(element) {
-//     element.remove();
-// }
-
-// function removeElements(elements) {
-//     elements.forEach(removeElement);
-// }
-
 function removeElementClass(selector, classToRemove) {
   const element = document.querySelector(selector);
 
