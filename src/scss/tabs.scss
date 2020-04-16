@@ -120,8 +120,14 @@
   }
 }
 
-.list-type-btn {
-  margin-right: 8px;
+.playlist-type-btn {
+  &.active {
+    color: $color-accent;
+  }
+
+  &:first-of-type {
+    margin-right: 8px;
+  }
 }
 
 .tab {

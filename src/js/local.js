@@ -79,16 +79,13 @@ async function fetchTrackAlbum(track) {
           const [imageName] = pathname.split("/").slice(-1);
           const directUrl = `${origin}/i/u/${imageName}`;
           const type = getFileType(imageName);
-          const [hash, image] = await Promise.all([
-            hashString(directUrl),
-            resizeImage(directUrl, type)
-          ]);
+          const hash = await hashString(directUrl);
           track.artworkId = hash;
 
           setArtwork(hash, {
             image: {
               original: { url: directUrl },
-              small: { blob: image }
+              small: { url }
             },
             type
           });
@@ -191,7 +188,7 @@ function updateTrackElement(track, pl) {
   }
 }
 
-function resizeImage(image, imageType = image.type) {
+function resizeImage(image) {
   return new Promise((resolve) => {
     const canvasImage = new Image();
     const canvas = document.createElement("canvas");
@@ -213,13 +210,10 @@ function resizeImage(image, imageType = image.type) {
       canvas.width = width;
       canvas.height = height;
       ctx.drawImage(canvasImage, 0, 0, width, height);
-      canvas.toBlob(resolve, imageType, 0.72);
-
-      if (typeof image === "object") {
-        URL.revokeObjectURL(canvasImage.src);
-      }
+      canvas.toBlob(resolve, image.type, 0.72);
+      URL.revokeObjectURL(canvasImage.src);
     };
-    canvasImage.src = typeof image === "string" ? image : URL.createObjectURL(image);
+    canvasImage.src = URL.createObjectURL(image);
   });
 }
 
@@ -235,6 +229,18 @@ async function parseTrackImage(track) {
     type: track.picture.type
   });
   delete track.picture;
+}
+
+async function updateTrackWithMetadata(track, pl) {
+  delete track.needsMetadata;
+  await parseMetadata(track);
+
+  if (pl.id === getVisiblePlaylistId()) {
+    updateTrackElement(track, pl);
+  }
+  else if (isRouteActive("")) {
+    updatePlaylistEntry(pl.id, pl.tracks, false);
+  }
 }
 
 async function updateTrackWithImage(track, pl) {
@@ -298,36 +304,41 @@ async function updateTrackInfo(callback) {
   }
 }
 
-async function updateTrackWithMetadata(track, pl, isCurrentTrack = false) {
-  delete track.needsMetadata;
-  await parseMetadata(track);
+async function updateCurrentTrackWithMetadata(track) {
+  const pl = getPlaylistById("local-files");
 
-  if (isCurrentTrack) {
-    if (track.picture) {
-      await parseTrackImage(track);
-    }
-    else if (track.needsAlbum) {
-      delete track.needsAlbum;
-      await fetchTrackAlbum(track);
-    }
+  if (track.needsMetadata) {
+    delete track.needsMetadata;
+    await parseMetadata(track);
+  }
 
-    if (pl.storePlaylist) {
-      postMessageToWorker({
-        action: "update-tracks",
-        artworks: getArtworks(),
-        playlist: {
-          id: pl.id,
-          tracks: pl.tracks
-        }
-      });
-    }
+  if (track.picture) {
+    await parseTrackImage(track);
+  }
+  else if (track.needsAlbum) {
+    delete track.needsAlbum;
+    await fetchTrackAlbum(track);
   }
 
   if (pl.id === getVisiblePlaylistId()) {
     updateTrackElement(track, pl);
   }
   else if (isRouteActive("")) {
-    updatePlaylistEntry(pl.id, pl.tracks, isCurrentTrack);
+    updatePlaylistEntry(pl.id, pl.tracks, true);
+  }
+  else {
+    needsPlaylistThumbnailRefresh = true;
+  }
+
+  if (pl.storePlaylist) {
+    postMessageToWorker({
+      action: "update-tracks",
+      artworks: getArtworks(),
+      playlist: {
+        id: pl.id,
+        tracks: pl.tracks
+      }
+    });
   }
 }
 
@@ -442,6 +453,6 @@ window.addEventListener("dragover", event => {
 export {
   addTracks,
   selectLocalFiles,
-  updateTrackWithMetadata,
+  updateCurrentTrackWithMetadata,
   refreshPlaylistThumbnail
 };

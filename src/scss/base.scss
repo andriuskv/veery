@@ -106,9 +106,13 @@ svg {
 .btn-icon {
   padding: 0;
   background-color: transparent;
+}
 
-  &.active {
-    color: $color-accent;
+.btn-icon-alt {
+  color: $color-text-dark;
+
+  &:not(:disabled):hover {
+    color: $color-text;
   }
 }
 
