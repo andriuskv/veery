@@ -30,10 +30,8 @@ import { getSetting } from "../settings.js";
 import { showActiveIcon, removeActiveIcon } from "../sidebar.js";
 import { scrollTrackIntoView, toggleTrackPlayPauseBtn, resetCurrentTrackElement, setTrackElement } from "../playlist/playlist.view.js";
 import { isMediaVisible, showTrackInfo, resetTrackInfo } from "./player.now-playing.js";
-import { postMessageToWorker } from "../web-worker.js";
 import { showPlayerMessage } from "./player.view.js";
-import { updateTrackWithMetadata } from "../local";
-import { getArtworks } from "../artworks";
+import { updateCurrentTrackWithMetadata } from "../local";
 import * as nPlayer from "./player.native.js";
 import * as ytPlayer from "./player.youtube.js";
 
@@ -101,22 +99,9 @@ function updatePlayerState(state) {
 async function beforeTrackStart(track, playlistId, { scrollToTrack, startTime }) {
   const { rendered } = getPlaylistState(playlistId);
 
-  if (track.needsMetadata) {
-    const pl = getPlaylistById(playlistId);
-
+  if (track.needsMetadata || track.needsAlbum || track.picture) {
     showPlayPauseBtnSpinner();
-    await updateTrackWithMetadata(track, pl, true);
-
-    if (pl.storePlaylist) {
-      postMessageToWorker({
-        action: "update-tracks",
-        artworks: getArtworks(),
-        playlist: {
-          id: pl.id,
-          tracks: pl.tracks
-        }
-      });
-    }
+    await updateCurrentTrackWithMetadata(track);
   }
   showTrackInfo(track);
   showTrackDuration(track.duration, track.durationInSeconds);

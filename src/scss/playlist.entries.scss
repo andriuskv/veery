@@ -114,11 +114,6 @@
 
 .pl-entry-btn {
   margin-right: 8px;
-  color: $color-text-dark;
-
-  &:not(:disabled):hover {
-    color: $color-text;
-  }
 
   &.spinner {
     position: relative;
