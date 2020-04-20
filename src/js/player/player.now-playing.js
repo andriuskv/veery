@@ -144,7 +144,8 @@ function getTrackInfo(track) {
   else {
     info = `<div class="track-info-item track-name" data-action="reveal-track">${track.name}</div>`;
   }
-  return `<div id="js-track-info" class="track-info" title="${elementTitle}">${info}</div> `;
+  const escapedTitle = elementTitle.replace(/"/g, "&quot;");
+  return `<div id="js-track-info" class="track-info" title="${escapedTitle}">${info}</div> `;
 }
 
 function showTrackInfo(track) {
