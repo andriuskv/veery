@@ -495,11 +495,11 @@ function getMouseEnterHandler(slider) {
 
 window.addEventListener("keydown", event => {
   const modifierKeyPressed = event.ctrlKey || event.shiftKey || event.altKey || event.metaKey;
+  const { target, key } = event;
 
-  if (event.target instanceof HTMLInputElement || modifierKeyPressed) {
+  if ((target instanceof HTMLInputElement && target.type === "text") || modifierKeyPressed) {
     return;
   }
-  const { key } = event;
 
   if (key === "p") {
     playTrack();
@@ -513,7 +513,7 @@ window.addEventListener("keydown", event => {
   else if (key === "o") {
     playPreviousTrack();
   }
-  else if (key.startsWith("Arrow") && event.target.getAttribute("role") !== "slider" && !getScrollParent(event.target)) {
+  else if (key.startsWith("Arrow") && target.getAttribute("role") !== "slider" && !getScrollParent(target)) {
     if (key === "ArrowUp" || key === "ArrowDown") {
       updateVolumeOnKeyDown(key);
     }

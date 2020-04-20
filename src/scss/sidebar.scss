@@ -135,6 +135,7 @@
 .sidebar-entry {
   --background-color: #{$background-color-dark};
 
+  overflow: hidden;
   position: relative;
   background-color: var(--background-color);
 
