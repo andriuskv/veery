@@ -178,6 +178,17 @@ svg {
   margin-left: 8px;
 }
 
+.play-pause-btn-spinner {
+  pointer-events: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: calc(100% - 4px);
+  height: calc(100% - 4px);
+  transform: translate(-50%, -50%);
+  color: var(--spinner-color, #{$color-accent});
+}
+
 .modal {
   z-index: 4;
   position: absolute;
