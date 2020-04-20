@@ -56,27 +56,46 @@ const elapsedTime = (function() {
 })();
 
 function showPlayPauseBtnSpinner() {
+  const playBtn = document.getElementById("js-play-btn");
+  const spinnerElement = playBtn.querySelector(".play-pause-btn-spinner");
+
+  if (spinnerElement) {
+    return;
+  }
   const element = getTrackPlayPauseBtn();
+  const spinner = `
+    <svg viewBox="0 0 100 100" class="play-pause-btn-spinner">
+      <use href="#spinner"/>
+    </svg>
+  `;
 
   if (element) {
     lastSpinnerElement = element;
-    element.classList.add("show-spinner");
+    element.insertAdjacentHTML("beforeend", spinner);
   }
-  document.getElementById("js-play-btn").classList.add("show-spinner");
+  playBtn.insertAdjacentHTML("beforeend", spinner);
 }
 
 function hidePlayPauseBtnSpinner() {
   const element = getTrackPlayPauseBtn();
 
   if (lastSpinnerElement) {
-    lastSpinnerElement.classList.remove("show-spinner");
+    removeSpinner(lastSpinnerElement);
     lastSpinnerElement = null;
   }
 
   if (element) {
-    element.classList.remove("show-spinner");
+    removeSpinner(element);
   }
-  document.getElementById("js-play-btn").classList.remove("show-spinner");
+  removeSpinner(document.getElementById("js-play-btn"));
+}
+
+function removeSpinner(element) {
+  const spinner = element.querySelector(".play-pause-btn-spinner");
+
+  if (spinner) {
+    spinner.remove();
+  }
 }
 
 function getPlayPauseButtonIcon(state) {
