@@ -35,7 +35,7 @@ function filterUnsupportedFiles(files) {
 
   if (unsupportedTypes.length) {
     showPlayerMessage({
-      title: "Local files",
+      title: "Local Files",
       body: `Can't play audio files with type: ${unsupportedTypes.join(", ")}`
     });
   }
@@ -358,7 +358,7 @@ function selectLocalFiles(files) {
   const id = "local-files";
   const pl = getPlaylistById(id) || createPlaylist({
     id,
-    title: "Local files",
+    title: "Local Files",
     type: "list",
     storePlaylist: importSettings.getSetting(id, "storePlaylist")
   });

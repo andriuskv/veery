@@ -197,7 +197,7 @@ function createSettingsPanel(id, { element }) {
         <div class="checkbox">
           <div class="checkbox-tick"></div>
         </div>
-        <span class="checkbox-label">Store <b>Local files</b> playlist</span>
+        <span class="checkbox-label">Store <b>Local Files</b> playlist</span>
       </label>
       <label class="checkbox-container import-setting">
         <input type="checkbox" class="sr-only checkbox-input"
