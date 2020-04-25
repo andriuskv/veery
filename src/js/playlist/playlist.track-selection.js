@@ -17,6 +17,7 @@ const startingPoint = {};
 const mousePos = {};
 let playlistElement = null;
 let playlistElementRect = null;
+let playlistOffsetY = 0;
 let selectionElement = null;
 let selectionArea = {};
 let trackElements = [];
@@ -25,13 +26,14 @@ let updating = false;
 let isMoveToVisible = false;
 let seletectTrackIndex = -1;
 
-function enableTrackSelection({ id, tracks }) {
+function enableTrackSelection({ id, tracks, type }) {
   if (playlistElement) {
     disableTrackSelection();
   }
 
   if (tracks.length) {
     seletectTrackIndex = -1;
+    playlistOffsetY = type === "list" ? 35 : 0;
     playlistElement = getTab(id);
     playlistElement.addEventListener("mousedown", onMousedown);
   }
@@ -97,8 +99,11 @@ function updateSelectionArea(mousePos, startingPoint, area, areaStyle) {
   }
 
   if (height < 0) {
-    const top = startingPoint.y + height;
+    let top = startingPoint.y + height;
 
+    if (top < playlistOffsetY) {
+      top = playlistOffsetY;
+    }
     height *= -1;
     area.top = top;
     areaStyle.top = `${top}px`;
@@ -194,12 +199,12 @@ function selectTrackElements(elements, area, ctrlKey) {
   }
 }
 
-function normalizeMousePosition(pos, max) {
+function normalizeMousePosition(pos, { min, max }) {
   if (pos > max) {
     return max;
   }
-  else if (pos < 0) {
-    return 0;
+  else if (pos < min) {
+    return min;
   }
   return pos;
 }
@@ -266,8 +271,14 @@ function onMousemove(event) {
   const { top, left, width, height, scrollHeight } = playlistElementRect;
   const mouseYRelatedToPage = event.clientY - top;
 
-  mousePos.x = normalizeMousePosition(event.clientX - left, width);
-  mousePos.y = normalizeMousePosition(playlistElement.scrollTop + mouseYRelatedToPage, scrollHeight);
+  mousePos.x = normalizeMousePosition(event.clientX - left, {
+    min: 0,
+    max: width
+  });
+  mousePos.y = normalizeMousePosition(playlistElement.scrollTop + mouseYRelatedToPage, {
+    min: playlistOffsetY,
+    max: scrollHeight
+  });
 
   event.preventDefault();
 
@@ -289,7 +300,7 @@ function onMousemove(event) {
     update(event.ctrlKey);
   }
 
-  if (intervalId && mouseYRelatedToPage > 0 && mouseYRelatedToPage < height) {
+  if (intervalId && mouseYRelatedToPage > playlistOffsetY && mouseYRelatedToPage < height) {
     stopScrolling();
   }
   else if (!intervalId) {
@@ -298,7 +309,7 @@ function onMousemove(event) {
     if (mouseYRelatedToPage > height && mousePos.y < scrollHeight) {
       scrollDirection = scrollDown;
     }
-    else if (mouseYRelatedToPage < 0 && mousePos.y > 0) {
+    else if (mouseYRelatedToPage < playlistOffsetY && mousePos.y > playlistOffsetY) {
       scrollDirection = scrollUp;
     }
     else {
@@ -394,8 +405,8 @@ function onMousedown({ currentTarget, target, which, clientX, clientY }) {
   startingPoint.x = clientX - playlistElementRect.left;
   startingPoint.y = currentTarget.scrollTop + clientY - playlistElementRect.top;
 
-  // Don't add event listeners if clicked on scrollbar
-  if (startingPoint.x < playlistElementRect.width) {
+  // Don't add event listeners if clicked on scrollbar or playlist header
+  if (startingPoint.x < playlistElementRect.width && startingPoint.y > playlistOffsetY) {
     window.addEventListener("mousemove", onMousemove);
     window.addEventListener("mouseup", onMouseup);
   }

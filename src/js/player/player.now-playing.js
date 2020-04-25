@@ -117,8 +117,11 @@ function updateTrackMedia(player, { original, small }) {
         const isPlaceholder = original.url.includes("placeholder");
         background.classList.toggle("hidden", isPlaceholder);
         artworkClone.classList.toggle("shadow", !isPlaceholder);
-        element.replaceChild(artworkClone, image);
-        background.style.backgroundImage = `url(${small.url})`;
+
+        if (image) {
+          element.replaceChild(artworkClone, image);
+          background.style.backgroundImage = `url(${small.url})`;
+        }
         artworkClone.onload = null;
       };
       artworkClone.src = original.url;
