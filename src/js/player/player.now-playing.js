@@ -117,11 +117,8 @@ function updateTrackMedia(player, { original, small }) {
         const isPlaceholder = original.url.includes("placeholder");
         background.classList.toggle("hidden", isPlaceholder);
         artworkClone.classList.toggle("shadow", !isPlaceholder);
-
-        if (image) {
-          element.replaceChild(artworkClone, image);
-          background.style.backgroundImage = `url(${small.url})`;
-        }
+        image.replaceWith(artworkClone);
+        background.src = small.url;
         artworkClone.onload = null;
       };
       artworkClone.src = original.url;
@@ -163,7 +160,16 @@ function showTrackInfo(track) {
       title: track.title,
       artist: track.artist,
       album: track.album,
-      artwork: [{ src: image.original.url, sizes: "512x512", type }]
+      artwork: [{
+        src: image.original.url,
+        sizes: "512x512",
+        type
+      },
+      {
+        src: image.small.url,
+        sizes: "256x256",
+        type
+      }]
     });
   }
 }

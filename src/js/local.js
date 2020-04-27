@@ -77,7 +77,7 @@ async function fetchTrackAlbum(track) {
         if (url) {
           const { origin, pathname } = new URL(url);
           const [imageName] = pathname.split("/").slice(-1);
-          const directUrl = `${origin}/i/u/${imageName}`;
+          const directUrl = `${origin}/i/u/500x500/${imageName}`;
           const type = getFileType(imageName);
           const hash = await hashString(directUrl);
           track.artworkId = hash;

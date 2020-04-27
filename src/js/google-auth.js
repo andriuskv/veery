@@ -44,7 +44,7 @@ async function initGoogleAPI(signIn = false) {
       apiKey: process.env.YOUTUBE_API_KEY,
       clientId: "293076144560-r5cear7rprgo094u6ibcd6nl3bbg18te.apps.googleusercontent.com",
       discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest"],
-      scope: "https://www.googleapis.com/auth/youtube.force-ssl"
+      scope: "https://www.googleapis.com/auth/youtube.readonly"
     });
     const instance = gapi.auth2.getAuthInstance();
 
