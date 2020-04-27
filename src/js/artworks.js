@@ -11,8 +11,10 @@ function getArtworks() {
 }
 
 function setArtwork(id, value) {
-  value.id = id;
-  artworks[id] = value;
+  if (!artworks[id]) {
+    value.id = id;
+    artworks[id] = value;
+  }
 }
 
 function getArtwork(id) {

@@ -10,7 +10,9 @@
   <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
-  <link rel="manifest" href="./manifest.json" />
+  <link rel="manifest" href="./manifest.json">
+  <link rel="preload" href="vendor.js" as="script">
+  <link rel="preload" href="main.js" as="script">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="dns-prefetch" href="//fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600&display=swap" rel="stylesheet">
@@ -334,7 +336,7 @@
   </div>
   <div id="js-media-container" class="media-container">
     <div id="js-media-image-container" class="media-image-container">
-      <div class="media-image-background"></div>
+      <img src="" class="media-image-background" alt="">
       <img src="" class="media-image" data-item="image" alt="">
     </div>
     <div id="js-yt-player" class="yt-player" tabindex="-1"></div>
