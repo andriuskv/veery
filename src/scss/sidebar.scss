@@ -43,8 +43,9 @@
   position: relative;
   flex-shrink: 0;
   height: 120px;
-  background-image: url("./assets/images/logo.png");
-  background-size: contain;
+  background-image: url("./assets/images/logo.svg");
+  background-size: calc(100% - 40px) calc(100% - 8px);
+
   background-repeat: no-repeat;
   background-position: center;
 
@@ -60,15 +61,20 @@
 
 .online-status {
   position: absolute;
-  top: 30px;
+  top: 26px;
   right: 16px;
   display: none;
   color: $color-text-dark;
   font-style: italic;
   font-size: 13px;
 
+
   &.visible {
     display: block;
+  }
+
+  @include sidebar-height-breakpoint {
+    right: 8px;
   }
 }
 
