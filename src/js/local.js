@@ -147,7 +147,7 @@ async function addTracks(importOption, pl, files, parseTracks) {
     const tracks = await parseTracks(newTracks);
 
     addTracksToPlaylist(pl, tracks);
-    updateTracksWithMetadata();
+    updateTracksWithMetadata(pl.id);
   }
   catch (e) {
     console.log(e);
@@ -264,10 +264,13 @@ async function updateTrackWithAlbumInfo(track, pl) {
   }
 }
 
-async function updateTracksWithMetadata() {
+async function updateTracksWithMetadata(id) {
   await updateTrackInfo(updateTrackWithMetadata);
   updateTrackInfo(updateTrackWithImage);
-  updateTrackInfo(updateTrackWithAlbumInfo);
+
+  if (importSettings.getSetting(id, "fetchMetadata")) {
+    updateTrackInfo(updateTrackWithAlbumInfo);
+  }
 }
 
 async function updateTrackInfo(callback) {
@@ -315,7 +318,8 @@ async function updateCurrentTrackWithMetadata(track) {
   if (track.picture) {
     await parseTrackImage(track);
   }
-  else if (track.needsAlbum) {
+
+  if (track.needsAlbum) {
     delete track.needsAlbum;
     await fetchTrackAlbum(track);
   }
