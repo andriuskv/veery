@@ -22,24 +22,28 @@ module.exports = function(env = {}) {
     }),
     new HtmlWebpackPlugin({
       template: "./public/index.html",
+      cache: false,
       minify: env.prod ? {
         keepClosingSlash: true,
         collapseWhitespace: true,
         collapseInlineTagWhitespace: true
       } : undefined
     }),
-    new CopyPlugin([
+    new CopyPlugin({ patterns: [
       { from: "./src/libs", to: "./libs"},
       { from: "./src/assets", to: "./assets"},
       { from: "./public" }
-    ]),
-    new workboxPlugin.GenerateSW({
+    ]})
+  ];
+
+  if (env.prod) {
+    plugins.push(new workboxPlugin.GenerateSW({
       swDest:  "./sw.js",
       skipWaiting: true,
       clientsClaim: true,
       disableDevLogs: true
-    })
-  ];
+    }));
+  }
 
   return {
     mode,

@@ -11,7 +11,8 @@ const importOptionsElement = document.getElementById("js-import-options");
 const importSettings = (function() {
   const defaultSettings = {
     "local-files": {
-      storePlaylist: false
+      storePlaylist: false,
+      fetchMetadata: false
     },
     dropbox: {
       storePlaylist: false
@@ -129,38 +130,24 @@ function createYoutubeModal() {
 function handleChangeOnFileInput({ target }) {
   selectLocalFiles([...target.files]);
   target.value = "";
-  target.removeEventListener("change", handleChangeOnFileInput);
-  target.remove();
-}
-
-function createFileInput() {
-  const input = document.createElement("input");
-
-  input.setAttribute("type", "file");
-  input.setAttribute("id", "js-file-picker");
-  input.setAttribute("accept", "audio/*");
-  input.classList.add("file-picker");
-  input.addEventListener("change", handleChangeOnFileInput);
-  document.body.appendChild(input);
-  return input;
+  target.onchange = null;
 }
 
 function showFilePicker(item) {
-  const filePicker = document.getElementById("js-file-picker") || createFileInput();
+  const input = document.createElement("input");
+  input.onchange = handleChangeOnFileInput;
 
   if (item === "file") {
-    filePicker.removeAttribute("webkitdirectory");
-    filePicker.removeAttribute("directory");
-    filePicker.removeAttribute("allowdirs");
-    filePicker.setAttribute("multiple", "");
+    input.setAttribute("multiple", "");
   }
   else if (item === "folder") {
-    filePicker.removeAttribute("multiple");
-    filePicker.setAttribute("webkitdirectory", "");
-    filePicker.setAttribute("directory", "");
-    filePicker.setAttribute("allowdirs", "");
+    input.setAttribute("webkitdirectory", "");
+    input.setAttribute("directory", "");
+    input.setAttribute("allowdirs", "");
   }
-  filePicker.click();
+  input.setAttribute("type", "file");
+  input.setAttribute("accept", "audio/*");
+  input.click();
 }
 
 function handleImportFormSubmit(event) {
@@ -190,38 +177,52 @@ function createSettingsPanel(id, { element }) {
 
   element.insertAdjacentHTML("afterend", `
     <div id="${id}" class="panel import-settings-panel">
-      <h3 class="panel-title">Settings</h3>
-      <label class="checkbox-container import-setting">
-        <input type="checkbox" class="sr-only checkbox-input"
-          ${settings["local-files"].storePlaylist ? "checked" : ""} data-id="local-files">
-        <div class="checkbox">
-          <div class="checkbox-tick"></div>
+      <h3 class="panel-title import-settings-panel-title">Settings</h3>
+      <div class="import-setting-group">
+        <h4 class="import-setting-group-title">Store playlist for...</h4>
+        <label class="checkbox-container import-setting">
+          <input type="checkbox" class="sr-only checkbox-input"
+            data-id="local-files" data-setting="storePlaylist"
+            ${settings["local-files"].storePlaylist ? "checked" : ""}>
+          <div class="checkbox">
+            <div class="checkbox-tick"></div>
+          </div>
+          <span class="checkbox-label">Local Files</span>
+        </label>
+        <label class="checkbox-container import-setting">
+          <input type="checkbox" class="sr-only checkbox-input"
+            data-id="dropbox" data-setting="storePlaylist"
+            ${settings.dropbox.storePlaylist ? "checked" : ""}>
+          <div class="checkbox">
+            <div class="checkbox-tick"></div>
+          </div>
+          <span class="checkbox-label">Dropbox</span>
+        </label>
+        <div class="import-setting-message">
+          <svg viewBox="0 0 24 24">
+          <use href="#info"></use>
+          </svg>
+          <span>Stored playlists will persist through reload</span>
         </div>
-        <span class="checkbox-label">Store <b>Local Files</b> playlist</span>
-      </label>
-      <label class="checkbox-container import-setting">
-        <input type="checkbox" class="sr-only checkbox-input"
-          ${settings.dropbox.storePlaylist ? "checked" : ""} data-id="dropbox">
-        <div class="checkbox">
-          <div class="checkbox-tick"></div>
-        </div>
-        <span class="checkbox-label">Store <b>Dropbox</b> playlist</span>
-      </label>
-      <div class="import-setting-message">
-        <svg viewBox="0 0 24 24">
-        <use href="#info"></use>
-        </svg>
-        <span>Stored playlists will persist through reload</span>
       </div>
+      <label class="checkbox-container import-setting">
+        <input type="checkbox" class="sr-only checkbox-input"
+          data-id="local-files" data-setting="fetchMetadata"
+          ${settings["local-files"].fetchMetadata ? "checked" : ""}>
+        <div class="checkbox">
+          <div class="checkbox-tick"></div>
+        </div>
+        <span class="checkbox-label">Look for additional metadata</span>
+      </label>
     </div>
   `);
   document.getElementById(id).addEventListener("change", handleSettingChange);
 }
 
 function handleSettingChange({ target }) {
-  const id = target.getAttribute("data-id");
+  const { id, setting } = target.dataset;
 
-  importSettings.setSetting(id, "storePlaylist", target.checked);
+  importSettings.setSetting(id, setting, target.checked);
 }
 
 async function handleYouTubeOptionClick(attrValue, optionElement) {

@@ -6,7 +6,7 @@
 
 .move-to-panel-title {
   padding: 8px 0 16px 16px;
-  border-bottom: 1px solid $background-color-dark;
+  border-bottom: 1px solid $background-color;
 }
 
 .move-to-list {
@@ -14,7 +14,7 @@
   max-height: 200px;
   padding-bottom: 8px;
   margin-bottom: 8px;
-  border-bottom: 1px solid $background-color-dark;
+  border-bottom: 1px solid $background-color;
 
   &::-webkit-scrollbar-thumb {
     background: $background-color-dark;
