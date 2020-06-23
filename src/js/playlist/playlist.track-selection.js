@@ -24,7 +24,7 @@ let trackElements = [];
 let intervalId = 0;
 let updating = false;
 let isMoveToVisible = false;
-let seletectTrackIndex = -1;
+let selectTrackIndex = -1;
 
 function enableTrackSelection({ id, tracks, type }) {
   if (playlistElement) {
@@ -32,7 +32,7 @@ function enableTrackSelection({ id, tracks, type }) {
   }
 
   if (tracks.length) {
-    seletectTrackIndex = -1;
+    selectTrackIndex = -1;
     playlistOffsetY = type === "list" ? 35 : 0;
     playlistElement = getTab(id);
     playlistElement.addEventListener("mousedown", onMousedown);
@@ -326,7 +326,7 @@ function onMouseup({ target, ctrlKey, shiftKey }) {
 
   if (selectionElement) {
     const elements = getSelectedElements();
-    seletectTrackIndex = -1;
+    selectTrackIndex = -1;
 
     resetSelection();
 
@@ -341,18 +341,18 @@ function onMouseup({ target, ctrlKey, shiftKey }) {
     const element = getElementByAttr("data-index", target, playlistElement);
 
     if (element) {
-      const newSeletectTrackIndex = parseInt(element.attrValue, 10);
+      const newSelectTrackIndex = parseInt(element.attrValue, 10);
 
-      if (!shiftKey || seletectTrackIndex === -1) {
-        seletectTrackIndex = newSeletectTrackIndex;
+      if (!shiftKey || selectTrackIndex === -1) {
+        selectTrackIndex = newSelectTrackIndex;
         selectTrackElement(element.elementRef, ctrlKey);
       }
-      else if (seletectTrackIndex >= 0 && seletectTrackIndex !== newSeletectTrackIndex) {
-        selectTrackElementRange(seletectTrackIndex, newSeletectTrackIndex, ctrlKey);
+      else if (selectTrackIndex >= 0 && selectTrackIndex !== newSelectTrackIndex) {
+        selectTrackElementRange(selectTrackIndex, newSelectTrackIndex, ctrlKey);
       }
     }
     else if (!ctrlKey) {
-      seletectTrackIndex = -1;
+      selectTrackIndex = -1;
       deselectTrackElements();
     }
   }
@@ -470,7 +470,7 @@ function removeSelectedTracks() {
   const indexes = getElementIndexes(elements);
   const { tracksToKeep, tracksToRemove } = separatePlaylistTracks(pl.tracks, indexes);
   pl.tracks = tracksToKeep;
-  seletectTrackIndex = -1;
+  selectTrackIndex = -1;
 
   elements.forEach(element => element.remove());
   resetTrackIndexes(pl);
