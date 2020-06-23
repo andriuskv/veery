@@ -301,8 +301,8 @@ function createPlaylistRemoveModal(id) {
         </div>
         <p>Are you sure you want to remove this playlist?<br>If you remove this playlist all your tracks will be lost.</p>
         <div class="panel-button-container">
-          <button class="btn btn-danger" data-type="remove">Remove</button>
           <button class="btn btn-text" data-type="cancel">Cancel</button>
+          <button class="btn btn-danger" data-type="remove">Remove</button>
         </div>
       </div>
     </div>
@@ -316,12 +316,12 @@ function createPlaylistSyncModal(id) {
       <div class="panel">
         <div class="panel-title-container">
           ${getIcon({ iconId: "sync", className: "panel-icon" })}
-          <h3 class="panel-title">Syncronize playlist?</h3>
+          <h3 class="panel-title">Synchronize playlist?</h3>
         </div>
         <p>Are you sure you want to synchronize this playlist with the playlist on YouTube? If you choose to synchronize you will lose all previously imported tracks.</p>
         <div class="panel-button-container">
-          <button class="btn btn-danger" data-type="sync">Synchronize</button>
           <button class="btn btn-text" data-type="cancel">Cancel</button>
+          <button class="btn btn-danger" data-type="sync">Synchronize</button>
         </div>
       </div>
     </div>

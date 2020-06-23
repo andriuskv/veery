@@ -48,12 +48,12 @@ function setSortOptions({ sortedBy, order }) {
 }
 
 function getSortPanel(id, sortedBy) {
-  const options = getSortOtions(sortedBy);
+  const options = getSortOptions(sortedBy);
 
   return `<ul id="${id}" class="panel sort-panel">${options}</ul>`;
 }
 
-function getSortOtions(sortedBy) {
+function getSortOptions(sortedBy) {
   const options = ["index", "title", "artist", "album", "duration"];
 
   return options.reduce((str, option) => {

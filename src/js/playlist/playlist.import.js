@@ -38,18 +38,18 @@ const importSettings = (function() {
 
 function changeImportOptionState({ children }, state) {
   Array.from(children).forEach(element => {
-    let itemELement = null;
+    let itemElement = null;
 
     if (element.hasAttribute("data-item")) {
-      itemELement = element;
+      itemElement = element;
     }
     else if (element.querySelector("[data-item]")) {
-      itemELement = element.querySelector("[data-item]");
+      itemElement = element.querySelector("[data-item]");
     }
 
-    if (itemELement) {
-      itemELement.classList.toggle("spinner", state);
-      itemELement.disabled = state;
+    if (itemElement) {
+      itemElement.classList.toggle("spinner", state);
+      itemElement.disabled = state;
     }
   });
 }
@@ -268,13 +268,13 @@ function getYoutubeUserPlaylistsTemplate() {
   `;
 }
 
-importOptionsElement.addEventListener("click", async ({ currenTarget, target }) => {
-  const element = getElementByAttr("data-item", target, currenTarget);
+importOptionsElement.addEventListener("click", async ({ currentTarget, target }) => {
+  const element = getElementByAttr("data-item", target, currentTarget);
 
   if (!element || element.elementRef.disabled) {
     return;
   }
-  const { attrValue, elementRef: optionElement } = getElementByAttr("data-option", target, currenTarget);
+  const { attrValue, elementRef: optionElement } = getElementByAttr("data-option", target, currentTarget);
 
   if (attrValue === "local") {
     showFilePicker(element.attrValue);

@@ -190,14 +190,14 @@ function updateTrackSlider(track, currentTime = 0) {
     durationInSeconds = track.durationInSeconds;
     duration = track.duration;
   }
-  const formatedCurrentTime = formatTime(currentTime, durationInSeconds >= 3600);
+  const formattedCurrentTime = formatTime(currentTime, durationInSeconds >= 3600);
 
   if (!seeking) {
-    document.getElementById("js-track-current").textContent = formatedCurrentTime;
+    document.getElementById("js-track-current").textContent = formattedCurrentTime;
   }
   updateSlider("track", currentTime / durationInSeconds);
   trackSlider.setAttribute("aria-valuenow", currentTime);
-  trackSlider.setAttribute("aria-valuetext", `${formatedCurrentTime} of ${duration}`);
+  trackSlider.setAttribute("aria-valuetext", `${formattedCurrentTime} of ${duration}`);
 }
 
 function updateVolumeSlider(volume) {
