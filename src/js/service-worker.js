@@ -1,6 +1,6 @@
 import { dispatchCustomEvent } from "./utils.js";
 
-if ("serviceWorker" in navigator) {
+if (process.env.NODE_ENV === "production" && "serviceWorker" in navigator) {
   navigator.serviceWorker.register("./sw.js").then(reg => {
     reg.onupdatefound = () => {
       const worker = reg.installing;
