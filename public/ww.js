@@ -8,7 +8,17 @@ db.version(1).stores({ playlists: "id", artworks: "id" });
 (async function init() {
   const [playlists, artworks] = await Promise.all([db.playlists.toArray(), db.artworks.toArray()]);
 
-  postMessage({ artworks, playlists });
+  postMessage({
+    artworks,
+    playlists: playlists.sort((a, b) => {
+      if (a.createdAt > b.createdAt) {
+        return 1;
+      }
+      else if (a.createdAt < b.createdAt) {
+        return -1;
+      }
+      return 0;
+    }) });
 })();
 
 function getPlaylist(id) {

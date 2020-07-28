@@ -292,7 +292,7 @@ async function fetchYoutubeUserPlaylists() {
 
 window.addEventListener("google-sign-out", () => {
   userPlaylists = null;
-});
+}, { once: true });
 
 export {
   fetchYoutubeItem,

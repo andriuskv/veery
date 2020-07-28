@@ -24,6 +24,7 @@ function createPlaylist(pl) {
     sortedBy: "index",
     order: 1,
     tracks: [],
+    createdAt: Date.now(),
     ...pl
   };
   return playlists[pl.id];

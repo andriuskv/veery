@@ -78,7 +78,7 @@ window.addEventListener("sw-state-change", ({ detail }) => {
 
 window.addEventListener("online", emitConnectivityStatus);
 window.addEventListener("offline", emitConnectivityStatus);
-window.addEventListener("load", emitConnectivityStatus);
+window.addEventListener("load", emitConnectivityStatus, { once: true });
 
 export {
   showPlayerMessage,
