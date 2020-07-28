@@ -30,15 +30,15 @@ module.exports = function(env = {}) {
       } : undefined
     }),
     new CopyPlugin({ patterns: [
-      { from: "./src/libs", to: "./libs"},
-      { from: "./src/assets", to: "./assets"},
+      { from: "./src/libs", to: "./libs" },
+      { from: "./src/assets", to: "./assets" },
       { from: "./public" }
     ]})
   ];
 
   if (env.prod) {
     plugins.push(new workboxPlugin.GenerateSW({
-      swDest:  "./sw.js",
+      swDest: "./sw.js",
       skipWaiting: true,
       clientsClaim: true,
       disableDevLogs: true
