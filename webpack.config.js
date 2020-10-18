@@ -47,6 +47,7 @@ module.exports = function(env = {}) {
 
   return {
     mode,
+    target: "browserslist",
     entry: {
       main: "./src/js/index.js"
     },
@@ -67,7 +68,9 @@ module.exports = function(env = {}) {
       minimizer: [new TerserPlugin({
         parallel: true,
         terserOptions: {
-          ecma: 8,
+          ecma: 2019,
+          module: true,
+          toplevel: true,
           output: {
             comments: false
           }
@@ -78,8 +81,8 @@ module.exports = function(env = {}) {
       rules: [
         {
           test: /\.s?css$/,
-          loaders: [
-            MiniCssExtractPlugin.loader,
+          use: [
+            { loader: MiniCssExtractPlugin.loader },
             {
               loader: "css-loader",
               options: {
@@ -91,16 +94,12 @@ module.exports = function(env = {}) {
               loader: "postcss-loader",
               options: {
                 sourceMap: !env.prod,
-                plugins() {
-                  const plugins = [
+                postcssOptions: {
+                  plugins: [
                     require("autoprefixer")(),
-                    require("css-mqpacker")()
-                  ];
-
-                  if (env.prod) {
-                    plugins.push(require("cssnano")());
-                  }
-                  return plugins;
+                    require("css-mqpacker")(),
+                    env.prod ? require("cssnano")() : undefined
+                  ]
                 }
               }
             },
