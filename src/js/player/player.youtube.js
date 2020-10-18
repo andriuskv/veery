@@ -14,6 +14,7 @@ let ytPlayer = null;
 let videoCued = false;
 let args = null;
 let stateUpdated = false;
+let playState = false;
 
 function onPlayerStateChange({ data: state }) {
   const track = getCurrentTrack();
@@ -51,8 +52,14 @@ function onPlayerReady() {
 
   if (typeof startTime === "number") {
     setVolume(volume);
-    ytPlayer.cueVideoById(id, startTime);
-    videoCued = true;
+
+    if (playState) {
+      ytPlayer.loadVideoById(id, startTime);
+    }
+    else {
+      ytPlayer.cueVideoById(id, startTime);
+      videoCued = true;
+    }
   }
   else {
     playTrack(id, volume);
@@ -109,6 +116,7 @@ function initPlayer() {
 
 function togglePlaying(paused) {
   if (!initialized) {
+    playState = paused;
     return;
   }
   stateUpdated = true;
