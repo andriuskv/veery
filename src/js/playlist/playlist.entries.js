@@ -371,16 +371,16 @@ function handleContainerClick({ target }) {
   const pl = getPlaylistById(entry.attrValue);
 
   if (attrValue === "remove") {
-    if (pl.tracks.length) {
+    if (!pl.tracks.length || !pl.storePlaylist) {
+      deletePlaylist(pl);
+      removePlaylistEntry(entry.elementRef);
+    }
+    else {
       modalData = {
         playlist: pl,
         entryElement: entry.elementRef
       };
       showPlaylistRemoveModal();
-    }
-    else {
-      deletePlaylist(pl);
-      removePlaylistEntry(entry.elementRef);
     }
   }
   else if (attrValue === "sync") {
