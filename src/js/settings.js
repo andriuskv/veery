@@ -3,7 +3,7 @@ const settings = Object.assign({
   shuffle: false,
   mute: false,
   volume: 0.4
-}, JSON.parse(localStorage.getItem("settings")) || {});
+}, JSON.parse(localStorage.getItem("veery-settings")) || {});
 
 function setSetting(setting, value) {
   settings[setting] = value;
@@ -20,7 +20,7 @@ function removeSetting(setting) {
 }
 
 function saveSettings(settings) {
-  localStorage.setItem("settings", JSON.stringify(settings));
+  localStorage.setItem("veery-settings", JSON.stringify(settings));
 }
 
 export {

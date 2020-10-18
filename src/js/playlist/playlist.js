@@ -97,7 +97,7 @@ function setPlaybackIndex(trackIndex, id) {
   const { sortOrder } = playlistState[id];
   const index = sortOrder.indexOf(trackIndex);
   playbackIndex = playbackOrder.indexOf(index);
-  playbackIndex = playbackIndex < 0 ? 0 : playbackIndex;
+  playbackIndex = playbackIndex < 0 ? -1 : playbackIndex;
 }
 
 function getPlaybackIndex() {
