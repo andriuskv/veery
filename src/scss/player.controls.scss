@@ -347,6 +347,83 @@
   }
 }
 
+.control-action {
+  z-index: 3;
+  position: absolute;
+  top: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: calc(100% - var(--controls-height) - 40px);
+  pointer-events: none;
+
+  &.animate {
+    .control-action-icon-container {
+      animation-name: opacity-scale-up;
+      animation-duration: 0.64s;
+      animation-fill-mode: forwards;
+    }
+
+    .control-action-text {
+      animation-name: opacity-scale-up;
+      animation-duration: 0.64s;
+      animation-fill-mode: forwards;
+    }
+  }
+
+  @include breakpoint-small {
+    justify-content: center;
+  }
+}
+
+.control-action-icon-container {
+  box-sizing: content-box;
+  position: relative;
+  width: 48px;
+  height: 48px;
+  margin-top: 16vh;
+  margin-bottom: 10vh;
+  padding: 24px;
+  border-radius: 50%;
+  background-color: $color-black-60;
+
+  @include breakpoint-small {
+    width: 36px;
+    height: 36px;
+    margin-top: 0;
+    margin-bottom: 32px;
+  }
+}
+
+.control-action-icon {
+  width: inherit;
+  height: inherit;
+}
+
+.control-action-text {
+  padding: 8px 16px;
+  border-radius: 8px;
+  background-color: $color-black-60;
+  font-size: 24px;
+  line-height: 1;
+
+  @include breakpoint-small {
+    font-size: 20px;
+  }
+}
+
+@keyframes opacity-scale-up {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 @keyframes control-btn-label-reveal {
   from {
     opacity: 0;

@@ -16,6 +16,7 @@ const controlsElement = document.getElementById("js-player-controls");
 let seeking = false;
 let lastSpinnerElement = null;
 let playbackBtnLabelTimeout = 0;
+let actionDisplayTimeout = 0;
 
 const elapsedTime = (function() {
   let timeout = 0;
@@ -150,9 +151,10 @@ function resetTrackSlider() {
 }
 
 function updateVolume(volume) {
+  setVolume(volume);
   setSetting("volume", volume);
   updateVolumeSlider(volume);
-  setVolume(volume);
+  displayVolumeLevel(volume);
 }
 
 function isOutsideViewport(x, width) {
@@ -442,6 +444,48 @@ function handleControls({ attrValue, elementRef }) {
   }
 }
 
+function displayControlAction(html) {
+  const element = document.getElementById("js-control-action");
+  let animate = true;
+
+  if (element) {
+    animate = false;
+    element.remove();
+  }
+  document.body.insertAdjacentHTML("beforeend", `
+    <div id="js-control-action" class="control-action${animate ? ` animate` : ""}">${html}</div>
+  `);
+
+  clearTimeout(actionDisplayTimeout);
+  actionDisplayTimeout = setTimeout(() => {
+    document.getElementById("js-control-action").remove();
+  }, 1000);
+}
+
+function displayVolumeLevel(volume) {
+  const displayValue = `${Math.round(volume * 100)}%`;
+  const iconId = volume ? "volume" : "volume-off";
+
+  displayControlAction(`
+    <div class="control-action-icon-container">
+      <svg viewBox="0 0 24 24" class="control-action-icon">
+        <use href="#${iconId}"/>
+      </svg>
+    </div>
+    <div class="control-action-text">${displayValue}</div>
+  `);
+}
+
+function displaySeekDirection(iconId) {
+  displayControlAction(`
+    <div class="control-action-icon-container">
+      <svg viewBox="0 0 24 24" class="control-action-icon">
+        <use href="#${iconId}"/>
+      </svg>
+    </div>
+  `);
+}
+
 function updateVolumeOnKeyDown(key) {
   let volume = getSetting("volume");
 
@@ -482,6 +526,7 @@ function updateCurrentTimeOnKeyDown(key) {
     if (currentTime > duration) {
       currentTime = duration;
     }
+    displaySeekDirection("fast-forward");
   }
   else if (key === "ArrowLeft" || key === "ArrowDown") {
     currentTime -= 5;
@@ -489,6 +534,7 @@ function updateCurrentTimeOnKeyDown(key) {
     if (currentTime < 0) {
       currentTime = 0;
     }
+    displaySeekDirection("rewind");
   }
   updateTrackSlider(track, currentTime);
   seekTo(track.player, currentTime);
