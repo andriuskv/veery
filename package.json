@@ -34,7 +34,7 @@
     "live-server": "^1.2.1",
     "mini-css-extract-plugin": "^1.0.0",
     "node-sass": "^4.14.1",
-    "postcss": "^8.1.1",
+    "postcss": "^8.1.2",
     "postcss-loader": "^4.0.4",
     "sass-loader": "^10.0.3",
     "style-loader": "^2.0.0",
