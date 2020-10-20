@@ -8,7 +8,7 @@ import {
 import { setSetting, getSetting, removeSetting } from "../settings.js";
 import { getCurrentTrack } from "../playlist/playlist.js";
 import { getTrackPlayPauseBtn } from "../playlist/playlist.view.js";
-import { storedTrack, setVolume, seekTo, playPreviousTrack, playTrack, playNextTrack } from "./player.js";
+import { storedTrack, setVolume, seekTo, playPreviousTrack, playTrack, playNextTrack, getPlayerState } from "./player.js";
 
 const volumeSlider = document.getElementById("js-volume-slider");
 const trackSlider = document.getElementById("js-track-slider");
@@ -150,11 +150,14 @@ function resetTrackSlider() {
   updateTrackSlider();
 }
 
-function updateVolume(volume) {
+function updateVolume(volume, volumeVisible = false) {
   setVolume(volume);
   setSetting("volume", volume);
   updateVolumeSlider(volume);
-  displayVolumeLevel(volume);
+
+  if (volumeVisible) {
+    displayVolumeLevel(volume);
+  }
 }
 
 function isOutsideViewport(x, width) {
@@ -297,7 +300,7 @@ function onVolumeSliderMousemove({ pageX }) {
   updateVolumeSliderLabel(percentage, pageX);
 
   if (!volume) {
-    toggleMute(true);
+    toggleMute({ mute: true });
     return;
   }
   unmutePlayer();
@@ -384,7 +387,7 @@ function showControlBtnLabel(element, label) {
   }, 1000);
 }
 
-function mutePlayer(muted) {
+function mutePlayer(muted, volumeVisible) {
   const volume = muted ? 0 : getSetting("volumeBeforeMute");
 
   if (muted) {
@@ -393,7 +396,7 @@ function mutePlayer(muted) {
   else {
     removeSetting("volumeBeforeMute");
   }
-  updateVolume(volume);
+  updateVolume(volume, volumeVisible);
 }
 
 function unmutePlayer() {
@@ -406,10 +409,10 @@ function unmutePlayer() {
   }
 }
 
-function toggleMute(value = !getSetting("mute")) {
-  mutePlayer(value);
-  setSetting("mute", value);
-  updateVolumeIcon(value);
+function toggleMute({ mute = !getSetting("mute"), volumeVisible = false } = {}) {
+  mutePlayer(mute, volumeVisible);
+  setSetting("mute", mute);
+  updateVolumeIcon(mute);
 }
 
 function toggleShuffle(element) {
@@ -444,7 +447,7 @@ function handleControls({ attrValue, elementRef }) {
   }
 }
 
-function displayControlAction(html) {
+function displayControlAction(iconId, html = "") {
   const element = document.getElementById("js-control-action");
   let animate = true;
 
@@ -453,7 +456,14 @@ function displayControlAction(html) {
     element.remove();
   }
   document.body.insertAdjacentHTML("beforeend", `
-    <div id="js-control-action" class="control-action${animate ? ` animate` : ""}">${html}</div>
+    <div id="js-control-action" class="control-action${animate ? ` animate` : ""}">
+      <div class="control-action-icon-container">
+        <svg viewBox="0 0 24 24" class="control-action-icon">
+          <use href="#${iconId}"/>
+        </svg>
+      </div>
+      ${html}
+    </div>
   `);
 
   clearTimeout(actionDisplayTimeout);
@@ -462,34 +472,21 @@ function displayControlAction(html) {
   }, 1000);
 }
 
+function displayPlayerState() {
+  displayControlAction(getPlayerState() ? "pause" : "play");
+}
+
 function displayVolumeLevel(volume) {
   const displayValue = `${Math.round(volume * 100)}%`;
   const iconId = volume ? "volume" : "volume-off";
 
-  displayControlAction(`
-    <div class="control-action-icon-container">
-      <svg viewBox="0 0 24 24" class="control-action-icon">
-        <use href="#${iconId}"/>
-      </svg>
-    </div>
-    <div class="control-action-text">${displayValue}</div>
-  `);
-}
-
-function displaySeekDirection(iconId) {
-  displayControlAction(`
-    <div class="control-action-icon-container">
-      <svg viewBox="0 0 24 24" class="control-action-icon">
-        <use href="#${iconId}"/>
-      </svg>
-    </div>
-  `);
+  displayControlAction(iconId, `<div class="control-action-text">${displayValue}</div>`);
 }
 
 function updateVolumeOnKeyDown(key) {
   let volume = getSetting("volume");
 
-  if (volume < 1 && key === "ArrowUp") {
+  if (volume < 1 && key === "ArrowRight" || key === "ArrowUp") {
     if (!volume) {
       unmutePlayer();
     }
@@ -499,16 +496,16 @@ function updateVolumeOnKeyDown(key) {
       volume = 1;
     }
   }
-  else if (volume && key === "ArrowDown") {
+  else if (volume && "ArrowLeft" || key === "ArrowDown") {
     volume -= 0.05;
 
     if (volume <= 0) {
       volume = 0;
-      toggleMute(true);
+      toggleMute({ mute: true });
       return;
     }
   }
-  updateVolume(volume);
+  updateVolume(volume, true);
 }
 
 function updateCurrentTimeOnKeyDown(key) {
@@ -526,7 +523,7 @@ function updateCurrentTimeOnKeyDown(key) {
     if (currentTime > duration) {
       currentTime = duration;
     }
-    displaySeekDirection("fast-forward");
+    displayControlAction("fast-forward");
   }
   else if (key === "ArrowLeft" || key === "ArrowDown") {
     currentTime -= 5;
@@ -534,7 +531,7 @@ function updateCurrentTimeOnKeyDown(key) {
     if (currentTime < 0) {
       currentTime = 0;
     }
-    displaySeekDirection("rewind");
+    displayControlAction("rewind");
   }
   updateTrackSlider(track, currentTime);
   seekTo(track.player, currentTime);
@@ -568,9 +565,10 @@ window.addEventListener("keydown", event => {
 
   if (key === "p") {
     playTrack();
+    displayPlayerState();
   }
   else if (key === "m") {
-    toggleMute();
+    toggleMute({ volumeVisible: true });
   }
   else if (key === "[") {
     playNextTrack();
