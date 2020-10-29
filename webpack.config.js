@@ -3,6 +3,7 @@ const { DefinePlugin } = require("webpack");
 const TerserPlugin = require("terser-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const workboxPlugin = require("workbox-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
 
@@ -47,7 +48,7 @@ module.exports = function(env = {}) {
 
   return {
     mode,
-    target: "browserslist",
+    target: "web",
     entry: {
       main: "./src/js/index.js"
     },
@@ -69,11 +70,17 @@ module.exports = function(env = {}) {
         parallel: true,
         terserOptions: {
           ecma: 2019,
-          module: true,
-          toplevel: true,
           output: {
             comments: false
           }
+        }
+      }),
+      new CssMinimizerPlugin({
+        minimizerOptions: {
+          preset: [
+            "default",
+            { discardComments: { removeAll: true } }
+          ]
         }
       })]
     },
@@ -96,9 +103,7 @@ module.exports = function(env = {}) {
                 sourceMap: !env.prod,
                 postcssOptions: {
                   plugins: [
-                    require("autoprefixer")(),
-                    require("css-mqpacker")(),
-                    env.prod ? require("cssnano")() : undefined
+                    require("autoprefixer")()
                   ]
                 }
               }
@@ -113,16 +118,19 @@ module.exports = function(env = {}) {
         },
         {
           test: /\.js$/,
-          loader: "babel-loader",
           exclude: /node_modules/,
-          options: {
-            presets: [["@babel/preset-env", {
-              modules: false,
-              loose: true,
-              bugfixes: true,
-              useBuiltIns: "usage",
-              corejs: 3
-            }]]
+          use: {
+            loader: "babel-loader",
+            options: {
+              presets: [["@babel/preset-env", {
+                modules: false,
+                loose: true,
+                bugfixes: true,
+                useBuiltIns: "usage",
+                corejs: 3
+              }]],
+              plugins: ["@babel/plugin-proposal-optional-chaining"]
+            }
           }
         }
       ]

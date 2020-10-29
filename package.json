@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "npm run dist && npm run watch & live-server dist",
-    "build": "npm run dist && npm run webpack -- --env prod",
+    "build": "npm run dist && npm run webpack -- --env.prod",
     "watch": "npm run webpack -- --watch",
     "dist": "rm -rf dist && mkdir dist",
     "webpack": "if which config/env; then source config/env; fi; webpack --progress"
@@ -14,12 +14,12 @@
   "license": "ISC",
   "dependencies": {
     "focus-visible": "^5.2.0",
-    "intersection-observer": "^0.11.0",
     "normalize.css": "^8.0.1",
     "parse-audio-metadata": "^1.0.4"
   },
   "devDependencies": {
     "@babel/core": "^7.12.3",
+    "@babel/plugin-proposal-optional-chaining": "^7.12.1",
     "@babel/preset-env": "^7.12.1",
     "autoprefixer": "^10.0.1",
     "babel-eslint": "^10.1.0",
@@ -27,27 +27,25 @@
     "copy-webpack-plugin": "^6.2.1",
     "core-js": "^3.6.5",
     "css-loader": "^5.0.0",
-    "css-mqpacker": "^7.0.0",
-    "cssnano": "^4.1.10",
-    "eslint": "^7.11.0",
+    "css-minimizer-webpack-plugin": "^1.1.5",
+    "eslint": "^7.12.1",
     "html-webpack-plugin": "^4.5.0",
     "live-server": "^1.2.1",
-    "mini-css-extract-plugin": "^1.1.0",
-    "node-sass": "^4.14.1",
-    "postcss": "^8.1.2",
+    "mini-css-extract-plugin": "^1.2.1",
+    "postcss": "^8.1.4",
     "postcss-loader": "^4.0.4",
-    "sass-loader": "^10.0.3",
+    "sass": "^1.27.1",
+    "sass-loader": "^10.0.4",
     "style-loader": "^2.0.0",
-    "terser-webpack-plugin": "^5.0.0",
-    "webpack": "^5.1.3",
-    "webpack-cli": "^4.1.0",
+    "terser-webpack-plugin": "^4.2.3",
+    "webpack": "^4.44.2",
+    "webpack-cli": "^3.3.12",
     "workbox-webpack-plugin": "^5.1.4"
   },
   "browserslist": [
     "last 4 chrome versions",
     "last 4 firefox versions",
     "last 1 and_chr versions",
-    "last 1 edge versions",
     "last 1 safari versions",
     "last 1 ios_saf versions"
   ]
