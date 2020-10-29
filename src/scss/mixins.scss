@@ -50,17 +50,16 @@
   }
 }
 
-// Force css-mqpacker to use correct breakpoint order.
-@media (max-width: 1024px) {/* */}
-@media (max-width: 760px) {/* */}
-@media (max-width: 540px) {/* */}
-
 @mixin home-tab-breakpoint {
   @media (max-width: 1060px) { @content; }
 }
 
 @mixin breakpoint-small {
   @media (max-width: 760px) { @content; }
+}
+
+@mixin breakpoint-small-landscape {
+  @media (max-width: 760px) and (orientation: landscape) { @content; }
 }
 
 @mixin breakpoint-smallest {
