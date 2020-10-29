@@ -202,32 +202,3 @@
   width: 100%;
   height: 100%;
 }
-
-.media-state-icon {
-  z-index: 1;
-  position: absolute;
-  top: calc(50% - 78px);
-  left: 50%;
-  opacity: 1;
-  width: 80px;
-  height: 80px;
-  padding: 16px;
-  border-radius: 50%;
-  background-color: rgba(0, 0, 0, 0.4);
-  transform: translate(-50%, -50%) scale(0.4);
-  pointer-events: none;
-  animation-name: scale-icon-up;
-  animation-duration: 0.8s;
-  animation-fill-mode: forwards;
-
-  @include breakpoint-small {
-    top: calc(50% - 90px);
-  }
-}
-
-@keyframes scale-icon-up {
-  to {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 0;
-  }
-}

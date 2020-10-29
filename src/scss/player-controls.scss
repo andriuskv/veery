@@ -348,79 +348,102 @@
 }
 
 .control-action {
-  z-index: 3;
+  --offset-top: 40px;
+  --text-height: 36px;
+
+  z-index: 5;
   position: absolute;
-  top: 40px;
+  top: calc(50% - var(--offset-top));
+  left: 50%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100%;
-  height: calc(100% - var(--controls-height) - 40px);
+  transform: translate(-50%, -50%);
   pointer-events: none;
 
-  &.animate {
-    .control-action-icon-container {
-      animation-name: opacity-scale-up;
-      animation-duration: 0.64s;
-      animation-fill-mode: forwards;
+  &.media-visible {
+     --offset-top: 78px;
+
+    @include breakpoint-small {
+      --offset-top: 90px;
     }
+  }
+
+  &.text-visible {
+    --text-spacing: 128px;
+    --offset: calc((var(--text-spacing) + var(--text-height)) / 2);
+
+    transform: translate(-50%, calc(-50% - var(--offset)));
 
     .control-action-text {
-      animation-name: opacity-scale-up;
-      animation-duration: 0.64s;
-      animation-fill-mode: forwards;
+      margin-bottom: var(--text-spacing);
     }
-  }
 
-  @include breakpoint-small {
-    justify-content: center;
-  }
-}
+    @include breakpoint-small {
+      --text-spacing: 64px;
+      --text-height: 32px;
+    }
 
-.control-action-icon-container {
-  box-sizing: content-box;
-  position: relative;
-  width: 48px;
-  height: 48px;
-  margin-top: 16vh;
-  margin-bottom: 10vh;
-  padding: 24px;
-  border-radius: 50%;
-  background-color: $color-black-60;
+    @include breakpoint-small-landscape {
+      transform: translate(-50%, -50%);
 
-  @include breakpoint-small {
-    width: 36px;
-    height: 36px;
-    margin-top: 0;
-    margin-bottom: 32px;
+      .control-action-text {
+        position: absolute;
+        bottom: 0;
+        margin-bottom: 0;
+        transform: translateY(calc(100% + 16px));
+      }
+    }
   }
 }
 
 .control-action-icon {
-  width: inherit;
-  height: inherit;
+  opacity: 1;
+  width: 80px;
+  height: 80px;
+  padding: 16px;
+  border-radius: 50%;
+  background-color: $color-black-40;
+  transform: scale(0.4);
+  pointer-events: none;
+  animation-name: scale-icon-up;
+  animation-duration: 0.8s;
+  animation-fill-mode: forwards;
+
+  @include breakpoint-small {
+    width: 64px;
+    height: 64px;
+  }
 }
 
 .control-action-text {
+  visibility: visible;
+  height: var(--text-height);
   padding: 8px 16px;
   border-radius: 8px;
-  background-color: $color-black-60;
-  font-size: 24px;
+  background-color: $color-black-40;
+  font-size: 20px;
   line-height: 1;
+  animation-name: delayed-hide;
+  animation-duration: 0.6s;
+  animation-fill-mode: forwards;
+  animation-timing-function: linear;
 
   @include breakpoint-small {
-    font-size: 20px;
+    font-size: 16px;
   }
 }
 
-@keyframes opacity-scale-up {
-  from {
-    opacity: 0;
-    transform: scale(0.8);
-  }
+@keyframes scale-icon-up {
   to {
-    opacity: 1;
     transform: scale(1);
+    opacity: 0;
+  }
+}
+
+@keyframes delayed-hide {
+  to {
+    visibility: hidden;
   }
 }
 

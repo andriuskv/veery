@@ -1,6 +1,7 @@
 import { getElementByAttr, setElementIconAndTitle } from "../utils.js";
 import { toggleRoute } from "../router.js";
 import { getPlayerState, togglePlaying } from "./player.js";
+import { displayControlAction } from "./player.controls.js";
 import { getCurrentTrack, getActivePlaylistId } from "../playlist/playlist.js";
 import { scrollCurrentTrackIntoView } from "../playlist/playlist.view.js";
 import { getVisiblePlaylistId } from "../tab.js";
@@ -9,32 +10,17 @@ import { getArtwork } from "../artworks";
 const nowPlayingElement = document.getElementById("js-now-playing");
 const mediaElement = document.getElementById("js-media-container");
 let mediaVisible = false;
-let iconTimeout = 0;
 
 function isMediaVisible() {
   return mediaVisible;
 }
 
-function handleClickOnMedia({ currentTarget, target }) {
+function handleClickOnMedia({ target }) {
   const element = getElementByAttr("data-item", target);
 
   if (element && element.attrValue === "image") {
-    const iconElement = document.getElementById("js-media-state-icon");
-
     togglePlaying(getCurrentTrack());
-
-    if (iconElement) {
-      iconElement.remove();
-    }
-    currentTarget.insertAdjacentHTML("beforeend", `
-      <svg viewBox="0 0 24 24" id="js-media-state-icon" class="media-state-icon">
-        <use href="#${getPlayerState() ? "pause" : "play"}"/>
-      </svg>
-    `);
-    clearTimeout(iconTimeout);
-    iconTimeout = setTimeout(() => {
-      document.getElementById("js-media-state-icon").remove();
-    }, 1000);
+    displayControlAction(getPlayerState() ? "pause" : "play");
   }
 }
 
