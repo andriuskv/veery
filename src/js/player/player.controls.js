@@ -9,6 +9,7 @@ import { setSetting, getSetting, removeSetting } from "../settings.js";
 import { getCurrentTrack } from "../playlist/playlist.js";
 import { getTrackPlayPauseBtn } from "../playlist/playlist.view.js";
 import { storedTrack, setVolume, seekTo, playPreviousTrack, playTrack, playNextTrack, getPlayerState } from "./player.js";
+import { isMediaVisible } from "./player.now-playing.js";
 
 const volumeSlider = document.getElementById("js-volume-slider");
 const trackSlider = document.getElementById("js-track-slider");
@@ -447,22 +448,19 @@ function handleControls({ attrValue, elementRef }) {
   }
 }
 
-function displayControlAction(iconId, html = "") {
+function displayControlAction(iconId, html = "", className = "") {
   const element = document.getElementById("js-control-action");
-  let animate = true;
+  className = `${isMediaVisible() ? " media-visible" : ""}${className ? ` ${className}` : ""}`;
 
   if (element) {
-    animate = false;
     element.remove();
   }
   document.body.insertAdjacentHTML("beforeend", `
-    <div id="js-control-action" class="control-action${animate ? ` animate` : ""}">
-      <div class="control-action-icon-container">
-        <svg viewBox="0 0 24 24" class="control-action-icon">
-          <use href="#${iconId}"/>
-        </svg>
-      </div>
+    <div id="js-control-action" class="control-action${className}">
       ${html}
+      <svg viewBox="0 0 24 24" class="control-action-icon">
+        <use href="#${iconId}"/>
+      </svg>
     </div>
   `);
 
@@ -480,7 +478,7 @@ function displayVolumeLevel(volume) {
   const displayValue = `${Math.round(volume * 100)}%`;
   const iconId = volume ? "volume" : "volume-off";
 
-  displayControlAction(iconId, `<div class="control-action-text">${displayValue}</div>`);
+  displayControlAction(iconId, `<div class="control-action-text">${displayValue}</div>`, "text-visible");
 }
 
 function updateVolumeOnKeyDown(key) {
@@ -675,6 +673,7 @@ export {
   hidePlayPauseBtnSpinner,
   getPlayPauseButtonIcon,
   togglePlayPauseBtn,
+  displayControlAction,
   updateTrackSlider,
   updateVolume,
   showTrackDuration,
