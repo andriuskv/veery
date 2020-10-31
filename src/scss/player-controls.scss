@@ -361,12 +361,16 @@
   transform: translate(-50%, -50%);
   pointer-events: none;
 
-  &.media-visible {
+  &.artwork-visible {
      --offset-top: 78px;
 
     @include breakpoint-small {
       --offset-top: 90px;
     }
+  }
+
+  &.youtube-player-visible {
+     --offset-top: calc(var(--controls-height) / 2);
   }
 
   &.text-visible {

@@ -450,7 +450,18 @@ function handleControls({ attrValue, elementRef }) {
 
 function displayControlAction(iconId, html = "", className = "") {
   const element = document.getElementById("js-control-action");
-  className = `${isMediaVisible() ? " media-visible" : ""}${className ? ` ${className}` : ""}`;
+  className = `${className ? ` ${className}` : ""}`;
+
+  if (isMediaVisible()) {
+    const track = getCurrentTrack();
+
+    if (track?.player === "youtube") {
+      className = `${className} youtube-player-visible`;
+    }
+    else {
+      className = `${className} artwork-visible`;
+    }
+  }
 
   if (element) {
     element.remove();
