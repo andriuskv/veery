@@ -161,7 +161,7 @@ async function addTracks(importOption, pl, files, parseTracks) {
   }
 }
 
-async function parseMetadata(track) {
+async function parseMetadata(track, playlistId) {
   const { artist, title, album, duration, picture } = await parseAudioMetadata(track.audioTrack);
 
   track.title = title || track.name;
@@ -174,7 +174,7 @@ async function parseMetadata(track) {
     track.picture = picture;
   }
 
-  if (!track.album || !picture) {
+  if (importSettings.getSetting(playlistId, "fetchMetadata") && !(track.album || picture)) {
     track.needsAlbum = true;
   }
 }
@@ -233,7 +233,7 @@ async function parseTrackImage(track) {
 
 async function updateTrackWithMetadata(track, pl) {
   delete track.needsMetadata;
-  await parseMetadata(track);
+  await parseMetadata(track, pl.id);
 
   if (pl.id === getVisiblePlaylistId()) {
     updateTrackElement(track, pl);
@@ -312,7 +312,7 @@ async function updateCurrentTrackWithMetadata(track) {
 
   if (track.needsMetadata) {
     delete track.needsMetadata;
-    await parseMetadata(track);
+    await parseMetadata(track, pl.id);
   }
 
   if (track.picture) {
@@ -419,10 +419,10 @@ window.addEventListener("drop", event => {
       showPlayerMessage({
         id: "js-upload-notice",
         body: `
-        <div class="upload-notice">
-        <img src="./assets/images/spinner.svg" alt="">
-        <span>Uploading...</span>
-        </div>
+          <div class="upload-notice">
+            <img src="./assets/images/spinner.svg" alt="">
+            <span>Uploading...</span>
+          </div>
         `
       });
 
