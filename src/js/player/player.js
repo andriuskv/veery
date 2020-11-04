@@ -337,6 +337,20 @@ function seekTo(player, currentTime) {
   }
 }
 
+function handleSeek({ action }) {
+  const track = getCurrentTrack();
+  let { currentTime } = storedTrack.getTrack();
+
+  if (action === "seekforward") {
+    currentTime += 5;
+  }
+  else if (action === "seekbackward") {
+    currentTime -= 5;
+  }
+  seekTo(track.player, currentTime);
+  storedTrack.updateTrack({ currentTime });
+}
+
 function updateDocumentTitle(id = getVisiblePlaylistId()) {
   const isPlayerPaused = getPlayerState();
   const pl = getPlaylistById(id);
@@ -396,6 +410,8 @@ if ("mediaSession" in navigator) {
   navigator.mediaSession.setActionHandler("pause", playTrack);
   navigator.mediaSession.setActionHandler("previoustrack", playPreviousTrack);
   navigator.mediaSession.setActionHandler("nexttrack", playNextTrack);
+  navigator.mediaSession.setActionHandler("seekforward", handleSeek);
+  navigator.mediaSession.setActionHandler("seekbackward", handleSeek);
 }
 
 export {
