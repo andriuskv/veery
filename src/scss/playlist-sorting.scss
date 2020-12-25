@@ -40,10 +40,6 @@
   &:hover {
     background-color: $background-color-light;
     color: $color-text;
-
-    &.active {
-      color: $color-accent;
-    }
   }
 
   &.active {
