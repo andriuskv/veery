@@ -48,7 +48,7 @@ module.exports = function(env = {}) {
 
   return {
     mode,
-    target: "web",
+    target: "browserslist",
     entry: {
       main: "./src/js/index.js"
     },

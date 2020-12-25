@@ -1,6 +1,6 @@
 /* global Dexie */
 
-importScripts("./libs/dexie.min.js");
+importScripts("./libs/dexie.js");
 
 const db = new Dexie("veery");
 db.version(1).stores({ playlists: "id", artworks: "id" });
