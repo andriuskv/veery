@@ -12,7 +12,10 @@ worker.onmessage = function({ data: { artworks, playlists } }) {
   playlists.forEach(pl => {
     initPlaylist(createPlaylist(pl));
   });
-  syncPlaylists(playlists.filter(pl => pl.syncOnInit));
+
+  if (navigator.onLine) {
+    syncPlaylists(playlists.filter(pl => pl.syncOnInit));
+  }
   storedTrack.initTrack();
   showCurrentRoute();
 };
