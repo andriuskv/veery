@@ -1,50 +1,12 @@
-import { getElementByAttr, getIcon } from "./../utils.js";
 import { toggleRoute } from "../router.js";
 import { getVisiblePlaylistId, getVisiblePlaylist } from "./../tab.js";
-import { removePanel } from "./../panels.js";
 import { getPlaylistById, getPlaylistArray, findTrack } from "./playlist.js";
 import { getSelectedElementIndexes, deselectTrackElements } from "./playlist.track-selection.js";
 import { onNewPlaylistFormSubmit, createNewPlaylistForm, addTracksToPlaylist } from "./playlist.manage.js";
 
-function createMoveToContainer() {
-  const id = "js-move-to-panel-container";
-  const element = document.getElementById("js-playlist-tab-header-items");
-
-  element.insertAdjacentHTML("afterbegin", `
-    <div id="${id}" class="playlist-tab-header-item" data-move-to>
-      <button class="btn btn-icon" data-item="move-to" title="Move to">
-        ${getIcon({ iconId: "move-to" })}
-      </button>
-    </div>
-  `);
-  document.getElementById(id).addEventListener("click", handleClick);
-}
-
-function removeMoveToContainer() {
-  const element = document.getElementById("js-move-to-panel-container");
-
-  element.removeEventListener("click", handleClick);
+function createMoveToForm(id, element, insertPoint) {
+  createNewPlaylistForm(id, element, insertPoint, handleSubmit);
   element.remove();
-}
-
-function handleClick({ currentTarget, target }) {
-  const element = getElementByAttr("data-panel-item", target, currentTarget);
-
-  if (!element) {
-    return;
-  }
-  const { attrValue, elementRef } = element;
-
-  if (attrValue === "btn") {
-    createNewPlaylistForm("move-to", elementRef.parentElement, "beforeend", handleSubmit);
-    elementRef.remove();
-  }
-  else {
-    currentTarget.removeEventListener("click", handleClick);
-    moveTracks(attrValue);
-    removePanel();
-    deselectTrackElements();
-  }
 }
 
 function handleSubmit(event) {
@@ -70,6 +32,7 @@ function moveTracks(playlistId) {
     .map(track => ({ ...track }));
 
   addTracksToPlaylist(pl, selectedTracks);
+  deselectTrackElements();
   toggleRoute(`playlist/${pl.id}`);
 }
 
@@ -77,9 +40,9 @@ function getPlaylistItems(id) {
   return getPlaylistArray().reduce((str, pl) => {
     if (pl.id !== id) {
       str += `
-      <li data-panel-item="${pl.id}">
-      <button class="btn btn-icon move-to-list-item-btn">${pl.title}</button>
-      </li>
+        <li data-panel-item="${pl.id}">
+          <button class="btn btn-icon selection-panel-btn selection-panel-move-to-list-item-btn">${pl.title}</button>
+        </li>
       `;
     }
     return str;
@@ -89,26 +52,19 @@ function getPlaylistItems(id) {
 function getPlaylistList(playlistId) {
   const items = getPlaylistItems(playlistId);
 
-  return items ? `<ul id="js-move-to-list" class="move-to-list">${items}</ul>` : "";
+  return items ? `<ul id="js-move-to-list" class="selection-panel-move-to-list">${items}</ul>` : "";
 }
 
-function createMoveToPanel(panelId, { playlistId }) {
-  const element = document.getElementById("js-move-to-panel-container");
-
-  element.insertAdjacentHTML("beforeend", `
-    <div id="${panelId}" class="panel move-to-panel">
-      <h3 class="panel-title move-to-panel-title">Move to</h3>
-      ${getPlaylistList(playlistId)}
-      <button class="btn btn-icon move-to-new-pl-btn" data-panel-item="btn">
-        ${getIcon({ iconId: "plus" })}
-        <span>Create new playlist</span>
-      </button>
-    </div>
-  `);
+function getMoveToSection(id) {
+  return `
+    <h3 class="panel-title selection-panel-title">Move to...</h3>
+    ${getPlaylistList(id)}
+    <button class="btn btn-icon selection-panel-btn" data-panel-item="form-btn">Create New Playlist</button>
+  `;
 }
 
 export {
-  createMoveToContainer,
-  removeMoveToContainer,
-  createMoveToPanel
+  createMoveToForm,
+  moveTracks,
+  getMoveToSection
 };

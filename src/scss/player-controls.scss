@@ -59,7 +59,7 @@
       background-color: $color-white-20;
     }
 
-    .volume-controls {
+    .additional-controls {
       --offset: 76px;
     }
   }
@@ -249,7 +249,7 @@
   animation-fill-mode: forwards;
 }
 
-.shuffle-btn-wrapper {
+.secondary-controls-left {
   position: relative;
   grid-row: 2 / 3;
   grid-column: 2 / 3;
@@ -261,15 +261,24 @@
   }
 }
 
-.playback-btn-wrapper {
+.secondary-controls-right {
   position: relative;
   grid-row: 2 / 3;
   grid-column: 4 / 5;
   align-self: center;
   justify-self: flex-start;
 
+  .control-queue-btn {
+    display: none;
+  }
+
   @include breakpoint-small {
+    display: flex;
     grid-row: 3 / 4;
+
+    .control-queue-btn {
+      display: flex;
+    }
   }
 }
 
@@ -296,7 +305,7 @@
   }
 }
 
-.volume-controls {
+.additional-controls {
   --offset: 8px;
 
   display: flex;
@@ -320,6 +329,10 @@
     &.visible {
       display: flex;
     }
+
+    .control-queue-btn {
+      display: none;
+    }
   }
 }
 
@@ -328,6 +341,15 @@
 
   @include breakpoint-small {
     width: 100%;
+  }
+}
+
+.control-queue-btn {
+  margin-right: 8px;
+
+  @include breakpoint-small {
+    margin-right: 0;
+    margin-left: 16px;
   }
 }
 
@@ -436,6 +458,84 @@
   @include breakpoint-small {
     font-size: 16px;
   }
+}
+
+.queue {
+  z-index: 5;
+  overflow: hidden;
+  position: absolute;
+  bottom: calc(var(--controls-height) + 8px);
+  right: 8px;
+  display: none;
+  flex-direction: column;
+  max-width: 360px;
+  width: 100%;
+  max-height: calc(100% - var(--controls-height) - 56px);
+  height: 640px;
+  padding: 8px 0 0 0;
+
+  &.visible {
+    display: flex;
+  }
+
+  @include breakpoint-smallest {
+    max-width: calc(100% - 16px);
+  }
+}
+
+.queue-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 8px 8px 16px;
+  border-bottom: 1px solid $background-color;
+}
+
+.queue-header-title {
+  font-size: 18px;
+}
+
+.queue-clear-btn {
+  padding: 8px 16px;
+  border-radius: 999px;
+  background-color: $background-color;
+}
+
+.queue-tracks {
+  overflow-y: auto;
+  display: none;
+
+  &.visible {
+    display: block;
+
+    & + .queue-message {
+      display: none;
+    }
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: $background-color;
+  }
+}
+.queue-track {
+  &:hover {
+    .track-play-pause-btn {
+      opacity: 1;
+    }
+
+    .artwork {
+      opacity: 0.4;
+    }
+  }
+}
+
+.queue-message {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  flex-grow: 1;
+  font-size: 16px;
 }
 
 @keyframes scale-icon-up {

@@ -17,6 +17,7 @@ import { getSetting } from "../settings.js";
 import { postMessageToWorker } from "../web-worker.js";
 import { createSidebarEntry, removeSidebarEntry } from "../sidebar.js";
 import { stopPlayer } from "../player/player.js";
+import { removeQueuePlaylistTracks } from "../player/queue.js";
 import { getArtworks } from "../artworks";
 
 function initPlaylist(pl) {
@@ -36,6 +37,7 @@ function deletePlaylist({ id, storePlaylist }) {
   removePlaylist(id);
   removeSidebarEntry(id);
   removeRoute(id);
+  removeQueuePlaylistTracks(id);
 
   if (storePlaylist) {
     postMessageToWorker({

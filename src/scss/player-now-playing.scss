@@ -138,6 +138,11 @@
   &.visible {
     top: 0;
     width: 100%;
+
+    & + .queue {
+      background-color: $background-color-lightest-80;
+      backdrop-filter: blur(8px);
+    }
   }
 
   &.image {
