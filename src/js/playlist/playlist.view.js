@@ -304,6 +304,7 @@ export {
   scrollCurrentTrackIntoView,
   scrollTrackIntoView,
   getTrackElement,
+  getTrackInfo,
   toggleTrackPlayPauseBtn,
   togglePlaylistTypeBtn,
   changePlaylistType

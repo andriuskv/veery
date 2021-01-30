@@ -9,9 +9,10 @@ import {
 import { getSetting } from "../settings.js";
 import { getVisiblePlaylistId, getVisiblePlaylist, getTab } from "../tab.js";
 import { postMessageToWorker } from "../web-worker.js";
-import { createMoveToContainer, removeMoveToContainer } from "./playlist.move-to.js";
+import { createSelectionPanelContainer, removeSelectionPanel } from "./selection-panel.js";
 import { getPlaylistElement, updatePlaylistView } from "./playlist.view.js";
 import { updatePlaylistEntry } from "./playlist.entries.js";
+import { removeQueueTracks } from "../player/queue.js";
 
 const startingPoint = {};
 const mousePos = {};
@@ -23,7 +24,7 @@ let selectionArea = {};
 let trackElements = [];
 let intervalId = 0;
 let updating = false;
-let isMoveToVisible = false;
+let isSelectionPanelVisible = false;
 let selectTrackIndex = -1;
 
 function enableTrackSelection({ id, tracks, type }) {
@@ -128,24 +129,24 @@ function removeSelectedElementClass() {
 
 function deselectTrackElements() {
   removeSelectedElementClass();
-  hideMoveTo();
+  hideSelectionPanel();
 }
 
-function showMoveTo() {
-  if (!isMoveToVisible) {
-    isMoveToVisible = true;
+function showSelectionPanel() {
+  if (!isSelectionPanelVisible) {
+    isSelectionPanelVisible = true;
 
-    createMoveToContainer();
+    createSelectionPanelContainer();
     addClickHandler();
     window.addEventListener("keydown", handleKeydown);
   }
 }
 
-function hideMoveTo() {
-  if (isMoveToVisible) {
-    isMoveToVisible = false;
+function hideSelectionPanel() {
+  if (isSelectionPanelVisible) {
+    isSelectionPanelVisible = false;
 
-    removeMoveToContainer();
+    removeSelectionPanel();
     window.removeEventListener("click", onClick, true);
     window.removeEventListener("keydown", handleKeydown);
   }
@@ -158,7 +159,7 @@ function selectTrackElement(element, selectMultiple) {
   element.classList.toggle("selected");
 
   if (element.classList.contains("selected")) {
-    showMoveTo();
+    showSelectionPanel();
   }
   else {
     const elements = getSelectedElements();
@@ -166,7 +167,7 @@ function selectTrackElement(element, selectMultiple) {
     element.blur();
 
     if (!elements.length) {
-      hideMoveTo();
+      hideSelectionPanel();
     }
   }
 }
@@ -292,7 +293,7 @@ function onMousemove(event) {
     if (!event.ctrlKey) {
       removeSelectedElementClass();
     }
-    hideMoveTo();
+    hideSelectionPanel();
     return;
   }
 
@@ -331,10 +332,10 @@ function onMouseup({ target, ctrlKey, shiftKey }) {
     resetSelection();
 
     if (elements.length) {
-      showMoveTo();
+      showSelectionPanel();
     }
     else {
-      hideMoveTo();
+      hideSelectionPanel();
     }
   }
   else {
@@ -385,7 +386,7 @@ function addClickHandler() {
 }
 
 function onClick({ target }) {
-  const element = getElementByAttr("data-move-to", target);
+  const element = getElementByAttr("data-selection-panel", target);
 
   if (!element && isOutsideElement(target, playlistElement)) {
     deselectTrackElements();
@@ -415,7 +416,7 @@ function onMousedown({ currentTarget, target, which, clientX, clientY }) {
 function handleKeydown({ key, keyCode }) {
   if (key === "Delete" || keyCode === 127) {
     removeSelectedTracks();
-    hideMoveTo();
+    hideSelectionPanel();
   }
 }
 
@@ -494,6 +495,7 @@ function removeSelectedTracks() {
       }
     });
   }
+  removeQueueTracks(tracksToRemove);
 }
 
 window.addEventListener("keydown", event => {
@@ -511,7 +513,7 @@ window.addEventListener("keydown", event => {
 
   if (event.ctrlKey && event.key === "a") {
     event.preventDefault();
-    showMoveTo();
+    showSelectionPanel();
 
     for (const element of playlistElement.children) {
       element.classList.add("selected");

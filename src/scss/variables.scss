@@ -15,6 +15,7 @@ $color-text-darker:#656c7b;
 $color-danger: #f4483b;
 
 $background-color-lightest: #494e5a;
+$background-color-lightest-80: transparentize($background-color-lightest, 0.2);
 $background-color-light: #404552;
 $background-color: #3a3e4b;
 $background-color-dark: #353945;

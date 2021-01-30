@@ -19,7 +19,7 @@
 </head>
 <body id="js-player" class="player">
   <svg style="display:none;">
-    <symbol id="move-to" viewBox="0 0 24 24">
+    <symbol id="playlist-add" viewBox="0 0 24 24">
       <path d="M2,16H10V14H2M18,14V10H16V14H12V16H16V20H18V16H22V14M14,6H2V8H14M14,10H2V12H14V10Z"/>
     </symbol>
     <symbol id="alert" viewBox="0 0 24 24">
@@ -118,6 +118,9 @@
     </symbol>
     <symbol id="fast-forward" viewBox="0 0 24 24">
       <path d="M11.5 3C14.15 3 16.55 4 18.4 5.6L21 3V10H14L16.62 7.38C15.23 6.22 13.46 5.5 11.5 5.5C7.96 5.5 4.95 7.81 3.9 11L1.53 10.22C2.92 6.03 6.85 3 11.5 3M9 12H15V14H11V16H13C14.11 16 15 16.9 15 18V20C15 21.11 14.11 22 13 22H9V20H13V18H9V12Z"/>
+    </symbol>
+    <symbol id="queue" viewBox="0 0 24 24">
+      <path d="M15,6H3V8H15V6M15,10H3V12H15V10M3,16H11V14H3V16M17,6V14.18C16.69,14.07 16.35,14 16,14A3,3 0 0,0 13,17A3,3 0 0,0 16,20A3,3 0 0,0 19,17V8H22V6H17Z"/>
     </symbol>
   </svg>
   <div id="js-sidebar-container" class="sidebar-container hidden">
@@ -281,7 +284,7 @@
       </div>
       <div id="js-track-duration" class="track-time">0:00</div>
     </div>
-    <div class="shuffle-btn-wrapper">
+    <div class="secondary-controls-left">
       <label class="btn btn-icon control-btn">
         <input type="checkbox" class="sr-only checkbox-input" data-item="shuffle">
         <svg viewBox="0 0 24 24" class="checkbox">
@@ -309,14 +312,24 @@
         </svg>
       </button>
     </div>
-    <div class="playback-btn-wrapper">
+    <div class="secondary-controls-right">
       <button class="btn btn-icon control-btn" data-item="playback" data-mode="normal" title="Repeat track">
         <svg viewBox="0 0 24 24">
           <use href="#repeat"/>
         </svg>
       </button>
+      <button class="btn btn-icon control-btn control-queue-btn" data-item="queue" title="Toggle queue">
+        <svg viewBox="0 0 24 24">
+          <use href="#queue"/>
+        </svg>
+      </button>
     </div>
-    <div id="js-volume-controls" class="volume-controls">
+    <div id="js-additional-controls" class="additional-controls">
+      <button class="btn btn-icon control-btn control-queue-btn" data-item="queue" title="Toggle queue">
+        <svg viewBox="0 0 24 24">
+          <use href="#queue"/>
+        </svg>
+      </button>
       <label class="btn btn-icon control-btn mute-btn">
         <input type="checkbox" class="sr-only checkbox-input" data-item="mute">
         <svg viewBox="0 0 24 24" id="js-volume-icon" class="checkbox">
@@ -346,6 +359,14 @@
       <img src="" class="media-image" data-item="image" alt="">
     </div>
     <div id="js-yt-player" class="yt-player" tabindex="-1"></div>
+  </div>
+  <div id="js-queue" class="panel queue">
+    <div class="queue-header">
+      <h3 class="queue-header-title">Queue</h3>
+      <button id="js-queue-clear-btn" class="btn queue-clear-btn">Clear All</button>
+    </div>
+    <ul class="queue-tracks"></ul>
+    <p class="queue-message">No track in queue.</p>
   </div>
 </body>
 </html>

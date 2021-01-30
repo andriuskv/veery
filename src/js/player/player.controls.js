@@ -10,6 +10,7 @@ import { getCurrentTrack } from "../playlist/playlist.js";
 import { getTrackPlayPauseBtn } from "../playlist/playlist.view.js";
 import { storedTrack, setVolume, seekTo, playPreviousTrack, playTrack, playNextTrack, getPlayerState } from "./player.js";
 import { isMediaVisible } from "./player.now-playing.js";
+import { toggleQueue } from "./queue.js";
 
 const volumeSlider = document.getElementById("js-volume-slider");
 const trackSlider = document.getElementById("js-track-slider");
@@ -445,6 +446,9 @@ function handleControls({ attrValue, elementRef }) {
     case "shuffle":
       toggleShuffle(elementRef.parentElement);
       break;
+    case "queue":
+      toggleQueue(elementRef);
+      break;
   }
 }
 
@@ -654,7 +658,7 @@ controlsElement.addEventListener("keyup", ({ target, key }) => {
 
 document.getElementById("js-volume-toggle-btn").addEventListener("click", ({ currentTarget }) => {
   currentTarget.classList.toggle("active");
-  document.getElementById("js-volume-controls").classList.toggle("visible");
+  document.getElementById("js-additional-controls").classList.toggle("visible");
 });
 
 (function() {

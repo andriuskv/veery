@@ -11,7 +11,7 @@ import { refreshPlaylistThumbnail } from "./local.js";
 import { getPlaylistById, getPlaylistState } from "./playlist/playlist.js";
 import { enableTrackSelection } from "./playlist/playlist.track-selection.js";
 import { setSortOptions, createSortPanel, changePlaylistOrder } from "./playlist/playlist.sorting.js";
-import { createMoveToPanel } from "./playlist/playlist.move-to.js";
+import { createSelectionPanel } from "./playlist/selection-panel.js";
 import { resetFilteredPlaylist } from "./playlist/playlist.filter.js";
 import { playTrackFromElement, updateDocumentTitle } from "./player/player.js";
 
@@ -68,8 +68,8 @@ headerElement.addEventListener("click", ({ currentTarget, target }) => {
   const pl = getVisiblePlaylist();
   const item = element.attrValue;
 
-  if (item === "move-to") {
-    togglePanel("js-move-to-panel", createMoveToPanel, {
+  if (item === "selection-panel") {
+    togglePanel("js-selection-panel", createSelectionPanel, {
       playlistId: pl.id,
       element: element.elementRef
     });
