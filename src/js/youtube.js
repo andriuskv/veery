@@ -194,36 +194,10 @@ async function addPlaylist(url, id, type) {
   addTracksToPlaylist(pl, filterDuplicateTracks(tracks, pl.tracks), { type: "sync" });
 }
 
-function parseUrl(url) {
-  let videoId = "";
-  let playlistId = "";
-
-  try {
-    const { searchParams } = new URL(url);
-    videoId = searchParams.get("v");
-    playlistId = searchParams.get("list");
-  }
-  catch (e) {
-    const videoMatch = url.match(/v=[a-zA-Z0-9\-_]+/);
-    const playlistMatch = url.match(/list=[a-zA-Z0-9\-_]+/);
-
-    if (videoMatch) {
-      videoId = videoMatch[0].slice(2);
-    }
-
-    if (playlistMatch) {
-      playlistId = playlistMatch[0].slice(5);
-    }
-  }
-
-  return {
-    videoId,
-    playlistId
-  };
-}
-
 async function fetchYoutubeItem(url, type) {
-  const { videoId, playlistId } = parseUrl(url);
+  const { searchParams } = new URL(url);
+  const videoId = searchParams.get("v");
+  const playlistId = searchParams.get("list");
   const id = playlistId || "youtube";
 
   if (!videoId && !playlistId) {
@@ -242,11 +216,14 @@ async function fetchYoutubeItem(url, type) {
   });
 
   try {
-    if (videoId) {
+    if (playlistId) {
+      await addPlaylist(url, id, type);
+    }
+    else if (videoId) {
       await addVideo(id, videoId);
     }
     else {
-      await addPlaylist(url, id, type);
+      showYouTubeMessage("Invalid URL");
     }
   }
   catch (e) {
