@@ -18,22 +18,23 @@ module.exports = function(env = {}) {
         LAST_FM_API_KEY: JSON.stringify(process.env.LAST_FM_API_KEY)
       }
     }),
-    new MiniCssExtractPlugin({
-      filename: "[name].css"
-    }),
     new HtmlWebpackPlugin({
       template: "./public/index.html",
-      cache: false,
       minify: env.prod ? {
         keepClosingSlash: true,
         collapseWhitespace: true,
         collapseInlineTagWhitespace: true
       } : undefined
     }),
+    new MiniCssExtractPlugin({
+      filename: "[name].css"
+    }),
     new CopyPlugin({ patterns: [
       { from: "./src/libs", to: "./libs" },
       { from: "./src/assets", to: "./assets" },
-      { from: "./public" }
+      { from: "./public", globOptions: {
+        ignore: ["**/index.html"]
+      }}
     ]})
   ];
 
