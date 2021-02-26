@@ -502,24 +502,34 @@
   background-color: $background-color;
 }
 
-.queue-tracks {
-  overflow-y: auto;
+.queue-section {
+  padding-top: 16px;
+  padding-left: 8px;
+}
+
+.queue-section-title {
+  padding-bottom: 8px;
+  font-weight: bold;
+}
+
+.queue-tracks-container {
   display: none;
 
   &.visible {
     display: block;
-
-    & + .queue-message {
-      display: none;
-    }
   }
+}
+
+.queue-tracks {
+  overflow-y: auto;
 
   &::-webkit-scrollbar-thumb {
     background-color: $background-color;
   }
 }
+
 .queue-track {
-  &:hover {
+  &.removable:hover {
     .track-play-pause-btn {
       opacity: 1;
     }
@@ -537,6 +547,10 @@
   transform: translate(-50%, -50%);
   flex-grow: 1;
   font-size: 16px;
+
+  &.hidden {
+    display: none;
+  }
 }
 
 @keyframes scale-icon-up {
