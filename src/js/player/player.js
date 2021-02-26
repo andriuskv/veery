@@ -31,7 +31,7 @@ import { showActiveIcon, removeActiveIcon } from "../sidebar.js";
 import { scrollTrackIntoView, toggleTrackPlayPauseBtn, resetCurrentTrackElement, setTrackElement } from "../playlist/playlist.view.js";
 import { isMediaVisible, showTrackInfo, resetTrackInfo } from "./player.now-playing.js";
 import { showPlayerMessage } from "./player.view.js";
-import { getQueueTrack } from "./queue.js";
+import { getQueueTrack, updateQueueView, resetQueue } from "./queue.js";
 import { updateCurrentTrackWithMetadata } from "../local";
 import * as nPlayer from "./player.native.js";
 import * as ytPlayer from "./player.youtube.js";
@@ -115,6 +115,7 @@ async function beforeTrackStart(track, playlistId, { scrollToTrack, startTime })
     setPlaybackIndex(track.index, playlistId);
   }
   setCurrentTrack(track);
+  updateQueueView(track, playlistId);
 
   if (rendered && track.index !== -1) {
     setTrackElement(track.index, playlistId);
@@ -346,6 +347,7 @@ function resetPlayer(track) {
     resetCurrentTrackElement();
     resetTrackSlider();
     hidePlayPauseBtnSpinner();
+    resetQueue();
   }
 }
 

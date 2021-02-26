@@ -1,12 +1,13 @@
 import { getElementByAttr, getIcon } from "../utils.js";
 import { getVisiblePlaylistId } from "./../tab.js";
-import { getPlaylistById } from "../playlist/playlist.js";
+import { getPlaylistById, getNextTrack } from "../playlist/playlist.js";
 import { getSelectedElementIndexes } from "../playlist/playlist.track-selection.js";
 import { getTrackInfo } from "../playlist/playlist.view.js";
 import { getArtwork } from "../artworks";
 
 const queueElement = document.getElementById("js-queue");
 const queueTracksElement = queueElement.querySelector(".queue-tracks");
+const messageElement = queueElement.querySelector(".queue-message");
 let queue = [];
 let queueTrack = null;
 
@@ -21,7 +22,7 @@ function getQueueTrack() {
   queueTracksElement.firstElementChild.remove();
 
   if (!queue.length) {
-    queueTracksElement.classList.remove("visible");
+    queueTracksElement.parentElement.classList.remove("visible");
   }
   return {
     track: pl.tracks[queueTrack.index],
@@ -44,7 +45,7 @@ function addSelectedTracksToQueue() {
   }).filter(({ name }) => !queue.find(track => track.name === name));
 
   queue = queue.concat(uniqueTracks);
-  updateQueueView(uniqueTracks);
+  addTracksToQueueView(uniqueTracks);
 }
 
 function removeQueueTracks(tracks) {
@@ -77,25 +78,65 @@ function removeQueuePlaylistTracks(id) {
   elements.forEach(element => element.remove());
 }
 
-function updateQueueView(queueTracks) {
-  queueTracksElement.classList.add("visible");
-  queueTracksElement.insertAdjacentHTML("beforeend", queueTracks.map(queueTrack => {
+function updateQueueView(track, playlistId) {
+  const currentTrackElement = document.getElementById("queue-now-playing");
+  const nextTrackElement = document.getElementById("queue-next-in-playlist");
+  const nextTrack = getNextTrack(playlistId, 1);
+
+  if (currentTrackElement) {
+    currentTrackElement.children[1].innerHTML = getQueueTrackView(track);
+  }
+  else {
+    queueTracksElement.parentElement.insertAdjacentHTML("beforebegin", `
+      <div id="queue-now-playing" class="queue-section">
+        <h4 class="queue-section-title">Now playing</h4>
+        <div class="grid-item queue-track">${getQueueTrackView(track)}</div>
+      </div>
+    `);
+  }
+
+  if (nextTrackElement) {
+    nextTrackElement.children[1].innerHTML = getQueueTrackView(nextTrack);
+  }
+  else {
+    queueTracksElement.parentElement.insertAdjacentHTML("afterend", `
+      <div id="queue-next-in-playlist" class="queue-section">
+        <h4 class="queue-section-title">Next in playlist</h4>
+        <div class="grid-item queue-track">${getQueueTrackView(nextTrack)}</div>
+      </div>
+    `);
+  }
+
+  messageElement.classList.add("hidden");
+}
+
+function addTracksToQueueView(tracks) {
+  queueTracksElement.parentElement.classList.add("visible");
+  queueTracksElement.insertAdjacentHTML("beforeend", tracks.map(queueTrack => {
     const pl = getPlaylistById(queueTrack.playlistId);
     const track = pl.tracks[queueTrack.index];
 
     return `
-      <li class="grid-item queue-track" data-id="${queueTrack.name}">
-        <div class="artwork-container grid-item-thumbnail">
-          <button class="btn btn-icon track-play-pause-btn artwork-container-btn" data-remove-btn title="Remove">
-            ${getIcon({ iconId: "close" })}
-          </button>
-          <img src="${getArtwork(track.artworkId).image.small.url}" class="artwork" alt="">
-        </div>
-        ${getTrackInfo(track)}
-        <div class="grid-item-duration">${track.duration}</div>
+      <li class="grid-item queue-track removable" data-id="${queueTrack.name}">
+        ${getQueueTrackView(track, true)}
       </li>
     `;
   }).join(""));
+}
+
+function getQueueTrackView(track, removable) {
+  return `
+    <div class="artwork-container grid-item-thumbnail">
+      ${removable ? `
+        <button class="btn btn-icon track-play-pause-btn artwork-container-btn" data-remove-btn title="Remove">
+          ${getIcon({ iconId: "close" })}
+        </button>
+      ` : ""}
+      <img src="${getArtwork(track.artworkId).image.small.url}" class="artwork" alt="">
+    </div>
+    ${getTrackInfo(track)}
+    <div class="grid-item-duration">${track.duration}</div>
+  `;
 }
 
 function toggleQueue(toggleButton) {
@@ -103,10 +144,27 @@ function toggleQueue(toggleButton) {
   queueElement.classList.toggle("visible");
 }
 
+function resetQueue() {
+  const currentTrackElement = document.getElementById("queue-now-playing");
+  const nextTrackElement = document.getElementById("queue-next-in-playlist");
+
+  if (currentTrackElement) {
+    currentTrackElement.remove();
+  }
+
+  if (nextTrackElement) {
+    nextTrackElement.remove();
+  }
+
+  if (queue.length === 0) {
+    messageElement.classList.remove("hidden");
+  }
+}
+
 function clearQueue() {
   queue.length = 0;
   queueTracksElement.innerHTML = "";
-  queueTracksElement.classList.remove("visible");
+  queueTracksElement.parentElement.classList.remove("visible");
 }
 
 queueElement.addEventListener("click", event => {
@@ -120,7 +178,7 @@ queueElement.addEventListener("click", event => {
   trackElement.elementRef.remove();
 
   if (!queue.length) {
-    queueTracksElement.classList.remove("visible");
+    queueTracksElement.parentElement.classList.remove("visible");
   }
 });
 
@@ -132,7 +190,8 @@ export {
   removeQueueTracks,
   removeQueuePlaylistTracks,
   updateQueueView,
-  toggleQueue
+  toggleQueue,
+  resetQueue
 };
 
 
