@@ -30,8 +30,8 @@ module.exports = function(env = {}) {
       filename: "[name].css"
     }),
     new CopyPlugin({ patterns: [
-      { from: "./src/libs", to: "./libs" },
       { from: "./src/assets", to: "./assets" },
+      { from: "./node_modules/idb/build/iife/index-min.js", to: "./idb-min.js" },
       { from: "./public", globOptions: {
         ignore: ["**/index.html"]
       }}
