@@ -1,11 +1,12 @@
 import { getElementByAttr, getIcon } from "../utils.js";
 import { getVisiblePlaylistId } from "./../tab.js";
-import { getPlaylistById, getNextTrack } from "../playlist/playlist.js";
+import { getPlaylistById, getNextTrack, getCurrentTrack } from "../playlist/playlist.js";
 import { getSelectedElementIndexes } from "../playlist/playlist.track-selection.js";
 import { getTrackInfo } from "../playlist/playlist.view.js";
 import { getArtwork } from "../artworks";
 
 const queueElement = document.getElementById("js-queue");
+const clearBtnElement = document.getElementById("js-queue-clear-btn");
 const queueTracksElement = queueElement.querySelector(".queue-tracks");
 const messageElement = queueElement.querySelector(".queue-message");
 let queue = [];
@@ -20,10 +21,8 @@ function getQueueTrack() {
   const pl = getPlaylistById(queueTrack.playlistId);
 
   queueTracksElement.firstElementChild.remove();
+  cleanupQueue();
 
-  if (!queue.length) {
-    queueTracksElement.parentElement.classList.remove("visible");
-  }
   return {
     track: pl.tracks[queueTrack.index],
     playlistId: queueTrack.playlistId
@@ -61,6 +60,7 @@ function removeQueueTracks(tracks) {
 
   queue = queueTracks;
   elements.forEach(element => element.remove());
+  cleanupQueue();
 }
 
 function removeQueuePlaylistTracks(id) {
@@ -76,6 +76,7 @@ function removeQueuePlaylistTracks(id) {
 
   queue = queueTracks;
   elements.forEach(element => element.remove());
+  cleanupQueue();
 }
 
 function updateQueueView(track, playlistId) {
@@ -111,6 +112,8 @@ function updateQueueView(track, playlistId) {
 }
 
 function addTracksToQueueView(tracks) {
+  clearBtnElement.disabled = false;
+  messageElement.classList.add("hidden");
   queueTracksElement.parentElement.classList.add("visible");
   queueTracksElement.insertAdjacentHTML("beforeend", tracks.map(queueTrack => {
     const pl = getPlaylistById(queueTrack.playlistId);
@@ -156,15 +159,28 @@ function resetQueue() {
     nextTrackElement.remove();
   }
 
-  if (queue.length === 0) {
+  if (!queue.length) {
     messageElement.classList.remove("hidden");
   }
 }
 
-function clearQueue() {
+function cleanupQueue() {
+  if (queue.length) {
+    return;
+  }
+  clearBtnElement.disabled = true;
+  queueTracksElement.parentElement.classList.remove("visible");
+
+  if (!getCurrentTrack()) {
+    messageElement.classList.remove("hidden");
+  }
+}
+
+function clearQueuedTracks() {
   queue.length = 0;
   queueTracksElement.innerHTML = "";
-  queueTracksElement.parentElement.classList.remove("visible");
+
+  cleanupQueue();
 }
 
 queueElement.addEventListener("click", event => {
@@ -176,13 +192,10 @@ queueElement.addEventListener("click", event => {
   const trackElement = getElementByAttr("data-id", event.target);
   queue = queue.filter(track => track.name !== trackElement.attrValue);
   trackElement.elementRef.remove();
-
-  if (!queue.length) {
-    queueTracksElement.parentElement.classList.remove("visible");
-  }
+  cleanupQueue();
 });
 
-document.getElementById("js-queue-clear-btn").addEventListener("click", clearQueue);
+clearBtnElement.addEventListener("click", clearQueuedTracks);
 
 export {
   getQueueTrack,

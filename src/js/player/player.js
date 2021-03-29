@@ -111,7 +111,7 @@ async function beforeTrackStart(track, playlistId, { scrollToTrack, startTime })
   showTrackSlider();
   setPlaylistAsActive(playlistId);
 
-  if (!isQueueTrack) {
+  if (!isQueueTrack || !getCurrentTrack()) {
     setPlaybackIndex(track.index, playlistId);
   }
   setCurrentTrack(track);
@@ -203,6 +203,16 @@ function play(source, sourceValue, id, mode) {
     playNewTrack(track, id);
   }
   else if (source === "direction") {
+    let swapFirstTrack = false;
+
+    if (!getPlaybackOrder().length || shuffled !== shuffle) {
+      setPlaybackOrder(id, shuffle);
+
+      if (shuffle) {
+        swapFirstTrack = true;
+      }
+    }
+
     if (sourceValue === 0 || sourceValue === 1) {
       const { track, playlistId } = getQueueTrack();
 
@@ -230,15 +240,6 @@ function play(source, sourceValue, id, mode) {
       return;
     }
     let track = null;
-    let swapFirstTrack = false;
-
-    if (!getPlaybackOrder().length || shuffled !== shuffle) {
-      setPlaybackOrder(id, shuffle);
-
-      if (shuffle) {
-        swapFirstTrack = true;
-      }
-    }
 
     if (!navigator.onLine) {
       const checkedTracks = [];
@@ -269,6 +270,7 @@ function play(source, sourceValue, id, mode) {
 
     if (track) {
       if (swapFirstTrack) {
+        // Make sure current track is the first in the playback order.
         swapFirstPlaybackOrderItem(track.index);
       }
       playNewTrack(track, id, {
