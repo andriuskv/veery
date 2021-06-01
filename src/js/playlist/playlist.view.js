@@ -295,6 +295,7 @@ window.addEventListener("connectivity-status", ({ detail: status }) => {
 export {
   getPlaylistElement,
   getTrackPlayPauseBtn,
+  getPlayPauseIcon,
   creatItemContent,
   removePlaylistTab,
   updatePlaylistView,
