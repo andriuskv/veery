@@ -103,6 +103,9 @@
 
 .track-info {
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   flex-grow: 1;
   font-size: 13px;
 }
@@ -110,6 +113,7 @@
 .track-info-item {
   @include text-truncate;
 
+  max-width: 100%;
   padding-bottom: 1px;
 }
 
