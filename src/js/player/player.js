@@ -31,7 +31,7 @@ import { showActiveIcon, removeActiveIcon } from "../sidebar.js";
 import { scrollTrackIntoView, toggleTrackPlayPauseBtn, resetCurrentTrackElement, setTrackElement } from "../playlist/playlist.view.js";
 import { isMediaVisible, showTrackInfo, resetTrackInfo } from "./player.now-playing.js";
 import { showPlayerMessage } from "./player.view.js";
-import { getQueueTrack, updateQueueView, resetQueue } from "./queue.js";
+import { getQueueTrack, updateQueueView, resetQueue, toggleQueuedTrackBtn } from "./queue.js";
 import { updateCurrentTrackWithMetadata } from "../local";
 import * as nPlayer from "./player.native.js";
 import * as ytPlayer from "./player.youtube.js";
@@ -142,6 +142,7 @@ function togglePlayPauseBtns(isPaused) {
 
   togglePlayPauseBtn(element, isPaused);
   toggleTrackPlayPauseBtn(isPaused);
+  toggleQueuedTrackBtn(isPaused);
 }
 
 function togglePlaying({ player }) {
@@ -178,7 +179,7 @@ function playTrack() {
   }
 }
 
-function play(source, sourceValue, id, mode) {
+function play(source, sourceValue, id, mode = "auto", ignoreQueue = false) {
   if (!id) {
     return;
   }
@@ -213,7 +214,7 @@ function play(source, sourceValue, id, mode) {
       }
     }
 
-    if (sourceValue === 0 || sourceValue === 1) {
+    if (!ignoreQueue && (sourceValue === 0 || sourceValue === 1)) {
       const { track, playlistId } = getQueueTrack();
 
       if (track) {
@@ -284,12 +285,16 @@ function play(source, sourceValue, id, mode) {
   }
 }
 
-function playNextTrack(mode) {
-  play("direction", 1, getActivePlaylistId(), mode);
+function playNextTrack({ mode, ignoreQueue } = {}) {
+  play("direction", 1, getActivePlaylistId(), mode, ignoreQueue);
 }
 
 function playPreviousTrack() {
   play("direction", -1, getActivePlaylistId());
+}
+
+function playTrackAtIndex(index, playlistId) {
+  play("index", index, playlistId);
 }
 
 function playTrackFromElement({ currentTarget, detail, target }) {
@@ -302,7 +307,7 @@ function playTrackFromElement({ currentTarget, detail, target }) {
   }
 
   if (detail === 2 && trackElement && !element) {
-    play("index", trackElement.attrValue, id);
+    playTrackAtIndex(trackElement.attrValue, id);
   }
   else if (element) {
     const index = parseInt(trackElement.attrValue, 10);
@@ -310,7 +315,7 @@ function playTrackFromElement({ currentTarget, detail, target }) {
     const playlistId = getActivePlaylistId();
 
     if (!track || playlistId !== id || index !== track.index) {
-      play("index", index, id);
+      playTrackAtIndex(index, id);
     }
     else {
       togglePlaying(track);
@@ -440,7 +445,7 @@ window.addEventListener("track-end", () => {
     playNewTrack(track, getActivePlaylistId());
     return;
   }
-  playNextTrack("auto");
+  playNextTrack({ mode: "auto" });
 });
 
 if ("mediaSession" in navigator) {
@@ -460,6 +465,7 @@ export {
   playTrack,
   playNextTrack,
   playTrackFromElement,
+  playTrackAtIndex,
   stopPlayer,
   setVolume,
   seekTo,

@@ -530,13 +530,39 @@
 }
 
 .queue-track {
-  &.removable:hover {
+  &:hover {
+    &.removable {
+      .grid-item-duration {
+        opacity: 0;
+      }
+
+      .queue-track-remove-btn {
+        opacity: 1;
+      }
+    }
+
     .track-play-pause-btn {
       opacity: 1;
     }
 
     .artwork {
       opacity: 0.4;
+    }
+  }
+}
+
+.queue-track-remove-btn {
+  z-index: 1;
+  position: absolute;
+  right: 12px;
+
+  opacity: 0;
+
+  &:focus-visible {
+    opacity: 1;
+
+    & + .grid-item-duration {
+      opacity: 0;
     }
   }
 }
