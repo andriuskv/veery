@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, useMemo } from "react";
 import { openDB } from "idb";
 import { dispatchCustomEvent } from "../utils.js";
+import { resetSettings } from "services/settings";
 import * as playlistService from "services/playlist";
 import * as playerService from "services/player";
 import * as artworkService from "services/artwork";
@@ -41,6 +42,8 @@ function PlaylistProvider({ children }) {
 
     if (!localStorage.getItem("reseted")) {
       localStorage.setItem("reseted", 1);
+      localStorage.removeItem("veery-settings");
+      resetSettings();
       await Promise.all([db.clear("artworks"), db.clear("playlists")]);
     }
     await Promise.all([artworkService.initArtworks(db), playlistService.initPlaylists(db)]);
