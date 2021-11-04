@@ -16,6 +16,6 @@
   "start_url": ".",
   "display_override": ["minimal-ui"],
   "display": "standalone",
-  "theme_color": "#2f333d",
-  "background_color": "#2f333d"
+  "theme_color": "#333842",
+  "background_color": "#333842"
 }
