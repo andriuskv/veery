@@ -1,0 +1,59 @@
+.playlist-toolbar-search {
+  z-index: 1;
+  position: absolute;
+  left: 0;
+  width: 100%;
+  background-color: var(--color-grey-70);
+
+  @media (max-width: 768px) {
+    padding-left: 48px;
+    padding-right: var(--space-md);
+  }
+}
+
+.playlist-toolbar-search-enable-btn {
+  margin-left: var(--space-sm);
+}
+
+.playlist-toolbar-search-input-container {
+  position: relative;
+  width: 50%;
+  margin: 0 auto;
+  border-radius: 999px;
+  background-color: var(--color-grey-60);
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+}
+
+.playlist-toolbar-search-input {
+  width: 100%;
+  padding: var(--space-md) var(--space-xxl);
+  background-color: transparent;
+}
+
+.playlist-toolbar-search-input-icon {
+  position: absolute;
+  top: 50%;
+  left: var(--space-md);
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  color: var(--color-white-10);
+  pointer-events: none;
+}
+
+.playlist-toolbar-search-reset-btn {
+  --button-icon-size: 20px;
+
+  position: absolute;
+  top: 50%;
+  right: var(--space-xs);
+  transform: translateY(-50%);
+
+  &:hover,
+  &:focus-visible {
+    --background-color: var(--color-grey-50);
+  }
+}

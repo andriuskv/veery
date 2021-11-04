@@ -1,0 +1,163 @@
+.import-option {
+  border: 1px solid var(--color-white-100-4);
+  border-radius: 8px;
+  box-shadow:
+    1px 2px 2px 0 var(--color-black-100-4),
+    2px 4px 4px 0 var(--color-black-100-2),
+    4px 8px 8px 0 var(--color-black-100-1);
+  background-color: var(--color-grey-70);
+}
+
+.import-option-btn {
+  padding: var(--space-lg);
+  border-radius: 0;
+
+  @media (max-width: 428px) {
+    padding: var(--space-md);
+  }
+}
+
+.import-option-btn-icon {
+  margin-right: var(--space-md);
+}
+
+.import-option-local {
+  overflow: hidden;
+  margin-bottom: var(--space-md);
+}
+
+.import-local-items {
+  display: flex;
+  box-shadow: 0 1px 0 0 var(--color-white-100-4);
+}
+
+.import-local-item {
+  flex: 1;
+
+  &:first-of-type {
+    border-top-left-radius: 8px;
+    box-shadow: 1px 0 0 0 var(--color-white-100-4);
+  }
+
+  &:last-of-type {
+    margin-left: 1px;
+    border-top-right-radius: 8px;
+  }
+
+  &:focus-within {
+    --background-color: var(--color-grey-60);
+    --color: var(--color-white);
+
+    box-shadow: inset 0 0 0 2px var(--color-primary);
+
+    &:first-of-type {
+      border-top-left-radius: 8px;
+      box-shadow:
+        1px 0 0 0 var(--color-white-100-4),
+        inset 0 0 0 2px var(--color-primary);
+    }
+  }
+}
+
+.import-local-settings {
+  padding: var(--space-lg);
+  font-size: var(--text-sm);
+  color: var(--color-white-10);
+}
+
+.import-option-youtube {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.import-youtube-spinner {
+  z-index: 1;
+  position: absolute;
+  top: 50%;
+  left: var(--space-xl);
+  transform: translateY(-50%);
+  color: var(--color-primary);
+}
+
+.import-youtube-modal-show-btn {
+  flex-grow: 1;
+  margin-right: 1px;
+  box-shadow: 1px 0 0 0 var(--color-white-100-4);
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+
+  &:focus-visible {
+    box-shadow:
+      1px 0 0 0 var(--color-white-100-4),
+      inset 0 0 0 2px var(--color-primary);
+  }
+}
+
+.import-youtube-login-btn {
+  align-self: stretch;
+  border-radius: 0;
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+.import-youtube-user-toggle-btn {
+  overflow: hidden;
+  display: flex;
+  padding: 0;
+  margin: var(--space-md) var(--space-lg);
+
+  &:hover,
+  &:focus-visible {
+    opacity: 72%;
+  }
+
+  &:focus-visible {
+    box-shadow: 0 0 0 2px var(--color-primary);
+  }
+
+  @media (max-width: 428px) {
+    margin: var(--space-sm) var(--space-md);
+  }
+}
+
+.import-youtube-user-btn-image {
+  width: 32px;
+  height: 32px;
+}
+
+.import-youtube-user {
+  display: flex;
+  align-items: center;
+  padding: 0 var(--space-md);
+  margin-bottom: var(--space-md);
+}
+
+.import-youtube-user-image {
+  width: 48px;
+  height: 48px;
+  margin-right: var(--space-md);
+  border-radius: 50%;
+}
+
+.import-youtube-user-name {
+  font-weight: 500;
+  font-size: var(--text-md);
+}
+
+.import-youtube-user-email {
+  margin-top: var(--space-xs);
+  font-size: var(--text-sm);
+  color: var(--color-white-10);
+}
+
+.import-youtube-user-bottom {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 var(--space-md);
+  margin-top: var(--space-md);
+}
+
+.import-youtube-logout-btn:is(:hover, :focus-visible) {
+  --background-color: var(--color-grey-50);
+}

@@ -1,0 +1,46 @@
+:root {
+  --space-unit: 8px;
+  --space-xs: calc(0.25 * var(--space-unit));
+  --space-sm: calc(0.5 * var(--space-unit));
+  --space-md: calc(1 * var(--space-unit));
+  --space-lg: calc(1.5 * var(--space-unit));
+  --space-xl: calc(2 * var(--space-unit));
+  --space-xxl: calc(4 * var(--space-unit));
+
+  --text-base-size: 1rem;
+  --text-xs: calc(0.8125 * var(--text-base-size));
+  --text-sm: calc(0.875 * var(--text-base-size));
+  --text-md: calc(1 * var(--text-base-size));
+  --text-lg: calc(1.125 * var(--text-base-size));
+  --text-xl: calc(1.375 * var(--text-base-size));
+  --text-xxl: calc(1.5 * var(--text-base-size));
+  --text-xxxl: calc(2 * var(--text-base-size));
+
+  --color-primary: hsl(198deg 78% 64%);
+  --color-primary-10: hsl(198deg 78% 64% / 10%);
+
+  --color-white: hsl(198deg 4% 98%);
+  --color-white-10: hsl(198deg 10% 72%);
+  --color-white-20: hsl(206deg 6% 56%);
+  --color-white-100-4: hsl(198deg 4% 98% / 4%);
+  --color-white-100-8: hsl(198deg 4% 98% / 8%);
+  --color-white-100-16: hsl(198deg 4% 98% / 16%);
+  --color-white-100-32: hsl(198deg 4% 98% / 32%);
+
+  --color-black-100-1: rgb(0 0 0 / 1%);
+  --color-black-100-2: rgb(0 0 0 / 2%);
+  --color-black-100-4: rgb(0 0 0 / 4%);
+  --color-black-100-8: rgb(0 0 0 / 8%);
+  --color-black-100-16: rgb(0 0 0 / 16%);
+  --color-black-100-32: rgb(0 0 0 / 32%);
+
+  --color-grey-50: hsl(221deg 10% 31%);
+  --color-grey-60: hsl(221deg 11% 26%);
+  --color-grey-60-40: hsl(221deg 11% 26% / 40%);
+  --color-grey-70: hsl(221deg 13% 23%);
+  --color-grey-80: hsl(221deg 13% 21%);
+
+  --color-negative-10: hsl(0deg 86% 82%);
+  --color-negative-20: hsl(0deg 86% 70%);
+  --color-negative-20-10: hsl(0deg 86% 70% / 10%);
+}
