@@ -1,4 +1,3 @@
-
 const settings = Object.assign({
   repeat: "repeat-off",
   shuffle: false,
@@ -6,6 +5,15 @@ const settings = Object.assign({
   volume: 0.2
 }, JSON.parse(localStorage.getItem("veery-settings")) || {});
 let timeoutId = 0;
+
+function resetSettings() {
+  Object.assign(settings, {
+    repeat: "repeat-off",
+    shuffle: false,
+    mute: false,
+    volume: 0.2
+  });
+}
 
 function setSetting(setting, value) {
   settings[setting] = value;
@@ -29,6 +37,7 @@ function saveSettings(settings) {
 }
 
 export {
+  resetSettings,
   setSetting,
   getSetting,
   removeSetting
