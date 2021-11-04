@@ -1,0 +1,17 @@
+.home {
+  --min-grid-item-width: 480px;
+
+  overflow-y: auto;
+  display: grid;
+  gap: var(--space-xl);
+  grid-template-columns: repeat(auto-fill, minmax(var(--min-grid-item-width), 1fr));
+  align-items: flex-start;
+  align-content: flex-start;
+  height: 100%;
+  padding: var(--space-xl);
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    padding: 64px var(--space-md) var(--space-xl) var(--space-md);
+  }
+}

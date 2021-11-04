@@ -1,0 +1,17 @@
+.seek-slider-container {
+  display: flex;
+  align-items: center;
+  grid-row: 1 / 2;
+  grid-column: 2 / 3;
+  align-self: flex-start;
+
+  @media (max-width: 768px) {
+    grid-row: 2 / 3;
+    grid-column: 1 / 4;
+  }
+}
+
+.seek-slider-time {
+  color: var(--color-white-10);
+  font-size: var(--text-xs);
+}

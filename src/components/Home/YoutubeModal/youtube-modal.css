@@ -1,0 +1,106 @@
+.youtube-modal-form {
+  display: flex;
+  margin-bottom: var(--space-xl);
+  border: 1px solid var(--color-white-100-4);
+  border-radius: 999px;
+  background-color: var(--color-grey-50);
+  box-shadow:
+    1px 2px 2px 0 var(--color-black-100-2),
+    2px 4px 4px 0 var(--color-black-100-1);
+}
+
+.youtube-modal-form-input {
+  flex-grow: 1;
+  border-right: 1px solid var(--color-white-100-4);
+  border-radius: 0;
+  border-top-left-radius: 999px;
+  border-bottom-left-radius: 999px;
+  background-color: transparent;
+}
+
+.youtube-modal-form-submit-btn {
+  border-radius: 0;
+  border-top-right-radius: 999px;
+  border-bottom-right-radius: 999px;
+
+  &:hover {
+    --background-color: transparent;
+  }
+}
+
+.youtube-modal-playlists {
+  --scrollbar-color: var(--color-grey-50);
+
+  overflow-y: auto;
+  max-height: 280px;
+  padding: var(--space-md) var(--space-md) 0 var(--space-sm);
+  border-top: 1px solid var(--color-white-100-4);
+}
+
+.youtube-modal-playlist {
+  margin-bottom: var(--space-md);
+}
+
+.youtube-modal-playlist-action {
+  opacity: 0%;
+  font-weight: 500;
+}
+
+.youtube-modal-playlist-btn {
+  --background-color: transparent;
+
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: var(--space-sm) var(--space-xl) var(--space-sm) var(--space-sm);
+  border-radius: 8px;
+  font-weight: normal;
+
+  &:hover,
+  &:focus-visible {
+    --background-color: var(--color-grey-50);
+
+    & .youtube-modal-playlist-action {
+      opacity: 100%;
+    }
+  }
+}
+
+.youtube-modal-playlist-thumbnail-container {
+  width: 64px;
+  height: 64px;
+  margin-right: var(--space-md);
+}
+
+.youtube-modal-playlist-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  align-self: stretch;
+  flex-grow: 1;
+  padding-top: var(--space-xs);
+  padding-bottom: var(--space-xs);
+}
+
+.youtube-modal-playlist-bottom {
+  display: flex;
+}
+
+.youtube-modal-playlist-bottom-item {
+  display: flex;
+  align-items: center;
+  font-size: var(--text-xs);
+  color: var(--color-white-10);
+
+  &:not(:last-of-type)::after {
+    content: "•";
+    margin-left: var(--space-md);
+    margin-right: var(--space-md);
+  }
+}
+
+.youtube-modal-playlist-bottom-icon {
+  width: 20px;
+  height: 20px;
+}

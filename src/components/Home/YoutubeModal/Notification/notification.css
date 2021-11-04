@@ -1,0 +1,60 @@
+.notification {
+  display: flex;
+  align-items: center;
+  padding: var(--space-xs) var(--space-xs) var(--space-xs) var(--space-sm);
+  margin-bottom: var(--space-xl);
+  border-radius: 999px;
+  background-color: var(--notification-background-color);
+  box-shadow: 0 0 0 1px var(--notification-color);
+  color: var(--notification-color);
+  font-size: var(--text-xs);
+
+  &.negative {
+    --notification-background-color: var(--color-negative-20-10);
+    --notification-color: var(--color-negative-20);
+
+    &.flash {
+      animation-name: flash-negative;
+    }
+  }
+
+  &.flash {
+    animation-duration: 0.32s;
+    animation-fill-mode: forwards;
+    animation-iteration-count: 2;
+  }
+}
+
+.notification-icon {
+  flex-shrink: 0;
+}
+
+.notification-text {
+  margin-left: var(--space-md);
+  font-weight: 500;
+}
+
+.notification-dismiss-btn {
+  margin-left: auto;
+  color: inherit;
+
+  &:hover,
+  &:focus-visible {
+    --background-color: var(--notification-background-color);
+  }
+}
+
+.notification-dismiss-btn-icon {
+  width: 20px;
+  height: 20px;
+}
+
+@keyframes flash-negative {
+  50% {
+    --notification-color: var(--color-negative-10);
+  }
+
+  100% {
+    --notification-color: var(--color-negative-20);
+  }
+}

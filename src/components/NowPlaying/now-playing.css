@@ -1,0 +1,118 @@
+.now-playing-background {
+  z-index: -1;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  filter: blur(16px);
+  transform: scale(1.08);
+}
+
+.now-playing {
+  --artwork-container-height: 72%;
+  --max-width: 100%;
+  --dimmed-bottom: linear-gradient(transparent, transparent, transparent, transparent, rgb(0 0 0 / 32%), rgb(0 0 0 / 64%));
+
+  z-index: 2;
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  &:not(.placeholder) .now-playing-background {
+    background-image: var(--dimmed-bottom), var(--background-url);
+  }
+
+  &.queue-visible {
+    --max-width: calc(100% - var(--queue-width));
+    --dimmed-right: linear-gradient(to right, transparent, transparent, transparent, rgb(0 0 0 / 32%), rgb(0 0 0 / 64%));
+
+    &:not(.placeholder) .now-playing-background {
+      background-image: var(--dimmed-bottom), var(--dimmed-right), var(--background-url);
+    }
+
+    @media (max-width: 1024px) {
+      --max-width: 100%;
+
+      &:not(.placeholder) .now-playing-background {
+        background-image: var(--dimmed-bottom), var(--background-url);
+      }
+    }
+  }
+}
+
+.now-playing-artwork-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  max-width: var(--max-width);
+  max-height: var(--artwork-container-height);
+  transition: 0.2s opacity, 0.2s visibility;
+
+  &.hidden {
+    opacity: 0%;
+    visibility: hidden;
+  }
+}
+
+.now-playing-artwork {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  opacity: 0%;
+  max-width: calc(100% - 64px);
+  max-height: calc(80% - 64px);
+  transform: translate(-50%, -50%);
+  border-radius: 8px;
+
+  &.shadow {
+    box-shadow:
+      1px 2px 2px var(--color-black-100-16),
+      2px 4px 4px var(--color-black-100-8),
+      4px 8px 8px var(--color-black-100-4),
+      8px 16px 16px var(--color-black-100-2);
+  }
+}
+
+.now-playing-info {
+  --text-size-multiplier: 1;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: var(--max-width);
+  height: calc(100% - var(--artwork-container-height) - var(--controls-height));
+  padding: 0 var(--space-xxl);
+
+  & .track-info-item {
+    text-shadow: 1px 2px 2px var(--color-black-100-16);
+    font-size: calc(var(--text-lg) * var(--text-size-multiplier));
+    color: var(--color-white);
+  }
+
+  & .track-title {
+    margin-bottom: var(--space-sm);
+    font-size: calc(var(--text-xl) * var(--text-size-multiplier));
+    text-align: center;
+  }
+
+  @media (max-width: 1024px) {
+    --text-size-multiplier: 0.875;
+  }
+
+  @media (max-width: 768px) {
+    --text-size-multiplier: 0.725;
+  }
+
+  @media (max-width: 428px) {
+    padding: 0 var(--space-xl);
+  }
+}
