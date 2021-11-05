@@ -33,12 +33,7 @@ function PlaylistProvider({ children }) {
   }, [playlists]);
 
   async function init() {
-    const db = await openDB("veery", 1, {
-      upgrade(db) {
-        db.createObjectStore("artworks", { keyPath: "id" });
-        db.createObjectStore("playlists", { keyPath: "id" });
-      }
-    });
+    const db = await getDb();
 
     if (!localStorage.getItem("reseted")) {
       localStorage.setItem("reseted", 1);
@@ -62,6 +57,33 @@ function PlaylistProvider({ children }) {
         dispatchCustomEvent("youtube-user-update", user);
       }
     }
+  }
+
+  async function getDb() {
+    let db = null;
+
+    try {
+      db = await openDB("veery", 1, {
+        upgrade(db) {
+          db.createObjectStore("artworks", { keyPath: "id" });
+          db.createObjectStore("playlists", { keyPath: "id" });
+        }
+      });
+    } catch (e) {
+      db = await new Promise(resolve => {
+        const req = indexedDB.deleteDatabase("veery");
+
+        req.onsuccess = function() {
+          resolve(openDB("veery", 1, {
+            upgrade(db) {
+              db.createObjectStore("artworks", { keyPath: "id" });
+              db.createObjectStore("playlists", { keyPath: "id" });
+            }
+          }));
+        };
+      });
+    }
+    return db;
   }
 
   async function handeFileDrop(event) {
