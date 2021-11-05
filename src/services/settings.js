@@ -2,7 +2,7 @@ const settings = Object.assign({
   repeat: "repeat-off",
   shuffle: false,
   mute: false,
-  volume: 0.2
+  volume: 0.33
 }, JSON.parse(localStorage.getItem("veery-settings")) || {});
 let timeoutId = 0;
 
