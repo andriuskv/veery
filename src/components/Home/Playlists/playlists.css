@@ -1,5 +1,5 @@
 .playlist-entry {
-  --thumbnail-size: 156px;
+  --thumbnail-size: 150px;
 
   display: flex;
   border-radius: 8px;
@@ -10,12 +10,8 @@
     2px 4px 4px 0 var(--color-black-100-2),
     4px 8px 8px 0 var(--color-black-100-1);
 
-  @media (max-width: 1024px) {
-    --thumbnail-size: 124px;
-  }
-
   @media (max-width: 428px) {
-    --thumbnail-size: 96px;
+    --thumbnail-size: 108px;
 
     & .playlist-entry-content {
       padding-top: var(--space-md);
@@ -68,6 +64,7 @@
   height: var(--thumbnail-size);
   border-top-left-radius: 8px;
   border-bottom-left-radius: 8px;
+  user-select: none;
 
   &.t-1 {
     grid-template-columns: 1fr;
@@ -188,7 +185,7 @@
 .playlist-entry-dropdown-container {
   margin-left: auto;
 
-  @media (max-width: 1024px) {
+  @media (max-width: 428px) {
     & .dropdown-toggle-btn-icon {
       width: 20px;
       height: 20px;
