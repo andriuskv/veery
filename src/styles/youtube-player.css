@@ -1,24 +1,39 @@
+.youtube-player {
+  opacity: 0%;
+  transform: scale(0.94);
+  width: auto;
+  height: 100%;
+  aspect-ratio: 16 / 9;
+  transition: 0.2s opacity, 0.2s transform;
+}
+
 .youtube-player-container {
-  display: none;
+  opacity: 0%;
+  visibility: hidden;
 
   &.visible {
     z-index: 2;
     position: absolute;
     top: 0;
     left: 0;
-    display: block;
+    opacity: 100%;
+    visibility: visible;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 100%;
     height: 72%;
-    transition: 0.2s height;
-    animation: reveal-youtube-player 0.2s both;
+
+    & .youtube-player {
+      opacity: 100%;
+      transform: scale(1);
+    }
 
     &.maximized {
-      height: 100%;
+      height: calc(100% - var(--controls-height));
 
       & .youtube-player {
         width: 100%;
-        height: calc(100% - var(--controls-height));
-        transition: 0.2s width, 0.2s height;
       }
     }
 
@@ -32,15 +47,8 @@
       }
 
       & .youtube-player {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
         max-width: calc(100% - 64px);
         max-height: calc(80% - 64px);
-        width: auto;
-        height: 100%;
-        aspect-ratio: 16 / 9;
         border-radius: 8px;
         box-shadow:
           1px 2px 2px var(--color-black-100-16),
@@ -50,17 +58,5 @@
         background-color: var(--color-black-100-16);
       }
     }
-  }
-}
-
-@keyframes reveal-youtube-player {
-  from {
-    opacity: 0%;
-    transform: scale(0.96);
-  }
-
-  to {
-    opacity: 100%;
-    transform: scale(1);
   }
 }
