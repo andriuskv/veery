@@ -134,13 +134,16 @@ function PlayerProvider({ children }) {
     if (typeof paused === "boolean") {
       updatePlayerState(paused);
     }
-    setTrackLoading(loading);
 
-    if (loading) {
-      showTrackElementSpinner();
-    }
-    else {
-      hideTrackElementSpinner();
+    if (typeof loading === "boolean") {
+      setTrackLoading(loading);
+
+      if (loading) {
+        showTrackElementSpinner();
+      }
+      else {
+        hideTrackElementSpinner();
+      }
     }
   }
 
@@ -170,9 +173,9 @@ function PlayerProvider({ children }) {
   }
 
   function handlePlayerReset() {
-    setActivePlaylistId("");
-    setActiveTrack(null);
     setPaused(true);
+    setActiveTrack(null);
+    setActivePlaylistId("");
   }
 
   function setActivePlaylist(id) {

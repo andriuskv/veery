@@ -1,44 +1,36 @@
 import { scriptLoader, dispatchCustomEvent } from "../utils";
 import { getNextPlayableTrack, getActivePlaylistId, stopPlayer } from "./player";
 
-const UNSTARTED = -1;
 const PLAYING = 1;
 const PAUSED = 2;
 const BUFFERING = 3;
-const CUED = 5;
 let player = null;
 let initArgs = null;
 let initialized = false;
 let videoCued = false;
-let shouldPause = true;
+let playState = false;
 let timeoutId = 0;
 let seekedTime = 0;
 let currentTrack = null;
 
 function onPlayerStateChange({ data: state }) {
-  let playerPaused = false;
-  let loading = false;
+  let playerState = null;
 
   clearTimeout(timeoutId);
 
-  if (state === PLAYING) {
-    playerPaused = false;
+  if (state === BUFFERING) {
+    playerState = { loading: true };
+  }
+  else if (state === PLAYING) {
+    playerState = { loading: false, paused: false };
     startCounting();
   }
-  else if (state === PAUSED || state === UNSTARTED || state === CUED) {
-    playerPaused = true;
-  }
-  else if (state === BUFFERING) {
-    loading = true;
+  else if (state === PAUSED) {
+    playerState = { loading: false, paused: true };
   }
 
-  // Align player state with the YouTube player state.
-  if (shouldPause !== playerPaused) {
-    shouldPause = playerPaused;
-    dispatchCustomEvent("player-state", { loading, paused: shouldPause });
-  }
-  else {
-    dispatchCustomEvent("player-state", { loading });
+  if (playerState) {
+    dispatchCustomEvent("player-state", playerState);
   }
 }
 
@@ -51,13 +43,13 @@ function onPlayerReady() {
   setVolume(volume);
 
   if (currentTime > 0) {
-    if (shouldPause) {
-      videoCued = true;
-      player.cueVideoById(track.id, currentTime);
-    }
-    else {
+    if (playState) {
       initArgs = null;
       player.loadVideoById(track.id, currentTime);
+    }
+    else {
+      videoCued = true;
+      player.cueVideoById(track.id, currentTime);
     }
   }
   else {
@@ -133,9 +125,8 @@ function initPlayer() {
 }
 
 function togglePlay(paused) {
-  shouldPause = paused;
-
   if (!initialized) {
+    playState = paused;
     return;
   }
   videoCued = false;
