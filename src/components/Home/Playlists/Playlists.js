@@ -4,6 +4,7 @@ import { dispatchCustomEvent } from "../../../utils.js";
 import { usePlaylists } from "contexts/playlist";
 import { usePlayer } from "contexts/player";
 import { getPlaylistById, getPlaylistState } from "services/playlist";
+import { setPlaylistViewActiveTrack, resetPlaylistViewActiveTrack } from "services/playlist-view";
 import Icon from "components/Icon";
 import Dropdown from "components/Dropdown";
 import "./playlists.css";
@@ -11,7 +12,7 @@ import "./playlists.css";
 export default function Playlists({ youtube, setYoutube }) {
   const location = useLocation();
   const { playlists, removePlaylist, updatePlaylist } = usePlaylists();
-  const { activePlaylistId, paused, trackLoading, togglePlay, playPlaylist } = usePlayer();
+  const { activePlaylistId, activeTrack, paused, trackLoading, togglePlay, playPlaylist } = usePlayer();
   const [playlistTitle, setPlaylistTitle] = useState(null);
 
   function togglePlaylistSync({ target }, id) {
@@ -25,6 +26,9 @@ export default function Playlists({ youtube, setYoutube }) {
     dispatchCustomEvent("update-indicator-status", { id, visible: true });
     setYoutube({ ...youtube, playlistId: id, fetching: true });
 
+    resetPlaylistViewActiveTrack();
+    updatePlaylist(id, { tracks: [] }, false);
+
     if (!user) {
       user = await initGoogleAPI();
 
@@ -33,6 +37,10 @@ export default function Playlists({ youtube, setYoutube }) {
       }
     }
     await fetchPlaylistItems(id);
+
+    if (id === activePlaylistId) {
+      setPlaylistViewActiveTrack(activeTrack.index, id);
+    }
 
     if (location.pathname === "/") {
       setYoutube({ ...youtube, user });

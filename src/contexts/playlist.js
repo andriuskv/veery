@@ -113,8 +113,8 @@ function PlaylistProvider({ children }) {
     }
   }
 
-  function handleYoutubeTracksUpdate({ detail: { id, tracks } }) {
-    addTracks(id, tracks);
+  function handleYoutubeTracksUpdate({ detail: { id, tracks, done } }) {
+    addTracks(id, tracks, done);
   }
 
   async function uploadFiles(files) {

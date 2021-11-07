@@ -81,7 +81,7 @@ async function fetchPlaylistItems(id, token) {
   const pl = getPlaylistById(id);
   const newTtracks = filterDuplicateTracks(tracks, pl.tracks);
 
-  dispatchCustomEvent("youtube-tracks", { id, tracks: newTtracks });
+  dispatchCustomEvent("youtube-tracks", { id, tracks: newTtracks, done: !nextPageToken });
 
   if (nextPageToken) {
     return fetchPlaylistItems(id, nextPageToken);
