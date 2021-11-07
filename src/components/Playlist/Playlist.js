@@ -1,7 +1,6 @@
 import { useState, useEffect, useLayoutEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { reobserveTrack, createPlaylistView, cleanupPlaylistView, addTrackElements, scrollActiveTrackIntoView } from "services/playlist-view";
-import { enableTrackSelection, disableTrackSelection } from "services/playlist-selection";
 import { getActiveTrack } from "services/player";
 import { usePlaylists } from "contexts/playlist";
 import { usePlayer } from "contexts/player";
@@ -24,7 +23,6 @@ export default function Playlist() {
 
       setMessage("");
       cleanupPlaylistView();
-      disableTrackSelection();
     };
   }, [id]);
 
@@ -46,13 +44,11 @@ export default function Playlist() {
           return;
         }
         createPlaylistView(playlistRef.current, playlist);
-        enableTrackSelection(playlistRef.current, playlist);
         scrollActiveTrackIntoView(id);
         rendered.current = true;
       }
       else if (!playlist.tracks.length) {
         cleanupPlaylistView();
-        disableTrackSelection();
       }
     }
   }, [playlist]);

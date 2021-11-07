@@ -1,4 +1,5 @@
 import { getPlaylistState, getPlaylistById } from "services/playlist";
+import { enableTrackSelection, disableTrackSelection } from "services/playlist-selection";
 import { getActivePlaylistId, getActiveTrack, getPlayerState } from "services/player";
 import { getArtwork } from "services/artwork";
 
@@ -68,6 +69,8 @@ function cleanupPlaylistView() {
   visiblePlaylistId = "";
   searchValue = "";
   playlistElement = null;
+
+  disableTrackSelection();
 }
 
 function createItem(item, id, viewMode) {
@@ -316,6 +319,7 @@ function createPlaylistView(container, playlist) {
     container.innerHTML = createMinimal(playlist.id, html);
   }
   observePlaylist(container);
+  enableTrackSelection(container, playlist);
 }
 
 function addTrackElements(tracks, container, playlist) {
@@ -323,6 +327,7 @@ function addTrackElements(tracks, container, playlist) {
 
   container.lastElementChild.insertAdjacentHTML("beforeend", elements);
   observePlaylist(container);
+  enableTrackSelection(container, playlist);
 }
 
 function addTrackElement(track, container, playlist) {
@@ -613,7 +618,6 @@ function scrollToBeginning() {
 
 export {
   getVisiblePlaylistId,
-  observePlaylist,
   reobserveTrack,
   cleanupPlaylistView,
   createPlaylistView,

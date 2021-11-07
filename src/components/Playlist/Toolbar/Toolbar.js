@@ -1,5 +1,5 @@
 import { useState, useEffect, lazy, Suspense } from "react";
-import { enableTrackSelection, getSelectedElements, getElementIndexes, selectedAllTracks, removeSelectedElements } from "services/playlist-selection";
+import { getSelectedElements, getElementIndexes, selectedAllTracks, removeSelectedElements } from "services/playlist-selection";
 import { createPlaylistView, setPlaylistViewActiveTrack } from "services/playlist-view";
 import { getActiveTrack, updateActiveTrackIndex, setPlaybackOrder } from "services/player";
 import { setTrackIndexes } from "services/playlist";
@@ -88,7 +88,6 @@ export default function Toolbar({ playlist, playlistRef, setMessage }) {
 
     updatePlaylist(playlist.id, { viewMode });
     createPlaylistView(playlistRef.current, playlist);
-    enableTrackSelection(playlistRef.current, playlist);
   }
 
   function updateSortedPlaylist({ sortBy, sortOrder }) {
