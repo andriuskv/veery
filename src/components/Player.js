@@ -156,7 +156,8 @@ export default function Player() {
       {indicator && (
         <Suspense fallback={null}>
           <PlayerStateIndicator indicator={indicator} nowPlayingVisible={nowPlayingVisible}
-            shift={queueVisible && youtubePlayer.mode !== "maximized"}/>
+            queueVisible={queueVisible}
+            youtubePlayerMaximized={youtubePlayer.mode === "maximized"}/>
         </Suspense>
       )}
     </>
