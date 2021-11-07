@@ -6,10 +6,10 @@
   left: 50%;
   transform: translate(-50%, -50%);
 
-  &.now-playing-visible {
+  &.now-playing-visible:not(.youtube-player-maximized) {
     top: 36%;
 
-    &.shift-left {
+    &.queue-visible {
       left: calc((100% - var(--queue-width)) / 2);
     }
   }
