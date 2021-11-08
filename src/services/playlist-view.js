@@ -19,6 +19,10 @@ function observerCallback(entries) {
     const index = Number(target.getAttribute("data-index"));
     const track = tracks[index];
 
+    if (!track) {
+      return;
+    }
+
     if (isIntersecting) {
       target.innerHTML = createItem(track, id, viewMode);
     }
@@ -43,21 +47,15 @@ function observePlaylist(root) {
   });
 }
 
-function reobserveTrack(track, playlistId) {
+function reobserveTrack(track) {
   const { children } = observer.root.lastElementChild;
-  const { sortOrder } = getPlaylistState(playlistId);
+  const { sortOrder } = getPlaylistState("local-files");
   const elementIndex = sortOrder.indexOf(track.index);
   const element = children[elementIndex];
 
   if (element) {
     observer.unobserve(element);
     observer.observe(element);
-  }
-  else {
-    const playlist = getPlaylistById(playlistId);
-
-    addTrackElement(track, observer.root.lastElementChild, playlist);
-    observer.observe(children[children.length - 1]);
   }
 }
 
@@ -71,6 +69,9 @@ function cleanupPlaylistView() {
   playlistElement = null;
 
   disableTrackSelection();
+
+  window.removeEventListener("track", handleTrackUpdate);
+  window.removeEventListener("tracks", handleTracksUpdate);
 }
 
 function createItem(item, id, viewMode) {
@@ -320,20 +321,46 @@ function createPlaylistView(container, playlist) {
   }
   observePlaylist(container);
   enableTrackSelection(container, playlist);
+
+  if (playlist.id === "local-files") {
+    window.addEventListener("track", handleTrackUpdate);
+  }
+
+  if (playlist.id !== "search") {
+    window.addEventListener("tracks", handleTracksUpdate);
+  }
 }
 
-function addTrackElements(tracks, container, playlist) {
+function updatePlaylistView(container, playlistId) {
+  const playlist = getPlaylistById(playlistId);
+
+  container.lastElementChild.innerHTML = createItemContainers(playlist);
+  observePlaylist(container);
+}
+
+function addTrackElements(tracks, container, playlistId) {
+  const playlist = getPlaylistById(playlistId);
   const elements = tracks.reduce((items, track) => items + createItemContainer(track, playlist), "");
 
   container.lastElementChild.insertAdjacentHTML("beforeend", elements);
   observePlaylist(container);
-  enableTrackSelection(container, playlist);
 }
 
-function addTrackElement(track, container, playlist) {
-  const element = createItemContainer(track, playlist);
+function handleTrackUpdate({ detail: { track } }) {
+  reobserveTrack(track);
+}
 
-  container.insertAdjacentHTML("beforeend", element);
+function handleTracksUpdate({ detail: { id, tracks, type } }) {
+  if (id !== visiblePlaylistId) {
+    return;
+  }
+
+  if (type === "replace") {
+    updatePlaylistView(playlistElement, id);
+  }
+  else {
+    addTrackElements(tracks, playlistElement, id);
+  }
 }
 
 function setSearchValue(value) {
@@ -621,7 +648,6 @@ export {
   reobserveTrack,
   cleanupPlaylistView,
   createPlaylistView,
-  addTrackElements,
   setSearchValue,
   getSearchValue,
   searchPlaylist,

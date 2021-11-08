@@ -71,16 +71,16 @@ function createPlaylist(playlist) {
   return pl;
 }
 
-function updatePlaylist(id, data, shouldUpdateThumbnail = true) {
+function updatePlaylist(id, data, done = true) {
   playlists[id] = { ...playlists[id], ...data };
 
   if (data.tracks) {
     playlistState[id].duration = parsePlaylistDuration(data.tracks);
 
-    if (shouldUpdateThumbnail) {
+    if (done) {
       playlistState[id].thumbnail = getPlaylistThumbnailImages(data.tracks);
+      setSortOrder(playlists[id]);
     }
-    setSortOrder(playlists[id]);
   }
 
   if (id !== "local-files" && id !== "search") {
@@ -108,7 +108,6 @@ function addTracks(id, newTracks, save = true) {
 
   playlist.tracks = playlist.tracks.concat(newIndexedTracks);
   playlistState[id].sortOrder = playlistState[id].sortOrder.concat(indexes);
-
 
   if (save && id !== "local-files") {
     updateIDBPlaylist(id, { tracks: playlist.tracks });

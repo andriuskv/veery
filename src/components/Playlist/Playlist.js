@@ -1,6 +1,6 @@
 import { useState, useEffect, useLayoutEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
-import { reobserveTrack, createPlaylistView, cleanupPlaylistView, addTrackElements, scrollActiveTrackIntoView } from "services/playlist-view";
+import { createPlaylistView, cleanupPlaylistView, scrollActiveTrackIntoView } from "services/playlist-view";
 import { getActiveTrack } from "services/player";
 import { usePlaylists } from "contexts/playlist";
 import { usePlayer } from "contexts/player";
@@ -35,46 +35,18 @@ export default function Playlist() {
   }, [playlists, id]);
 
   useLayoutEffect(() => {
-    if (playlist) {
-      if (!rendered.current) {
-        const media = window.matchMedia("(max-width: 700px)");
+    if (playlist && !rendered.current) {
+      const media = window.matchMedia("(max-width: 700px)");
 
-        if (media.matches && playlist.viewMode !== "grid") {
-          updatePlaylist(playlist.id, { viewMode: "grid" });
-          return;
-        }
-        createPlaylistView(playlistRef.current, playlist);
-        scrollActiveTrackIntoView(id);
-        rendered.current = true;
+      if (media.matches && playlist.viewMode !== "grid") {
+        updatePlaylist(playlist.id, { viewMode: "grid" });
+        return;
       }
-      else if (!playlist.tracks.length) {
-        cleanupPlaylistView();
-      }
+      createPlaylistView(playlistRef.current, playlist);
+      scrollActiveTrackIntoView(id);
+      rendered.current = true;
     }
   }, [playlist]);
-
-  useEffect(() => {
-    if (id === "local-files") {
-      window.addEventListener("track", handleTrackUpdate);
-    }
-    else {
-      window.addEventListener("youtube-tracks", handleYoutubeTrackUpdate);
-    }
-    return () => {
-      window.removeEventListener("track", handleTrackUpdate);
-      window.removeEventListener("youtube-tracks", handleYoutubeTrackUpdate);
-    };
-  }, [playlist]);
-
-  function handleTrackUpdate({ detail: { track } }) {
-    reobserveTrack(track, id);
-  }
-
-  function handleYoutubeTrackUpdate({ detail: { id: playlistId, tracks } }) {
-    if (playlistId === id) {
-      addTrackElements(tracks, playlistRef.current, playlist);
-    }
-  }
 
   function handleClick({ target, detail }) {
     const trackElement = target.closest(".track");
