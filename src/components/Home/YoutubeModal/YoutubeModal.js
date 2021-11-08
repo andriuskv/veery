@@ -50,6 +50,11 @@ export default function YoutubeModal({ youtube, setYoutube }) {
       if (pl) {
         delete youtube.modalVisible;
         setYoutube({ ...youtube, playlistId, loading: true });
+
+        const tracks = await fetchPlaylistItems(playlistId, "reimport");
+
+        addTracks(playlistId, tracks);
+        dispatchCustomEvent("tracks", { id: playlistId, type: "replace" });
       }
       else {
         const response = await fetchPlaylistTitleAndStatus(playlistId);
@@ -65,6 +70,8 @@ export default function YoutubeModal({ youtube, setYoutube }) {
             url,
             ...response
           });
+
+          await fetchPlaylistItems(playlistId, "new");
         }
         else {
           setFormDisabled(false);
@@ -72,7 +79,6 @@ export default function YoutubeModal({ youtube, setYoutube }) {
           return;
         }
       }
-      await fetchPlaylistItems(playlistId);
 
       if (location.pathname === "/") {
         setYoutube({ ...youtube, loading: false });

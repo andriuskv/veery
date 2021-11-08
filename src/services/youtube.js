@@ -70,22 +70,28 @@ async function fetchPlaylistTitleAndStatus(id) {
   }
 }
 
-async function fetchPlaylistItems(id, token) {
+async function fetchPlaylistItems(id, type, tracks = [], token = "") {
   const { error, items, nextPageToken } = await fetchYoutube("playlistItems", "snippet", "playlistId", id, token);
 
   if (error) {
     console.log(error);
   }
   const validItems = await getVideoDuration(filterInvalidItems(items));
-  const tracks = parseItems(validItems);
-  const pl = getPlaylistById(id);
-  const newTtracks = filterDuplicateTracks(tracks, pl.tracks);
+  let pageTracks = parseItems(validItems);
 
-  dispatchCustomEvent("youtube-tracks", { id, tracks: newTtracks, done: !nextPageToken });
+  if (type === "new") {
+    dispatchCustomEvent("youtube-tracks", { id, tracks: pageTracks, done: !nextPageToken });
+  }
+  else if (type === "reimport") {
+    const pl = getPlaylistById(id);
+    pageTracks = filterDuplicateTracks(pageTracks, pl.tracks);
+  }
+  tracks = tracks.concat(pageTracks);
 
   if (nextPageToken) {
-    return fetchPlaylistItems(id, nextPageToken);
+    return fetchPlaylistItems(id, type, tracks, nextPageToken);
   }
+  return tracks;
 }
 
 function parseDuration(duration) {

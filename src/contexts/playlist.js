@@ -1,7 +1,8 @@
-import { createContext, useContext, useState, useEffect, useMemo } from "react";
+import { createContext, useContext, useState, useEffect, useRef, useMemo } from "react";
 import { openDB } from "idb";
 import { dispatchCustomEvent } from "../utils.js";
 import { resetSettings } from "services/settings";
+import { setPlaylistViewActiveTrack } from "services/playlist-view";
 import * as playlistService from "services/playlist";
 import * as playerService from "services/player";
 import * as artworkService from "services/artwork";
@@ -13,12 +14,17 @@ function PlaylistProvider({ children }) {
   const { showNotification } = useNotification();
   const [playlists, setPlaylists] = useState(null);
   const value = useMemo(() => ({ playlists, createPlaylist, updatePlaylist, removePlaylist, addTracks, uploadFiles }), [playlists]);
+  const first = useRef(true);
 
   useEffect(() => {
     init();
   }, []);
 
   useEffect(() => {
+    if (playlists && first.current) {
+      first.current = false;
+      syncPlaylists();
+    }
     window.addEventListener("drop", handeFileDrop);
     window.addEventListener("dragover", handleDragOver);
     window.addEventListener("track", handleTrackUpdate);
@@ -43,20 +49,7 @@ function PlaylistProvider({ children }) {
     }
     await Promise.all([artworkService.initArtworks(db), playlistService.initPlaylists(db)]);
 
-    const playlists = playlistService.getPlaylists();
-
-    setPlaylists(playlists);
-
-    for (const playlist of Object.values(playlists)) {
-      if (playlist.sync) {
-        const { initGoogleAPI, fetchPlaylistItems } = await import("services/youtube");
-        const user = await initGoogleAPI();
-
-        await fetchPlaylistItems(playlist.id);
-
-        dispatchCustomEvent("youtube-user-update", user);
-      }
-    }
+    setPlaylists(playlistService.getPlaylists());
   }
 
   async function getDb() {
@@ -86,6 +79,33 @@ function PlaylistProvider({ children }) {
     return db;
   }
 
+  async function syncPlaylists() {
+    for (const { id, sync } of Object.values(playlists)) {
+      if (sync) {
+        dispatchCustomEvent("update-indicator-status", { id, visible: true });
+
+        const { initGoogleAPI, fetchPlaylistItems } = await import("services/youtube");
+        const user = await initGoogleAPI();
+        const tracks = await fetchPlaylistItems(id, "sync");
+        const activeTrack = playerService.getActiveTrack();
+        const activePlaylistId = playerService.getActivePlaylistId();
+
+        updatePlaylist(id, { tracks: playlistService.setTrackIndexes(tracks) });
+
+        if (id === activePlaylistId) {
+          playerService.setPlaybackOrder(id);
+
+          if (activeTrack) {
+            setPlaylistViewActiveTrack(activeTrack.index, id);
+          }
+        }
+        dispatchCustomEvent("youtube-user-update", user);
+        dispatchCustomEvent("tracks", { id, type: "replace" });
+        dispatchCustomEvent("update-indicator-status", { id, visible: false });
+      }
+    }
+  }
+
   async function handeFileDrop(event) {
     event.preventDefault();
 
@@ -104,17 +124,18 @@ function PlaylistProvider({ children }) {
   }
 
   function handleTrackUpdate({ detail: { track, done } }) {
-    const pl = playlists["local-files"];
-    const index = pl.tracks.findIndex(({ name }) => track.name === name);
+    const { id, tracks } = playlists["local-files"];
+    const index = tracks.findIndex(({ id }) => track.id === id);
 
     if (index >= 0) {
-      pl.tracks[index] = track;
-      updatePlaylist(pl.id, { tracks: pl.tracks }, done);
+      tracks[index] = track;
+      updatePlaylist(id, { tracks }, done);
     }
   }
 
   function handleYoutubeTracksUpdate({ detail: { id, tracks, done } }) {
     addTracks(id, tracks, done);
+    dispatchCustomEvent("tracks", { id, tracks });
   }
 
   async function uploadFiles(files) {
@@ -129,6 +150,7 @@ function PlaylistProvider({ children }) {
 
       if (pl) {
         addTracks(id, tracks, false);
+        dispatchCustomEvent("tracks", { id, tracks });
       }
       else {
         createPlaylist({
@@ -153,10 +175,10 @@ function PlaylistProvider({ children }) {
     });
   }
 
-  function updatePlaylist(id, data, shouldUpdateThumbnail) {
+  function updatePlaylist(id, data, done) {
     setPlaylists({
       ...playlists,
-      [id]: playlistService.updatePlaylist(id, data, shouldUpdateThumbnail)
+      [id]: playlistService.updatePlaylist(id, data, done)
     });
   }
 
@@ -165,12 +187,12 @@ function PlaylistProvider({ children }) {
     setPlaylists({ ...playlists });
   }
 
-  async function addTracks(id, tracks, shouldUpdateThumbnail = true) {
+  function addTracks(id, tracks, done) {
     const activePlaylistId = playerService.getActivePlaylistId();
 
     updatePlaylist(id, {
-      tracks: await playlistService.addTracks(id, tracks, false)
-    }, shouldUpdateThumbnail);
+      tracks: playlistService.addTracks(id, tracks, false)
+    }, done);
 
     if (id === activePlaylistId) {
       playerService.flagPlaybackOrderForUpdate();

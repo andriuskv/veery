@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { dispatchCustomEvent } from "../../../utils.js";
+import { getPlaylistById, getPlaylistState, setTrackIndexes } from "services/playlist";
+import { setPlaylistViewActiveTrack } from "services/playlist-view";
+import { setPlaybackOrder } from "services/player";
 import { usePlaylists } from "contexts/playlist";
 import { usePlayer } from "contexts/player";
-import { getPlaylistById, getPlaylistState } from "services/playlist";
-import { setPlaylistViewActiveTrack, resetPlaylistViewActiveTrack } from "services/playlist-view";
 import Icon from "components/Icon";
 import Dropdown from "components/Dropdown";
 import "./playlists.css";
@@ -26,9 +27,6 @@ export default function Playlists({ youtube, setYoutube }) {
     dispatchCustomEvent("update-indicator-status", { id, visible: true });
     setYoutube({ ...youtube, playlistId: id, fetching: true });
 
-    resetPlaylistViewActiveTrack();
-    updatePlaylist(id, { tracks: [] }, false);
-
     if (!user) {
       user = await initGoogleAPI();
 
@@ -36,10 +34,17 @@ export default function Playlists({ youtube, setYoutube }) {
         setYoutube({ ...youtube, user, playlistId: id, fetching: true });
       }
     }
-    await fetchPlaylistItems(id);
+    const tracks = await fetchPlaylistItems(id, "sync");
+
+    updatePlaylist(id, { tracks: setTrackIndexes(tracks) });
+    dispatchCustomEvent("tracks", { id, type: "replace" });
 
     if (id === activePlaylistId) {
-      setPlaylistViewActiveTrack(activeTrack.index, id);
+      setPlaybackOrder(id);
+
+      if (activeTrack) {
+        setPlaylistViewActiveTrack(activeTrack.index, id);
+      }
     }
 
     if (location.pathname === "/") {
@@ -146,15 +151,15 @@ export default function Playlists({ youtube, setYoutube }) {
               </button>
               {playlist.url ? (
                 <>
-                  <a href={playlist.url} className="btn icon-text-btn dropdown-btn" target="_blank" rel="noreferrer">
-                    <Icon id="link" className="dropdown-btn-icon"/>
-                    <span>Open on YouTube</span>
-                  </a>
                   <button className="btn icon-text-btn dropdown-btn" onClick={() => syncPlaylist(playlist.id)}
                     disabled={youtube.playlistId === playlist.id}>
                     <Icon id="sync" className="dropdown-btn-icon"/>
                     <span>Sync</span>
                   </button>
+                  <a href={playlist.url} className="btn icon-text-btn dropdown-btn" target="_blank" rel="noreferrer">
+                    <Icon id="link" className="dropdown-btn-icon"/>
+                    <span>Open on YouTube</span>
+                  </a>
                   <label className="checkbox-container playlist-entry-dropdown-setting">
                     <input type="checkbox" className="sr-only checkbox-input"
                       checked={playlist.sync}
