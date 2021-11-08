@@ -413,7 +413,7 @@ function getNextTrackIndex(direction, wrapAround = false) {
       index = 0;
     }
   }
-  else if (index === -1) {
+  else if (index < 0) {
     index = playbackOrder.length - 1;
   }
   return playbackOrder[index];
