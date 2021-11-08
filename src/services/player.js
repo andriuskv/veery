@@ -420,17 +420,21 @@ function getNextTrackIndex(direction, wrapAround = false) {
 }
 
 function getNextTrack(direction, playlistId, wrap) {
+  const playlist = getPlaylistById(playlistId);
+
+  if (!playlist) {
+    return null;
+  }
   const trackIndex = getNextTrackIndex(direction, wrap);
-  const { tracks } = getPlaylistById(playlistId);
 
   // We don't have to follow sort order if playlist is shuffled.
   if (getSetting("shuffle")) {
-    return tracks[trackIndex];
+    return playlist.tracks[trackIndex];
   }
   const { sortOrder } = getPlaylistState(playlistId);
   const sortIndex = sortOrder[trackIndex];
 
-  return tracks[sortIndex];
+  return playlist.tracks[sortIndex];
 }
 
 export {
