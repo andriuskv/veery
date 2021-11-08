@@ -1,4 +1,4 @@
-import { useState, useLayoutEffect, useRef, lazy, Suspense } from "react";
+import { useState, useEffect, useLayoutEffect, useRef, lazy, Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
 import { useNotification } from "contexts/notification";
 import { usePlayer } from "contexts/player";
@@ -45,6 +45,28 @@ export default function Player() {
       setQueueVisible(false);
     }
   }, [activeTrack]);
+
+  useEffect(() => {
+    if (youtubePlayer.mode === "off") {
+      return;
+    }
+    window.addEventListener("blur", blurIframe);
+
+    return () => {
+      window.removeEventListener("blur", blurIframe);
+    };
+
+  }, [youtubePlayer]);
+
+  function blurIframe() {
+    const element = document.activeElement;
+
+    if (element instanceof HTMLIFrameElement) {
+      requestAnimationFrame(() => {
+        element.blur();
+      });
+    }
+  }
 
   function toggleNowPlaying() {
     setNowPlayingVisible(!nowPlayingVisible);
