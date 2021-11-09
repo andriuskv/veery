@@ -2,7 +2,7 @@ import { createContext, useContext, useState, useEffect, useRef, useMemo } from 
 import { openDB } from "idb";
 import { dispatchCustomEvent } from "../utils.js";
 import { resetSettings } from "services/settings";
-import { setPlaylistViewActiveTrack } from "services/playlist-view";
+import { setPlaylistViewActiveTrack, resetPlaylistViewActiveTrack } from "services/playlist-view";
 import * as playlistService from "services/playlist";
 import * as playerService from "services/player";
 import * as artworkService from "services/artwork";
@@ -96,6 +96,7 @@ function PlaylistProvider({ children }) {
           playerService.setPlaybackOrder(id);
 
           if (activeTrack) {
+            resetPlaylistViewActiveTrack();
             setPlaylistViewActiveTrack(activeTrack.index, id);
           }
         }
