@@ -538,21 +538,19 @@ function resetPlaylistViewActiveTrack() {
 }
 
 function resetActiveTrack() {
-  if (activeTrack) {
-    const element = getTrackElement(activeTrack.index, activeTrack.playlistId);
+  const element = getTrackElement(activeTrack.index, activeTrack.playlistId);
+
+  if (element) {
+    element.classList.remove("playing");
+  }
+  else {
+    const element = getSearchTrackElement();
 
     if (element) {
       element.classList.remove("playing");
     }
-    else {
-      const element = getSearchTrackElement();
-
-      if (element) {
-        element.classList.remove("playing");
-      }
-    }
-    activeTrack = null;
   }
+  activeTrack = null;
 }
 
 function togglePlayPauseBtns(paused) {

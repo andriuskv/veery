@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { dispatchCustomEvent } from "../../../utils.js";
 import { getPlaylistById, getPlaylistState, setTrackIndexes } from "services/playlist";
-import { setPlaylistViewActiveTrack } from "services/playlist-view";
+import { setPlaylistViewActiveTrack, resetPlaylistViewActiveTrack } from "services/playlist-view";
 import { setPlaybackOrder } from "services/player";
 import { usePlaylists } from "contexts/playlist";
 import { usePlayer } from "contexts/player";
@@ -43,6 +43,7 @@ export default function Playlists({ youtube, setYoutube }) {
       setPlaybackOrder(id);
 
       if (activeTrack) {
+        resetPlaylistViewActiveTrack();
         setPlaylistViewActiveTrack(activeTrack.index, id);
       }
     }
