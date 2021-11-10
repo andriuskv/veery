@@ -1,5 +1,6 @@
 .playlist {
   overflow: hidden;
+  contain: strict;
   height: 100%;
 
   &.empty {
@@ -58,4 +59,5 @@
   transform: translate(-50%, -50%);
   font-size: var(--text-xl);
   color: var(--color-white-10);
+  user-select: none;
 }

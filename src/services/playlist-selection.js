@@ -13,15 +13,12 @@ let intervalId = 0;
 let downTimeoutId = 0;
 let mobileSelectionEnabled = false;
 
-
-function enableTrackSelection(element, { viewMode, tracks }) {
+function enableTrackSelection(element, viewMode) {
   disableTrackSelection();
 
-  if (tracks.length) {
-    playlist.offsetY = viewMode === "grid" ? 0 : 40;
-    playlist.element = element;
-    element.addEventListener("pointerdown", handlePointerDown);
-  }
+  playlist.offsetY = viewMode === "grid" ? 0 : 40;
+  playlist.element = element;
+  element.addEventListener("pointerdown", handlePointerDown);
 }
 
 function disableTrackSelection() {
@@ -251,11 +248,13 @@ function resetSelectedElements() {
 }
 
 function setPlaylistElementRect(element) {
+  const { top, left, width, height } = element.getBoundingClientRect();
+
   playlist.rect = {
-    top: element.offsetTop,
-    left: element.offsetLeft,
-    width: element.clientWidth - 1, // clientWidth excludes scrollbar width
-    height: element.offsetHeight,
+    top,
+    left,
+    width: width - 1,
+    height,
     scrollHeight: element.scrollHeight
   };
 }

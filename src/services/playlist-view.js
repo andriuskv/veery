@@ -320,13 +320,13 @@ function createPlaylistView(container, playlist) {
     container.innerHTML = createMinimal(playlist.id, html);
   }
   observePlaylist(container);
-  enableTrackSelection(container, playlist);
 
   if (playlist.id === "local-files") {
     window.addEventListener("track", handleTrackUpdate);
   }
 
   if (playlist.id !== "search") {
+    enableTrackSelection(container, playlist.viewMode);
     window.addEventListener("tracks", handleTracksUpdate);
   }
 }
