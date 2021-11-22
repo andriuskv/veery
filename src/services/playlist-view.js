@@ -534,7 +534,10 @@ function getSearchTrackElement() {
 function resetPlaylistViewActiveTrack() {
   togglePlayPauseBtns(true);
   hideTrackElementSpinner();
-  resetActiveTrack();
+
+  if (activeTrack) {
+    resetActiveTrack();
+  }
 }
 
 function resetActiveTrack() {
