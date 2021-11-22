@@ -1,6 +1,7 @@
 import { scriptLoader, dispatchCustomEvent } from "../utils";
 import { getNextPlayableTrack, getActivePlaylistId, stopPlayer } from "./player";
 
+const ENDED = 0;
 const PLAYING = 1;
 const PAUSED = 2;
 const BUFFERING = 3;
@@ -27,6 +28,9 @@ function onPlayerStateChange({ data: state }) {
   }
   else if (state === PAUSED) {
     playerState = { loading: false, paused: true };
+  }
+  else if (state === ENDED) {
+    dispatchCustomEvent("track-end");
   }
 
   if (playerState) {
@@ -90,15 +94,11 @@ function update(startTime, currentTime, elapsed = 0) {
   const ideal = performance.now() - startTime;
   const diff = ideal - elapsed;
 
-  if (currentTime < currentTrack.durationInSeconds) {
-    currentTime += 1;
-
-    dispatchCustomEvent("current-time-update", currentTime);
-  }
-  else {
-    dispatchCustomEvent("track-end");
-  }
   timeoutId = setTimeout(() => {
+    if (currentTime < currentTrack.durationInSeconds) {
+      currentTime += 1;
+      dispatchCustomEvent("current-time-update", currentTime);
+    }
     update(startTime, currentTime, elapsed + 1000);
   }, 1000 - diff);
 }
