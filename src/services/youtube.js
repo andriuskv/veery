@@ -4,7 +4,6 @@ import { dispatchCustomEvent, scriptLoader, formatTime } from "../utils.js";
 import { setArtwork } from "services/artwork";
 import { getPlaylistById } from "services/playlist";
 
-let initialized = false;
 let userPlaylists = null;
 let user = null;
 let accessToken = "";
@@ -221,7 +220,7 @@ async function logoutUser() {
 }
 
 async function initGoogleAPI(shouldSignIn) {
-  if (initialized) {
+  if (user) {
     return user;
   }
   await scriptLoader.load({ src: "https://apis.google.com/js/platform.js" });
@@ -238,7 +237,6 @@ async function initGoogleAPI(shouldSignIn) {
     await instance.signIn();
     setUser(instance);
   }
-  initialized = true;
   return user;
 }
 
