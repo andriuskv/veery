@@ -32,6 +32,7 @@
 .notification-text {
   margin-left: var(--space-md);
   font-weight: 500;
+  line-height: 1;
 }
 
 .notification-dismiss-btn {
