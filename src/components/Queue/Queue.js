@@ -190,7 +190,7 @@ export default function Queue({ nowPlayingVisible, youtubePlayerMaximized, toggl
         </button>
       </div>
       <div className="queue-middle">
-        <div className="queue-section">
+        <div className="queue-section queue-now-playing-section">
           <div className="queue-section-top">
             <h4>Now Playing</h4>
           </div>

@@ -155,7 +155,7 @@ export default function Playlists({ youtube, setYoutube }) {
                   <button className="btn icon-text-btn dropdown-btn" onClick={() => syncPlaylist(playlist.id)}
                     disabled={youtube.playlistId === playlist.id}>
                     <Icon id="sync" className="dropdown-btn-icon"/>
-                    <span>Sync</span>
+                    <span>Sync to YouTube</span>
                   </button>
                   <a href={playlist.url} className="btn icon-text-btn dropdown-btn" target="_blank" rel="noreferrer">
                     <Icon id="link" className="dropdown-btn-icon"/>

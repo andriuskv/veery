@@ -255,7 +255,7 @@
   --min-grid-item-width: 400px;
 
   display: grid;
-  grid-gap: var(--space-sm);
+  gap: var(--space-sm);
   grid-template-columns: repeat(auto-fill, minmax(var(--min-grid-item-width), 1fr));
   align-content: flex-start;
   padding: var(--space-md);
