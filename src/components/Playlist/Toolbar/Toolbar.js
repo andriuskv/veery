@@ -1,5 +1,5 @@
 import { useState, useEffect, lazy, Suspense } from "react";
-import { getSelectedElements, getElementIndexes, selectedAllTracks, removeSelectedElements } from "services/playlist-selection";
+import { getSelectedElements, getElementIndexes, selectAllTracks, removeSelectedElements } from "services/playlist-selection";
 import { createPlaylistView, setPlaylistViewActiveTrack } from "services/playlist-view";
 import { getActiveTrack, updateActiveTrackIndex, setPlaybackOrder } from "services/player";
 import { setTrackIndexes } from "services/playlist";
@@ -43,7 +43,7 @@ export default function Toolbar({ playlist, playlistRef, setMessage }) {
       event.preventDefault();
 
       if (playlist.tracks.length) {
-        const shouldShowSelection = selectedAllTracks();
+        const shouldShowSelection = selectAllTracks();
 
         setSelection(shouldShowSelection);
       }

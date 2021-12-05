@@ -437,7 +437,7 @@ function setTrackElements() {
   });
 }
 
-function selectedAllTracks() {
+function selectAllTracks() {
   const value = getSearchValue();
   const selector = value ? ".track:not(.hidden)" : ".track";
   const elements = playlist.element.querySelectorAll(selector);
@@ -493,6 +493,6 @@ export {
   resetSelection,
   getElementIndexes,
   getSelectedElements,
-  selectedAllTracks,
+  selectAllTracks,
   removeSelectedElements
 };
