@@ -19,18 +19,24 @@ async function updateTracksWithMetadata(tracks, checkLastFm) {
   left = tracks.length;
 
   for (const track of tracks) {
-    try {
-      await updateTrackWithMetadata(track, checkLastFm);
-    } catch (e) {
-      console.log(e);
-    }
+    await updateTrackWithMetadata(track, checkLastFm);
   }
 }
 
 async function updateTrackWithMetadata(track, checkLastFm) {
-  delete track.needsMetadata;
-  await parseMetadata(track);
-  parseAlbum(track, checkLastFm);
+  try {
+    delete track.needsMetadata;
+    await parseMetadata(track);
+    parseAlbum(track, checkLastFm);
+  } catch (e) {
+    console.log(e);
+
+    left -= 1;
+
+    if (left <= 0) {
+      postMessage({ type: "track", track, done: true });
+    }
+  }
 }
 
 async function parseMetadata(track) {

@@ -85,7 +85,7 @@ export default function Import({ youtube, setYoutube }) {
           <label className="btn icon-text-btn import-option-btn import-local-item" onChange={handleFileChange}>
             <Icon id="folder" className="import-option-btn-icon"/>
             <span>Folder</span>
-            <input type="file" className="sr-only" accept="audio/*" webkitdirectory="true" directory="true" allowdirs="true"/>
+            <input type="file" className="sr-only" webkitdirectory="true" directory="true" allowdirs="true"/>
           </label>
         </div>
         <div className="import-local-settings">

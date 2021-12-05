@@ -8,16 +8,19 @@ function removeFileType(fileName) {
   return fileName.slice(0, fileName.lastIndexOf("."));
 }
 
-function collectUniqueTracks(tracks, currentTracks) {
-  return tracks.reduce((tracks, track) => {
-    const name = removeFileType(track.name.trim());
+function collectUniqueTracks(files, currentTracks) {
+  return files.reduce((tracks, file) => {
+    if (!file.type.startsWith("audio")) {
+      return tracks;
+    }
+    const name = removeFileType(file.name.trim());
     const duplicate = currentTracks.some(track => track.name === name);
 
     if (!duplicate) {
       tracks.push({
         needsMetadata: true,
         id: getRandomString(),
-        audioTrack: track,
+        audioTrack: file,
         name,
         title: name,
         artist: "",

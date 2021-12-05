@@ -188,9 +188,8 @@ svg {
   width: 32%;
   height: 64%;
   margin-bottom: var(--space-xs);
-  border-right: 2px solid var(--color-primary);
-  border-bottom: 2px solid var(--color-primary);
-  border-radius: 2px;
+  border-right: 3px solid var(--color-primary);
+  border-bottom: 3px solid var(--color-primary);
 }
 
 .checkbox-input {
@@ -275,6 +274,6 @@ svg {
 
 @keyframes delayed-reveal {
   to {
-    opacity: 100%;
+    opacity: 1;
   }
 }
