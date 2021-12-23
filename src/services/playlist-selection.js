@@ -248,12 +248,12 @@ function resetSelectedElements() {
 }
 
 function setPlaylistElementRect(element) {
-  const { top, left, width, height } = element.getBoundingClientRect();
+  const { top, left, height } = element.getBoundingClientRect();
 
   playlist.rect = {
     top,
     left,
-    width: width - 1,
+    width: element.clientWidth - 1, // clientWidth excludes scrollbar width
     height,
     scrollHeight: element.scrollHeight
   };

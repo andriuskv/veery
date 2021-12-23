@@ -20,7 +20,7 @@
 
     &:not(.youtube-player-maximized) {
       & .artwork-btn {
-        opacity: 100%;
+        opacity: 1;
       }
 
       & .slider-label {
@@ -155,11 +155,30 @@
   height: 20px;
 }
 
-.player-bar-shuffle-btn {
+.player-bar-setting-label {
+  z-index: 1;
+  position: absolute;
+  bottom: calc(100% + var(--space-md));
+  left: 50%;
+  padding: var(--space-md) var(--space-xl);
+  border: 1px solid var(--color-white-100-4);
+  border-radius: 999px;
+  background-color: var(--color-grey-60);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  white-space: nowrap;
+  animation-name: setting-label-reveal;
+  animation-duration: 0.2s;
+  animation-fill-mode: forwards;
+}
+
+.player-bar-shuffle-container {
+  position: relative;
   margin-right: var(--space-md);
 }
 
-.player-bar-repeat-btn {
+.player-bar-repeat-container {
+  position: relative;
   margin-left: var(--space-md);
 }
 
@@ -192,5 +211,17 @@
     align-self: center;
     justify-self: flex-end;
     display: block;
+  }
+}
+
+@keyframes setting-label-reveal {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
   }
 }
