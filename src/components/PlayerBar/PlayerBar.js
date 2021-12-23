@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { getSetting, setSetting } from "services/settings";
 import * as playerService from "services/player";
 import { getVisiblePlaylistId } from "services/playlist-view";
@@ -12,10 +12,11 @@ import VolumeSlider from "./VolumeSlider";
 export default function PlayerBar({ nowPlayingVisible, queueVisible, youtubePlayer, toggleNowPlaying, toggleQueue, toggleYoutubePlayer, showIndicator }) {
   const { paused, activePlaylistId, activeTrack, trackLoading, togglePlay, playPrevious, playNext, playPlaylist } = usePlayer();
   const [shuffled, setShuffled] = useState(() => getSetting("shuffle"));
-  const [repeat, setRepeat] = useState(() => {
-    return getRepeatState(getSetting("repeat"));
-  });
+  const [repeat, setRepeat] = useState(() => getRepeatState(getSetting("repeat")));
   const [volumeVisible, setVolumeVisible] = useState(false);
+  const [settingLabel, setSettingLabel] = useState(null);
+
+  const labelTimeoutId = useRef(0);
 
   useEffect(() => {
     window.addEventListener("keydown", handleKeyboardShortcuts);
@@ -68,10 +69,23 @@ export default function PlayerBar({ nowPlayingVisible, queueVisible, youtubePlay
     playPlaylist(id, { scrollToTrack: true });
   }
 
+  function showSettingLabel(label) {
+    setSettingLabel(label);
+    clearTimeout(labelTimeoutId.current);
+    labelTimeoutId.current = setTimeout(() => {
+      setSettingLabel(null);
+    }, 1000);
+  }
+
   function handleShuffle() {
     setShuffled(!shuffled);
     playerService.flagPlaybackOrderForUpdate();
     setSetting("shuffle",!shuffled);
+
+    showSettingLabel({
+      type: "shuffle",
+      text: shuffled ? "No shuffle" : "Shuffle"
+    });
   }
 
   function getRepeatState(mode) {
@@ -103,9 +117,15 @@ export default function PlayerBar({ nowPlayingVisible, queueVisible, youtubePlay
       "repeat-one": "repeat-off"
     };
     const nextMode = modes[currentMode];
+    const nextState = getRepeatState(nextMode);
+    const currentState = getRepeatState(currentMode);
 
-    setRepeat(getRepeatState(nextMode));
+    setRepeat(nextState);
     setSetting("repeat", nextMode);
+    showSettingLabel({
+      type: "repeat",
+      text: currentState.title
+    });
   }
 
   function toggleVolume() {
@@ -126,24 +146,34 @@ export default function PlayerBar({ nowPlayingVisible, queueVisible, youtubePlay
       <NowPlaying visible={nowPlayingVisible} toggleNowPlaying={toggleNowPlaying} youtubePlayerMaximized={youtubePlayer.mode === "maximized"}/>
       <SeekSlider showIndicator={showIndicator}/>
       <div className="player-bar-middle">
-        <button className={`btn icon-btn player-bar-tertiary-btn player-bar-shuffle-btn${shuffled ? " active" : ""}`}
-          onClick={handleShuffle} title={shuffled ? "No shuffle" : "Shuffle"}>
-          <Icon id="shuffle" className="player-bar-tertiary-btn-icon"/>
-        </button>
-        <button className="btn icon-btn player-bar-secondary-btn" onClick={playPrevious} title="Previous">
+        <div className="player-bar-shuffle-container">
+          {settingLabel?.type === "shuffle" && (
+            <div className="player-bar-setting-label">{settingLabel.text}</div>
+          )}
+          <button className={`btn icon-btn player-bar-tertiary-btn${shuffled ? " active" : ""}`}
+            onClick={handleShuffle} aria-label={shuffled ? "No shuffle" : "Shuffle"}>
+            <Icon id="shuffle" className="player-bar-tertiary-btn-icon"/>
+          </button>
+        </div>
+        <button className="btn icon-btn player-bar-secondary-btn" onClick={playPrevious} aria-label="Previous">
           <Icon id="previous" className="player-bar-secondary-btn-icon"/>
         </button>
-        <button className="btn icon-btn player-bar-play-pause-btn" onClick={() => handleTrackPlay()} title={paused ? "Play" : "Pause"}>
+        <button className="btn icon-btn player-bar-play-pause-btn" onClick={() => handleTrackPlay()} aria-label={paused ? "Play" : "Pause"}>
           <Icon id={paused ? "play-circle" : "pause-circle"} className="player-bar-play-pause-btn-icon"/>
           {trackLoading && <Icon id="spinner" className="play-pause-btn-spinner"/>}
         </button>
-        <button className="btn icon-btn player-bar-secondary-btn" onClick={playNext} title="Next">
+        <button className="btn icon-btn player-bar-secondary-btn" onClick={playNext} aria-label="Next">
           <Icon id="next" className="player-bar-secondary-btn-icon"/>
         </button>
-        <button className={`btn icon-btn player-bar-tertiary-btn player-bar-repeat-btn${repeat.active ? " active" : ""}`}
-          onClick={handleRepeat} title={repeat.title}>
-          <Icon id={repeat.iconId} className="player-bar-tertiary-btn-icon"/>
-        </button>
+        <div className="player-bar-repeat-container">
+          {settingLabel?.type === "repeat" && (
+            <div className="player-bar-setting-label">{settingLabel.text}</div>
+          )}
+          <button className={`btn icon-btn player-bar-tertiary-btn${repeat.active ? " active" : ""}`}
+            onClick={handleRepeat} aria-label={repeat.title}>
+            <Icon id={repeat.iconId} className="player-bar-tertiary-btn-icon"/>
+          </button>
+        </div>
       </div>
       <div className={`player-bar-right-controls${volumeVisible ? " visible" : ""}`}>
         {nowPlayingVisible && activeTrack?.player === "youtube" ? renderYoutubePlayerButton() : null}
