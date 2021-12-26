@@ -1,5 +1,5 @@
 .youtube-player {
-  opacity: 0%;
+  opacity: 0;
   transform: scale(0.94);
   width: auto;
   height: 100%;
@@ -8,7 +8,7 @@
 }
 
 .youtube-player-container {
-  opacity: 0%;
+  opacity: 0;
   visibility: hidden;
 
   &.visible {
@@ -16,7 +16,7 @@
     position: absolute;
     top: 0;
     left: 0;
-    opacity: 100%;
+    opacity: 1;
     visibility: visible;
     display: flex;
     justify-content: center;
@@ -25,12 +25,13 @@
     height: 72%;
 
     & .youtube-player {
-      opacity: 100%;
+      opacity: 1;
       transform: scale(1);
     }
 
     &.maximized {
       height: calc(100% - var(--controls-height));
+      background-color: black;
 
       & .youtube-player {
         width: 100%;

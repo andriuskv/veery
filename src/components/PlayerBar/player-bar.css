@@ -18,6 +18,11 @@
       box-shadow: inset 0 1px 0 0 var(--color-white-100-4);
     }
 
+    &.youtube-player-maximized {
+      background-color: black;
+      box-shadow: inset 0 1px 0 0 var(--color-white-100-8);
+    }
+
     &:not(.youtube-player-maximized) {
       & .artwork-btn {
         opacity: 1;
