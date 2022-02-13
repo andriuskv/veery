@@ -16,7 +16,7 @@ jobs:
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           LAST_FM_API_KEY: ${{ secrets.LAST_FM_API_KEY }}
         run: |
-          npm install
+          npm install --force
           npm run build
 
       - name: Deploy to GitHub Pages
