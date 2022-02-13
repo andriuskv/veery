@@ -175,7 +175,6 @@ function createGridItem(item, playlistId) {
     </div>
     ${getGridTrackInfo(item)}
   `;
-
 }
 
 function createGridItemPlaceholder() {
@@ -223,14 +222,14 @@ function getIcon(config) {
 
 function createMinimal(id, items) {
   return `
-  <ul class="playlist-view-header">
-    <li class="track-first-col">#</li>
-    <li class="track-col">TITLE</li>
-    <li class="track-col">ARTIST</li>
-    <li class="track-col">ALBUM</li>
-    <li class="track-last-col">DURATION</li>
-  </ul>
-  <ul id="js-${id}" class="playlist-items minimal-items">${items}</ul>
+    <ul class="playlist-view-header">
+      <li class="track-first-col">#</li>
+      <li class="track-col">TITLE</li>
+      <li class="track-col">ARTIST</li>
+      <li class="track-col">ALBUM</li>
+      <li class="track-last-col">DURATION</li>
+    </ul>
+    <ul id="js-${id}" class="playlist-items minimal-items">${items}</ul>
   `;
 }
 
@@ -602,7 +601,18 @@ function setElementIconAndTitle(element, paused) {
 function getPlayPauseIcon(index, playlistId) {
   const activePlaylistId = getActivePlaylistId();
 
-  if (playlistId !== activePlaylistId) {
+  if (playlistId === "search") {
+    const playlist = getPlaylistById(playlistId);
+    const track = playlist.tracks[index];
+
+    if (track.playlistId === activePlaylistId) {
+      index = track.playlistIndex;
+    }
+    else {
+      return getPlayPauseButtonIcon(true);
+    }
+  }
+  else if (playlistId !== activePlaylistId) {
     return getPlayPauseButtonIcon(true);
   }
   const activeTrack = getActiveTrack();
