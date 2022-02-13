@@ -65,9 +65,6 @@ module.exports = function(env = {}) {
       path: path.resolve(__dirname, "./build"),
       filename: "[name].js"
     },
-    experiments: {
-      futureDefaults: true
-    },
     optimization: {
       splitChunks: {
         cacheGroups: {

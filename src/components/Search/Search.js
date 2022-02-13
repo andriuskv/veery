@@ -24,7 +24,7 @@ export default function Search() {
 
   useEffect(() => {
     return () => {
-      removePlaylist("seach");
+      removePlaylist("search");
       cleanupPlaylistView();
     };
   }, []);

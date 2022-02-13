@@ -3,15 +3,16 @@ import "normalize.css";
 import "./styles/index.css";
 
 import { StrictMode } from "react";
-import { render } from "react-dom";
+import { createRoot } from "react-dom";
 
 import App from "components/App";
 
-render(
+const root = createRoot(document.getElementById("root"));
+
+root.render(
   <StrictMode>
     <App/>
-  </StrictMode>,
-  document.getElementById("root")
+  </StrictMode>
 );
 
 if (process.env.NODE_ENV === "production") {
