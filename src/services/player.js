@@ -369,7 +369,6 @@ function setGlobalMediaSession(track) {
   if (track.player !== "youtube") {
     const { original, small, type } = getArtwork(track.artworkId);
 
-    /* global MediaMetadata */
     navigator.mediaSession.metadata = new MediaMetadata({
       title: track.title,
       artist: track.artist,

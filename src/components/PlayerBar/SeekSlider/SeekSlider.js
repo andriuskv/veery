@@ -227,7 +227,7 @@ export default function SeekSlider({ showIndicator }) {
     return (
       <div className="seek-slider-container">
         <div className="seek-slider-time">{formattedCurrentTime}</div>
-        <Slider element={slider} progress={progress} label={label}
+        <Slider element={slider} progress={progress} label={label} key={activeTrack.id}
           pointerDownHandler={handlePointerDown} keyDownHandler={handleKeyDown}
           min="0" now={currentTime} max={activeTrack.durationInSeconds}
           nowText={`${formattedCurrentTime} / ${activeTrack.duration}`}

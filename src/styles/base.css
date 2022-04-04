@@ -91,6 +91,7 @@ svg {
   border-radius: 999px;
   background-color: var(--background-color);
   font-size: var(--text-sm);
+  line-height: 1;
 }
 
 .input {
