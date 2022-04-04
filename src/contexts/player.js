@@ -157,13 +157,13 @@ function PlayerProvider({ children }) {
     updatePlayerState(false);
   }
 
-  function handleTrackEnd() {
+  function handleTrackEnd({ detail: ignoreRepeatOne }) {
     const mode = getSetting("repeat");
 
     if (mode === "repeat-off" && playerService.isLastTrackInPlayback()) {
       playerService.stopPlayer();
     }
-    else if (mode === "repeat-one") {
+    else if (mode === "repeat-one" && !ignoreRepeatOne) {
       playerService.repeatPlay();
     }
     else {
@@ -176,6 +176,7 @@ function PlayerProvider({ children }) {
     setPaused(true);
     setActiveTrack(null);
     setActivePlaylistId("");
+    setTrackLoading(false);
   }
 
   function setActivePlaylist(id) {

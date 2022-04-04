@@ -1,4 +1,6 @@
 import { dispatchCustomEvent } from "../utils.js";
+import { getNextPlayableTrack, stopPlayer } from "./player";
+import { getSetting } from "./settings";
 
 let audioBlobURL;
 let audio;
@@ -22,6 +24,22 @@ function playTrack(track, volume, startTime) {
 
   audio.onended = function() {
     dispatchCustomEvent("track-end");
+  };
+
+  audio.onerror = function(error) {
+    const { id } = getNextPlayableTrack(1, "local-files");
+
+    if (track.id === id) {
+      stopPlayer();
+    }
+    else {
+      const mode = getSetting("repeat");
+
+      dispatchCustomEvent("player-state", { loading: false });
+      dispatchCustomEvent("track-end", mode === "repeat-one");
+    }
+    dispatchCustomEvent("notification", { value: `Cannot play ${track.name}.\nIts location might have changed.` });
+    console.log(error);
   };
 
   setVolume(volume);
