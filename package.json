@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "npm run dist && npm run watch & live-server build",
-    "build": "npm run dist && npm run webpack --env prod",
-    "watch": "npm run webpack --watch",
+    "build": "npm run dist && webpack --env prod",
+    "watch": "webpack --watch",
     "dist": "rm -rf build && mkdir build"
   },
   "author": "",
