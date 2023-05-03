@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, useRef } from "react";
+import { createContext, useContext, useState, useEffect, useRef, useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import { dispatchCustomEvent } from "../utils.js";
 import { usePlaylists } from "contexts/playlist";
@@ -20,6 +20,18 @@ function PlayerProvider({ children }) {
   const [paused, setPaused] = useState(true);
   const [trackLoading, setTrackLoading] = useState(false);
   const initialized = useRef(false);
+  const memoizedValue = useMemo(() => ({
+    paused,
+    activePlaylistId,
+    activeTrack,
+    trackLoading,
+    togglePlay,
+    playPrevious,
+    playNext,
+    playAtIndex,
+    playPlaylist,
+    playQueueTrack
+  }), [paused, activePlaylistId, activeTrack, trackLoading]);
 
   useEffect(() => {
     window.addEventListener("player-state", handlePlayerState);
@@ -264,7 +276,7 @@ function PlayerProvider({ children }) {
     dispatchCustomEvent("current-time-update", currentTime);
   }
 
-  return <PlayerContext.Provider value={{ paused, activePlaylistId, activeTrack, trackLoading, togglePlay, playPrevious, playNext, playAtIndex, playPlaylist, playQueueTrack }}>{children}</PlayerContext.Provider>;
+  return <PlayerContext.Provider value={memoizedValue}>{children}</PlayerContext.Provider>;
 }
 
 function usePlayer() {
