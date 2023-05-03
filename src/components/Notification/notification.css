@@ -37,23 +37,23 @@
 @keyframes show {
   from {
     transform: translateX(calc(100% + 24px)) scale(0.88);
-    opacity: 0%;
+    opacity: 0;
   }
 
   to {
     transform: translateX(0) scale(1);
-    opacity: 100%;
+    opacity: 1;
   }
 }
 
 @keyframes hide {
-  to {
-    transform: translateX(calc(100% + 24px)) scale(0.88);
-    opacity: 0%;
+  from {
+    transform: translateX(0) scale(1);
+    opacity: 1;
   }
 
-  form {
-    transform: translateX(0) scale(1);
-    opacity: 100%;
+  to {
+    transform: translateX(calc(100% + 24px)) scale(0.88);
+    opacity: 0;
   }
 }
