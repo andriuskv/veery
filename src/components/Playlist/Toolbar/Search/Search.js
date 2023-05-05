@@ -16,6 +16,15 @@ export default function Search({ playlistId, setMessage }) {
     };
   }, [playlistId]);
 
+  useEffect(() => {
+    if (searchEnabled) {
+      window.addEventListener("keydown", handleGlobalKeydown);
+    }
+    return () => {
+      window.removeEventListener("keydown", handleGlobalKeydown);
+    };
+  }, [searchEnabled]);
+
   function enableSearch() {
     setSearchEnabled(true);
   }
@@ -38,6 +47,12 @@ export default function Search({ playlistId, setMessage }) {
     }
   }
 
+  function handleGlobalKeydown({ key }) {
+    if (key === "Escape") {
+      handleCleanup();
+    }
+  }
+
   function handleCleanup() {
     setValue("");
     setMessage("");
@@ -51,7 +66,8 @@ export default function Search({ playlistId, setMessage }) {
       <div className="playlist-toolbar-search">
         <div className="playlist-toolbar-search-input-container">
           <Icon id="search" className="playlist-toolbar-search-input-icon"/>
-          <input type="text" className="input playlist-toolbar-search-input" placeholder="Search" value={value} onChange={handleInputChange} onKeyDown={handleInputKeydown}autoFocus/>
+          <input type="text" className="input playlist-toolbar-search-input" placeholder="Search" value={value}
+            onChange={handleInputChange} onKeyDown={handleInputKeydown} autoFocus/>
           <button className="btn icon-btn playlist-toolbar-search-reset-btn" onClick={handleCleanup} title="Clear">
             <Icon id="close"/>
           </button>
