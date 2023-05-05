@@ -59,7 +59,15 @@ export default function NowPlaying({ visible, toggleNowPlaying, youtubePlayerMax
       </div>
       {activeTrack ? (
         <div className="track-info">
-          <div className="track-info-item track-title multiline" onClick={jumpToTrack}>{activeTrack.title}</div>
+          <div className="track-title-container">
+            <div className="track-info-item track-title multiline" onClick={jumpToTrack}>{activeTrack.title}</div>
+            {activeTrack.player === "youtube" ? (
+              <a href={`https://youtube.com/watch?v=${activeTrack.id}`} className="track-link"
+                target="_blank" rel="noreferrer" title="Open on YouTube">
+                <Icon id="link" className="track-link-icon"/>
+              </a>
+            ) : null}
+          </div>
           {activeTrack.artist ? <div className="track-info-item">{activeTrack.artist}</div> : null}
         </div>
       ) : null}
