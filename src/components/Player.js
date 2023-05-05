@@ -58,6 +58,21 @@ export default function Player() {
 
   }, [youtubePlayer]);
 
+  useEffect(() => {
+    if (nowPlayingVisible) {
+      window.addEventListener("keydown", handleGlobalKeydown);
+    }
+    return () => {
+      window.removeEventListener("keydown", handleGlobalKeydown);
+    };
+  }, [nowPlayingVisible]);
+
+  function handleGlobalKeydown({ key }) {
+    if (key === "Escape") {
+      toggleNowPlaying();
+    }
+  }
+
   function blurIframe() {
     const element = document.activeElement;
 
