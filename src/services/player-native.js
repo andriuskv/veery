@@ -65,6 +65,7 @@ function stopTrack() {
   audio.ontimeupdate = null;
   audio.onended = null;
   audio.onplaying = null;
+  audio.onerror = null;
   audio.currentTime = 0;
   audio = null;
 
