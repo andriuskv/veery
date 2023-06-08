@@ -228,6 +228,10 @@ function disableMobileSelection() {
   window.removeEventListener("pointerup", handleOutsideClick);
 }
 
+function isMobileSelectionEnabled() {
+  return mobileSelectionEnabled;
+}
+
 function resetSelection() {
   mobileSelectionEnabled = false;
 
@@ -490,6 +494,7 @@ function removeSelectedElements(elements, { id, viewMode }) {
 export {
   enableTrackSelection,
   disableTrackSelection,
+  isMobileSelectionEnabled,
   resetSelection,
   getElementIndexes,
   getSelectedElements,
