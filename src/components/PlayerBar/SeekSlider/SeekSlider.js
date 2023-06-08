@@ -61,15 +61,18 @@ export default function SeekSlider({ showIndicator }) {
       if (pointerIsDown) {
         window.addEventListener("pointermove", handlePointerMove);
         slider.current.removeEventListener("pointermove", handleLocalPointerMove);
+        slider.current.removeEventListener("pointerleave", handleLocalPointerLeave);
         window.removeEventListener("current-time-update", handleCurrentTimeChange);
       }
       else {
         slider.current.addEventListener("pointermove", handleLocalPointerMove);
+        slider.current.addEventListener("pointerleave", handleLocalPointerLeave);
       }
     }
     return () => {
       if (slider.current) {
         slider.current.removeEventListener("pointermove", handleLocalPointerMove);
+        slider.current.removeEventListener("pointerleave", handleLocalPointerLeave);
       }
       window.removeEventListener("pointermove", handlePointerMove);
       window.removeEventListener("current-time-update", handleCurrentTimeChange);
@@ -203,6 +206,14 @@ export default function SeekSlider({ showIndicator }) {
         text: formatTime(currentTime),
         progress: ratio * 100
       });
+      updating.current = false;
+    });
+  }
+
+  function handleLocalPointerLeave() {
+    updating.current = true;
+    requestAnimationFrame(() => {
+      setLabel(null);
       updating.current = false;
     });
   }
