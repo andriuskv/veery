@@ -1,6 +1,7 @@
 import { useState, useEffect, useLayoutEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { createPlaylistView, cleanupPlaylistView, scrollActiveTrackIntoView } from "services/playlist-view";
+import { isMobileSelectionEnabled } from "services/playlist-selection";
 import { getActiveTrack } from "services/player";
 import { usePlaylists } from "contexts/playlist";
 import { usePlayer } from "contexts/player";
@@ -56,6 +57,9 @@ export default function Playlist() {
     }
 
     if (detail === 2) {
+      if (isMobileSelectionEnabled()) {
+        return;
+      }
       const index = Number(trackElement.getAttribute("data-index"));
 
       playAtIndex(index, id);
