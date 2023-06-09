@@ -95,7 +95,7 @@ export default function SeekSlider({ showIndicator }) {
       return;
     }
 
-    if (event.shiftKey && (key === "ArrowRight" || key === "ArrowLeft") && target.getAttribute("role") !== "slider") {
+    if (event.shiftKey && (key === "ArrowRight" || key === "ArrowLeft")) {
       updateCurrentTimeOnKeyDown(key);
     }
   }
@@ -228,8 +228,8 @@ export default function SeekSlider({ showIndicator }) {
     seekTo(currentTime);
   }
 
-  function handleKeyDown({ key }) {
-    if (key.startsWith("Arrow")) {
+  function handleKeyDown({ shiftKey, key }) {
+    if (!shiftKey && key.startsWith("Arrow")) {
       updateCurrentTimeOnKeyDown(key);
     }
   }

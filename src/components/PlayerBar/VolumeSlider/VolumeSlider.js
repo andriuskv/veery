@@ -39,7 +39,7 @@ export default function VolumeSlider({ visible, showIndicator }) {
       return;
     }
 
-    if (event.shiftKey && (key === "ArrowUp" || key === "ArrowDown") && target.getAttribute("role") !== "slider") {
+    if (event.shiftKey && (key === "ArrowUp" || key === "ArrowDown")) {
       updateVolumeOnKeyDown(key);
     }
     else if (!modifierKeyPressed && key === "m") {
@@ -149,8 +149,8 @@ export default function VolumeSlider({ visible, showIndicator }) {
     setPointerIsDown(false);
   }
 
-  function handleKeyDown({ key }) {
-    if (key.startsWith("Arrow")) {
+  function handleKeyDown({ shiftKey, key }) {
+    if (!shiftKey && key.startsWith("Arrow")) {
       updateVolumeOnKeyDown(key);
     }
   }
