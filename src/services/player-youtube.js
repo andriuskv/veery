@@ -23,6 +23,7 @@ function onPlayerStateChange({ data: state }) {
     playerState = { loading: true };
   }
   else if (state === PLAYING) {
+    videoCued = false;
     playerState = { loading: false, paused: false };
     startCounting();
   }
