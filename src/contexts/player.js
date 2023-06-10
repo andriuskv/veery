@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, useRef, useMemo } from "react";
 import { useLocation } from "react-router-dom";
-import { dispatchCustomEvent } from "../utils.js";
+import { dispatchCustomEvent, setPageTitle } from "../utils.js";
 import { usePlaylists } from "contexts/playlist";
 import { useQueue } from "contexts/queue";
 import { getSetting } from "services/settings";
@@ -55,25 +55,26 @@ function PlayerProvider({ children }) {
         const playlist = playlistService.getPlaylistById(playlistId);
 
         if (playlist) {
-          document.title = `${playlist.title} | Veery`;
+          setPageTitle(playlist.title);
         }
         else {
-          document.title = "404 | Veery";
+          setPageTitle("404");
         }
       }
       else if (location.pathname === "/") {
-        document.title = "Home | Veery";
+        setPageTitle("Home");
       }
       else if (location.pathname.startsWith("/search")) {
-        document.title = "Search | Veery";
+        setPageTitle("Search");
       }
       else {
-        document.title = "404 | Veery";
+        setPageTitle("404");
       }
     }
     else {
       const { title, artist } = activeTrack;
-      document.title = `${artist && title ? `${artist} - ${title}` : title} | Veery`;
+
+      setPageTitle(artist && title ? `${artist} - ${title}` : title);
     }
   }, [playlists, paused, activeTrack, location]);
 
