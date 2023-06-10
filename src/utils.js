@@ -29,8 +29,15 @@ function dispatchCustomEvent(eventName, data) {
   window.dispatchEvent(event);
 }
 
-function setDocumentTitle(title) {
-  document.title = title ? `${title} | Veery` : "Veery";
+function setPageTitle(title) {
+  const isOpenedAsPwa = window.matchMedia("(display-mode: standalone)").matches;
+
+  if (isOpenedAsPwa) {
+    document.title = title;
+  }
+  else {
+    document.title = title ? `${title} | Veery` : "Veery";
+  }
 }
 
 function classNames(...classNames) {
@@ -88,7 +95,7 @@ async function computeHash(buffer) {
 
 export {
   dispatchCustomEvent,
-  setDocumentTitle,
+  setPageTitle,
   classNames,
   formatTime,
   shuffleArray,
