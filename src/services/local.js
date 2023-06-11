@@ -189,6 +189,53 @@ function readFile(entry) {
   });
 }
 
+document.addEventListener("paste", async event => {
+  const clipboardItems = typeof navigator?.clipboard?.read === "function" ? await navigator.clipboard.read() : event.clipboardData.files;
+  const blobs = [];
+
+  event.preventDefault();
+
+  for (const clipboardItem of clipboardItems) {
+    // For files from `e.clipboardData.files`.
+    if (clipboardItem.type?.startsWith("audio/")) {
+      blobs.push(clipboardItem);
+    } else {
+      // For files from `navigator.clipboard.read()`.
+      const audioTypes = clipboardItem.types?.filter(type => type.startsWith("audio/"));
+
+      for (const audioType of audioTypes) {
+        const blob = await clipboardItem.getType(audioType);
+
+        blobs.push(blob);
+      }
+    }
+  }
+
+  if (blobs.length) {
+    dispatchCustomEvent("file-handler", blobs);
+  }
+});
+
+if ("launchQueue" in window && "files" in window.LaunchParams.prototype) {
+  window.launchQueue.setConsumer(async launchParams => {
+    console.log(launchParams);
+    if (!launchParams.files.length) {
+      return;
+    }
+    const blobs = [];
+
+    for (const fileHandle of launchParams.files) {
+      const blob = await fileHandle.getFile();
+
+      blobs.push(blob);
+    }
+
+    if (blobs.length) {
+      dispatchCustomEvent("file-handler", blobs);
+    }
+  });
+}
+
 export {
   collectUniqueTracks,
   updateTrackWithMetadata,
