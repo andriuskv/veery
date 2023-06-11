@@ -13,8 +13,19 @@
       "type":"image/png"
       }
   ],
-  "start_url": "/",
+  "start_url": ".",
   "display": "standalone",
   "theme_color": "#333842",
-  "background_color": "#333842"
+  "background_color": "#333842",
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  },
+  "file_handlers": [
+    {
+      "action": ".",
+      "accept": {
+        "audio/*": [".mp3", ".flac", ".opus", ".m4a", ".ogg", ".wav"]
+      }
+    }
+  ]
 }
