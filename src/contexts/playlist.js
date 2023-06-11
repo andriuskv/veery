@@ -25,16 +25,18 @@ function PlaylistProvider({ children }) {
       first.current = false;
       syncPlaylists();
     }
-    window.addEventListener("drop", handeFileDrop);
+    window.addEventListener("drop", handleFileDrop);
     window.addEventListener("dragover", handleDragOver);
     window.addEventListener("track", handleTrackUpdate);
     window.addEventListener("youtube-tracks", handleYoutubeTracksUpdate);
+    window.addEventListener("file-handler", handleFileHandler);
 
     return () => {
-      window.removeEventListener("drop", handeFileDrop);
+      window.removeEventListener("drop", handleFileDrop);
       window.addEventListener("dragover", handleDragOver);
       window.removeEventListener("track", handleTrackUpdate);
       window.removeEventListener("youtube-tracks", handleYoutubeTracksUpdate);
+      window.removeEventListener("file-handler", handleFileHandler);
     };
   }, [playlists]);
 
@@ -50,6 +52,10 @@ function PlaylistProvider({ children }) {
     await Promise.all([artworkService.initArtworks(db), playlistService.initPlaylists(db)]);
 
     setPlaylists(playlistService.getPlaylists());
+  }
+
+  function handleFileHandler({ detail }) {
+    uploadFiles(detail);
   }
 
   async function getDb() {
@@ -107,7 +113,7 @@ function PlaylistProvider({ children }) {
     }
   }
 
-  async function handeFileDrop(event) {
+  async function handleFileDrop(event) {
     event.preventDefault();
 
     const { readItems } = await import("services/local");
