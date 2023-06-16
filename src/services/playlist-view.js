@@ -24,7 +24,7 @@ function observerCallback(entries) {
     }
 
     if (isIntersecting) {
-      target.innerHTML = createItem(track, id, viewMode);
+      target.innerHTML = createItem(structuredClone(track), id, viewMode);
     }
     else {
       target.innerHTML = createItemPlaceholder(track, viewMode);
@@ -75,6 +75,8 @@ function cleanupPlaylistView() {
 }
 
 function createItem(item, id, viewMode) {
+  item.title = item.title.replace(/<(.+?)>/g, (_, g1) => `&lt;${g1}&gt;`);
+
   if (viewMode === "grid") {
     return createGridItem(item, id);
   }
