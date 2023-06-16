@@ -659,6 +659,7 @@ export {
   reobserveTrack,
   cleanupPlaylistView,
   createPlaylistView,
+  getIcon,
   setSearchValue,
   getSearchValue,
   searchPlaylist,

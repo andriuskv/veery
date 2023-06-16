@@ -148,6 +148,15 @@
   flex-direction: column;
   align-items: flex-start;
   flex: 1;
+
+  @media (width < 428px) {
+    .track-title.multiline {
+      display: block;
+      -webkit-box-orient: unset;
+      -webkit-line-clamp: unset;
+      white-space: nowrap;
+    }
+  }
 }
 
 .track-info-item {
@@ -168,13 +177,6 @@
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
     white-space: normal;
-
-    @media (max-width: 428px) {
-      display: block;
-      -webkit-box-orient: unset;
-      -webkit-line-clamp: unset;
-      white-space: nowrap;
-    }
   }
 }
 

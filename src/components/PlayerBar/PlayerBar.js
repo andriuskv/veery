@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { getSetting, setSetting } from "services/settings";
 import * as playerService from "services/player";
+import * as pipService from "services/picture-in-picture";
 import { getVisiblePlaylistId } from "services/playlist-view";
 import { usePlayer } from "contexts/player";
 import Icon from "components/Icon";
@@ -15,8 +16,16 @@ export default function PlayerBar({ nowPlayingVisible, queueVisible, youtubePlay
   const [repeat, setRepeat] = useState(() => getRepeatState(getSetting("repeat")));
   const [volumeVisible, setVolumeVisible] = useState(false);
   const [settingLabel, setSettingLabel] = useState(null);
-
+  const [pipVisible, setPipVisible] = useState(false);
   const labelTimeoutId = useRef(0);
+
+  useEffect(() => {
+    window.addEventListener("pip-close", handlePipClose);
+
+    return () => {
+      window.removeEventListener("pip-close", handlePipClose);
+    };
+  }, []);
 
   useEffect(() => {
     window.addEventListener("keydown", handleKeyboardShortcuts);
@@ -132,6 +141,21 @@ export default function PlayerBar({ nowPlayingVisible, queueVisible, youtubePlay
     setVolumeVisible(!volumeVisible);
   }
 
+  function togglePip() {
+    setPipVisible(!pipVisible);
+    pipService.toggle({
+      paused,
+      track: activeTrack,
+      togglePlay,
+      playNext,
+      playPrevious
+    });
+  }
+
+  function handlePipClose() {
+    setPipVisible(false);
+  }
+
   function renderYoutubePlayerButton() {
     return (
       <button className={`btn icon-btn player-bar-tertiary-btn${youtubePlayer.mode !== "off" ? " active" : ""}`}
@@ -181,6 +205,12 @@ export default function PlayerBar({ nowPlayingVisible, queueVisible, youtubePlay
           <button className={`btn icon-btn player-bar-tertiary-btn${queueVisible ? " active" : ""}`}
             onClick={toggleQueue} title="Queue">
             <Icon id="queue" className="player-bar-tertiary-btn-icon"/>
+          </button>
+        ) : null}
+        {activeTrack && pipService.isSupported() ? (
+          <button className={`btn icon-btn player-bar-tertiary-btn${pipVisible ? " active" : ""}`}
+            onClick={togglePip} title="Toggle picture-in-picture">
+            <Icon id="pip" className="player-bar-tertiary-btn-icon"/>
           </button>
         ) : null}
         <VolumeSlider visible={volumeVisible} showIndicator={showIndicator}/>

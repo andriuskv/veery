@@ -7,7 +7,10 @@ function getTrack() {
 function updateTrack(data, save = true) {
   track = { ...track, ...data };
 
-  if (save) {
+  if (track.playlistId === "local-files") {
+    localStorage.removeItem("track");
+  }
+  else if (save) {
     localStorage.setItem("track", JSON.stringify(track));
   }
 }

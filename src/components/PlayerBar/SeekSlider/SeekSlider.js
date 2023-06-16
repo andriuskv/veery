@@ -139,7 +139,7 @@ export default function SeekSlider({ showIndicator }) {
       position: currentTime
     });
 
-    if (activeTrack.player !== "native" && !getQueueStart()) {
+    if (!getQueueStart()) {
       savedTrackService.updateTrack({ currentTime });
     }
   }

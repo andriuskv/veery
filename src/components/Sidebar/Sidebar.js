@@ -91,7 +91,7 @@ export default function Sidebar({ nowPlayingVisible }) {
 
   return (
     <>
-      {renderShowButton()}
+      {nowPlayingVisible ? null : renderShowButton()}
       <div className={`sidebar-container${visible ? "": " hidden"}${nowPlayingVisible ? " now-playing-visible" : ""}`} onClick={handleContainerClick}>
         <aside className="sidebar">
           <header className="sidebar-header">
