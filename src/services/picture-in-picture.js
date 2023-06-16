@@ -5,6 +5,7 @@ import { getIcon } from "services/playlist-view";
 const pipSupported = "documentPictureInPicture" in window;
 let pipWindow = null;
 let currentTitle = "";
+let playerActions = {};
 
 function isSupported() {
   return pipSupported;
@@ -27,11 +28,17 @@ function close() {
 function cleanup() {
   dispatchCustomEvent("pip-close");
   pipWindow = null;
+  playerActions = {};
   currentTitle = "";
 }
 
 async function init({ paused, track, togglePlay, playNext, playPrevious }) {
   pipWindow = await window.documentPictureInPicture.requestWindow();
+  playerActions = {
+    togglePlay,
+    playNext,
+    playPrevious
+  };
   await copyStyleSheets(pipWindow.document.head);
 
   pipWindow.document.head.insertAdjacentHTML("beforeend", `
@@ -170,13 +177,13 @@ async function init({ paused, track, togglePlay, playNext, playPrevious }) {
       const action = element.getAttribute("data-action");
 
       if (action === "play-pause") {
-        togglePlay();
+        playerActions.togglePlay();
       }
       else if (action === "next") {
-        playNext();
+        playerActions.playNext();
       }
       else if (action === "previous") {
-        playPrevious();
+        playerActions.playPrevious();
       }
     }
   });
@@ -275,11 +282,16 @@ function updateState(paused) {
   setTitle(currentTitle, paused);
 }
 
+function updatePlayerActions(actions) {
+  playerActions = actions;
+}
+
 export {
   isSupported,
   setTitle,
   close,
   toggle,
   update,
-  updateState
+  updateState,
+  updatePlayerActions
 };

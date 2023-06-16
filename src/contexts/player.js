@@ -93,6 +93,11 @@ function PlayerProvider({ children }) {
     if (!activeTrack) {
       return;
     }
+    pipService.updatePlayerActions({
+      togglePlay,
+      playPrevious,
+      playNext
+    });
     navigator.mediaSession.setActionHandler("play", togglePlay);
     navigator.mediaSession.setActionHandler("pause", togglePlay);
     navigator.mediaSession.setActionHandler("previoustrack", playPrevious);
