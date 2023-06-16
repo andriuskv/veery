@@ -4,6 +4,7 @@ import { dispatchCustomEvent, setPageTitle } from "../utils.js";
 import { usePlaylists } from "contexts/playlist";
 import { useQueue } from "contexts/queue";
 import { getSetting } from "services/settings";
+import * as pipService from "services/picture-in-picture";
 import * as savedTrackService from "services/savedTrack";
 import * as playerService from "services/player";
 import * as playlistService from "services/playlist";
@@ -168,6 +169,7 @@ function PlayerProvider({ children }) {
     }
     setTrackLoading(true);
     updatePlayerState(false);
+    pipService.update(track, false);
   }
 
   function handleTrackEnd({ detail: ignoreRepeatOne }) {
@@ -190,6 +192,7 @@ function PlayerProvider({ children }) {
     setActiveTrack(null);
     setActivePlaylistId("");
     setTrackLoading(false);
+    pipService.close();
   }
 
   function setActivePlaylist(id) {
@@ -197,10 +200,11 @@ function PlayerProvider({ children }) {
     playerService.setActivePlaylistId(id);
   }
 
-  function updatePlayerState(paused) {
-    setPaused(paused);
-    playerService.setPlayerState(paused);
-    togglePlayPauseBtns(paused);
+  function updatePlayerState(state) {
+    setPaused(state);
+    playerService.setPlayerState(state);
+    togglePlayPauseBtns(state);
+    pipService.updateState(state);
   }
 
   function togglePlayerState() {

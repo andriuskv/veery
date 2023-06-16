@@ -164,6 +164,7 @@ function stopTrack() {
   initArgs = null;
   currentTrack = null;
   player.stopVideo();
+  clearTimeout(timeoutId);
 }
 
 function setVolume(volume) {

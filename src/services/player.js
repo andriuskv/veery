@@ -262,10 +262,7 @@ async function startTrack(track, playlistId, { queueStart, currentTime, scrollTo
   setGlobalMediaSession(track);
   playTrack(track, currentTime);
 
-  if (track.player === "native") {
-    savedTrackService.removeTrack();
-  }
-  else if (queueStart) {
+  if (queueStart) {
     savedTrackService.updateTrack({
       trackId: queueStart.track.id,
       currentTime: 0,

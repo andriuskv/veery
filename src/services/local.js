@@ -218,7 +218,6 @@ document.addEventListener("paste", async event => {
 
 if ("launchQueue" in window && "files" in window.LaunchParams.prototype) {
   window.launchQueue.setConsumer(async launchParams => {
-    console.log(launchParams);
     if (!launchParams.files.length) {
       return;
     }
