@@ -74,6 +74,7 @@ async function fetchPlaylistItems(id, type, tracks = [], token = "") {
 
   if (error) {
     console.log(error);
+    return tracks;
   }
   const validItems = await getVideoDuration(filterInvalidItems(items));
   let pageTracks = parseItems(validItems);

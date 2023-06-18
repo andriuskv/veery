@@ -36,7 +36,7 @@
       background-image: var(--dimmed-bottom), var(--dimmed-right), var(--background-url);
     }
 
-    @media (width < 1024px) {
+    @media (width <= 1024px) {
       --max-width: 100%;
 
       &:not(.placeholder) .now-playing-background {
@@ -45,12 +45,12 @@
     }
   }
 
-  @media (orientation: landscape) and (height < 560px) {
+  @media (orientation: landscape) and (height <= 560px) {
     --artwork-container-height: 58%;
     --artwork-spacing: 16px;
   }
 
-  @media (orientation: portrait) and (width < 428px) {
+  @media (orientation: portrait) and (width <= 428px) {
     --artwork-spacing: 96px;
   }
 }
@@ -107,6 +107,7 @@
     text-shadow: 1px 2px 2px var(--color-black-100-16);
     font-size: calc(var(--text-lg) * var(--text-size-multiplier));
     color: var(--color-white);
+    text-wrap: balance;
   }
 
   .track-title {
@@ -115,15 +116,15 @@
     text-align: center;
   }
 
-  @media (width < 1024px) {
+  @media (width <= 1024px) {
     --text-size-multiplier: 0.875;
   }
 
-  @media (width < 768px) {
+  @media (width <= 768px) {
     --text-size-multiplier: 0.725;
   }
 
-  @media (width < 428px) {
+  @media (width <= 428px) {
     padding: 0 var(--space-xl);
   }
 }

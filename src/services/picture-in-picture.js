@@ -156,7 +156,7 @@ async function init({ paused, track, togglePlay, playNext, playPrevious }) {
       </symbol>
     </svg>
     <div id="artwork-background"></div>
-    <img id="artwork" src="" alt="">
+    <img id="artwork" src="" alt="" draggable="false">
     <div id="artwork-overlay"></div>
     <div id="bottom-bar">
       <div id="track-title" class="track-info-item"></div>

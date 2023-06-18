@@ -10,7 +10,7 @@
     cursor: pointer;
   }
 
-  @media (width < 768px) {
+  @media (width <= 768px) {
     position: relative;
     grid-row: 1 / 2;
     grid-column: 1 / 4;
@@ -66,7 +66,7 @@
     }
   }
 
-  @media (width < 768px) {
+  @media (width <= 768px) {
     margin-right: var(--space-md);
     border-radius: 4px;
 

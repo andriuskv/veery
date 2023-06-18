@@ -320,7 +320,9 @@ function stopPlayer() {
   activePlaylistId = "";
   activeTrack = null;
   paused = true;
+
   navigator.mediaSession.playbackState = "none";
+  navigator.mediaSession.setPositionState(null);
 
   savedTrackService.removeTrack();
   dispatchCustomEvent("reset-player");
@@ -375,6 +377,10 @@ function setGlobalMediaSession(track) {
         { src: small.url, sizes: "256x256", type },
         { src: small.url, sizes: "128x128", type }
       ]
+    });
+
+    navigator.mediaSession.setPositionState({
+      duration: track.durationInSeconds
     });
   }
 }
