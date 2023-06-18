@@ -47,7 +47,7 @@ function onPlayerReady() {
 
   setVolume(volume);
 
-  if (currentTime > 0) {
+  if (currentTime >= 0) {
     if (playState) {
       initArgs = null;
       player.loadVideoById(track.id, currentTime);
