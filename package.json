@@ -38,11 +38,11 @@
     "postcss": "^8.4.24",
     "postcss-import": "^15.1.0",
     "postcss-loader": "^7.3.3",
-    "postcss-preset-env": "^8.5.0",
+    "postcss-preset-env": "^8.5.1",
     "stylelint": "^15.8.0",
     "stylelint-config-standard": "^33.0.0",
     "terser-webpack-plugin": "^5.3.9",
-    "webpack": "^5.87.0",
+    "webpack": "^5.88.0",
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^4.15.1",
     "workbox-webpack-plugin": "^7.0.0"
