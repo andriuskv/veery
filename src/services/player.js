@@ -154,7 +154,8 @@ function playAtIndex(index, playlistId) {
     setQueueStart(null);
   }
 
-  if (playbackOrder.length === 0 || playlistId !== activePlaylistId) {
+  if (shouldUpdatePlaybackOrder || playbackOrder.length === 0 || playlistId !== activePlaylistId) {
+    shouldUpdatePlaybackOrder = false;
     setPlaybackOrder(playlistId, index);
   }
   const playlist = getPlaylistById(playlistId);

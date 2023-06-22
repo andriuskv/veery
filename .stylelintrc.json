@@ -2,6 +2,7 @@
   "extends": "stylelint-config-standard",
   "rules": {
     "custom-property-empty-line-before": null,
+    "value-keyword-case": null,
     "max-line-length": null,
     "shorthand-property-no-redundant-values": null,
     "font-family-name-quotes": "always-unless-keyword",
