@@ -33,7 +33,7 @@ export default function PlayerBar({ nowPlayingVisible, queueVisible, youtubePlay
     return () => {
       window.removeEventListener("keydown", handleKeyboardShortcuts);
     };
-  }, [paused, activePlaylistId]);
+  }, [paused, activePlaylistId, shuffled]);
 
   function handleKeyboardShortcuts(event) {
     const { target, key } = event;
@@ -49,6 +49,12 @@ export default function PlayerBar({ nowPlayingVisible, queueVisible, youtubePlay
 
     if (key === "p") {
       handleTrackPlay(true);
+    }
+    else if (key === "r") {
+      handleRepeat();
+    }
+    else if (key === "s") {
+      handleShuffle();
     }
     else if (key === "[") {
       if (activePlaylistId) {
