@@ -110,6 +110,7 @@ function setPlaybackOrder(id, trackIndex = -1) {
 
   playbackOrder = shuffle ? shuffleArray(trackIndexes) : trackIndexes;
   excludedPlaybackItems.length = 0;
+  shouldUpdatePlaybackOrder = false;
 
   // Make track appear first in playback order when playlist is shuffled.
   if (shuffle && trackIndex >= 0) {
@@ -155,7 +156,6 @@ function playAtIndex(index, playlistId) {
   }
 
   if (shouldUpdatePlaybackOrder || playbackOrder.length === 0 || playlistId !== activePlaylistId) {
-    shouldUpdatePlaybackOrder = false;
     setPlaybackOrder(playlistId, index);
   }
   const playlist = getPlaylistById(playlistId);
@@ -194,7 +194,6 @@ function playPrevious({ scrollToTrack } = {}) {
   }
 
   if (shouldUpdatePlaybackOrder) {
-    shouldUpdatePlaybackOrder = false;
     setPlaybackOrder(activePlaylistId);
   }
   const track = getNextPlayableTrack(-1, activePlaylistId);
@@ -230,7 +229,6 @@ function playNext(queueItem, { scrollToTrack } = {}) {
   }
 
   if (shouldUpdatePlaybackOrder) {
-    shouldUpdatePlaybackOrder = false;
     setPlaybackOrder(activePlaylistId);
   }
   const track = getNextPlayableTrack(1, activePlaylistId);
