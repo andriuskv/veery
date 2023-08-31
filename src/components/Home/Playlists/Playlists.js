@@ -88,7 +88,7 @@ export default function Playlists({ youtube, setYoutube }) {
 
     return (
       <div className="playlist-entry-thumbnail-container">
-        <Link to={`/playlist/${id}`} className={`playlist-entry-thumbnail t-${thumbnail.length}`}>
+        <Link to={`/playlist/${id}`} className={`playlist-entry-thumbnail t-${thumbnail.length}`} draggable="false">
           {thumbnail.map(url => (
             <div className="playlist-entry-thumbnail-image-container" key={url}>
               <img src={url} className="artwork" alt=""/>
@@ -144,8 +144,7 @@ export default function Playlists({ youtube, setYoutube }) {
             ) : null}
             <span className="playlist-entry-bottom-item">{playlist.tracks.length} track{playlist.tracks.length === 1 ? "" : "s"}</span>
             <span className="playlist-entry-bottom-item">{getPlaylistState(playlist.id).duration}</span>
-            <Dropdown
-              container={{ className: "playlist-entry-dropdown-container" }}>
+            <Dropdown container={{ className: "playlist-entry-dropdown-container" }}>
               <button className="btn icon-text-btn dropdown-btn" onClick={() => enableTitleChange(playlist.id, playlist.title)}>
                 <Icon id="edit" className="dropdown-btn-icon"/>
                 <span>Change Title</span>

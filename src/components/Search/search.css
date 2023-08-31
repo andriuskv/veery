@@ -5,7 +5,7 @@
   height: 100%;
   padding: var(--space-xl);
 
-  @media (max-width: 768px) {
+  @media (width <= 768px) {
     padding: 64px 0 0 0;
   }
 }
@@ -14,11 +14,11 @@
   margin-top: var(--space-xxl);
   margin-bottom: var(--space-xxl);
 
-  @media (max-width: 768px) {
+  @media (width <= 768px) {
     margin-top: var(--space-xl);
   }
 
-  @media (max-width: 428px) {
+  @media (width <= 428px) {
     margin-top: var(--space-md);
     margin-bottom: var(--space-xl);
   }
@@ -29,11 +29,11 @@
   font-size: var(--text-xxxl);
   text-align: center;
 
-  @media (max-width: 768px) {
+  @media (width <= 768px) {
     font-size: var(--text-xxl);
   }
 
-  @media (max-width: 428px) {
+  @media (width <= 428px) {
     margin-bottom: var(--space-xl);
   }
 }
@@ -52,16 +52,16 @@
     4px 8px 8px 0 var(--color-black-100-1);
   background-color: var(--color-grey-70);
 
-  @media (max-width: 1024px) {
+  @media (width <= 1024px) {
     width: 75%;
   }
 
-  @media (max-width: 768px) {
+  @media (width <= 768px) {
     width: calc(100% - var(--space-xxl));
     margin: 0 var(--space-xl);
   }
 
-  @media (max-width: 428px) {
+  @media (width <= 428px) {
     width: calc(100% - var(--space-xl));
     margin: 0 var(--space-md);
   }
@@ -82,7 +82,7 @@
   border-bottom-left-radius: 999px;
   background-color: transparent;
 
-  @media (max-width: 428px) {
+  @media (width <= 428px) {
     padding-top: var(--space-md);
     padding-bottom: var(--space-md);
   }
@@ -123,7 +123,7 @@
     0 8px 8px 0 var(--color-black-100-1);
   background-color: var(--color-grey-70);
 
-  @media (max-width: 768px) {
+  @media (width <= 768px) {
     border: none;
     border-top: 1px solid var(--color-white-100-4);
     box-shadow: none;
@@ -144,7 +144,7 @@
     0 8px 8px 0 var(--color-black-100-1);
   background-color: var(--color-grey-70);
 
-  @media (max-width: 768px) {
+  @media (width <= 768px) {
     padding: var(--space-sm);
   }
 }
@@ -158,7 +158,7 @@
   color: var(--color-white-10);
   text-align: center;
 
-  @media (max-width: 1024px) {
+  @media (width <= 1024px) {
     font-size: var(--text-lg);
   }
 }

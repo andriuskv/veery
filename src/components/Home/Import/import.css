@@ -12,7 +12,7 @@
   padding: var(--space-lg);
   border-radius: 0;
 
-  @media (max-width: 428px) {
+  @media (width <= 428px) {
     padding: var(--space-md);
   }
 }
@@ -44,7 +44,7 @@
     border-top-right-radius: 8px;
   }
 
-  &:focus-within {
+  &:has(:focus-visible) {
     --background-color: var(--color-grey-60);
     --color: var(--color-white);
 
@@ -107,16 +107,15 @@
   padding: 0;
   margin: var(--space-md) var(--space-lg);
 
-  &:hover,
-  &:focus-visible {
-    opacity: 72%;
+  &:hover, &:focus-visible {
+    opacity: 0.72;
   }
 
   &:focus-visible {
     box-shadow: 0 0 0 2px var(--color-primary);
   }
 
-  @media (max-width: 428px) {
+  @media (width <= 428px) {
     margin: var(--space-sm) var(--space-md);
   }
 }

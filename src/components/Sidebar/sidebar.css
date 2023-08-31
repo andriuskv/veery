@@ -6,7 +6,7 @@
     visibility: hidden;
   }
 
-  @media (max-width: 768px) {
+  @media (width <= 768px) {
     position: absolute;
     width: 100%;
     height: calc(100% - var(--controls-height));
@@ -14,13 +14,13 @@
     transition: 0.1s opacity, 0.1s visibility;
 
     &.hidden {
-      opacity: 0%;
+      opacity: 0;
       visibility: hidden;
       transition: 0.2s opacity, 0.2s visibility, 0.2s transform;
       transition-delay: 0.2s, 0.2s, 0.4s;
       transform: translateX(calc(-100%));
 
-      & .sidebar {
+      .sidebar {
         transform: translateX(calc(-100% - var(--space-md)));
       }
     }
@@ -30,7 +30,7 @@
 .sidebar-toolbar {
   display: none;
 
-  @media (max-width: 768px) {
+  @media (width <= 768px) {
     z-index: 1;
     position: absolute;
     top: 0;
@@ -51,7 +51,7 @@
 .sidebar-show-btn {
   display: none;
 
-  @media (max-width: 768px) {
+  @media (width <= 768px) {
     z-index: 2;
     position: absolute;
     top: var(--space-md);
@@ -83,7 +83,7 @@
 }
 
 .sidebar-header-title {
-  opacity: 0%;
+  opacity: 0;
 }
 
 .sidebar-links {
@@ -112,7 +112,7 @@
     visibility: visible;
   }
 
-  @media (max-width: 768px) {
+  @media (width <= 768px) {
     &::-webkit-scrollbar-thumb {
       visibility: visible;
     }
@@ -132,7 +132,7 @@
     font-weight: 500;
   }
 
-  @media (max-width: 768px) {
+  @media (width <= 768px) {
     font-size: var(--text-sm);
   }
 }

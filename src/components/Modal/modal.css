@@ -25,7 +25,7 @@
     8px 16px 16px 0 var(--color-black-100-1);
   background-color: var(--color-grey-60);
 
-  @media (max-width: 428px) {
+  @media (width <= 428px) {
     padding: var(--space-md);
   }
 }

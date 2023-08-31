@@ -49,12 +49,12 @@ async function init({ paused, track, togglePlay, playNext, playPrevious }) {
         align-items: flex-end;
       }
 
-      body:is(:hover, :focus-within) #bottom-bar {
+      body:is(:hover, :has(:focus-visible)) #bottom-bar {
         opacity: 1;
         transform: none;
       }
 
-      body:is(:hover, :focus-within) #artwork-overlay {
+      body:is(:hover, :has(:focus-visible)) #artwork-overlay {
         opacity: 1;
       }
 

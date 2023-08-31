@@ -35,7 +35,7 @@
   font-size: var(--text-sm);
   color: var(--color-grey-10);
 
-  & .radio-input:checked ~ .radio-label {
+  .radio-input:checked ~ .radio-label {
     color: var(--color-white);
   }
 }

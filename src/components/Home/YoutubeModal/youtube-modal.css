@@ -42,7 +42,7 @@
 }
 
 .youtube-modal-playlist-action {
-  opacity: 0%;
+  opacity: 0;
   font-weight: 500;
 }
 
@@ -56,12 +56,11 @@
   border-radius: 8px;
   font-weight: normal;
 
-  &:hover,
-  &:focus-visible {
+  &:hover, &:focus-visible {
     --background-color: var(--color-grey-50);
 
-    & .youtube-modal-playlist-action {
-      opacity: 100%;
+    .youtube-modal-playlist-action {
+      opacity: 1;
     }
   }
 }

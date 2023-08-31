@@ -245,7 +245,7 @@ svg {
   grid-template-rows: calc(100% - var(--controls-height)) var(--controls-height);
   height: 100%;
 
-  @media (max-width: 768px) {
+  @media (width <= 768px) {
     --controls-height: 128px;
   }
 }
@@ -257,7 +257,7 @@ svg {
     visibility: hidden;
   }
 
-  @media (max-width: 768px) {
+  @media (width <= 768px) {
     grid-column: 1 / 3;
   }
 }
