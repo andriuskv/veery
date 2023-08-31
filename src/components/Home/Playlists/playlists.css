@@ -10,23 +10,23 @@
     2px 4px 4px 0 var(--color-black-100-2),
     4px 8px 8px 0 var(--color-black-100-1);
 
-  @media (max-width: 428px) {
+  @media (width <= 428px) {
     --thumbnail-size: 108px;
 
-    & .playlist-entry-content {
+    .playlist-entry-content {
       padding-top: var(--space-md);
       padding-bottom: var(--space-sm);
     }
 
-    & .playlist-entry-title {
-      font-size: 14px;
+    .playlist-entry-title {
+      font-size: var(--text-md);
     }
 
-    & .playlist-entry-bottom {
+    .playlist-entry-bottom {
       padding-top: var(--space-sm);
     }
 
-    & .playlist-entry-title-input {
+    .playlist-entry-title-input {
       padding: var(--space-sm) var(--space-lg);
     }
   }
@@ -38,7 +38,7 @@
   bottom: var(--space-md);
   right: var(--space-md);
   transform: translateY(var(--space-md)) scale(0.9);
-  opacity: 0%;
+  opacity: 0;
   padding: 0;
   color: var(--color-white);
   transition: 0.2s opacity, 0.2s transform;
@@ -78,7 +78,7 @@
   &.t-3 .playlist-entry-thumbnail-image-container:first-of-type {
     grid-column: 1 / 3;
 
-    & .artwork {
+    .artwork {
       top: 50%;
       left: auto;
       width: 100%;
@@ -90,14 +90,11 @@
   &::after {
     z-index: 1;
     position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
+    inset: 0;
     content: "";
     display: block;
     background-image: linear-gradient(transparent, rgb(0 0 0 / 10%), var(--color-grey-80));
-    opacity: 0%;
+    opacity: 0;
     transition: 0.2s opacity;
   }
 
@@ -109,14 +106,13 @@
 .playlist-entry-thumbnail-container {
   position: relative;
 
-  &:hover,
-  &:focus-within {
-    & .playlist-entry-thumbnail::after {
-      opacity: 100%;
+  &:hover, &:has(:focus-visible) {
+    .playlist-entry-thumbnail::after {
+      opacity: 1;
     }
 
-    & .playlist-entry-play-btn {
-      opacity: 100%;
+    .playlist-entry-play-btn {
+      opacity: 1;
       transform: none;
 
       &:hover,
@@ -170,7 +166,7 @@
     margin-left: var(--space-md);
     margin-right: var(--space-md);
 
-    @media (max-width: 428px) {
+    @media (width <= 428px) {
       margin-left: var(--space-sm);
       margin-right: var(--space-sm);
     }
@@ -185,8 +181,8 @@
 .playlist-entry-dropdown-container {
   margin-left: auto;
 
-  @media (max-width: 428px) {
-    & .dropdown-toggle-btn-icon {
+  @media (width <= 428px) {
+    .dropdown-toggle-btn-icon {
       width: 20px;
       height: 20px;
     }
@@ -202,7 +198,7 @@
   font-size: var(--text-sm);
   color: var(--color-white-10);
 
-  & .checkbox {
+  .checkbox {
     background-color: var(--color-grey-50);
   }
 }

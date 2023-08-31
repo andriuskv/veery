@@ -7,7 +7,7 @@
   display: flex;
   align-items: center;
 
-  @media (max-width: 768px) {
+  @media (width <= 768px) {
     display: none;
 
     &.visible {
@@ -23,11 +23,11 @@
       border-radius: 999px;
       background-color: var(--color-grey-60);
 
-      & .player-bar-tertiary-btn::before {
+      .player-bar-tertiary-btn::before {
         display: none;
       }
 
-      & .player-bar-volume-bar-container {
+      .player-bar-volume-bar-container {
         width: 100%;
         margin-left: var(--space-md);
       }

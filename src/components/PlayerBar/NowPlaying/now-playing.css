@@ -43,7 +43,7 @@
       2px 4px 4px 0 var(--color-black-100-2),
       4px 8px 8px 0 var(--color-black-100-1);
 
-    &:hover, &:focus-within {
+    &:hover, &:has(:focus-visible) {
       .artwork-btn {
         opacity: 1;
       }

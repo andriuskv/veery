@@ -27,7 +27,7 @@
       height: calc(100% - var(--controls-height));
       background-color: black;
 
-      & .youtube-player {
+      .youtube-player {
         width: 100%;
       }
     }

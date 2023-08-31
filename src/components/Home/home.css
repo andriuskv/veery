@@ -1,5 +1,5 @@
 .home {
-  --min-grid-item-width: 480px;
+  --min-grid-item-width: 420px;
 
   overflow-y: auto;
   display: grid;
@@ -10,7 +10,7 @@
   height: 100%;
   padding: var(--space-xl);
 
-  @media (max-width: 768px) {
+  @media (width <= 768px) {
     grid-template-columns: 1fr;
     padding: 64px var(--space-md) var(--space-xl) var(--space-md);
   }

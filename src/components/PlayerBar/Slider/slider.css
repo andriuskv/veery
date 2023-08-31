@@ -44,8 +44,7 @@
   touch-action: none;
 
   &:is(:hover, :active) {
-    & .slider-bar-thumb,
-    & + .slider-label {
+    .slider-bar-thumb, & + .slider-label {
       display: block;
     }
   }

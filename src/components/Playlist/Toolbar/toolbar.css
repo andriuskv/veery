@@ -12,7 +12,7 @@
   background-color: var(--color-grey-70);
   user-select: none;
 
-  @media (max-width: 768px) {
+  @media (width <= 768px) {
     justify-content: flex-end;
     padding-left: 48px;
   }

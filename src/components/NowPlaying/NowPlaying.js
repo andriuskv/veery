@@ -48,7 +48,7 @@ export default function NowPlaying({ queueVisible, youtubePlayerVisible, showInd
     <div className={`now-playing${queueVisible ? " queue-visible" : ""}${isPlaceholder ? " placeholder" : ""}`}>
       <div className="now-playing-background" style={isPlaceholder ? {} : { "--background-url": `url(${small.url})` }}></div>
       <div className={`now-playing-artwork-container${youtubePlayerVisible ? " hidden" : ""}`}>
-        <img src={original.url} className="now-playing-artwork" ref={artworkRef} onClick={handleArtworkClick} alt=""/>
+        <img src={original.url} className="now-playing-artwork" ref={artworkRef} onClick={handleArtworkClick} alt="" draggable="false"/>
       </div>
       <div className="now-playing-info">
         <div className="track-info-item track-title multiline">{activeTrack.title}</div>

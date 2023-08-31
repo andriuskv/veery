@@ -100,13 +100,13 @@ export default function Sidebar({ nowPlayingVisible }) {
           <nav className="sidebar-links">
             <ul className="sidebar-general-links">
               <li>
-                <NavLink to="/" className={getNavLinkClassName}>
+                <NavLink to="/" className={getNavLinkClassName} draggable="false">
                   <Icon id="home"/>
                   <span>Home</span>
                 </NavLink>
               </li>
               <li>
-                <NavLink to="/search" className={getNavLinkClassName}>
+                <NavLink to="/search" className={getNavLinkClassName} draggable="false">
                   <Icon id="search"/>
                   <span>Search</span>
                 </NavLink>
@@ -116,7 +116,7 @@ export default function Sidebar({ nowPlayingVisible }) {
               <ul className="sidebar-playlist-links">
                 {Object.values(playlists).map(playlist => (
                   <li key={playlist.id}>
-                    <NavLink to={`/playlist/${playlist.id}`} className={getNavLinkClassName}>
+                    <NavLink to={`/playlist/${playlist.id}`} className={getNavLinkClassName} draggable="false">
                       <span className="sidebar-playlist-title">{playlist.title}</span>
                       {renderIndicator(playlist.id)}
                     </NavLink>
