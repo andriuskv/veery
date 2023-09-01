@@ -17,9 +17,8 @@ export default function Search({ playlistId, setMessage }) {
   }, [playlistId]);
 
   useEffect(() => {
-    if (searchEnabled) {
-      window.addEventListener("keydown", handleGlobalKeydown);
-    }
+    window.addEventListener("keydown", handleGlobalKeydown);
+
     return () => {
       window.removeEventListener("keydown", handleGlobalKeydown);
     };
@@ -47,8 +46,18 @@ export default function Search({ playlistId, setMessage }) {
     }
   }
 
-  function handleGlobalKeydown({ key }) {
-    if (key === "Escape") {
+  function handleGlobalKeydown(event) {
+    if (event.ctrlKey && event.key === "f") {
+      event.preventDefault();
+
+      if (searchEnabled) {
+        handleCleanup();
+      }
+      else {
+        enableSearch();
+      }
+    }
+    if (event.key === "Escape" && searchEnabled) {
       handleCleanup();
     }
   }
