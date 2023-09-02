@@ -154,10 +154,8 @@ function playAtIndex(index, playlistId) {
   if (start) {
     setQueueStart(null);
   }
+  setPlaybackOrder(playlistId, index);
 
-  if (shouldUpdatePlaybackOrder || playbackOrder.length === 0 || playlistId !== activePlaylistId) {
-    setPlaybackOrder(playlistId, index);
-  }
   const playlist = getPlaylistById(playlistId);
   const track = playlist.tracks[index];
 
@@ -171,6 +169,7 @@ function playQueueTrack(track, playlistId) {
     if (!start) {
       setQueueStart({
         playlistId: activePlaylistId,
+        playbackIndex,
         track: activeTrack
       });
     }
@@ -210,6 +209,7 @@ function playNext(queueItem, { scrollToTrack } = {}) {
     if (!queueStart && queueItem) {
       setQueueStart({
         playlistId: activePlaylistId,
+        playbackIndex,
         track: activeTrack
       });
     }
@@ -225,6 +225,7 @@ function playNext(queueItem, { scrollToTrack } = {}) {
 
   if (queueStart) {
     activePlaylistId = queueStart.playlistId;
+    playbackIndex = queueStart.playbackIndex;
     setQueueStart(null);
   }
 
@@ -278,7 +279,10 @@ async function startTrack(track, playlistId, { queueStart, currentTime, scrollTo
 }
 
 function repeatPlay() {
-  playAtIndex(activeTrack.index, activePlaylistId);
+  const playlist = getPlaylistById(activePlaylistId);
+  const track = playlist.tracks[activeTrack.index];
+
+  startTrack(track, activePlaylistId);
 }
 
 function playTrack(track, currentTime) {
@@ -400,7 +404,8 @@ function getNextPlayableTrack(direction, playlistId) {
 }
 
 function getNextTrackIndex(direction, wrapAround = false) {
-  let index = playbackIndex;
+  const start = getQueueStart();
+  let index = start ? start.playbackIndex : playbackIndex;
   index += direction;
 
   if (direction === 0) {

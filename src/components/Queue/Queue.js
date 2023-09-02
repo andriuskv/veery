@@ -37,10 +37,11 @@ export default function Queue({ nowPlayingVisible, youtubePlayerMaximized, toggl
     else {
       const tracks = [];
       const playbackOrder = playerService.getPlaybackOrder();
-      const start = queueService.getQueueStart();
-      const playlistId = start ? start.playlistId : activePlaylistId;
+      const queueStart = queueService.getQueueStart();
+      const playlistId = queueStart ? queueStart.playlistId : activePlaylistId;
       const excludes = playerService.getExcludedPlaybackItems();
-      let playbackIndex = playerService.getPlaybackIndex();
+      let playbackIndex = queueStart ? queueStart.playbackIndex : playerService.getPlaybackIndex();
+
       let i = 0;
 
       while (tracks.length < 10 && playbackIndex < playbackOrder.length) {
