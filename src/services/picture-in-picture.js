@@ -21,8 +21,10 @@ function toggle(params) {
 }
 
 function close() {
-  pipWindow.close();
-  cleanup();
+  if (pipWindow) {
+    pipWindow.close();
+    cleanup();
+  }
 }
 
 function cleanup() {
