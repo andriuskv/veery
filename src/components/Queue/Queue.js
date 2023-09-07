@@ -16,15 +16,6 @@ export default function Queue({ nowPlayingVisible, youtubePlayerMaximized, toggl
   const updated = useRef(false);
 
   useEffect(() => {
-    updated.current = false;
-  }, [activeTrack]);
-
-  useEffect(() => {
-    if (updated.current) {
-      return;
-    }
-    updated.current = true;
-
     if (!activeTrack) {
       setTracks([]);
       return;
@@ -35,55 +26,71 @@ export default function Queue({ nowPlayingVisible, youtubePlayerMaximized, toggl
       setTracks([activeTrack]);
     }
     else {
-      const tracks = [];
-      const playbackOrder = playerService.getPlaybackOrder();
-      const queueStart = queueService.getQueueStart();
-      const playlistId = queueStart ? queueStart.playlistId : activePlaylistId;
-      const excludes = playerService.getExcludedPlaybackItems();
-      let playbackIndex = queueStart ? queueStart.playbackIndex : playerService.getPlaybackIndex();
+      const tracks = getNextInPlaylist(mode);
+      setTracks(tracks);
+    }
 
-      let i = 0;
+    window.addEventListener("shuffle", handleShuffleChange);
 
-      while (tracks.length < 10 && playbackIndex < playbackOrder.length) {
-        i += 1;
+    return () => {
+      window.removeEventListener("shuffle", handleShuffleChange);
+    };
+  }, [activeTrack]);
 
-        if (mode === "repeat-off") {
-          if (playbackIndex === playbackOrder.length - 1) {
-            break;
-          }
-          else {
-            playbackIndex += 1;
+  function handleShuffleChange() {
+    const mode = getSetting("repeat");
+    const tracks = getNextInPlaylist(mode);
+    setTracks(tracks);
+  }
 
-            const track = playerService.getNextTrack(i, playlistId);
+  function getNextInPlaylist(mode) {
+    const tracks = [];
+    const playbackOrder = playerService.getPlaybackOrder();
+    const queueStart = queueService.getQueueStart();
+    const playlistId = queueStart ? queueStart.playlistId : activePlaylistId;
+    const excludes = playerService.getExcludedPlaybackItems();
+    let playbackIndex = queueStart ? queueStart.playbackIndex : playerService.getPlaybackIndex();
 
-            if (!excludes.includes(track.index)) {
-              tracks.push(track);
-            }
-          }
+    let i = 0;
+
+    while (tracks.length < 10 && playbackIndex < playbackOrder.length) {
+      i += 1;
+
+      if (mode === "repeat-off") {
+        if (playbackIndex === playbackOrder.length - 1) {
+          break;
         }
-        else if (mode === "repeat-all") {
-          const track = playerService.getNextTrack(i, playlistId, true);
+        else {
+          playbackIndex += 1;
 
-          if (!track) {
-            break;
-          }
-          else if (track.id === activeTrack.id) {
-            if (playbackOrder.length === 1) {
-              setTracks([activeTrack]);
-              return;
-            }
-            else {
-              break;
-            }
-          }
-          else if (!excludes.includes(track.index)) {
+          const track = playerService.getNextTrack(i, playlistId);
+
+          if (!excludes.includes(track.index)) {
             tracks.push(track);
           }
         }
       }
-      setTracks(tracks);
+      else if (mode === "repeat-all") {
+        const track = playerService.getNextTrack(i, playlistId, true);
+
+        if (!track) {
+          break;
+        }
+        else if (track.id === activeTrack.id) {
+          if (playbackOrder.length === 1) {
+            return [activeTrack];
+          }
+          else {
+            break;
+          }
+        }
+        else if (!excludes.includes(track.index)) {
+          tracks.push(track);
+        }
+      }
     }
-  }, [activeTrack, tracks]);
+    return tracks;
+  }
 
   function playPlaylistTrack(track) {
     const start = queueService.getQueueStart();

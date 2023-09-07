@@ -202,7 +202,7 @@ function PlaylistProvider({ children }) {
     }, done);
 
     if (id === activePlaylistId) {
-      playerService.flagPlaybackOrderForUpdate();
+      playerService.setPlaybackOrder(activePlaylistId, playerService.getPlaybackIndex());
     }
   }
 

@@ -9,6 +9,7 @@ import "./player-bar.css";
 import NowPlaying from "./NowPlaying";
 import SeekSlider from "./SeekSlider";
 import VolumeSlider from "./VolumeSlider";
+import { dispatchCustomEvent } from "../../utils";
 
 export default function PlayerBar({ nowPlayingVisible, queueVisible, youtubePlayer, toggleNowPlaying, toggleQueue, toggleYoutubePlayer, showIndicator }) {
   const { paused, activePlaylistId, activeTrack, trackLoading, togglePlay, playPrevious, playNext, playPlaylist } = usePlayer();
@@ -94,13 +95,14 @@ export default function PlayerBar({ nowPlayingVisible, queueVisible, youtubePlay
 
   function handleShuffle() {
     setShuffled(!shuffled);
-    playerService.flagPlaybackOrderForUpdate();
     setSetting("shuffle",!shuffled);
+    playerService.setPlaybackOrder(activePlaylistId, playerService.getPlaybackIndex());
 
     showSettingLabel({
       type: "shuffle",
       text: shuffled ? "No shuffle" : "Shuffle"
     });
+    dispatchCustomEvent("shuffle", !shuffled);
   }
 
   function getRepeatState(mode) {
