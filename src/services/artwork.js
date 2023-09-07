@@ -41,7 +41,11 @@ async function addArtworks(artworks) {
     if (artwork.original.blob || artwork.small.blob) {
       return null;
     }
-    return tx.store.put(artwork);
+    return tx.store.put({
+      id: artwork.id,
+      original: artwork.original,
+      small: artwork.small
+    });
   }), tx.done]);
 }
 

@@ -175,7 +175,7 @@ async function fetchTrackAlbum(track) {
 }
 
 function getFileType(name) {
-  const ext = name.split(".")[1];
+  const ext = name.split(".").at(-1);
 
   if (ext === "jpg") {
     return "image/jpeg";
@@ -195,5 +195,3 @@ function hashString(string) {
   const encoder = new TextEncoder("utf-8");
   return computeHash(encoder.encode(string).buffer);
 }
-
-

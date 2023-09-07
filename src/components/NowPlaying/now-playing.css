@@ -104,6 +104,7 @@
   padding: 0 var(--space-xxl);
 
   .track-info-item {
+    max-width: 720px;
     text-shadow: 1px 2px 2px var(--color-black-100-16);
     font-size: calc(var(--text-lg) * var(--text-size-multiplier));
     color: var(--color-white);

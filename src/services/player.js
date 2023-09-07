@@ -14,7 +14,6 @@ let activeTrack = null;
 let paused = true;
 let playbackOrder = [];
 let playbackIndex = -1;
-let shouldUpdatePlaybackOrder = false;
 const excludedPlaybackItems = [];
 
 function removeTrackFromPlayback(trackIndex) {
@@ -104,23 +103,21 @@ function getPlaybackOrder() {
 }
 
 function setPlaybackOrder(id, trackIndex = -1) {
+  if (!id) {
+    return;
+  }
   const shuffle = getSetting("shuffle");
   const { tracks } = getPlaylistById(id);
   const trackIndexes = tracks.map(({ index }) => index);
 
   playbackOrder = shuffle ? shuffleArray(trackIndexes) : trackIndexes;
   excludedPlaybackItems.length = 0;
-  shouldUpdatePlaybackOrder = false;
 
   // Make track appear first in playback order when playlist is shuffled.
   if (shuffle && trackIndex >= 0) {
     swapFirstPlaybackOrderItem(trackIndex);
   }
   updateActiveTrackIndex(tracks, id);
-}
-
-function flagPlaybackOrderForUpdate() {
-  shouldUpdatePlaybackOrder = true;
 }
 
 function cleanupPreviousTrack() {
@@ -192,9 +189,6 @@ function playPrevious({ scrollToTrack } = {}) {
     return;
   }
 
-  if (shouldUpdatePlaybackOrder) {
-    setPlaybackOrder(activePlaylistId);
-  }
   const track = getNextPlayableTrack(-1, activePlaylistId);
 
   if (track) {
@@ -229,9 +223,6 @@ function playNext(queueItem, { scrollToTrack } = {}) {
     setQueueStart(null);
   }
 
-  if (shouldUpdatePlaybackOrder) {
-    setPlaybackOrder(activePlaylistId);
-  }
   const track = getNextPlayableTrack(1, activePlaylistId);
 
   if (track) {
@@ -467,7 +458,6 @@ export {
   setVolume,
   getNextTrack,
   updateActiveTrackIndex,
-  flagPlaybackOrderForUpdate,
   isLastTrackInPlayback,
   setPlaybackOrder,
   canPlay,
