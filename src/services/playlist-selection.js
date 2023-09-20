@@ -491,6 +491,14 @@ function removeSelectedElements(elements, { id, viewMode }) {
   window.removeEventListener("pointerup", handleOutsideClick);
 }
 
+function selectTrackElementAtIndex(index) {
+  const element = playlist.element.lastElementChild.children[index];
+
+  if (element) {
+    selectTrackElement(element);
+  }
+}
+
 export {
   enableTrackSelection,
   disableTrackSelection,
@@ -499,5 +507,6 @@ export {
   getElementIndexes,
   getSelectedElements,
   selectAllTracks,
-  removeSelectedElements
+  removeSelectedElements,
+  selectTrackElementAtIndex
 };
