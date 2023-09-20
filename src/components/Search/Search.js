@@ -15,8 +15,9 @@ export default function Search() {
   const [value, setValue] = useState("");
   const [tracks, setTracks] = useState([]);
   const [playlist, setPlaylist] = useState(null);
-  const formRef = useRef(null);
+  const [pending, setPending] = useState(false);
   const playlistRef = useRef(null);
+  const timeoutId = useRef(0);
   const viewMode = useMemo(() => {
     const media = window.matchMedia("(max-width: 1024px)");
     return media.matches ? "grid": "compact";
@@ -49,19 +50,19 @@ export default function Search() {
     createPlaylistView(playlistRef.current, playlist);
   }
 
-  function handleFormSubmit(event) {
-    const { value } = event.target.elements.input;
+  function handleInputChange({ target }) {
+    setValue(target.value);
+    setPending(true);
+    clearTimeout(timeoutId.current);
 
-    event.preventDefault();
-
-    setValue(value);
-
-    if (value) {
-      searchTracks(value);
-    }
-    else {
-      setTracks([]);
-    }
+    timeoutId.current = setTimeout(() => {
+      if (target.value) {
+        searchTracks(target.value);
+      }
+      else {
+        handleCleanup();
+      }
+    }, 400);
   }
 
   function updateSortedPlaylist({ sortBy, sortOrder }) {
@@ -88,13 +89,15 @@ export default function Search() {
     });
 
     setTracks(trackMatches);
+    setPending(false);
   }
 
   function handleCleanup() {
-    formRef.current.reset();
+    clearTimeout(timeoutId.current);
     setValue("");
     setPlaylist(null);
     setTracks([]);
+    setPending(false);
   }
 
   function handleClick({ target, detail }) {
@@ -127,6 +130,22 @@ export default function Search() {
     }
   }
 
+  function renderSearchState() {
+    if (value) {
+      if (tracks.length) {
+        return null;
+      }
+      else if (pending) {
+        return <Icon id="spinner" className="search-playlist-spinner"/>;
+      }
+      return <p className="search-playlist-message">No matches found</p>;
+    }
+    else if (!tracks.length) {
+      return <p className="search-playlist-message">Search for tracks across all playlists.</p>;
+    }
+    return null;
+  }
+
   if (!playlists) {
     return null;
   }
@@ -134,9 +153,9 @@ export default function Search() {
     <div className="search">
       <div className="search-top">
         <h2 className="search-title">Search</h2>
-        <form className="search-form" onSubmit={handleFormSubmit} ref={formRef}>
+        <div className="search-form">
           <div className="search-form-input-container">
-            <input type="text" className="input search-form-input" name="input" placeholder="Enter search term"/>
+            <input type="text" className="input search-form-input" onChange={handleInputChange} value={value} placeholder="Enter search term"/>
             {value && (
               <button type="button" className="btn icon-btn search-form-input-clear-btn" onClick={handleCleanup} title="Clear">
                 <Icon id="close" className="search-form-input-clear-btn-icon"/>
@@ -147,7 +166,7 @@ export default function Search() {
             <Icon id="search"/>
             <span>Search</span>
           </button>
-        </form>
+        </div>
       </div>
       <div className="search-playlist-container">
         {playlist ? (
@@ -156,7 +175,7 @@ export default function Search() {
             <Sort playlist={playlist} playlistRef={playlistRef} updateSortedPlaylist={updateSortedPlaylist}/>
           </div>
         ) : null}
-        {value ? tracks.length ? null : <p className="search-playlist-message">No matches found</p> : <p className="search-playlist-message">Search for tracks across all playlists</p>}
+        {renderSearchState()}
         <div className="playlist-view" ref={playlistRef} onClick={handleClick}></div>
       </div>
     </div>
