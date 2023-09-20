@@ -1,5 +1,5 @@
 import { useState, useEffect, lazy, Suspense } from "react";
-import { getSelectedElements, getElementIndexes, selectAllTracks, removeSelectedElements } from "services/playlist-selection";
+import { getSelectedElements, getElementIndexes, selectAllTracks, removeSelectedElements, selectTrackElementAtIndex } from "services/playlist-selection";
 import { createPlaylistView, setPlaylistViewActiveTrack } from "services/playlist-view";
 import { getActiveTrack, updateActiveTrackIndex, setPlaybackOrder } from "services/player";
 import { setTrackIndexes } from "services/playlist";
@@ -62,6 +62,7 @@ export default function Toolbar({ playlist, playlistRef, setMessage }) {
     const elements = getSelectedElements();
     const indexes = getElementIndexes(elements);
     const tracksToKeep = [];
+    const firstSelectedTrackIndex = indexes[0];
 
     for (const track of playlist.tracks) {
       if (!indexes.includes(track.index)) {
@@ -70,6 +71,7 @@ export default function Toolbar({ playlist, playlistRef, setMessage }) {
     }
     updatePlaylist(playlist.id, { tracks: setTrackIndexes(tracksToKeep) });
     removeSelectedElements(elements, playlist);
+    selectTrackElementAtIndex(firstSelectedTrackIndex);
 
     if (playlist.id === activePlaylistId) {
       setPlaybackOrder(playlist.id);
