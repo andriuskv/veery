@@ -162,3 +162,11 @@
     font-size: var(--text-lg);
   }
 }
+
+.search-playlist-spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  color: var(--color-primary);
+}
