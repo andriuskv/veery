@@ -2,10 +2,6 @@
   z-index: 3;
   user-select: none;
 
-  &.now-playing-visible {
-    visibility: hidden;
-  }
-
   @media (width <= 768px) {
     position: absolute;
     width: 100%;

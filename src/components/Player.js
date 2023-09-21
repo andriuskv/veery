@@ -1,5 +1,5 @@
 import { useState, useEffect, useLayoutEffect, useRef, lazy, Suspense } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { useNotification } from "contexts/notification";
 import { usePlayer } from "contexts/player";
 import Sidebar from "components/Sidebar";
@@ -16,8 +16,9 @@ const NoMatch = lazy(() => import("components/NoMatch"));
 
 export default function Player() {
   const { notifications } = useNotification();
-  const { activeTrack } = usePlayer();
-  const [nowPlayingVisible, setNowPlayingVisible] = useState(false);
+  const { initialized, activeTrack } = usePlayer();
+  const location = useLocation();
+  const navigate = useNavigate();
   const [queueVisible, setQueueVisible] = useState(false);
   const [youtubePlayer, setYoutubePlayer] = useState(() => {
     const mode = localStorage.getItem("youtube-player") || "off";
@@ -25,6 +26,25 @@ export default function Player() {
   });
   const [indicator, setIndicator] = useState(null);
   const indicatorTimeoutId = useRef(0);
+  const lastRoute = useRef("/");
+  const nowPlayingVisible = location.pathname.startsWith("/now-playing");
+
+  useLayoutEffect(() => {
+    if (!initialized) {
+      return;
+    }
+    if (nowPlayingVisible) {
+      if (activeTrack) {
+        window.addEventListener("keydown", handleGlobalKeydown);
+      }
+      else {
+        navigate("/", { replace: true });
+      }
+    }
+    return () => {
+      window.removeEventListener("keydown", handleGlobalKeydown);
+    };
+  }, [initialized, activeTrack, location.pathname]);
 
   useLayoutEffect(() => {
     if (activeTrack) {
@@ -35,10 +55,6 @@ export default function Player() {
         setYoutubePlayer({ ...youtubePlayer.stateBefore });
       }
       return;
-    }
-
-    if (nowPlayingVisible) {
-      setNowPlayingVisible(false);
     }
 
     if (queueVisible) {
@@ -58,15 +74,6 @@ export default function Player() {
 
   }, [youtubePlayer]);
 
-  useEffect(() => {
-    if (nowPlayingVisible) {
-      window.addEventListener("keydown", handleGlobalKeydown);
-    }
-    return () => {
-      window.removeEventListener("keydown", handleGlobalKeydown);
-    };
-  }, [nowPlayingVisible]);
-
   function handleGlobalKeydown({ key }) {
     if (key === "Escape") {
       toggleNowPlaying();
@@ -84,7 +91,14 @@ export default function Player() {
   }
 
   function toggleNowPlaying() {
-    setNowPlayingVisible(!nowPlayingVisible);
+    if (nowPlayingVisible) {
+      navigate(lastRoute.current);
+      lastRoute.current = "";
+    }
+    else {
+      navigate("/now-playing");
+      lastRoute.current = location.pathname;
+    }
   }
 
   function toggleQueue() {
@@ -144,6 +158,7 @@ export default function Player() {
   function renderYoutubePlayer() {
     let classNames = "";
 
+    // if (nowPlayingVisible) {
     if (nowPlayingVisible) {
       if (youtubePlayer.mode === "mini") {
         classNames = " visible";
@@ -159,13 +174,14 @@ export default function Player() {
 
   return (
     <>
-      <Sidebar nowPlayingVisible={nowPlayingVisible}/>
-      <div className={`content${nowPlayingVisible ? " hidden" : ""}`}>
+      {nowPlayingVisible ? null : <Sidebar/>}
+      <div className="content">
         <Suspense fallback={null}>
           <Routes>
             <Route path="/" element={<Home/>}/>
             <Route path="/search" element={<Search/>}/>
             <Route path="/playlist/:id" element={<Playlist/>}/>
+            <Route path="/now-playing" element={activeTrack ? <NowPlaying queueVisible={queueVisible} youtubePlayerMode={youtubePlayer.mode} showIndicator={showIndicator}/> : null}/>
             <Route path="*" element={<NoMatch/>}/>
           </Routes>
         </Suspense>
@@ -173,11 +189,6 @@ export default function Player() {
       <PlayerBar nowPlayingVisible={nowPlayingVisible} queueVisible={queueVisible} youtubePlayer={youtubePlayer}
         toggleNowPlaying={toggleNowPlaying} toggleQueue={toggleQueue} toggleYoutubePlayer={toggleYoutubePlayer}
         showIndicator={showIndicator}/>
-      {nowPlayingVisible && activeTrack && youtubePlayer.mode !== "maximized" && (
-        <Suspense fallback={null}>
-          <NowPlaying queueVisible={queueVisible} youtubePlayerVisible={youtubePlayer.mode === "mini"} showIndicator={showIndicator}/>
-        </Suspense>
-      )}
       {queueVisible && activeTrack && (
         <Suspense fallback={null}>
           <Queue toggleQueue={toggleQueue} nowPlayingVisible={nowPlayingVisible}

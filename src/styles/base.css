@@ -252,10 +252,7 @@ svg {
 
 .content {
   overflow: hidden;
-
-  &.hidden {
-    visibility: hidden;
-  }
+  grid-column: 2 / 3;
 
   @media (width <= 768px) {
     grid-column: 1 / 3;

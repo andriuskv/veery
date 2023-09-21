@@ -3,7 +3,7 @@ import { usePlayer } from "contexts/player";
 import { getArtwork } from "services/artwork";
 import "./now-playing.css";
 
-export default function NowPlaying({ queueVisible, youtubePlayerVisible, showIndicator }) {
+export default function NowPlaying({ queueVisible, youtubePlayerMode, showIndicator }) {
   const { paused, activeTrack, togglePlay } = usePlayer();
   const artworkRef = useRef(null);
   const isSameArtwork = useRef(false);
@@ -11,6 +11,10 @@ export default function NowPlaying({ queueVisible, youtubePlayerVisible, showInd
 
   useLayoutEffect(() => {
     const element = artworkRef.current;
+
+    if (!element) {
+      return;
+    }
 
     element.style.opacity = 0;
     element.style.transition = "none";
@@ -34,20 +38,23 @@ export default function NowPlaying({ queueVisible, youtubePlayerVisible, showInd
       isSameArtwork.current = original.url === element.src;
       element.onload = null;
     };
-  }, [activeTrack]);
+  }, [activeTrack, youtubePlayerMode]);
 
   function handleArtworkClick() {
     togglePlay();
 
-    if (!youtubePlayerVisible) {
+    if (youtubePlayerMode === "off") {
       showIndicator({ iconId: paused ? "play" : "pause" });
     }
   }
 
+  if (youtubePlayerMode === "maximized") {
+    return null;
+  }
   return (
     <div className={`now-playing${queueVisible ? " queue-visible" : ""}${isPlaceholder ? " placeholder" : ""}`}>
       <div className="now-playing-background" style={isPlaceholder ? {} : { "--background-url": `url(${small.url})` }}></div>
-      <div className={`now-playing-artwork-container${youtubePlayerVisible ? " hidden" : ""}`}>
+      <div className={`now-playing-artwork-container${youtubePlayerMode === "mini" ? " hidden" : ""}`}>
         <img src={original.url} className="now-playing-artwork" ref={artworkRef} onClick={handleArtworkClick} alt="" draggable="false"/>
       </div>
       <div className="now-playing-info">
