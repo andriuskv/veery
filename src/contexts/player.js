@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, useRef, useMemo } from "react";
+import { createContext, useContext, useState, useEffect, useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import { dispatchCustomEvent, setPageTitle } from "../utils.js";
 import { usePlaylists } from "contexts/playlist";
@@ -20,8 +20,9 @@ function PlayerProvider({ children }) {
   const [activeTrack, setActiveTrack] = useState(null);
   const [paused, setPaused] = useState(true);
   const [trackLoading, setTrackLoading] = useState(false);
-  const initialized = useRef(false);
+  const [initialized, setInitialized] = useState(false);
   const memoizedValue = useMemo(() => ({
+    initialized,
     paused,
     activePlaylistId,
     activeTrack,
@@ -32,7 +33,7 @@ function PlayerProvider({ children }) {
     playAtIndex,
     playPlaylist,
     playQueueTrack
-  }), [paused, activePlaylistId, activeTrack, trackLoading]);
+  }), [initialized, paused, activePlaylistId, activeTrack, trackLoading]);
 
   useEffect(() => {
     window.addEventListener("player-state", handlePlayerState);
@@ -64,6 +65,16 @@ function PlayerProvider({ children }) {
       }
       else if (location.pathname === "/") {
         setPageTitle("Home");
+      }
+      else if (location.pathname.startsWith("/now-playing")) {
+        if (activeTrack) {
+          const { title, artist } = activeTrack;
+
+          setPageTitle(`Paused - ${artist && title ? `${artist} - ${title}` : title}`);
+        }
+        else {
+          document.title = "Veery";
+        }
       }
       else if (location.pathname.startsWith("/search")) {
         setPageTitle("Search");
@@ -118,14 +129,14 @@ function PlayerProvider({ children }) {
   }, [paused, activeTrack]);
 
   useEffect(() => {
-    if (!playlists || initialized.current) {
+    if (!playlists || initialized) {
       return;
     }
     init();
   }, [playlists]);
 
   function init() {
-    initialized.current = true;
+    setInitialized(true);
 
     const savedTrack = savedTrackService.getTrack();
 

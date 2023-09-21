@@ -5,7 +5,7 @@ import { usePlayer } from "contexts/player";
 import Icon from "components/Icon";
 import "./sidebar.css";
 
-export default function Sidebar({ nowPlayingVisible }) {
+export default function Sidebar() {
   const location = useLocation();
   const { playlists } = usePlaylists();
   const { activePlaylistId, paused } = usePlayer();
@@ -91,8 +91,8 @@ export default function Sidebar({ nowPlayingVisible }) {
 
   return (
     <>
-      {nowPlayingVisible ? null : renderShowButton()}
-      <div className={`sidebar-container${visible ? "": " hidden"}${nowPlayingVisible ? " now-playing-visible" : ""}`} onClick={handleContainerClick}>
+      {renderShowButton()}
+      <div className={`sidebar-container${visible ? "": " hidden"}`} onClick={handleContainerClick}>
         <aside className="sidebar">
           <header className="sidebar-header">
             <h1 className="sidebar-header-title">Veery</h1>
