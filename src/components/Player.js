@@ -158,7 +158,6 @@ export default function Player() {
   function renderYoutubePlayer() {
     let classNames = "";
 
-    // if (nowPlayingVisible) {
     if (nowPlayingVisible) {
       if (youtubePlayer.mode === "mini") {
         classNames = " visible";
