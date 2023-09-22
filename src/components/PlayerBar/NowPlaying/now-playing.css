@@ -44,11 +44,7 @@
       4px 8px 8px 0 var(--color-black-100-1);
 
     &:hover, &:has(:focus-visible) {
-      .artwork-btn {
-        opacity: 1;
-      }
-
-      .artwork {
+       .artwork {
         opacity: 0.4;
       }
     }
@@ -58,27 +54,33 @@
     box-shadow: none;
   }
 
+  .artwork-btn {
+    --button-icon-size: 48px;
+
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+
+    &:hover, &:focus-visible {
+      transform: translate(-50%, -50%);
+
+      .artwork-btn-icon {
+        scale: 1.2;
+      }
+    }
+  }
+
   .artwork-btn-icon {
-    transition: transform 0.2s;
+    transition: 0.2s rotate, 0.2s scale;
 
     &.rotated {
-      transform: rotateZ(180deg);
+      rotate: z 180deg;
     }
   }
 
   @media (width <= 768px) {
     margin-right: var(--space-md);
     border-radius: 4px;
-
-    .artwork-btn {
-      overflow: hidden;
-      width: 100%;
-      height: 100%;
-
-      &:hover, &:focus-visible {
-        transform: translate(-50%, -50%);
-      }
-    }
   }
 }
 

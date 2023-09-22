@@ -48,10 +48,9 @@
   width: 50%;
   height: 50%;
   padding: 0;
-  transition: 0.2s transform;
+  transition: 0.1s opacity, 0.2s transform;
 
-  &:hover,
-  &:focus-visible {
+  &:hover, &:focus-visible {
     --background-color: transparent;
 
     opacity: 1;
@@ -128,7 +127,7 @@
 }
 
 .artwork-container {
-  overflow-x: hidden;
+  overflow: hidden;
   position: relative;
   flex-shrink: 0;
   height: 100%;
