@@ -17,8 +17,13 @@ function playTrack(track, volume, startTime) {
 
   audio.ontimeupdate = function() {
     if (audio.currentTime - currentTime >= 1) {
-      currentTime = Math.round(audio.currentTime);
-      dispatchCustomEvent("current-time-update", currentTime);
+      if (currentTime >= track.durationInSeconds) {
+        dispatchCustomEvent("track-end");
+      }
+      else {
+        currentTime = Math.round(audio.currentTime);
+        dispatchCustomEvent("current-time-update", currentTime);
+      }
     }
   };
 
