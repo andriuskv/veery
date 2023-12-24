@@ -3,11 +3,9 @@
   "rules": {
     "custom-property-empty-line-before": null,
     "value-keyword-case": null,
-    "max-line-length": null,
     "shorthand-property-no-redundant-values": null,
     "font-family-name-quotes": "always-unless-keyword",
     "comment-empty-line-before": null,
-    "selector-list-comma-newline-after": null,
     "value-no-vendor-prefix": null,
     "at-rule-no-unknown": null,
     "no-descending-specificity": null

@@ -5,6 +5,12 @@
   grid-column: 1 / 2;
   max-width: 400px;
 
+  &:hover {
+    .track-link {
+      opacity: 1;
+    }
+  }
+
   .track-title:hover {
     text-decoration: underline;
     cursor: pointer;
@@ -95,11 +101,13 @@
 }
 
 .track-link {
+  opacity: 0;
   align-self: center;
   margin-left: var(--space-sm);
   color: var(--color-white-10);
 
   &:hover, &:focus-visible {
+    opacity: 1;
     color: var(--color-white);
   }
 }
