@@ -5,6 +5,7 @@ import { setPlaylistViewActiveTrack, resetPlaylistViewActiveTrack } from "servic
 import * as playlistService from "services/playlist";
 import * as playerService from "services/player";
 import * as artworkService from "services/artwork";
+import { collectUniqueTracks, updateTracksWithMetadata, getLauncherFileCache } from "services/local";
 import { useNotification } from "contexts/notification";
 
 const PlaylistContext = createContext();
@@ -14,25 +15,26 @@ function PlaylistProvider({ children }) {
   const [playlists, setPlaylists] = useState(null);
   const value = useMemo(() => ({ playlists, createPlaylist, updatePlaylist, removePlaylist, addTracks, uploadFiles }), [playlists]);
   const first = useRef(true);
+  const skip = useRef(false);
 
   useEffect(() => {
     init();
   }, []);
 
   useEffect(() => {
-    if (playlists && first.current) {
+    if (!playlists) {
+      return;
+    }
+
+    if (first.current) {
       first.current = false;
       syncPlaylists();
     }
-    window.addEventListener("drop", handleFileDrop);
-    window.addEventListener("dragover", handleDragOver);
     window.addEventListener("track", handleTrackUpdate);
     window.addEventListener("youtube-tracks", handleYoutubeTracksUpdate);
     window.addEventListener("file-handler", handleFileHandler);
 
     return () => {
-      window.removeEventListener("drop", handleFileDrop);
-      window.addEventListener("dragover", handleDragOver);
       window.removeEventListener("track", handleTrackUpdate);
       window.removeEventListener("youtube-tracks", handleYoutubeTracksUpdate);
       window.removeEventListener("file-handler", handleFileHandler);
@@ -40,14 +42,44 @@ function PlaylistProvider({ children }) {
   }, [playlists]);
 
   async function init() {
+    const cachedFiles = getLauncherFileCache();
     const db = await getDb();
 
     await Promise.all([artworkService.initArtworks(db), playlistService.initPlaylists(db)]);
 
+    if (cachedFiles.length) {
+      initLauncherFiles(cachedFiles);
+      return;
+    }
+    skip.current = true;
+    window.addEventListener("file-handler", async ({ detail }) => {
+      await initLauncherFiles(detail);
+      skip.current = false;
+    }, { once: true });
     setPlaylists(playlistService.getPlaylists());
   }
 
+  async function initLauncherFiles(files) {
+    const playlists = playlistService.getPlaylists();
+    const playlist = playlistService.createPlaylist({
+      id: "local-files",
+      title: "Local Files",
+      viewMode: "compact",
+      tracks: collectUniqueTracks(files, [])
+    });
+
+    setPlaylists({ ...playlists, "local-files": { ...playlist } });
+
+    dispatchCustomEvent("update-indicator-status", { id: "local-files", visible: true });
+    await updateTracksWithMetadata(playlist.tracks);
+    dispatchCustomEvent("update-indicator-status", { id: "local-files", visible: false });
+  }
+
   function handleFileHandler({ detail }) {
+    if (skip.current) {
+      skip.current = false;
+      return;
+    }
     uploadFiles(detail);
   }
 
@@ -106,23 +138,6 @@ function PlaylistProvider({ children }) {
     }
   }
 
-  async function handleFileDrop(event) {
-    event.preventDefault();
-
-    const { readItems } = await import("services/local");
-    const files = await readItems(event.dataTransfer.items);
-
-    if (files.length) {
-      uploadFiles(files);
-    }
-  }
-
-  function handleDragOver(event) {
-    // Preload module here to prevent receiving empty item list in drop handler.
-    import("services/local");
-    event.preventDefault();
-  }
-
   function handleTrackUpdate({ detail: { track, done } }) {
     const { id, tracks } = playlists["local-files"];
     const index = tracks.findIndex(({ id }) => track.id === id);
@@ -139,7 +154,6 @@ function PlaylistProvider({ children }) {
   }
 
   async function uploadFiles(files) {
-    const { collectUniqueTracks, updateTracksWithMetadata } = await import("services/local");
     const id = "local-files";
     const pl = playlists[id];
     const playlistTracks = pl ? pl.tracks: [];
