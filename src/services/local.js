@@ -189,25 +189,40 @@ function readFile(entry) {
   });
 }
 
+window.addEventListener("drop", async event => {
+  event.preventDefault();
+
+  if (event.dataTransfer.items.length) {
+    const files = await readItems(event.dataTransfer.items);
+
+    dispatchCustomEvent("file-handler", files);
+  }
+});
+
+window.addEventListener("dragover", event => {
+  event.preventDefault();
+});
+
+let fileCache = [];
+let first = true;
+
+function getLauncherFileCache() {
+  return fileCache;
+}
+
 document.addEventListener("paste", async event => {
-  const clipboardItems = typeof navigator?.clipboard?.read === "function" ? await navigator.clipboard.read() : event.clipboardData.files;
+  const clipboardItems = await navigator.clipboard.read();
   const blobs = [];
 
   event.preventDefault();
 
   for (const clipboardItem of clipboardItems) {
-    // For files from `e.clipboardData.files`.
-    if (clipboardItem.type?.startsWith("audio/")) {
-      blobs.push(clipboardItem);
-    } else {
-      // For files from `navigator.clipboard.read()`.
-      const audioTypes = clipboardItem.types?.filter(type => type.startsWith("audio/"));
+    const audioTypes = clipboardItem.types?.filter(type => type.startsWith("audio/"));
 
-      for (const audioType of audioTypes) {
-        const blob = await clipboardItem.getType(audioType);
+    for (const audioType of audioTypes) {
+      const blob = await clipboardItem.getType(audioType);
 
-        blobs.push(blob);
-      }
+      blobs.push(blob);
     }
   }
 
@@ -230,6 +245,13 @@ if ("launchQueue" in window && "files" in window.LaunchParams.prototype) {
     }
 
     if (blobs.length) {
+      if (first) {
+        first = false;
+        fileCache = [...blobs];
+      }
+      else {
+        fileCache.length = 0;
+      }
       dispatchCustomEvent("file-handler", blobs);
     }
   });
@@ -239,5 +261,6 @@ export {
   collectUniqueTracks,
   updateTrackWithMetadata,
   updateTracksWithMetadata,
-  readItems
+  readItems,
+  getLauncherFileCache
 };
