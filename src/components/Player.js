@@ -1,5 +1,6 @@
 import { useState, useEffect, useLayoutEffect, useRef, lazy, Suspense } from "react";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
+import { savePlaylistScrollPos } from "services/playlist-view";
 import { useNotification } from "contexts/notification";
 import { usePlayer } from "contexts/player";
 import Sidebar from "components/Sidebar";
@@ -96,6 +97,7 @@ export default function Player() {
       lastRoute.current = "";
     }
     else {
+      savePlaylistScrollPos();
       navigate("/now-playing");
       lastRoute.current = location.pathname;
     }
