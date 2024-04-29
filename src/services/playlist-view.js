@@ -8,6 +8,7 @@ let observer = null;
 let visiblePlaylistId = "";
 let searchValue = "";
 let activeTrack = null;
+let scrollPos = 0;
 
 function getVisiblePlaylistId() {
   return visiblePlaylistId;
@@ -57,6 +58,23 @@ function reobserveTrack(track) {
     observer.unobserve(element);
     observer.observe(element);
   }
+}
+
+function savePlaylistScrollPos() {
+  if (playlistElement) {
+    scrollPos = playlistElement.scrollTop;
+  }
+}
+
+function resetPlaylistScrollPos() {
+  scrollPos = 0;
+}
+
+function restorePlaylistScrollPos() {
+  requestAnimationFrame(() => {
+    playlistElement.scrollTop = scrollPos;
+    scrollPos = 0;
+  });
 }
 
 function cleanupPlaylistView() {
@@ -631,10 +649,11 @@ function scrollActiveTrackIntoView(id) {
   if (playlistId === id) {
     if (activeTrack && playlistElement) {
       scrollTrackIntoView();
+      resetPlaylistScrollPos();
     }
   }
   else if (playlistElement) {
-    scrollToBeginning();
+    restorePlaylistScrollPos();
   }
 }
 
@@ -650,15 +669,11 @@ function scrollTrackIntoView() {
   });
 }
 
-function scrollToBeginning() {
-  requestAnimationFrame(() => {
-    playlistElement.scrollTop = 0;
-  });
-}
-
 export {
   getVisiblePlaylistId,
   reobserveTrack,
+  savePlaylistScrollPos,
+  restorePlaylistScrollPos,
   cleanupPlaylistView,
   createPlaylistView,
   getIcon,
