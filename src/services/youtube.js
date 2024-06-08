@@ -6,7 +6,7 @@ import { getPlaylistById } from "services/playlist";
 
 let userPlaylists = null;
 let user = null;
-let accessToken = "";
+let auth = null;
 
 async function fetchYoutubeUserPlaylists() {
   const response = await fetchYoutube("playlists", "snippet,contentDetails,status", "mine", true);
@@ -179,15 +179,20 @@ function parseYoutubeUserPlaylists(items) {
   }));
 }
 
-function fetchYoutube(path, part, filter, id, token) {
+async function fetchYoutube(path, part, filter, id, token) {
   let params = `part=${part}&${filter}=${id}&maxResults=50&key=${process.env.YOUTUBE_API_KEY}`;
 
   if (token) {
     params += `&pageToken=${token}`;
   }
 
-  if (accessToken) {
-    params += `&access_token=${accessToken}`;
+  if (auth) {
+    if (Date.now() > auth.expiresAt) {
+      const instance = gapi.auth2.getAuthInstance();
+      await instance.signIn();
+      setUser(instance);
+    }
+    params += `&access_token=${auth.token}`;
   }
 
   return fetch(`https://www.googleapis.com/youtube/v3/${path}?${params}`)
@@ -197,8 +202,12 @@ function fetchYoutube(path, part, filter, id, token) {
 function setUser(instance) {
   const currentUser = instance.currentUser.get();
   const profile = currentUser.getBasicProfile();
+  const res = currentUser.getAuthResponse();
 
-  accessToken = currentUser.getAuthResponse().access_token;
+  auth = {
+    token: res.access_token,
+    expiresAt: res.expires_at
+  };
 
   user = {
     name: profile.getName(),
@@ -214,7 +223,7 @@ function getUser() {
 async function logoutUser() {
   const instance = gapi.auth2.getAuthInstance();
 
-  accessToken = "";
+  auth = null;
   user = null;
 
   return instance.signOut();

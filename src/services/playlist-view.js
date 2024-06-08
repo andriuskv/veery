@@ -673,7 +673,6 @@ export {
   getVisiblePlaylistId,
   reobserveTrack,
   savePlaylistScrollPos,
-  restorePlaylistScrollPos,
   cleanupPlaylistView,
   createPlaylistView,
   getIcon,
