@@ -34,17 +34,17 @@ export default function Selection({ playlist, removeSelectedTracks, hide }) {
     <Dropdown container={{ className: "js-selection-btn" }}>
       {activeTrack ? (
         <button className="btn icon-text-btn dropdown-btn" onClick={enqueueSelectedTracks}>
-          <Icon id="playlist-add" title="Add to queue"/>
+          <Icon id="playlist-add"/>
           <span>Add to queue</span>
         </button>
       ) : null}
       <button className="btn icon-text-btn dropdown-btn" onClick={removeSelectedTracks}>
-        <Icon id="trash" title="Remove selected"/>
+        <Icon id="trash"/>
         <span>Remove selected</span>
       </button>
       <button className="btn icon-text-btn dropdown-btn" onClick={cancelSelection}>
-        <Icon id="close" title="Cancel"/>
-        <span>Clear selected</span>
+        <Icon id="close"/>
+        <span>Clear selection</span>
       </button>
     </Dropdown>
   );
