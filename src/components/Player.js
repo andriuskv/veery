@@ -49,7 +49,7 @@ export default function Player() {
 
   useLayoutEffect(() => {
     if (activeTrack) {
-      if (activeTrack.player === "native" && youtubePlayer.mode !== "off") {
+      if (activeTrack.player === "native" && youtubePlayer.mode !== "off" && !youtubePlayer.stateBefore) {
         setYoutubePlayer({ stateBefore: youtubePlayer });
       }
       else if (activeTrack.player === "youtube" && youtubePlayer.stateBefore) {

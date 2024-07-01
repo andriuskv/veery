@@ -24,6 +24,11 @@
   width: 100%;
   height: 100%;
 
+  &.placeholder .now-playing-artwork {
+    object-fit: none;
+    width: 100%;
+  }
+
   &:not(.placeholder) .now-playing-background {
     background-image: var(--dimmed-bottom), var(--background-url);
   }
