@@ -20,8 +20,8 @@ export default function Sort({ playlist, playlistRef, updateSortedPlaylist }) {
     if (sortBy === state.sortBy && sortOrder === state.sortOrder) {
       return;
     }
-    updateSortedPlaylist({ sortBy, sortOrder });
     setSortOrder({ ...playlist, sortBy, sortOrder });
+    updateSortedPlaylist({ sortBy, sortOrder });
     setState({ sortBy, sortOrder });
     createPlaylistView(playlistRef.current, playlist);
   }

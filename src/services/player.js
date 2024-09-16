@@ -59,18 +59,8 @@ function getPlaybackIndex() {
   return playbackIndex;
 }
 
-function setPlaybackIndex(trackIndex, playlistId) {
-  let index = -1;
-
-  // We don't have to follow sort order if playlist is shuffled.
-  if (getSetting("shuffle")) {
-    index = trackIndex;
-  }
-  else {
-    const { sortOrder } = getPlaylistState(playlistId);
-    index = sortOrder.indexOf(trackIndex);
-  }
-  playbackIndex = playbackOrder.indexOf(index);
+function setPlaybackIndex(trackIndex) {
+  playbackIndex = playbackOrder.indexOf(trackIndex);
   playbackIndex = playbackIndex < 0 ? -1 : playbackIndex;
 }
 
@@ -108,15 +98,20 @@ function setPlaybackOrder(id, trackIndex = -1) {
   }
   const shuffle = getSetting("shuffle");
   const { tracks } = getPlaylistById(id);
-  const trackIndexes = tracks.map(({ index }) => index);
 
-  playbackOrder = shuffle ? shuffleArray(trackIndexes) : trackIndexes;
-  excludedPlaybackItems.length = 0;
+  if (shuffle) {
+    const trackIndexes = tracks.map(({ index }) => index);
+    playbackOrder = shuffleArray(trackIndexes);
 
-  // Make track appear first in playback order when playlist is shuffled.
-  if (shuffle && trackIndex >= 0) {
-    swapFirstPlaybackOrderItem(trackIndex);
+    // Make track appear first in playback order when playlist is shuffled.
+    if (trackIndex >= 0) {
+      swapFirstPlaybackOrderItem(trackIndex);
+    }
   }
+  else {
+    playbackOrder = getPlaylistState(id).sortOrder;
+  }
+  excludedPlaybackItems.length = 0;
   updateActiveTrackIndex(tracks, id);
 }
 
@@ -423,15 +418,7 @@ function getNextTrack(direction, playlistId, wrap) {
     return null;
   }
   const trackIndex = getNextTrackIndex(direction, wrap);
-
-  // We don't have to follow sort order if playlist is shuffled.
-  if (getSetting("shuffle")) {
-    return playlist.tracks[trackIndex];
-  }
-  const { sortOrder } = getPlaylistState(playlistId);
-  const sortIndex = sortOrder[trackIndex];
-
-  return playlist.tracks[sortIndex];
+  return playlist.tracks[trackIndex];
 }
 
 export {

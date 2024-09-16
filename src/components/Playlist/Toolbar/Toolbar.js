@@ -93,7 +93,7 @@ export default function Toolbar({ playlist, playlistRef, setMessage }) {
   }
 
   function updateSortedPlaylist({ sortBy, sortOrder }) {
-    updateActiveTrackIndex(playlist.tracks, playlist.id);
+    setPlaybackOrder(playlist.id);
     updatePlaylist(playlist.id, { sortBy, sortOrder });
   }
 
