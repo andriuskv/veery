@@ -159,6 +159,9 @@ function getSortingValue(sortBy, track) {
   else if (sortBy === "duration") {
     return track.durationInSeconds;
   }
+  else if (sortBy === "date") {
+    return track.date;
+  }
   // Remove special characters.
   return track[sortBy].toLowerCase().replace(/[^\w\s]/gi, "");
 }

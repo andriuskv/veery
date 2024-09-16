@@ -20,6 +20,7 @@ function collectUniqueTracks(files, currentTracks) {
       tracks.push({
         needsMetadata: true,
         id: getRandomString(),
+        date: file.lastModified,
         audioTrack: file,
         name,
         title: name,
