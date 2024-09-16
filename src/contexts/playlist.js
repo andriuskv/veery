@@ -144,7 +144,7 @@ function PlaylistProvider({ children }) {
 
     if (index >= 0) {
       tracks[index] = track;
-      updatePlaylist(id, { tracks }, done);
+      updatePlaylist(id, { tracks }, { done, sort: false });
     }
   }
 
@@ -189,10 +189,10 @@ function PlaylistProvider({ children }) {
     });
   }
 
-  function updatePlaylist(id, data, done) {
+  function updatePlaylist(id, data, options) {
     setPlaylists({
       ...playlists,
-      [id]: playlistService.updatePlaylist(id, data, done)
+      [id]: playlistService.updatePlaylist(id, data, options)
     });
   }
 
@@ -206,7 +206,7 @@ function PlaylistProvider({ children }) {
 
     updatePlaylist(id, {
       tracks: playlistService.addTracks(id, tracks, false)
-    }, done);
+    }, { done });
 
     if (id === activePlaylistId) {
       playerService.setPlaybackOrder(activePlaylistId, playerService.getPlaybackIndex());

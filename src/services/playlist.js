@@ -71,7 +71,7 @@ function createPlaylist(playlist) {
   return pl;
 }
 
-function updatePlaylist(id, data, done = true) {
+function updatePlaylist(id, data, { done = true, sort = true } = {}) {
   playlists[id] = { ...playlists[id], ...data };
 
   if (data.tracks) {
@@ -79,7 +79,10 @@ function updatePlaylist(id, data, done = true) {
 
     if (done) {
       playlistState[id].thumbnail = getPlaylistThumbnailImages(data.tracks);
-      setSortOrder(playlists[id]);
+
+      if (sort) {
+        setSortOrder(playlists[id]);
+      }
     }
   }
 

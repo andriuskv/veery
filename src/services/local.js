@@ -262,6 +262,5 @@ export {
   collectUniqueTracks,
   updateTrackWithMetadata,
   updateTracksWithMetadata,
-  readItems,
   getLauncherFileCache
 };
