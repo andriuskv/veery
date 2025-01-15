@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, useMemo } from "react";
+import { createContext, use, useState, useEffect, useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import { dispatchCustomEvent, setPageTitle } from "../utils.js";
 import { usePlaylists } from "contexts/playlist";
@@ -297,11 +297,11 @@ function PlayerProvider({ children }) {
     dispatchCustomEvent("current-time-update", currentTime);
   }
 
-  return <PlayerContext.Provider value={memoizedValue}>{children}</PlayerContext.Provider>;
+  return <PlayerContext value={memoizedValue}>{children}</PlayerContext>;
 }
 
 function usePlayer() {
-  return useContext(PlayerContext);
+  return use(PlayerContext);
 }
 
 export {

@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, useRef, useMemo } from "react";
+import { createContext, use, useState, useEffect, useRef, useMemo } from "react";
 import { openDB } from "idb";
 import { dispatchCustomEvent } from "../utils.js";
 import { setPlaylistViewActiveTrack, resetPlaylistViewActiveTrack } from "services/playlist-view";
@@ -213,11 +213,11 @@ function PlaylistProvider({ children }) {
     }
   }
 
-  return <PlaylistContext.Provider value={value}>{children}</PlaylistContext.Provider>;
+  return <PlaylistContext value={value}>{children}</PlaylistContext>;
 }
 
 function usePlaylists() {
-  return useContext(PlaylistContext);
+  return use(PlaylistContext);
 }
 
 export {

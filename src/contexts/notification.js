@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, useRef, useMemo } from "react";
+import { createContext, use, useState, useEffect, useRef, useMemo } from "react";
 import { getRandomString } from "../utils";
 
 const NotificationContext = createContext();
@@ -70,11 +70,11 @@ function NotificationProvider({ children }) {
     setNotifications([...notifications]);
   }
 
-  return <NotificationContext.Provider value={value}>{children}</NotificationContext.Provider>;
+  return <NotificationContext value={value}>{children}</NotificationContext>;
 }
 
 function useNotification() {
-  return useContext(NotificationContext);
+  return use(NotificationContext);
 }
 
 export {

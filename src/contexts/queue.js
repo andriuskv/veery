@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useMemo } from "react";
+import { createContext, use, useState, useMemo } from "react";
 import * as queueService from "services/queue";
 
 const QueueContext = createContext();
@@ -41,11 +41,11 @@ function QueueProvider({ children }) {
     return track;
   }
 
-  return <QueueContext.Provider value={value}>{children}</QueueContext.Provider>;
+  return <QueueContext value={value}>{children}</QueueContext>;
 }
 
 function useQueue() {
-  return useContext(QueueContext);
+  return use(QueueContext);
 }
 
 export {
