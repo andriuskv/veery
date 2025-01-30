@@ -1,4 +1,4 @@
-/* global gapi */
+/* global google */
 
 import { dispatchCustomEvent, scriptLoader, formatTime } from "../utils.js";
 import { setArtwork } from "services/artwork";
@@ -7,6 +7,7 @@ import { getPlaylistById } from "services/playlist";
 let userPlaylists = null;
 let user = null;
 let auth = null;
+let client = null;
 
 async function fetchYoutubeUserPlaylists() {
   const response = await fetchYoutube("playlists", "snippet,contentDetails,status", "mine", true);
@@ -188,9 +189,7 @@ async function fetchYoutube(path, part, filter, id, token) {
 
   if (auth) {
     if (Date.now() > auth.expiresAt) {
-      const instance = gapi.auth2.getAuthInstance();
-      await instance.signIn();
-      setUser(instance);
+      await fetchToken();
     }
     params += `&access_token=${auth.token}`;
   }
@@ -199,55 +198,71 @@ async function fetchYoutube(path, part, filter, id, token) {
     .then(response => response.json());
 }
 
-function setUser(instance) {
-  const currentUser = instance.currentUser.get();
-  const profile = currentUser.getBasicProfile();
-  const res = currentUser.getAuthResponse();
-
-  auth = {
-    token: res.access_token,
-    expiresAt: res.expires_at
-  };
-
-  user = {
-    name: profile.getName(),
-    email: profile.getEmail(),
-    image: profile.getImageUrl()
-  };
-}
-
 function getUser() {
   return user;
 }
 
-async function logoutUser() {
-  const instance = gapi.auth2.getAuthInstance();
-
+function logoutUser() {
   auth = null;
   user = null;
-
-  return instance.signOut();
+  localStorage.removeItem("yt-token");
 }
 
-async function initGoogleAPI(shouldSignIn) {
+function fetchUser(token) {
+  return fetch(`https://people.googleapis.com/v1/people/me?personFields=emailAddresses,names,photos&key=${process.env.YOUTUBE_API_KEY}&access_token=${token}`).then(res => res.json());
+}
+
+async function initGoogleAPI() {
   if (user) {
     return user;
   }
-  await scriptLoader.load({ src: "https://apis.google.com/js/platform.js" });
-  await new Promise(resolve => gapi.load("auth2", resolve));
-  const instance = await gapi.auth2.init({
-    client_id: process.env.GOOGLE_CLIENT_ID,
-    scope: "https://www.googleapis.com/auth/youtube.readonly"
-  });
+  const store = JSON.parse(localStorage.getItem("yt-token"));
 
-  if (instance.isSignedIn.get()) {
-    setUser(instance);
+  if (store && store.expiresAt > Date.now()) {
+    user = {
+      email: store.email,
+      name: store.name,
+      image: store.image
+    };
+    auth = {
+      token: store.token,
+      expiresAt: store.expiresAt
+    };
+    return user;
   }
-  else if (shouldSignIn) {
-    await instance.signIn();
-    setUser(instance);
-  }
-  return user;
+  return fetchToken();
+}
+
+function fetchToken() {
+  return new Promise(async resolve => {
+    window.onGoogleLibraryLoad = () => {
+      client = google.accounts.oauth2.initTokenClient({
+        client_id: process.env.GOOGLE_CLIENT_ID,
+        scope: "https://www.googleapis.com/auth/youtube.readonly",
+        callback: async tokenResponse => {
+          const json = await fetchUser(tokenResponse.access_token);
+
+          user = {
+            email: json.emailAddresses[0].value,
+            name: json.names[0].displayName,
+            image: json.photos[0].url
+          };
+          auth = {
+            token: tokenResponse.access_token,
+            expiresAt: Date.now() + tokenResponse.expires_in * 1000,
+          };
+          resolve(user);
+          localStorage.setItem("yt-token", JSON.stringify({
+            ...user,
+            ...auth
+          }));
+        },
+      });
+
+      client.requestAccessToken();
+    };
+    await scriptLoader.load({ src: "https://accounts.google.com/gsi/client" });
+  });
 }
 
 export {

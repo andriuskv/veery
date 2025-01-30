@@ -57,7 +57,7 @@ export default function Import({ youtube, setYoutube }) {
   }
 
   async function logoutYoutubeUser() {
-    await logoutUser();
+    logoutUser();
     setYoutube({});
   }
 
