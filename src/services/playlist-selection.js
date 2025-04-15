@@ -119,7 +119,12 @@ function handlePointerMove(event) {
         }
 
         if (scrollDirection) {
-          intervalId = setInterval(scrollDirection, 40, event.ctrlKey);
+          let mult = 1;
+
+          intervalId = setInterval(() => {
+            scrollDirection(event.ctrlKey, mult);
+            mult = mult < 5 ? mult * 1.05 : mult;
+          }, 40);
         }
       }
       else if (pointerYRelativeToPage > playlist.offsetY && pointerYRelativeToPage < height) {
@@ -394,9 +399,9 @@ function stopScrolling() {
   intervalId = 0;
 }
 
-function scrollDown(ctrlKey) {
+function scrollDown(ctrlKey, mult) {
   const { scrollHeight, height } = playlist.rect;
-  playlist.element.scrollTop += 36;
+  playlist.element.scrollTop += 36 * mult;
   pointerPosition.y = playlist.element.scrollTop + height;
 
   if (pointerPosition.y >= scrollHeight) {
@@ -407,8 +412,8 @@ function scrollDown(ctrlKey) {
   selectTrackElements(ctrlKey);
 }
 
-function scrollUp(ctrlKey) {
-  playlist.element.scrollTop -= 36;
+function scrollUp(ctrlKey, mult) {
+  playlist.element.scrollTop -= 36 * mult;
   pointerPosition.y = playlist.element.scrollTop;
 
   if (pointerPosition.y <= 0) {
