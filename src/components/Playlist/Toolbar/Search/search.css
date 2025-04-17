@@ -1,14 +1,10 @@
 .playlist-toolbar-search {
-  z-index: 1;
-  position: absolute;
-  left: 0;
   width: 100%;
-  background-color: var(--color-grey-70);
+  margin-right: auto;
+}
 
-  @media (width <= 768px) {
-    padding-left: 48px;
-    padding-right: var(--space-md);
-  }
+.playlist-toolbar-search-btn {
+  margin-right: auto;
 }
 
 .playlist-toolbar-search-enable-btn {
@@ -17,6 +13,7 @@
 
 .playlist-toolbar-search-input-container {
   position: relative;
+  max-width: 600px;
   width: 50%;
   margin: 0 auto;
   border-radius: 999px;

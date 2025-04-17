@@ -85,7 +85,7 @@ export default function Search({ playlistId, setMessage }) {
     );
   }
   return (
-    <button className="btn icon-text-btn" onClick={enableSearch}>
+    <button className="btn icon-text-btn playlist-toolbar-search-btn" onClick={enableSearch}>
       <Icon id="search"/>
       <span>Search</span>
     </button>
