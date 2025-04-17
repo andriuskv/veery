@@ -1,6 +1,5 @@
 .view-modes {
   display: flex;
-  margin-right: auto;
 
   @media (width <= 768px) {
     display: none;
