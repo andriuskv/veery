@@ -1,5 +1,4 @@
 import { useState, useEffect, useLayoutEffect, useRef, useMemo } from "react";
-import { createPlaylist, updatePlaylist, removePlaylist } from "services/playlist";
 import { createPlaylistView, cleanupPlaylistView } from "services/playlist-view";
 import { getActiveTrack } from "services/player";
 import { usePlaylists } from "contexts/playlist";
@@ -7,14 +6,14 @@ import { usePlayer } from "contexts/player";
 import Icon from "components/Icon";
 import ViewModes from "components/ViewModes";
 import Sort from "components/Sort";
+import Selection from "components/Selection";
 import "./search.css";
 
 export default function Search() {
-  const { playlists } = usePlaylists();
+  const { playlists, createPlaylist, updatePlaylist, removePlaylist } = usePlaylists();
   const { activePlaylistId, togglePlay, playAtIndex } = usePlayer();
   const [value, setValue] = useState("");
   const [tracks, setTracks] = useState([]);
-  const [playlist, setPlaylist] = useState(null);
   const [pending, setPending] = useState(false);
   const playlistRef = useRef(null);
   const timeoutId = useRef(0);
@@ -22,6 +21,7 @@ export default function Search() {
     const media = window.matchMedia("(max-width: 1024px)");
     return media.matches ? "grid": "compact";
   }, []);
+  const playlist = playlists.search;
 
   useEffect(() => {
     return () => {
@@ -34,21 +34,14 @@ export default function Search() {
     if (tracks.length) {
       const pl = playlist ? updatePlaylist("search", { tracks }) : createPlaylist({ id: "search", tracks, viewMode });
 
-      setPlaylist({ ...pl });
       createPlaylistView(playlistRef.current, pl);
     }
     else if (playlistRef.current) {
       playlistRef.current.innerHTML = null;
       cleanupPlaylistView();
+      removePlaylist("search");
     }
   }, [tracks]);
-
-  function changeViewMode(viewMode) {
-    playlist.viewMode = viewMode;
-
-    updatePlaylist("search", { viewMode });
-    createPlaylistView(playlistRef.current, playlist);
-  }
 
   function handleInputChange({ target }) {
     setValue(target.value);
@@ -73,6 +66,10 @@ export default function Search() {
     let tracks = [];
 
     for (const playlist of Object.values(playlists)) {
+      // Skip search playlist to prevent duplicate entries
+      if (playlist.id === "search") {
+        continue;
+      }
       tracks = tracks.concat(playlist.tracks.map(track => {
         return {
           ...track,
@@ -95,7 +92,6 @@ export default function Search() {
   function handleCleanup() {
     clearTimeout(timeoutId.current);
     setValue("");
-    setPlaylist(null);
     setTracks([]);
     setPending(false);
   }
@@ -141,7 +137,7 @@ export default function Search() {
       return <p className="search-playlist-message">No matches found</p>;
     }
     else if (!tracks.length) {
-      return <p className="search-playlist-message">Search for tracks across all playlists.</p>;
+      return <p className="search-playlist-message">Search for tracks across all playlists</p>;
     }
     return null;
   }
@@ -171,7 +167,8 @@ export default function Search() {
       <div className="search-playlist-container">
         {playlist ? (
           <div className="search-playlist-toolbar">
-            <ViewModes startViewMode={viewMode} changeViewMode={changeViewMode} hideMinimal={true}/>
+            <ViewModes playlist={playlist} playlistRef={playlistRef} updatePlaylist={updatePlaylist} hideMinimal={true}/>
+            <Selection playlist={playlist} playlistRef={playlistRef}/>
             <Sort playlist={playlist} playlistRef={playlistRef} updateSortedPlaylist={updateSortedPlaylist}/>
           </div>
         ) : null}

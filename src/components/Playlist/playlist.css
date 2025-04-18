@@ -32,25 +32,6 @@
   }
 }
 
-.selection-area {
-  z-index: 1;
-  position: absolute;
-  border: 1px solid var(--color-primary);
-  background-color: var(--color-primary-10);
-  will-change: top, left, width, height;
-  pointer-events: none;
-
-  & ~ .playlist-items .track:hover:not(.playing) {
-    .artwork-btn {
-      display: none;
-    }
-
-    .track-index, .artwork {
-      opacity: 1;
-    }
-  }
-}
-
 .playlist-message {
   position: absolute;
   top: 50%;
