@@ -345,9 +345,9 @@ function createPlaylistView(container, playlist) {
   }
 
   if (playlist.id !== "search") {
-    enableTrackSelection(container, playlist.viewMode);
     window.addEventListener("tracks", handleTracksUpdate);
   }
+  enableTrackSelection(container, playlist.viewMode);
 }
 
 function updatePlaylistView(container, playlistId) {
@@ -586,9 +586,10 @@ function togglePlayPauseBtns(paused) {
   }
   else {
     const element = getSearchTrackElement();
+    const btnElement = element.querySelector(".icon-btn");
 
-    if (element) {
-      setElementIconAndTitle(element.querySelector(".artwork-btn"), paused);
+    if (btnElement) {
+      setElementIconAndTitle(btnElement, paused);
     }
   }
 }

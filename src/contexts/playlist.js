@@ -13,7 +13,7 @@ const PlaylistContext = createContext();
 function PlaylistProvider({ children }) {
   const { showNotification } = useNotification();
   const [playlists, setPlaylists] = useState(null);
-  const value = useMemo(() => ({ playlists, createPlaylist, updatePlaylist, removePlaylist, addTracks, uploadFiles }), [playlists]);
+  const value = useMemo(() => ({ playlists, createPlaylist, updatePlaylist, removePlaylist, addTracks, uploadFiles, updatePlaylists }), [playlists]);
   const first = useRef(true);
   const skip = useRef(false);
 
@@ -93,7 +93,7 @@ function PlaylistProvider({ children }) {
           db.createObjectStore("playlists", { keyPath: "id" });
         }
       });
-    } catch (e) {
+    } catch {
       db = await new Promise(resolve => {
         const req = indexedDB.deleteDatabase("veery");
 
@@ -183,16 +183,31 @@ function PlaylistProvider({ children }) {
   }
 
   function createPlaylist(playlist) {
+    const newPlaylist = playlistService.createPlaylist(playlist);
+
     setPlaylists({
       ...playlists,
-      [playlist.id]: playlistService.createPlaylist(playlist)
+      [playlist.id]: newPlaylist
     });
+
+    return newPlaylist;
   }
 
   function updatePlaylist(id, data, options) {
+    const updatedPlaylist = playlistService.updatePlaylist(id, data, options);
+
     setPlaylists({
       ...playlists,
-      [id]: playlistService.updatePlaylist(id, data, options)
+      [id]: updatedPlaylist
+    });
+
+    return updatedPlaylist;
+  }
+
+  function updatePlaylists(updatedPlaylists) {
+    setPlaylists({
+      ...playlists,
+      ...updatedPlaylists
     });
   }
 

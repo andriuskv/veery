@@ -115,7 +115,7 @@ export default function Sidebar() {
             {playlists ? (
               <ul className="sidebar-playlist-links">
                 {Object.values(playlists).map(playlist => (
-                  <li key={playlist.id}>
+                  playlist.id === "search" ? null : <li key={playlist.id}>
                     <NavLink to={`/playlist/${playlist.id}`} className={getNavLinkClassName} draggable="false">
                       <span className="sidebar-playlist-title">{playlist.title}</span>
                       {renderIndicator(playlist.id)}

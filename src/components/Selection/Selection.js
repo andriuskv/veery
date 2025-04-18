@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { getRandomString } from "../../utils";
-import { setTrackIndexes } from "services/playlist";
+import { setTrackIndexes, getPlaylistById, updatePlaylist as updateServicePlaylist } from "services/playlist";
 import { getSelectedElements, getElementIndexes, resetSelection, selectAllTracks, removeSelectedElements, selectTrackElementAtIndex } from "services/playlist-selection";
 import { setPlaylistViewActiveTrack } from "services/playlist-view";
 import { getActiveTrack, setPlaybackOrder } from "services/player";
@@ -11,7 +11,7 @@ import Icon from "components/Icon";
 import Dropdown from "components/Dropdown";
 
 export default function Selection({ playlist }) {
-  const { updatePlaylist } = usePlaylists();
+  const { updatePlaylist, updatePlaylists } = usePlaylists();
   const { activePlaylistId, activeTrack } = usePlayer();
   const { enqueueTracks } = useQueue();
   const [selection, setSelection] = useState(false);
@@ -78,7 +78,75 @@ export default function Selection({ playlist }) {
     cancelSelection();
   }
 
+  function removeSearchTracks() {
+    const elements = getSelectedElements();
+    const indexes = getElementIndexes(elements);
+    const firstSelectedTrackIndex = indexes[0];
+    const searchTracksToKeep = [];
+    const playlists = {};
+    let oneOfActive = false;
+
+    for (const track of playlist.tracks) {
+      if (!indexes.includes(track.index)) {
+        searchTracksToKeep.push(track);
+      }
+    }
+
+    for (const index of indexes) {
+      const track = playlist.tracks[index];
+
+      if (playlists[track.playlistId]) {
+        playlists[track.playlistId].push(track.playlistIndex);
+      }
+      else {
+        playlists[track.playlistId] = [track.playlistIndex];
+      }
+    }
+    const updatedPlaylists = {};
+
+    for (const playlistId in playlists) {
+      const playlist = getPlaylistById(playlistId);
+      const tracksToKeep = [];
+      const indexesToRemove = [];
+
+      if (playlistId === activePlaylistId) {
+        oneOfActive = true;
+      }
+
+      for (const index of playlists[playlistId]) {
+        indexesToRemove.push(index);
+      }
+
+      for (const track of playlist.tracks) {
+        if (!indexesToRemove.includes(track.index)) {
+          tracksToKeep.push(track);
+        }
+      }
+      updatedPlaylists[playlistId] = updateServicePlaylist(playlistId, { tracks: setTrackIndexes(tracksToKeep) });
+    }
+    updatedPlaylists.search = updateServicePlaylist("search", { tracks: setTrackIndexes(searchTracksToKeep) });
+
+    updatePlaylists(updatedPlaylists);
+    removeSelectedElements(elements, playlist);
+    selectTrackElementAtIndex(firstSelectedTrackIndex);
+
+    if (oneOfActive) {
+      setPlaybackOrder(activePlaylistId);
+
+      const activeTrack = getActiveTrack();
+
+      if (activeTrack) {
+        setPlaylistViewActiveTrack(activeTrack.index, activePlaylistId);
+      }
+    }
+    hideSelection();
+  }
+
   function removeSelectedTracks() {
+    if (playlist.id === "search") {
+      removeSearchTracks();
+      return;
+    }
     const elements = getSelectedElements();
     const indexes = getElementIndexes(elements);
     const firstSelectedTrackIndex = indexes[0];
