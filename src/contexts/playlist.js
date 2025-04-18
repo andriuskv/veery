@@ -60,12 +60,14 @@ function PlaylistProvider({ children }) {
   }
 
   async function initLauncherFiles(files) {
+    const prefs = JSON.parse(localStorage.getItem("local-files")) || null;
     const playlists = playlistService.getPlaylists();
     const playlist = playlistService.createPlaylist({
       id: "local-files",
       title: "Local Files",
       viewMode: "compact",
-      tracks: collectUniqueTracks(files, [])
+      tracks: collectUniqueTracks(files, []),
+      ...prefs
     });
 
     setPlaylists({ ...playlists, "local-files": { ...playlist } });
@@ -144,7 +146,7 @@ function PlaylistProvider({ children }) {
 
     if (index >= 0) {
       tracks[index] = track;
-      updatePlaylist(id, { tracks }, { done, sort: false });
+      updatePlaylist(id, { tracks }, { done, sort: done });
     }
   }
 
@@ -167,11 +169,14 @@ function PlaylistProvider({ children }) {
         dispatchCustomEvent("tracks", { id, tracks });
       }
       else {
+        const prefs = JSON.parse(localStorage.getItem(id)) || null;
+
         createPlaylist({
           id,
           title: "Local Files",
           viewMode: "compact",
-          tracks
+          tracks,
+          ...prefs
         });
       }
       await updateTracksWithMetadata(tracks);
