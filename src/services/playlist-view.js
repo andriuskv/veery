@@ -584,12 +584,15 @@ function togglePlayPauseBtns(paused) {
   if (element) {
     setElementIconAndTitle(element, paused);
   }
-  else {
+  else if (visiblePlaylistId === "search") {
     const element = getSearchTrackElement();
-    const btnElement = element.querySelector(".icon-btn");
 
-    if (btnElement) {
-      setElementIconAndTitle(btnElement, paused);
+    if (element) {
+      const btnElement = element.querySelector(".icon-btn");
+
+      if (btnElement) {
+        setElementIconAndTitle(btnElement, paused);
+      }
     }
   }
 }

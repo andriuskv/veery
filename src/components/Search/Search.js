@@ -22,8 +22,11 @@ export default function Search() {
     return media.matches ? "grid": "compact";
   }, []);
   const playlist = playlists.search;
+  const prefs = useRef(null);
 
   useEffect(() => {
+    prefs.current = JSON.parse(localStorage.getItem("search")) || null;
+
     return () => {
       removePlaylist("search");
       cleanupPlaylistView();
@@ -32,7 +35,7 @@ export default function Search() {
 
   useLayoutEffect(() => {
     if (tracks.length) {
-      const pl = playlist ? updatePlaylist("search", { tracks }) : createPlaylist({ id: "search", tracks, viewMode });
+      const pl = playlist ? updatePlaylist("search", { tracks }) : createPlaylist({ id: "search", tracks, viewMode, ...prefs.current });
 
       createPlaylistView(playlistRef.current, pl);
     }

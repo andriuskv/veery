@@ -86,7 +86,14 @@ function updatePlaylist(id, data, { done = true, sort = true } = {}) {
     }
   }
 
-  if (id !== "local-files" && id !== "search") {
+  if (id === "local-files" || id === "search") {
+    localStorage.setItem(id, JSON.stringify({
+      sortBy: playlists[id].sortBy,
+      sortOrder: playlists[id].sortOrder,
+      viewMode: playlists[id].viewMode
+    }));
+  }
+  else {
     updateIDBPlaylist(id, data);
     syncArtworks(playlists);
   }
