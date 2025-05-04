@@ -65,7 +65,7 @@ export default function Queue({ nowPlayingVisible, youtubePlayerMaximized, toggl
 
           const track = playerService.getNextTrack(i, playlistId);
 
-          if (!excludes.includes(track.index)) {
+          if (track && !excludes.includes(track.index)) {
             tracks.push(track);
           }
         }

@@ -5,7 +5,7 @@ const QueueContext = createContext();
 
 function QueueProvider({ children }) {
   const [queue, setQueue] = useState([]);
-  const value = useMemo(() => ({ queue, enqueueTracks, resetQueue, dequeueTrack, getNextQueueItem, getQueueItemAtIndex }), [queue]);
+  const value = useMemo(() => ({ queue, enqueueTracks, resetQueue, dequeueTrack, getNextQueueItem, getQueueItemAtIndex, removePlaylistItems }), [queue]);
 
   function enqueueTracks(tracks) {
     setQueue([...queueService.enqueueTracks(tracks)]);
@@ -14,6 +14,12 @@ function QueueProvider({ children }) {
   function resetQueue() {
     queueService.resetQueue();
     setQueue([]);
+  }
+
+  function removePlaylistItems(playlistId) {
+    const queue = queueService.removePlaylistItems(playlistId);
+
+    setQueue(queue);
   }
 
   function dequeueTrack(index) {
