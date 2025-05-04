@@ -49,10 +49,10 @@ export default function Sort({ playlist, playlistRef, updateSortedPlaylist }) {
           onClick={() => sortPlaylist("album")}>Album</button>
         <button className={`btn text-btn dropdown-btn sort-dropdown-btn${state.sortBy === "duration" ? " active" : ""}`}
           onClick={() => sortPlaylist("duration")}>Duration</button>
-          {playlist.id === "local-files" ? (
-            <button className={`btn text-btn dropdown-btn sort-dropdown-btn${state.sortBy === "date" ? " active" : ""}`}
-              onClick={() => sortPlaylist("date")}>Date</button>
-          ) : null}
+        {playlist.id === "local-files" ? (
+          <button className={`btn text-btn dropdown-btn sort-dropdown-btn${state.sortBy === "date" ? " active" : ""}`}
+            onClick={() => sortPlaylist("date")}>Date</button>
+        ) : null}
       </div>
       <div className="sort-dropdown-group">
         <label className="dropdown-btn sort-dropdown-radio">

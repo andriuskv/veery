@@ -1,6 +1,6 @@
 import { createContext, use, useState, useEffect, useMemo } from "react";
 import { useLocation } from "react-router-dom";
-import { dispatchCustomEvent, setPageTitle } from "../utils.js";
+import { dispatchCustomEvent, getRandomString, setPageTitle } from "../utils.js";
 import { usePlaylists } from "contexts/playlist";
 import { useQueue } from "contexts/queue";
 import { getSetting } from "services/settings";
@@ -8,6 +8,7 @@ import * as pipService from "services/picture-in-picture";
 import * as savedTrackService from "services/savedTrack";
 import * as playerService from "services/player";
 import * as playlistService from "services/playlist";
+import { resetPlaylistViewActiveTrack } from "services/playlist-view";
 import { togglePlayPauseBtns, showTrackElementSpinner, hideTrackElementSpinner } from "services/playlist-view";
 
 const PlayerContext = createContext();
@@ -15,7 +16,7 @@ const PlayerContext = createContext();
 function PlayerProvider({ children }) {
   const location = useLocation();
   const { playlists } = usePlaylists();
-  const { getNextQueueItem, getQueueItemAtIndex, resetQueue } = useQueue();
+  const { getNextQueueItem, getQueueItemAtIndex, removePlaylistItems, resetQueue } = useQueue();
   const [activePlaylistId, setActivePlaylistId] = useState("");
   const [activeTrack, setActiveTrack] = useState(null);
   const [paused, setPaused] = useState(true);
@@ -48,6 +49,12 @@ function PlayerProvider({ children }) {
   useEffect(() => {
     if (!playlists) {
       return;
+    }
+
+    if (activePlaylistId && !playlists[activePlaylistId]) {
+      removePlaylistItems(activePlaylistId);
+      setActivePlaylist(getRandomString());
+      resetPlaylistViewActiveTrack();
     }
 
     if (paused) {
@@ -236,8 +243,9 @@ function PlayerProvider({ children }) {
     if (!activePlaylistId) {
       return;
     }
+    const item = getNextQueueItem();
 
-    if (playerService.canPlay(activePlaylistId)) {
+    if (playerService.canPlay(activePlaylistId) || item && playerService.canPlay(item.playlistId)) {
       playerService.playPrevious({ scrollToTrack: true });
     }
     else {
@@ -249,9 +257,9 @@ function PlayerProvider({ children }) {
     if (!activePlaylistId) {
       return;
     }
+    const item = getNextQueueItem();
 
-    if (playerService.canPlay(activePlaylistId)) {
-      const item = getNextQueueItem();
+    if (playerService.canPlay(activePlaylistId) || item && playerService.canPlay(item.playlistId)) {
       playerService.playNext(item, { scrollToTrack: true });
     }
     else {

@@ -30,7 +30,10 @@ function PlaylistProvider({ children }) {
       first.current = false;
       syncPlaylists();
     }
-    window.addEventListener("track", handleTrackUpdate);
+
+    if (playlists["local-files"]) {
+      window.addEventListener("track", handleTrackUpdate);
+    }
     window.addEventListener("youtube-tracks", handleYoutubeTracksUpdate);
     window.addEventListener("file-handler", handleFileHandler);
 

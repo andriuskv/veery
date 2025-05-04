@@ -43,6 +43,11 @@ function dequeueTrack(index) {
   return queue;
 }
 
+function removePlaylistItems(playlistId) {
+  queue = queue.filter(({ playlistId: id }) => id !== playlistId);
+  return queue;
+}
+
 function resetQueue() {
   queue.length = 0;
 }
@@ -55,5 +60,6 @@ export {
   getQueueItemAtIndex,
   enqueueTracks,
   dequeueTrack,
-  resetQueue
+  removePlaylistItems,
+  resetQueue,
 };
