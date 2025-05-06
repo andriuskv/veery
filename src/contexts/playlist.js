@@ -149,7 +149,7 @@ function PlaylistProvider({ children }) {
 
     if (index >= 0) {
       tracks[index] = track;
-      updatePlaylist(id, { tracks }, { done, sort: done });
+      updatePlaylist(id, { tracks, idle: done }, { done, sort: done });
     }
   }
 

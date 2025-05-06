@@ -1,4 +1,4 @@
-import { useState, useEffect, useLayoutEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { createPlaylistView, cleanupPlaylistView, scrollActiveTrackIntoView } from "services/playlist-view";
 import { isMobileSelectionEnabled } from "services/playlist-selection";
@@ -12,11 +12,10 @@ export default function Playlist() {
   const { id } = useParams();
   const { playlists, updatePlaylist } = usePlaylists();
   const { activePlaylistId, togglePlay, playAtIndex } = usePlayer();
-  const [playlist, setPlaylist] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
   const rendered = useRef(false);
   const playlistRef = useRef(null);
+  const playlist = playlists ? playlists[id] : null;
 
   useEffect(() => {
     return () => {
@@ -28,15 +27,11 @@ export default function Playlist() {
   }, [id]);
 
   useEffect(() => {
-    if (!playlists) {
+    if (!playlist || !playlistRef.current) {
       return;
     }
-    setLoading(false);
-    setPlaylist(playlists[id]);
-  }, [playlists, id]);
 
-  useLayoutEffect(() => {
-    if (playlist && !rendered.current) {
+    if (!rendered.current) {
       const media = window.matchMedia("(max-width: 700px)");
 
       if (media.matches && playlist.viewMode !== "grid") {
@@ -47,7 +42,10 @@ export default function Playlist() {
       scrollActiveTrackIntoView(id);
       rendered.current = true;
     }
-  }, [playlist]);
+    else if (id === "local-files" && playlist.idle) {
+      createPlaylistView(playlistRef.current, playlist);
+    }
+  }, [playlists, id]);
 
   function handleClick({ target, detail }) {
     const trackElement = target.closest(".track");
@@ -83,7 +81,10 @@ export default function Playlist() {
   }
 
   function renderMessage() {
-    if (!playlist.tracks.length) {
+    if (!playlist) {
+      return <p className="playlist-message">Playlist not found</p>;
+    }
+    else if (!playlist.tracks.length) {
       return <p className="playlist-message">Playlist is empty</p>;
     }
     else if (message) {
@@ -92,19 +93,12 @@ export default function Playlist() {
     return null;
   }
 
-  if (!playlists || loading) {
+  if (!playlists) {
     return null;
   }
-  else if (!playlist) {
-    return (
-      <div className="playlist empty">
-        <p className="playlist-message">Playlist not found</p>
-      </div>
-    );
-  }
   return (
-    <div className={`playlist${playlist.tracks.length && !message ? "" : " empty"}`}>
-      <Toolbar playlist={playlist} playlistRef={playlistRef} setMessage={setMessage}/>
+    <div className={`playlist${playlist?.tracks.length && !message ? "" : " empty"}`}>
+      {playlist ? <Toolbar playlist={playlist} playlistRef={playlistRef} setMessage={setMessage}/> : null}
       <div className="playlist-view" ref={playlistRef} onClick={handleClick}></div>
       {renderMessage()}
     </div>
