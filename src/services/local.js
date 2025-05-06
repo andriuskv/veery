@@ -37,6 +37,9 @@ function collectUniqueTracks(files, currentTracks) {
 
 function initWorker(payload, type) {
   return new Promise(resolve => {
+    const props = {
+      checkLastFm: localStorage.getItem("use-last.fm") === "true"
+    };
     let worker = null;
 
     if (type === "one") {
@@ -52,7 +55,7 @@ function initWorker(payload, type) {
       worker = workerForMany;
     }
     worker.addEventListener("message", handleMessage(resolve));
-    worker.postMessage({ payload, checkLastFm: localStorage.getItem("use-last.fm") === "true" });
+    worker.postMessage({ payload, ...props });
   });
 }
 
