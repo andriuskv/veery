@@ -199,7 +199,9 @@ window.addEventListener("drop", async event => {
   if (event.dataTransfer.items.length) {
     const files = await readItems(event.dataTransfer.items);
 
-    dispatchCustomEvent("file-handler", files);
+    if (files.length) {
+      dispatchCustomEvent("file-handler", files);
+    }
   }
 });
 
