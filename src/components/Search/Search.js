@@ -25,7 +25,13 @@ export default function Search() {
   const prefs = useRef(null);
 
   useEffect(() => {
+    const searchTerm = localStorage.getItem("searchTerm") || "";
     prefs.current = JSON.parse(localStorage.getItem("search")) || null;
+
+    if (searchTerm) {
+      searchTracks(searchTerm);
+      setValue(searchTerm);
+    }
 
     return () => {
       removePlaylist("search");
@@ -53,6 +59,7 @@ export default function Search() {
 
     timeoutId.current = setTimeout(() => {
       if (target.value) {
+        localStorage.setItem("searchTerm", target.value);
         searchTracks(target.value);
       }
       else {
@@ -97,6 +104,7 @@ export default function Search() {
     setValue("");
     setTracks([]);
     setPending(false);
+    localStorage.removeItem("searchTerm");
   }
 
   function handleClick({ target, detail }) {
