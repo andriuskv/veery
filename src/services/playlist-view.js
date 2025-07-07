@@ -536,7 +536,7 @@ function getTrackPlayPauseBtn() {
 function getSearchTrackElement() {
   const playlist = getPlaylistById("search");
 
-  if (!playlist) {
+  if (!playlist || !activeTrack) {
     return;
   }
   const container = document.getElementById("js-search");
