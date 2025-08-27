@@ -2,9 +2,11 @@ import parseAudioMetadata from "parse-audio-metadata";
 import { formatTime, computeHash } from "./utils";
 
 let left = 0;
+let workerType = "";
 
 onmessage = function(event) {
-  const { payload, checkLastFm } = event.data;
+  const { payload, checkLastFm, workerType: type } = event.data;
+  workerType = type;
 
   if (Array.isArray(payload)) {
     updateTracksWithMetadata(payload, checkLastFm);
@@ -70,7 +72,7 @@ async function parseAlbum(track, checkLastFm) {
   left -= 1;
 
   if (left <= 0) {
-    postMessage({ type: "track", track, done: true });
+    postMessage({ type: "track", track, workerType, done: true });
   }
 }
 
@@ -99,6 +101,7 @@ async function parseTrackImage(track) {
         file: picture
       },
       done: left <= 1,
+      workerType,
       track
     });
   }
