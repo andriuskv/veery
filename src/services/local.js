@@ -38,6 +38,7 @@ function collectUniqueTracks(files, currentTracks) {
 function initWorker(payload, type) {
   return new Promise(resolve => {
     const props = {
+      workerType: type,
       checkLastFm: localStorage.getItem("use-last.fm") === "true"
     };
     let worker = null;
@@ -61,7 +62,7 @@ function initWorker(payload, type) {
 
 function handleMessage(resolve) {
   return function handleMessage({ target, data }) {
-    const { type, track, artwork, done = false } = data;
+    const { type, track, artwork, workerType, done = false } = data;
 
     if (type === "track") {
       dispatchCustomEvent("track", { track, done });
@@ -72,7 +73,16 @@ function handleMessage(resolve) {
 
       if (done) {
         target.removeEventListener("message", handleMessage);
+        target.terminate();
+
         resolve(track);
+
+        if (workerType === "one") {
+          workerForOne = null;
+        }
+        else if (workerType === "many") {
+          workerForMany = null;
+        }
       }
     }
     else if (type === "image") {
