@@ -28,6 +28,7 @@ function PlayerProvider({ children }) {
     activePlaylistId,
     activeTrack,
     trackLoading,
+    initTrack,
     togglePlay,
     playPrevious,
     playNext,
@@ -157,14 +158,18 @@ function PlayerProvider({ children }) {
       const track = playlist.tracks.find(track => trackId === track.id);
 
       if (track) {
-        setActiveTrack(track);
-        setActivePlaylist(playlistId);
-        playerService.setPlaybackOrder(playlistId, track.index);
-        playerService.startTrack(track, playlistId, { currentTime, willPlay: false });
+        initTrack(track, playlistId, currentTime);
         return;
       }
     }
     savedTrackService.removeTrack();
+  }
+
+  function initTrack(track, playlistId, currentTime = 0) {
+    setActiveTrack(track);
+    setActivePlaylist(playlistId);
+    playerService.setPlaybackOrder(playlistId, track.index);
+    playerService.startTrack(track, playlistId, { currentTime, willPlay: false });
   }
 
   function handlePlayerState({ detail: { loading, paused } }) {
