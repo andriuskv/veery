@@ -12,7 +12,7 @@ import Dropdown from "components/Dropdown";
 
 export default function Selection({ playlist }) {
   const { updatePlaylist, updatePlaylists } = usePlaylists();
-  const { activePlaylistId, activeTrack } = usePlayer();
+  const { initTrack, activePlaylistId, activeTrack } = usePlayer();
   const { enqueueTracks } = useQueue();
   const [selection, setSelection] = useState(false);
 
@@ -64,8 +64,16 @@ export default function Selection({ playlist }) {
 
   function enqueueSelectedTracks() {
     const elements = getSelectedElements();
-    const indexes = getElementIndexes(elements);
     const items = [];
+    let indexes = getElementIndexes(elements);
+
+    if (!activeTrack) {
+      const track = playlist.tracks[indexes[0]];
+
+      // The first queue track will be replaced with an active track
+      indexes = indexes.slice(1);
+      initTrack(track, playlist.id);
+    }
 
     for (const index of indexes) {
       items.push({
@@ -178,12 +186,10 @@ export default function Selection({ playlist }) {
   }
   return (
     <Dropdown container={{ className: "js-selection-btn" }}>
-      {activeTrack ? (
-        <button className="btn icon-text-btn dropdown-btn" onClick={enqueueSelectedTracks}>
-          <Icon id="playlist-add"/>
-          <span>Add to queue</span>
-        </button>
-      ) : null}
+      <button className="btn icon-text-btn dropdown-btn" onClick={enqueueSelectedTracks}>
+        <Icon id="playlist-add"/>
+        <span>Add to queue</span>
+      </button>
       <button className="btn icon-text-btn dropdown-btn" onClick={removeSelectedTracks}>
         <Icon id="trash"/>
         <span>Remove selected</span>
