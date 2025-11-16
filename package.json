@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "webpack serve",
+    "start": "export NODE_OPTIONS='--no-webstorage' && webpack serve",
     "prebuild": "rm -rf build && mkdir build",
-    "build": "webpack --env prod"
+    "build": "export NODE_OPTIONS='--no-webstorage' && webpack --env prod"
   },
   "author": "",
   "license": "ISC",
@@ -16,7 +16,7 @@
     "parse-audio-metadata": "^1.3.3",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "react-router-dom": "^7.9.5"
+    "react-router-dom": "^7.9.6"
   },
   "devDependencies": {
     "@babel/core": "^7.28.5",
