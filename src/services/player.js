@@ -234,6 +234,10 @@ async function startTrack(track, playlistId, { queueStart, currentTime, scrollTo
 
     const { updateTrackWithMetadata } = await import("services/local");
     track = await updateTrackWithMetadata(track);
+
+    if (!willPlay) {
+      dispatchCustomEvent("player-state", { loading: false });
+    }
   }
 
   if (!queueStart) {
@@ -262,6 +266,8 @@ async function startTrack(track, playlistId, { queueStart, currentTime, scrollTo
       playlistId
     });
   }
+
+  return track;
 }
 
 function repeatPlay() {

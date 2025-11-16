@@ -165,11 +165,12 @@ function PlayerProvider({ children }) {
     savedTrackService.removeTrack();
   }
 
-  function initTrack(track, playlistId, currentTime = 0) {
-    setActiveTrack(track);
+  async function initTrack(track, playlistId, currentTime = 0) {
+    const updatedTrack = await playerService.startTrack(track, playlistId, { currentTime, willPlay: false });
+
+    setActiveTrack(updatedTrack);
     setActivePlaylist(playlistId);
-    playerService.setPlaybackOrder(playlistId, track.index);
-    playerService.startTrack(track, playlistId, { currentTime, willPlay: false });
+    playerService.setPlaybackOrder(playlistId, updatedTrack.index);
   }
 
   function handlePlayerState({ detail: { loading, paused } }) {
