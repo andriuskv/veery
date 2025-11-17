@@ -6,7 +6,7 @@
   "scripts": {
     "start": "export NODE_OPTIONS='--no-webstorage' && webpack serve",
     "prebuild": "rm -rf build && mkdir build",
-    "build": "export NODE_OPTIONS='--no-webstorage' && webpack --env prod"
+    "build": "webpack --env prod"
   },
   "author": "",
   "license": "ISC",
