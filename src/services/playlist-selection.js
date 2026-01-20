@@ -296,7 +296,7 @@ function selectTrackElementRange(start, end, ctrlKey) {
   if (start > end) {
     [start, end] = [end, start];
   }
-  const elementRange = [...children].slice(start, end + 1);
+  const elementRange = [...children].slice(start, end + 1).filter((element) => !element.classList.contains("hidden"));
 
   if (!ctrlKey) {
     resetSelectedElements();
@@ -426,7 +426,7 @@ function scrollUp(ctrlKey, mult) {
 
 function isAboveThreshold(mousePos) {
   return mousePos.x > selection.startingPoint.x + 2 || mousePos.x < selection.startingPoint.x - 2
-  || mousePos.y > selection.startingPoint.y + 2 || mousePos.y < selection.startingPoint.y - 2;
+    || mousePos.y > selection.startingPoint.y + 2 || mousePos.y < selection.startingPoint.y - 2;
 }
 
 function setTrackElements() {
