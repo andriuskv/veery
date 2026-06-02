@@ -55,33 +55,35 @@ function PlaylistProvider({ children }) {
       return;
     }
     skip.current = true;
-    window.addEventListener("file-handler", async ({ detail }) => {
-      await initLauncherFiles(detail);
-      skip.current = false;
-    }, { once: true });
     setPlaylists(playlistService.getPlaylists());
   }
 
   async function initLauncherFiles(files) {
-    const prefs = JSON.parse(localStorage.getItem("local-files")) || null;
-    const playlists = playlistService.getPlaylists();
+    const id = "local-files";
+    const pl = playlists[id];
+
+    if (pl) {
+      return uploadFiles(files);
+    }
+    const prefs = JSON.parse(localStorage.getItem(id)) || null;
     const playlist = playlistService.createPlaylist({
-      id: "local-files",
+      id,
       title: "Local Files",
       viewMode: "compact",
       tracks: collectUniqueTracks(files, []),
       ...prefs
     });
 
-    setPlaylists({ ...playlists, "local-files": { ...playlist } });
+    setPlaylists({ ...playlists, [id]: { ...playlist } });
 
-    dispatchCustomEvent("update-indicator-status", { id: "local-files", visible: true });
+    dispatchCustomEvent("update-indicator-status", { id, visible: true });
     await updateTracksWithMetadata(playlist.tracks);
-    dispatchCustomEvent("update-indicator-status", { id: "local-files", visible: false });
+    dispatchCustomEvent("update-indicator-status", { id, visible: false });
   }
 
-  function handleFileHandler({ detail }) {
+  async function handleFileHandler({ detail }) {
     if (skip.current) {
+      await initLauncherFiles(detail);
       skip.current = false;
       return;
     }

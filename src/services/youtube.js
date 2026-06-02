@@ -238,7 +238,7 @@ function fetchToken() {
     window.onGoogleLibraryLoad = () => {
       client = google.accounts.oauth2.initTokenClient({
         client_id: process.env.GOOGLE_CLIENT_ID,
-        scope: "https://www.googleapis.com/auth/youtube.readonly",
+        scope: "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/youtube.readonly",
         callback: async tokenResponse => {
           const json = await fetchUser(tokenResponse.access_token);
 
@@ -249,7 +249,7 @@ function fetchToken() {
           };
           auth = {
             token: tokenResponse.access_token,
-            expiresAt: Date.now() + tokenResponse.expires_in * 1000,
+            expiresAt: Date.now() + tokenResponse.expires_in * 1000
           };
           resolve(user);
           localStorage.setItem("yt-token", JSON.stringify({
