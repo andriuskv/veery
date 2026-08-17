@@ -20,7 +20,7 @@
 
 /**
  * @license React
- * react-jsx-runtime.production.js
+ * react-jsx-dev-runtime.production.js
  *
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
@@ -49,7 +49,7 @@
  */
 
 /**
- * react-router v7.16.0
+ * react-router v7.18.2
  *
  * Copyright (c) Remix Software Inc.
  *
