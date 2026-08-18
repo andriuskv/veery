@@ -10,7 +10,7 @@ const postcssPresetEnv = require("postcss-preset-env");
 
 require("dotenv").config({ path: "./config/env" });
 
-module.exports = function(env = {}) {
+module.exports = function (env = {}) {
   const mode = env.prod ? "production" : "development";
   const plugins = [
     new DefinePlugin({
@@ -33,12 +33,16 @@ module.exports = function(env = {}) {
         minifyCSS: true
       } : undefined
     }),
-    new CopyPlugin({ patterns: [
-      { from: "./src/assets", to: "./assets" },
-      { from: "./public", globOptions: {
-        ignore: ["**/index.html"]
-      }}
-    ]})
+    new CopyPlugin({
+      patterns: [
+        { from: "./src/assets", to: "./assets" },
+        {
+          from: "./public", globOptions: {
+            ignore: ["**/index.html"]
+          }
+        }
+      ]
+    })
   ];
 
   if (env.prod) {
@@ -151,7 +155,9 @@ module.exports = function(env = {}) {
                 modules: false,
                 corejs: 3
               }], ["@babel/preset-react", {
-                runtime: "automatic"
+                runtime: "automatic",
+                development: !env.prod,
+                developmentSourceSelf: !env.prod
               }]]
             }
           }
@@ -162,7 +168,12 @@ module.exports = function(env = {}) {
     devtool: env.prod ? false : "inline-source-map",
     stats: {
       entrypoints: false,
-      children: false
+      children: false,
+      warnings: false
+    },
+    performance: {
+      maxEntrypointSize: 1024000,
+      maxAssetSize: 1024000
     }
   };
 };

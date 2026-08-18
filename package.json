@@ -38,7 +38,7 @@
     "postcss": "^8.5.26",
     "postcss-import": "^17.0.0",
     "postcss-loader": "^8.2.1",
-    "postcss-preset-env": "^11.3.0",
+    "postcss-preset-env": "^11.4.0",
     "stylelint": "^17.14.1",
     "stylelint-config-standard": "^40.0.0",
     "terser-webpack-plugin": "^5.6.1",
