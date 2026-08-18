@@ -1,1 +1,1 @@
-"use strict";(globalThis.webpackChunkveery||=[]).push([[627],{627(e,s,a){a.r(s),a.d(s,{default:()=>c});var n=a(446);const c=function(){return(0,n.jsxDEV)("div",{className:"no-match",children:(0,n.jsxDEV)("p",{className:"no-match-message",children:"Page not found"},void 0,!1)},void 0,!1)}}}]);
+"use strict";(globalThis.webpackChunkveery||=[]).push([[627],{627(e,s,a){a.r(s),a.d(s,{default:()=>c});var n=a(848);const c=function(){return(0,n.jsx)("div",{className:"no-match",children:(0,n.jsx)("p",{className:"no-match-message",children:"Page not found"})})}}}]);
