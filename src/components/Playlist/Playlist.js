@@ -98,7 +98,7 @@ export default function Playlist() {
   }
   return (
     <div className={`playlist${playlist?.tracks.length && !message ? "" : " empty"}`}>
-      {playlist ? <Toolbar playlist={playlist} playlistRef={playlistRef} setMessage={setMessage}/> : null}
+      {playlist ? <Toolbar playlist={playlist} playlistRef={playlistRef} setMessage={setMessage} /> : null}
       <div className="playlist-view" ref={playlistRef} onClick={handleClick}></div>
       {renderMessage()}
     </div>
