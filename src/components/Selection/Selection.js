@@ -76,10 +76,11 @@ export default function Selection({ playlist }) {
     }
 
     for (const index of indexes) {
+      const track = playlist.tracks[index];
       items.push({
         id: getRandomString(),
-        playlistId: playlist.id,
-        track: playlist.tracks[index]
+        playlistId: track.playlistId,
+        track
       });
     }
     enqueueTracks(items);
@@ -187,15 +188,15 @@ export default function Selection({ playlist }) {
   return (
     <Dropdown container={{ className: "js-selection-btn" }}>
       <button className="btn icon-text-btn dropdown-btn" onClick={enqueueSelectedTracks}>
-        <Icon id="playlist-add"/>
+        <Icon id="playlist-add" />
         <span>Add to queue</span>
       </button>
       <button className="btn icon-text-btn dropdown-btn" onClick={removeSelectedTracks}>
-        <Icon id="trash"/>
+        <Icon id="trash" />
         <span>Remove selected</span>
       </button>
       <button className="btn icon-text-btn dropdown-btn" onClick={cancelSelection}>
-        <Icon id="close"/>
+        <Icon id="close" />
         <span>Clear selection</span>
       </button>
     </Dropdown>
