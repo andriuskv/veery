@@ -265,7 +265,7 @@ function PlayerProvider({ children }) {
     }
     const item = getNextQueueItem();
 
-    if (playerService.canPlay(activePlaylistId) || item && playerService.canPlay(item.playlistId)) {
+    if (playerService.canPlay(activePlaylistId) || (item && playerService.canPlay(item.playlistId))) {
       playerService.playNext(item, { scrollToTrack: true });
     }
     else {

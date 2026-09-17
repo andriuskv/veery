@@ -69,17 +69,17 @@ export default function Selection({ playlist }) {
 
     if (!activeTrack) {
       const track = playlist.tracks[indexes[0]];
+      initTrack(track, playlist.id === "search" ? track.playlistId : playlist.id);
 
       // The first queue track will be replaced with an active track
       indexes = indexes.slice(1);
-      initTrack(track, playlist.id);
     }
 
     for (const index of indexes) {
       const track = playlist.tracks[index];
       items.push({
         id: getRandomString(),
-        playlistId: track.playlistId,
+        playlistId: playlist.id === "search" ? track.playlistId : playlist.id,
         track
       });
     }
