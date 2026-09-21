@@ -37,16 +37,29 @@ async function addArtworks(artworks) {
 
   await Promise.all([...Object.keys(artworks).map(key => {
     const artwork = artworks[key];
+    let original = artwork.original;
+    let small = artwork.small;
 
-    if (artwork.original.blob || artwork.small.blob) {
-      return null;
+    if (artwork.original.blob) {
+      original = {
+        blob: artwork.original.blob
+      };
+    }
+    if (artwork.small.blob) {
+      small = {
+        blob: artwork.small.blob
+      };
     }
     return tx.store.put({
       id: artwork.id,
-      original: artwork.original,
-      small: artwork.small
+      original,
+      small
     });
   }), tx.done]);
+}
+
+function saveArtworks() {
+  addArtworks(artworks);
 }
 
 function getArtwork(id) {
@@ -140,6 +153,7 @@ export {
   getArtworks,
   setArtwork,
   getArtwork,
+  saveArtworks,
   getPlaylistThumbnailImages,
   syncArtworks
 };

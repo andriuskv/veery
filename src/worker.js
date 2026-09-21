@@ -84,25 +84,12 @@ async function parseTrackImage(track) {
     const [hash, image] = await Promise.all([hashFile(picture), resizeImage(picture)]);
     track.artworkId = hash;
 
-    postMessage({ type: "track", track, artwork: {
-      original: { blob: picture },
-      small: { blob: image },
-      type: picture.type
-    } });
-  }
-  else {
-    const hash = await hashFile(picture);
-    track.artworkId = hash;
-
     postMessage({
-      type: "image",
-      image: {
-        hash,
-        file: picture
-      },
-      done: left <= 1,
-      workerType,
-      track
+      type: "track", track, artwork: {
+        original: { blob: picture },
+        small: { blob: image },
+        type: picture.type
+      }
     });
   }
 }
@@ -172,7 +159,7 @@ async function fetchTrackAlbum(track) {
         postMessage({ type: "track", track, artwork });
       }
     }
-  } catch(e) {
+  } catch (e) {
     console.log(e);
   }
 }

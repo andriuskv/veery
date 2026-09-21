@@ -1,8 +1,30 @@
 import { dispatchCustomEvent, getRandomString } from "../utils.js";
-import { setArtwork } from "services/artwork";
-
+import { setArtwork, saveArtworks, getArtwork } from "services/artwork";
+const metadataCache = {};
 let workerForOne = null;
 let workerForMany = null;
+let db = null;
+
+async function initMetadataCache(idb) {
+  try {
+    db = idb;
+    const cache = await db.getAll("metadata") || [];
+
+    cache.forEach(item => {
+      metadataCache[item.id] = item;
+    });
+  } catch {
+    // The "metadata" store doesn't exist yet, so we don't do anything.
+  }
+}
+
+async function saveMetadata() {
+  const tx = db.transaction("metadata", "readwrite");
+
+  await Promise.all([...Object.keys(metadataCache).map(key => {
+    return tx.store.put(metadataCache[key]);
+  }), tx.done]);
+}
 
 function removeFileType(fileName) {
   return fileName.slice(0, fileName.lastIndexOf("."));
@@ -14,11 +36,14 @@ function collectUniqueTracks(files, currentTracks) {
       return tracks;
     }
     const name = removeFileType(file.name.trim());
-    const duplicate = currentTracks.some(track => track.name === name);
+    const duplicate = currentTracks.some(track => track.name === name && track.audioTrack.size === file.size && track.audioTrack.lastModified === file.lastModified);
 
     if (!duplicate) {
+      const metadata = metadataCache[`${file.name}//${file.size}//${file.lastModified}`];
+      const artwork = getArtwork(metadata?.artworkId);
+
       tracks.push({
-        needsMetadata: true,
+        needsMetadata: !(metadata && artwork),
         id: getRandomString(),
         date: file.lastModified,
         audioTrack: file,
@@ -28,7 +53,8 @@ function collectUniqueTracks(files, currentTracks) {
         album: "",
         durationInSeconds: 0,
         duration: "",
-        player: "native"
+        player: "native",
+        ...metadata
       });
     }
     return tracks;
@@ -70,8 +96,20 @@ function handleMessage(resolve) {
       if (artwork) {
         setArtwork(track.artworkId, artwork);
       }
+      const id = `${track.audioTrack.name}//${track.audioTrack.size}//${track.audioTrack.lastModified}`;
+      metadataCache[id] = {
+        id,
+        artworkId: track.artworkId,
+        title: track.title,
+        artist: track.artist,
+        album: track.album,
+        durationInSeconds: track.durationInSeconds,
+        duration: track.duration
+      };
 
       if (done) {
+        saveArtworks();
+        saveMetadata();
         target.removeEventListener("message", handleMessage);
         target.terminate();
 
@@ -85,9 +123,6 @@ function handleMessage(resolve) {
         }
       }
     }
-    else if (type === "image") {
-      resizeImage(track, data.image, done);
-    }
   };
 }
 
@@ -97,40 +132,6 @@ function updateTrackWithMetadata(track) {
 
 function updateTracksWithMetadata(tracks) {
   return initWorker(tracks, "many");
-}
-
-function resizeImage(track, { hash, file }, done) {
-  const canvasImage = new Image();
-  const canvas = document.createElement("canvas");
-  const ctx = canvas.getContext("2d");
-  canvasImage.crossOrigin = "anonymous";
-
-  canvasImage.onload = function() {
-    let { width, height } = canvasImage;
-    const minSize = Math.min(width, height, 256);
-
-    if (width < height) {
-      height = minSize / canvasImage.width * height;
-      width = minSize;
-    }
-    else {
-      width = minSize / canvasImage.height * width;
-      height = minSize;
-    }
-    canvas.width = width;
-    canvas.height = height;
-    ctx.drawImage(canvasImage, 0, 0, width, height);
-    canvas.toBlob(image => {
-      setArtwork(hash, {
-        original: { blob: file },
-        small: { blob: image },
-        type: file.type
-      });
-      dispatchCustomEvent("track", { track, done });
-    }, file.type, 0.72);
-    URL.revokeObjectURL(canvasImage.src);
-  };
-  canvasImage.src = URL.createObjectURL(file);
 }
 
 async function readItems(items) {
@@ -274,6 +275,7 @@ if ("launchQueue" in window && "files" in window.LaunchParams.prototype) {
 }
 
 export {
+  initMetadataCache,
   collectUniqueTracks,
   updateTrackWithMetadata,
   updateTracksWithMetadata,

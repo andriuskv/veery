@@ -10,7 +10,7 @@ const postcssPresetEnv = require("postcss-preset-env");
 
 require("dotenv").config({ path: "./config/env" });
 
-module.exports = function (env = {}) {
+module.exports = function(env = {}) {
   const mode = env.prod ? "production" : "development";
   const plugins = [
     new DefinePlugin({
