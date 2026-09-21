@@ -10,7 +10,7 @@
     2px 4px 4px 0 var(--color-black-100-2),
     4px 8px 8px 0 var(--color-black-100-1);
 
-  @media (width <= 428px) {
+  @media (width <=428px) {
     --thumbnail-size: 108px;
 
     .playlist-entry-content {
@@ -106,7 +106,8 @@
 .playlist-entry-thumbnail-container {
   position: relative;
 
-  &:hover, &:has(:focus-visible) {
+  &:hover,
+  &:has(:focus-visible) {
     .playlist-entry-thumbnail::after {
       opacity: 1;
     }
@@ -166,7 +167,7 @@
     margin-left: var(--space-md);
     margin-right: var(--space-md);
 
-    @media (width <= 428px) {
+    @media (width <=428px) {
       margin-left: var(--space-sm);
       margin-right: var(--space-sm);
     }
@@ -181,7 +182,7 @@
 .playlist-entry-dropdown-container {
   margin-left: auto;
 
-  @media (width <= 428px) {
+  @media (width <=428px) {
     .dropdown-toggle-btn-icon {
       width: 20px;
       height: 20px;
@@ -201,4 +202,16 @@
   .checkbox {
     background-color: var(--color-grey-50);
   }
+}
+
+.playlist-entry-cache-btn {
+  display: flex;
+  gap: var(--space-sm);
+  padding-left: calc(var(--button-icon-size) + var(--space-xl));
+  padding-block: 11px;
+}
+
+.playlist-entry-cache-size {
+  opacity: 0.9;
+  font-size: var(--text-xs);
 }

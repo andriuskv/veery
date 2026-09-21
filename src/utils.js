@@ -93,6 +93,14 @@ async function computeHash(buffer) {
     .join("");
 }
 
+function fileSize(bytes) {
+  const sizes = ["Bytes", "KB", "MB", "GB"];
+  if (bytes === 0) return "0 Byte";
+  const i = Math.floor(Math.log(bytes) / Math.log(1024));
+
+  return (bytes / Math.pow(1024, i)).toPrecision(3) + " " + sizes[i];
+}
+
 export {
   dispatchCustomEvent,
   setPageTitle,
@@ -101,5 +109,6 @@ export {
   shuffleArray,
   getRandomString,
   scriptLoader,
-  computeHash
+  computeHash,
+  fileSize
 };

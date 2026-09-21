@@ -1,11 +1,11 @@
 import { createContext, use, useState, useEffect, useRef, useMemo } from "react";
-import { openDB } from "idb";
 import { dispatchCustomEvent } from "../utils.js";
 import { setPlaylistViewActiveTrack, resetPlaylistViewActiveTrack } from "services/playlist-view";
 import * as playlistService from "services/playlist";
 import * as playerService from "services/player";
 import * as artworkService from "services/artwork";
-import { collectUniqueTracks, updateTracksWithMetadata, getLauncherFileCache } from "services/local";
+import * as dbService from "services/db";
+import * as localService from "services/local";
 import { useNotification } from "contexts/notification";
 
 const PlaylistContext = createContext();
@@ -45,10 +45,10 @@ function PlaylistProvider({ children }) {
   }, [playlists]);
 
   async function init() {
-    const cachedFiles = getLauncherFileCache();
-    const db = await getDb();
+    const cachedFiles = localService.getLauncherFileCache();
+    const db = await dbService.getDb();
 
-    await Promise.all([artworkService.initArtworks(db), playlistService.initPlaylists(db)]);
+    await Promise.all([artworkService.initArtworks(db), playlistService.initPlaylists(db), localService.initMetadataCache(db)]);
 
     if (cachedFiles.length) {
       initLauncherFiles(cachedFiles);
@@ -70,15 +70,19 @@ function PlaylistProvider({ children }) {
       id,
       title: "Local Files",
       viewMode: "compact",
-      tracks: collectUniqueTracks(files, []),
+      tracks: localService.collectUniqueTracks(files, []),
       ...prefs
     });
 
     setPlaylists({ ...playlists, [id]: { ...playlist } });
 
-    dispatchCustomEvent("update-indicator-status", { id, visible: true });
-    await updateTracksWithMetadata(playlist.tracks);
-    dispatchCustomEvent("update-indicator-status", { id, visible: false });
+    const tracksToProcess = playlist.tracks.filter(t => t.needsMetadata);
+
+    if (tracksToProcess.length) {
+      dispatchCustomEvent("update-indicator-status", { id, visible: true });
+      await localService.updateTracksWithMetadata(tracksToProcess);
+      dispatchCustomEvent("update-indicator-status", { id, visible: false });
+    }
   }
 
   async function handleFileHandler({ detail }) {
@@ -88,33 +92,6 @@ function PlaylistProvider({ children }) {
       return;
     }
     uploadFiles(detail);
-  }
-
-  async function getDb() {
-    let db = null;
-
-    try {
-      db = await openDB("veery", 1, {
-        upgrade(db) {
-          db.createObjectStore("artworks", { keyPath: "id" });
-          db.createObjectStore("playlists", { keyPath: "id" });
-        }
-      });
-    } catch {
-      db = await new Promise(resolve => {
-        const req = indexedDB.deleteDatabase("veery");
-
-        req.onsuccess = function() {
-          resolve(openDB("veery", 1, {
-            upgrade(db) {
-              db.createObjectStore("artworks", { keyPath: "id" });
-              db.createObjectStore("playlists", { keyPath: "id" });
-            }
-          }));
-        };
-      });
-    }
-    return db;
   }
 
   async function syncPlaylists() {
@@ -163,12 +140,10 @@ function PlaylistProvider({ children }) {
   async function uploadFiles(files) {
     const id = "local-files";
     const pl = playlists[id];
-    const playlistTracks = pl ? pl.tracks: [];
-    const tracks = collectUniqueTracks(files, playlistTracks);
+    const playlistTracks = pl ? pl.tracks : [];
+    const tracks = localService.collectUniqueTracks(files, playlistTracks);
 
     if (tracks.length) {
-      dispatchCustomEvent("update-indicator-status", { id, visible: true });
-
       if (pl) {
         addTracks(id, tracks, false);
         dispatchCustomEvent("tracks", { id, tracks });
@@ -184,12 +159,18 @@ function PlaylistProvider({ children }) {
           ...prefs
         });
       }
-      await updateTracksWithMetadata(tracks);
+
+      const tracksToProcess = tracks.filter(t => t.needsMetadata);
+
+      if (tracksToProcess.length) {
+        dispatchCustomEvent("update-indicator-status", { id, visible: true });
+        await localService.updateTracksWithMetadata(tracksToProcess);
+        dispatchCustomEvent("update-indicator-status", { id, visible: false });
+      }
     }
     else {
       showNotification({ value: "No unique files found." });
     }
-    dispatchCustomEvent("update-indicator-status", { id, visible: false });
   }
 
   function createPlaylist(playlist) {

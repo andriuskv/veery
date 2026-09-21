@@ -3,7 +3,7 @@ import { getRandomString } from "../../utils";
 import Icon from "components/Icon";
 import "./dropdown.css";
 
-export default function Dropdown({ container, toggle = {}, body, children }) {
+export default function Dropdown({ container, toggle = {}, body, children, onOpen = () => { }, onClose = () => { } }) {
   const [state, setState] = useState({ id: getRandomString() });
   const memoizedWindowClickHandler = useCallback(handleWindowClick, [state.id]);
   const isMounted = useRef(false);
@@ -42,6 +42,7 @@ export default function Dropdown({ container, toggle = {}, body, children }) {
 
     if (state.visible) {
       window.removeEventListener("click", memoizedWindowClickHandler);
+      onClose();
     }
     else {
       const container = currentTarget.parentElement;
@@ -59,6 +60,7 @@ export default function Dropdown({ container, toggle = {}, body, children }) {
         element.style.position = "";
       }
       window.addEventListener("click", memoizedWindowClickHandler);
+      onOpen();
     }
     setState({
       id: state.id,
@@ -101,7 +103,7 @@ export default function Dropdown({ container, toggle = {}, body, children }) {
     <div id={state.id} className={`dropdown-container${container ? ` ${container.className}` : ""}${state.visible ? " visible" : ""}`}>
       <button className={`btn icon-btn${toggle.className ? ` ${toggle.className}` : ""}${state.visible ? " active" : ""}`}
         onClick={toggleDropdown} title={toggle.title || "More"}>
-        {toggle.body ? toggle.body : <Icon id={toggle.iconId || "vertical-dots"} className="dropdown-toggle-btn-icon"/>}
+        {toggle.body ? toggle.body : <Icon id={toggle.iconId || "vertical-dots"} className="dropdown-toggle-btn-icon" />}
       </button>
       <div ref={drop} className={`container dropdown${body ? ` ${body.className}` : ""}${state.reveal ? " reveal" : ""}${state.visible ? " visible" : ""}${state.onTop ? " top" : ""}`}>{children}</div>
     </div>
