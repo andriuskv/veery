@@ -20,7 +20,7 @@ async function addVideo(videoId, oldTracks) {
   const { items } = await fetchYoutube("videos", "snippet,contentDetails", "id", videoId);
 
   if (items.length) {
-    const videos= parseVideos(items);
+    const videos = parseVideos(items);
 
     if (oldTracks.length) {
       return filterDuplicateTracks(videos, oldTracks);
@@ -235,6 +235,11 @@ async function initGoogleAPI() {
 
 function fetchToken() {
   return new Promise(async resolve => {
+    if (client) {
+      client.error_callback = () => resolve({ canceled: true });
+      client.requestAccessToken();
+      return;
+    }
     window.onGoogleLibraryLoad = () => {
       client = google.accounts.oauth2.initTokenClient({
         client_id: process.env.GOOGLE_CLIENT_ID,
@@ -258,7 +263,7 @@ function fetchToken() {
           }));
         },
       });
-
+      client.error_callback = () => resolve({ canceled: true });
       client.requestAccessToken();
     };
     await scriptLoader.load({ src: "https://accounts.google.com/gsi/client" });
