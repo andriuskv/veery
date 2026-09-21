@@ -45,10 +45,13 @@ export default function Import({ youtube, setYoutube }) {
 
       const user = await initGoogleAPI();
 
-      if (user) {
+      if (user?.email) {
         const playlists = await fetchYoutubeUserPlaylists();
 
         setYoutube({ user, playlists, modalVisible: true });
+      }
+      else if (user?.canceled) {
+        setYoutube({});
       }
       else {
         setYoutube({ modalVisible: true });
@@ -77,22 +80,22 @@ export default function Import({ youtube, setYoutube }) {
     <div>
       <div className="import-option import-option-local">
         <div className="import-local-items">
-          <label className="btn icon-text-btn import-option-btn import-local-item" onChange={handleFileChange}>
-            <Icon id="file" className="import-option-btn-icon"/>
+          <label className="btn icon-text-btn import-option-btn import-local-item">
+            <Icon id="file" className="import-option-btn-icon" />
             <span>Files</span>
-            <input type="file" className="sr-only" accept="audio/*" multiple/>
+            <input type="file" className="sr-only" accept="audio/*" multiple onChange={handleFileChange} />
           </label>
-          <label className="btn icon-text-btn import-option-btn import-local-item" onChange={handleFileChange}>
-            <Icon id="folder" className="import-option-btn-icon"/>
+          <label className="btn icon-text-btn import-option-btn import-local-item">
+            <Icon id="folder" className="import-option-btn-icon" />
             <span>Folder</span>
-            <input type="file" className="sr-only" webkitdirectory="true" directory="true" allowdirs="true"/>
+            <input type="file" className="sr-only" webkitdirectory="true" directory="true" allowdirs="true" onChange={handleFileChange} />
           </label>
         </div>
         <div className="import-local-settings">
           <label className="checkbox-container">
             <input type="checkbox" className="sr-only checkbox-input"
               onChange={toggleLastfmUsage}
-              checked={shouldUseLastfm}/>
+              checked={shouldUseLastfm} />
             <div className="checkbox">
               <div className="checkbox-tick"></div>
             </div>
@@ -101,19 +104,19 @@ export default function Import({ youtube, setYoutube }) {
         </div>
       </div>
       <div className="import-option import-option-youtube">
-        {youtube.fetching && <Icon id="spinner" className="import-youtube-spinner"/>}
+        {youtube.fetching && <Icon id="spinner" className="import-youtube-spinner" />}
         <button className="btn icon-text-btn import-option-btn import-youtube-modal-show-btn"
           onClick={showYoutubeModal} disabled={youtube.fetching}>
-          <Icon id="youtube" className="import-option-btn-icon"/>
+          <Icon id="youtube" className="import-option-btn-icon" />
           <span>YouTube</span>
         </button>
         {youtube.user ? (
           <Dropdown toggle={{
-            body: <img src={youtube.user.image} className="import-youtube-user-btn-image" alt=""/>,
+            body: <img src={youtube.user.image} className="import-youtube-user-btn-image" alt="" />,
             className: "import-youtube-user-toggle-btn"
           }}>
             <div className="import-youtube-user">
-              <img src={youtube.user.image} className="import-youtube-user-image" alt=""/>
+              <img src={youtube.user.image} className="import-youtube-user-image" alt="" />
               <div>
                 <div className="import-youtube-user-name">{youtube.user.name}</div>
                 <div className="import-youtube-user-email">{youtube.user.email}</div>
